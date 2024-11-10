@@ -6,12 +6,12 @@ import Image from 'next/image';
 import FilterIcon from '../../../../../../public/images/expenses/filter.png';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
-import ExpenseAddContent from './ExpenseAddContent';
 import ExpenseRuleUpdateOrCreateContent from './ExpenseRuleUpdateOrCreateContent';
 import ExpenseWriteOffSummary from './ExpenseWriteOffSummary';
 import SharedModal from '../../../../SharedModal';
 import ExpenseUploadContent from './ExpenseUploadContent';
 import { trpc } from '@/utils/trpc';
+import ExpenseAddContent from './ExpenseAddContent';
 
 const buttons = [
   { text: 'Filter By', icon: FilterIcon },
