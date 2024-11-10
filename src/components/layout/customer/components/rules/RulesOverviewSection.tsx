@@ -4,7 +4,6 @@ import { SharedDataTable } from '@/components/SharedDataTable';
 import SharedPagination from '@/components/SharedPagination';
 import SearchInput from '@/components/SearchInput';
 import { RulesDataTableColumns } from './RulesDataTableColumns';
-import { Button } from '@/components/ui/button';
 import CreateRuleModal from './CreateRuleModal';
 import { trpc } from '@/config/trpc/client';
 
@@ -33,9 +32,9 @@ export default function RulesOverviewSection() {
         <div className="flex gap-2">
           <SearchInput className="" placeholder="Search Rules" />
           <CreateRuleModal />
-          <Button className="text-white w-[124px] text-sm font-medium">
+          {/* <Button className="text-white w-[124px] text-sm font-medium">
             Save
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className="mt-10">

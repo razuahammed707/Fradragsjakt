@@ -105,7 +105,7 @@ function ExpenseRuleUpdateOrCreateContent({
 
         <div className="py-3">
           <Button type="submit" className="w-full text-white">
-            Apply Update
+            Create
           </Button>
           <Button
             type="button" // Change to button to avoid form submission
