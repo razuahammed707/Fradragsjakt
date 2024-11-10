@@ -23,9 +23,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
+import ExpenseCategoryCell from './ExpenseCategoryCell';
+import formatDate from '@/utils/helpers/formatDate';
+import { ReactNode } from 'react';
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type ExpenseColumnProps = {
   id: string;
   date: string;
@@ -64,8 +65,9 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
     accessorKey: 'createdAt',
     header: 'Date',
     cell: ({ row }) => {
+      const date_to_render = row.getValue('createdAt') as string;
       return (
-        <span className="text-[#00104B]">{row.getValue('createdAt')}</span>
+        <span className="text-[#00104B]">{formatDate(date_to_render)}</span>
       );
     },
   },
@@ -104,18 +106,7 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {[
-              'Transport',
-              'Meals',
-              'Travel',
-              'unknown',
-              'Transaction',
-              'withdraw',
-            ].map((_, i) => (
-              <SelectItem key={i} value={_}>
-                {_}
-              </SelectItem>
-            ))}
+            <ExpenseCategoryCell />
           </SelectContent>
         </Select>
       );
@@ -169,6 +160,12 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
           {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const amount_to_render = row.getValue('amount') as ReactNode;
+      return (
+        <span className="text-[#00104B]">{`NOK ${amount_to_render}`}</span>
       );
     },
   },
