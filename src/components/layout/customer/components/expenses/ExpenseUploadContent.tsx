@@ -1,10 +1,12 @@
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { FormInput } from '@/components/FormInput';
 import DragAndDropFile from '@/components/DragAndDropFile';
 import { useDropzone } from 'react-dropzone';
+import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
 
 type FormData = {
   Description: string;
@@ -109,17 +111,19 @@ const mapToExpenseData = (
     .filter((item): item is ExpenseData => item !== null);
 };
 
-const ExpenseUploadContent: React.FC = () => {
-  const { handleSubmit, control } = useForm<FormData>();
+type ExpenseUploadContentProps = {
+  setModalOpen: Dispatch<SetStateAction<boolean>>;
+};
+const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
+  setModalOpen,
+}) => {
+  const [loading, setLoading] = useState(false);
+  const utils = trpc.useUtils();
+  const { handleSubmit, control, reset } = useForm<FormData>();
   const [fileLink, setFileLink] = useState<File | null>(null);
-  console.log('fileLink__', fileLink);
 
   const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
   const [fileData, setFileData] = useState<FileRowData[]>([]);
-  console.log('fileData__', fileData);
-
-  const [expenseData, setExpenseData] = useState<ExpenseData[]>([]);
-  console.log('expenseData__', expenseData);
 
   const [headers, setHeaders] = useState<Column[]>([]);
   const [isFileProcessed, setIsFileProcessed] = useState(false);
@@ -151,10 +155,26 @@ const ExpenseUploadContent: React.FC = () => {
     accept: { 'text/csv': ['.csv'] },
   });
 
+  const mutation = trpc.expenses.createBulkExpenses.useMutation({
+    onSuccess: () => {
+      toast.success('Expenses created successfully!', {
+        duration: 4000,
+      });
+      utils.expenses.getExpenses.invalidate();
+      reset();
+      setModalOpen(false);
+      setLoading(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to create expenses');
+      setLoading(false);
+    },
+  });
+
   const onSubmit = (formData: FormData): void => {
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
-    setExpenseData(mappedExpenses);
-    console.log('Processed expense data:', mappedExpenses);
+    setLoading(true);
+    mutation.mutate(mappedExpenses);
   };
 
   const headerOptions = React.useMemo(
@@ -233,7 +253,7 @@ const ExpenseUploadContent: React.FC = () => {
               type="submit"
               className="w-full mt-7 text-white "
               variant="purple"
-              disabled={fileData.length === 0}
+              disabled={loading}
             >
               Process Expense Data
             </Button>

@@ -61,7 +61,7 @@ function ExpenseOverviewHeading({}) {
     ) : modalContent.title === 'Show Write-offs' ? (
       <ExpenseWriteOffSummary />
     ) : modalContent.title === 'Upload statements' ? (
-      <ExpenseUploadContent />
+      <ExpenseUploadContent setModalOpen={setModalOpen} />
     ) : (
       <></>
     );

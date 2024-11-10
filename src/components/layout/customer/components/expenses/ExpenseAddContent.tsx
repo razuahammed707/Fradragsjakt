@@ -10,7 +10,7 @@ import { Loader2 } from 'lucide-react';
 
 export type FormData = {
   description: string;
-  expense_type: 'Unknown' | 'Personal' | 'Business';
+  expense_type: 'unknown' | 'personal' | 'business';
   category: string;
   deduction_status: string;
   amount: number;
@@ -88,9 +88,9 @@ function ExpenseAddContent({
             control={control}
             placeholder="Select type"
             options={[
-              { title: 'Business', value: 'Business' },
-              { title: 'Personal', value: 'Personal' },
-              { title: 'Unknown', value: 'Unknown' },
+              { title: 'Business', value: 'business' },
+              { title: 'Personal', value: 'personal' },
+              { title: 'Unknown', value: 'unknown' },
             ]}
             required
           />

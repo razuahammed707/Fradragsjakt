@@ -104,7 +104,14 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {['Transport', 'Meals', 'Travel'].map((_, i) => (
+            {[
+              'Transport',
+              'Meals',
+              'Travel',
+              'unknown',
+              'Transaction',
+              'withdraw',
+            ].map((_, i) => (
               <SelectItem key={i} value={_}>
                 {_}
               </SelectItem>
