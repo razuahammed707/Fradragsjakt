@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { DeductionStatus, ExpenseType, IExpense } from '../interfaces/expense';
 
 const ExpenseSchema = new Schema<IExpense>(
@@ -32,12 +32,18 @@ const ExpenseSchema = new Schema<IExpense>(
       ref: 'user',
       required: true,
     },
+    rule: {
+      type: Schema.Types.ObjectId,
+      ref: 'rule',
+      //required: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const ExpenseModel = model<IExpense>('expense', ExpenseSchema);
+const ExpenseModel =
+  mongoose.models.expense || mongoose.model<IExpense>('expense', ExpenseSchema);
 
 export default ExpenseModel;

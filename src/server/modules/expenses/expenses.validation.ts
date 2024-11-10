@@ -14,5 +14,18 @@ const createExpenseSchema = z.object({
     required_error: 'Amount is required',
   }),
 });
+const createBulkExpenseSchema = z.array(
+  z.object({
+    description: z.string({
+      required_error: 'Description is required',
+    }),
+    amount: z.number({
+      required_error: 'Amount is required',
+    }),
+  })
+);
 
-export const expenseValidation = { createExpenseSchema };
+export const expenseValidation = {
+  createExpenseSchema,
+  createBulkExpenseSchema,
+};

@@ -10,4 +10,8 @@ const ruleSchema = z.object({
   }),
 });
 
-export const ruleValidation = { ruleSchema };
+const deleteRuleSchema = z.object({
+  _id: z.string().min(1, 'Rule ID is required'),
+});
+
+export const ruleValidation = { ruleSchema, deleteRuleSchema };

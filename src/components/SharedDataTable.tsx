@@ -22,16 +22,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterPlaceholder?: string;
+  className?: string;
 }
 
 export function SharedDataTable<TData, TValue>({
   columns,
   data,
+  className,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -62,7 +65,7 @@ export function SharedDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="rounded-md border-none h-[500px]">
+      <div className={cn('rounded-md border-none ', className)}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

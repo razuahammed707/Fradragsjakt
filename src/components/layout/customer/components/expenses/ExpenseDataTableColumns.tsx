@@ -22,9 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
+import ExpenseCategoryCell from './ExpenseCategoryCell';
+import formatDate from '@/utils/helpers/formatDate';
+import { ReactNode } from 'react';
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type ExpenseColumnProps = {
   id: string;
   date: string;
@@ -60,8 +62,14 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'date',
+    accessorKey: 'createdAt',
     header: 'Date',
+    cell: ({ row }) => {
+      const date_to_render = row.getValue('createdAt') as string;
+      return (
+        <span className="text-[#00104B]">{formatDate(date_to_render)}</span>
+      );
+    },
   },
   {
     accessorKey: 'description',
@@ -98,18 +106,14 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {['Transport', 'Meals', 'Travel', 'Meals'].map((_, i) => (
-              <SelectItem key={i} value={_}>
-                {_}
-              </SelectItem>
-            ))}
+            <ExpenseCategoryCell />
           </SelectContent>
         </Select>
       );
     },
   },
   {
-    accessorKey: 'expenseType',
+    accessorKey: 'expense_type',
     header: ({ column }) => {
       return (
         <Button
@@ -123,7 +127,7 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const defaultType = row.getValue('expenseType') as string;
+      const defaultType = row.getValue('expense_type') as string;
       return (
         <Select
           defaultValue={defaultType}
@@ -133,9 +137,9 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {['Don’t know', 'Personal', 'Business'].map((_, i) => (
-              <SelectItem key={i} value={_}>
-                {_}
+            {['unknown', 'personal', 'business'].map((type, i) => (
+              <SelectItem key={i} value={type}>
+                {transformToUppercase(type)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -156,6 +160,12 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
           {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const amount_to_render = row.getValue('amount') as ReactNode;
+      return (
+        <span className="text-[#00104B]">{`NOK ${amount_to_render}`}</span>
       );
     },
   },

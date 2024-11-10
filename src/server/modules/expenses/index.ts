@@ -7,7 +7,8 @@ import { z } from 'zod';
 import ExpenseModel from '@/server/db/models/expense';
 import { ApiError } from '@/lib/exceptions';
 import { expenseValidation } from './expenses.validation';
-import RuleModel from '@/server/db/models/rules';
+import { ExpenseHelpers } from '@/server/helpers/expense';
+import { IExpense } from '@/server/db/interfaces/expense';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -56,19 +57,11 @@ export const expenseRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        const { description } = input;
 
-        const rule = await RuleModel.findOne({
-          description_contains: { $regex: description, $options: 'i' },
-          user: loggedUser.id,
-        });
-
-        const expense = await ExpenseModel.create({
-          ...input,
-          user: loggedUser.id,
-          expense_type: rule?.expense_type || input.expense_type,
-          category: rule?.category || input.category,
-        });
+        const expense = await ExpenseHelpers.createExpenseRecord(
+          input as IExpense,
+          loggedUser.id
+        );
 
         return {
           status: 201,
@@ -81,6 +74,43 @@ export const expenseRouter = router({
         throw new ApiError(
           httpStatus.BAD_REQUEST,
           `Failed to create expense: ${errorMessage}`
+        );
+      }
+    }),
+  createBulkExpenses: protectedProcedure
+    .input(expenseValidation.createBulkExpenseSchema)
+    .mutation(async ({ ctx, input: expenses }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+        console.log('expenses_from_api', expenses);
+
+        // Array of expenses to be created in bulk
+        // const expenses = [
+        //   { description: 'Foodpanda', amount: 20 },
+        //   { description: 'Dhaka to Chittagong', amount: 100 },
+        //   { description: 'Charity', amount: 500 },
+        // ];
+
+        const createdExpenses = await Promise.all(
+          expenses.map(async (singleExpense) => {
+            return await ExpenseHelpers.createExpenseFromBulkInput(
+              singleExpense,
+              loggedUser.id
+            );
+          })
+        );
+
+        return {
+          status: 201,
+          message: 'Expenses created successfully',
+          data: createdExpenses,
+        } as ApiResponse<typeof createdExpenses>;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'An unknown error occurred';
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          `Failed to create expenses: ${errorMessage}`
         );
       }
     }),

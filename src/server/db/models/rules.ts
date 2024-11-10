@@ -27,7 +27,7 @@ const RuleSchema: Schema = new Schema<IRule>(
   { timestamps: true }
 );
 
-RuleSchema.index({ category_title: 1 });
+RuleSchema.index({ category_title: 1, user: 1 });
 RuleSchema.index({ description_contains: 1 });
 
 const RuleModel =
