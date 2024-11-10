@@ -16,16 +16,44 @@ import {
 import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
+import { IRule } from '@/server/db/interfaces/rules';
+import SharedModal from '@/components/SharedModal';
+import DeleteConfirmationContent from '@/components/DeleteConfirmationContent';
+import { useState } from 'react';
 
-export type Transaction = {
-  id: string;
-  serialNo: number;
-  description: string;
-  expenseType: 'Private' | 'Public';
-  category: string;
+const DeleteActionCell = ({ ruleId }: { ruleId: string }) => {
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+
+  const handleDelete = () => {
+    setModalOpen(true);
+  };
+
+  return (
+    <div className="flex items-center space-x-2">
+      <Button
+        variant="ghost"
+        className="h-8 w-8 p-0"
+        onClick={() => console.log('Delete transaction:', ruleId)}
+      >
+        <Trash2 className="h-4 w-4 text-[#5B52F9]" onClick={handleDelete} />
+        <div className="bg-white z-50">
+          <SharedModal
+            open={isModalOpen}
+            onOpenChange={setModalOpen}
+            customClassName="max-w-[500px]"
+          >
+            <DeleteConfirmationContent
+              ruleId={ruleId}
+              setModalOpen={setModalOpen}
+            />
+          </SharedModal>
+        </div>
+      </Button>
+    </div>
+  );
 };
 
-export const RulesDataTableColumns: ColumnDef<Transaction>[] = [
+export const RulesDataTableColumns: ColumnDef<IRule>[] = [
   {
     accessorKey: 'serialNo',
     header: 'Serial no.',
@@ -56,9 +84,6 @@ export const RulesDataTableColumns: ColumnDef<Transaction>[] = [
     },
     cell: ({ row }) => {
       const initialValue = row.getValue('expense_type') as string;
-
-      // console.log("initial value", initialValue)
-      // const [selectedOption, setSelectedOption] = useState<string>(initialValue);
 
       return (
         <Select
@@ -107,20 +132,6 @@ export const RulesDataTableColumns: ColumnDef<Transaction>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const transaction = row.original;
-
-      return (
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            className="h-8 w-8 p-0"
-            onClick={() => console.log('Delete transaction:', transaction.id)}
-          >
-            <Trash2 className="h-4 w-4 text-[#5B52F9]" />
-          </Button>
-        </div>
-      );
-    },
+    cell: ({ row }) => <DeleteActionCell ruleId={row.original._id as string} />,
   },
 ];
