@@ -57,7 +57,10 @@ function ExpenseOverviewHeading({}) {
         categories={manipulateCategories}
       />
     ) : modalContent.title === 'Rule' ? (
-      <ExpenseRuleUpdateOrCreateContent />
+      <ExpenseRuleUpdateOrCreateContent
+        categories={manipulateCategories}
+        modalClose={setModalOpen}
+      />
     ) : modalContent.title === 'Show Write-offs' ? (
       <ExpenseWriteOffSummary />
     ) : modalContent.title === 'Upload statements' ? (
