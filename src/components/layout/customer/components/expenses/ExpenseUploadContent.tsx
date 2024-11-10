@@ -48,8 +48,6 @@ interface ParsedFileResult {
 }
 
 const parseFileData = (data: string[][]): ParsedFileResult => {
-  console.log({ data });
-
   const headers: Column[] = data[0].slice(1).map((header, index) => ({
     title: header,
     dataIndex: `column_${index}`,

@@ -118,7 +118,7 @@ function ExpenseAddContent({
             required
           />
         </div>
-        <div>
+        {/* <div>
           <Label htmlFor="category">Deduction status</Label>
           <FormInput
             name="deduction_status"
@@ -132,7 +132,7 @@ function ExpenseAddContent({
             ]}
             required
           />
-        </div>
+        </div> */}
         <div className="py-3">
           <Button
             disabled={loading}

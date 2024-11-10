@@ -12,14 +12,18 @@ import SharedModal from '../../../../SharedModal';
 import ExpenseUploadContent from './ExpenseUploadContent';
 import { trpc } from '@/utils/trpc';
 import ExpenseAddContent from './ExpenseAddContent';
+import { usePathname, useRouter } from 'next/navigation';
 
 const buttons = [
   { text: 'Filter By', icon: FilterIcon },
-  { text: 'Rule', icon: RuleIcon },
+  { text: 'Apply Rule', icon: RuleIcon },
   { text: 'Show Write-offs', icon: WriteOffIcon },
 ];
 
 function ExpenseOverviewHeading({}) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<{
     title: string;
@@ -56,7 +60,7 @@ function ExpenseOverviewHeading({}) {
         setModalOpen={setModalOpen}
         categories={manipulateCategories}
       />
-    ) : modalContent.title === 'Rule' ? (
+    ) : modalContent.title === 'Apply Rule' ? (
       <ExpenseRuleUpdateOrCreateContent
         categories={manipulateCategories}
         modalClose={setModalOpen}
@@ -99,16 +103,29 @@ function ExpenseOverviewHeading({}) {
             <SearchInput className="hidden md:block" />
           </div>
           <div className="mt-5 flex space-x-2">
-            {buttons.map((button, index) => (
-              <Button
-                key={index}
-                variant="purple"
-                onClick={() => handleButtonClick(button.text)}
-              >
-                <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
-                {button.text}
-              </Button>
-            ))}
+            {buttons.map((button, index) =>
+              button.text === 'Show Write-offs' ? (
+                <Button
+                  key={index}
+                  variant="purple"
+                  onClick={() =>
+                    router.push(`/${pathname.split('/')[1]}/write-offs`)
+                  }
+                >
+                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
+                  {button.text}
+                </Button>
+              ) : (
+                <Button
+                  key={index}
+                  variant="purple"
+                  onClick={() => handleButtonClick(button.text)}
+                >
+                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
+                  {button.text}
+                </Button>
+              )
+            )}
           </div>
         </div>
       </div>
