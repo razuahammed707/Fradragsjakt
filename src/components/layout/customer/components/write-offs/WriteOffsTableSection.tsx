@@ -66,7 +66,7 @@ const data: WriteOffs[] = [
 
 export default function WriteOffsTableSection() {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 10;
+  const totalPages = 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

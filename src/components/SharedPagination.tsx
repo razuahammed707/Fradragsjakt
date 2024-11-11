@@ -9,18 +9,31 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 interface SharedPaginationProps {
   currentPage: number;
-  totalPages: number;
+  totalPages?: number;
   onPageChange: (page: number) => void;
+  pageLimit?: number;
+  onPageLimitChange?: (page: number) => void;
 }
 
 const SharedPagination: React.FC<SharedPaginationProps> = ({
   currentPage,
-  totalPages,
+  totalPages: rawTotalPages = 1,
   onPageChange,
+  pageLimit = 10,
+  onPageLimitChange = () => {},
 }) => {
+  const totalPages = rawTotalPages === 0 ? 1 : rawTotalPages;
+
   const handlePrevious = () => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);
@@ -73,8 +86,28 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
   };
 
   return (
-    <Pagination>
+    <Pagination className="relative">
       <PaginationContent>
+        <div className="absolute left-0">
+          <div className="flex items-center space-x-2">
+            <p className="text-sm font-medium">Rows per page</p>
+            <Select
+              value={`${pageLimit}`}
+              onValueChange={(page) => onPageLimitChange(Number(page))}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue placeholder={'rtyry'} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 20, 30, 40, 50].map((pageLimit) => (
+                  <SelectItem key={pageLimit} value={`${pageLimit}`}>
+                    {pageLimit}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <PaginationItem>
           <PaginationPrevious
             href="#"

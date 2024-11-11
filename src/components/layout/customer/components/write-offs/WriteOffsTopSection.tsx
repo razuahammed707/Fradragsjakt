@@ -20,7 +20,7 @@ export default function WriteOffsTopSection() {
         <h3 className="text-xl text-[#101010] font-semibold">
           Potential saving from expenses
         </h3>
-        <p className="text-[32px] text-[#00104B] font-bold">$2,086</p>
+        <p className="text-[32px] text-[#00104B] font-bold">NOK 2,086</p>
       </div>
       <div className="col-span-8">
         <div className="grid grid-cols-4 gap-2">

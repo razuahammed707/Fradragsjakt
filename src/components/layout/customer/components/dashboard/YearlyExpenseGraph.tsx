@@ -71,7 +71,7 @@ const YearlyExpenseGraph = () => {
       axisTicks: { show: true },
       axisBorder: { show: true, color: '#EEF0F4' },
       labels: {
-        formatter: (val: number) => `$${val}k`,
+        formatter: (val: number) => `NOK ${val}k`,
         style: { fontSize: '8.447px', colors: '#71717A' },
       },
     },

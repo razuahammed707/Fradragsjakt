@@ -101,7 +101,7 @@ const QuestionnairesReviewSection = () => {
                 />
                 <p>{question?.title}</p>
               </div>
-              {question?.amount !== 0 && <p> ${question?.amount} </p>}
+              {question?.amount !== 0 && <p> NOK {question?.amount} </p>}
             </div>
           ))}
         </div>
@@ -109,17 +109,17 @@ const QuestionnairesReviewSection = () => {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <p>Savings from questions</p>
-            <p className="font-medium">$800</p>
+            <p className="font-medium">NOK 800</p>
           </div>
           <div className="flex justify-between items-center">
             <p>Petntial Savings</p>
-            <p className="font-medium">$2,086</p>
+            <p className="font-medium">NOK 2,086</p>
           </div>
         </div>
         <Separator className="bg-[#E4E4E7] my-6" />
         <div className="flex justify-between items-center font-medium">
           <p>Total (write-offs)</p>
-          <p>$2,886</p>
+          <p>NOK 2,886</p>
         </div>
       </div>
       <SharedModal

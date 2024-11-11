@@ -12,7 +12,7 @@ const categories = [
   { label: 'Meals', amount: 30, image: '/Meals.png' },
   { label: 'Insurance', amount: 40, image: '/Insurance.png' },
   { label: 'Payment', amount: 25, image: '/Payment.png' },
-  { label: 'More (25)', amount: '$500', image: '/More.png' },
+  { label: 'More (25)', amount: 'NOK 500', image: '/More.png' },
 ];
 
 export default function CategoryCard() {

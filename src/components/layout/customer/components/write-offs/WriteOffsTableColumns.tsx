@@ -74,8 +74,8 @@ export const WriteOffsTableColumns: ColumnDef<WriteOffs>[] = [
     cell: ({ row }) => (
       <Input
         type="text"
-        defaultValue={`$${(Number(row.getValue('deduction')) || 0).toFixed(2)}`}
-        className="w-[100px]"
+        defaultValue={`NOK ${(Number(row.getValue('deduction')) || 0).toFixed(2)}`}
+        className="w-[110px]"
         onChange={(e) => console.log('Updated deduction:', e.target.value)}
       />
     ),

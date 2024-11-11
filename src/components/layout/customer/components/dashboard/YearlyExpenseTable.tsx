@@ -60,7 +60,11 @@ const YearlyExpenseTable = () => {
         </p>
       </div>
       <div className="">
-        <SharedDataTable columns={YearlyExpenseTableColumns} data={data} />
+        <SharedDataTable
+          className="max-h-[250px]"
+          columns={YearlyExpenseTableColumns}
+          data={data}
+        />
       </div>
     </div>
   );

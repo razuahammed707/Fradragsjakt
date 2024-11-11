@@ -23,7 +23,7 @@ const ExpenseType: React.FC<ExpenseProps> = ({
     >
       <Image src={imageSrc} alt={`${type} image`} width={40} height={40} />
       <div className="ml-4">
-        <h3 className="text-lg font-bold">${amount}</h3>
+        <h3 className="text-lg font-bold">NOK {amount}</h3>
         <p className="text-xs font-normal text-gray-700">
           {type}({quantity})
         </p>
