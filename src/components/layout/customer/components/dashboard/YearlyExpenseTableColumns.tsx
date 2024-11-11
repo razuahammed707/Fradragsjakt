@@ -111,12 +111,18 @@ export const YearlyExpenseTableColumns: ColumnDef<Expense>[] = [
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'));
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount);
+      const formatToNOK = (amount: number) => {
+        const formatted = new Intl.NumberFormat('nb-NO', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>; // Center aligned
+        return `NOK ${formatted}`;
+      };
+
+      return (
+        <div className="text-right font-medium">{formatToNOK(amount)}</div>
+      ); // Center aligned
     },
   },
   {

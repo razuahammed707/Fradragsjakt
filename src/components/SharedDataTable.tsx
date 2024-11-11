@@ -10,7 +10,6 @@ import {
   VisibilityState,
   getFilteredRowModel,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -23,19 +22,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterPlaceholder?: string;
   className?: string;
+  loading?: boolean;
 }
 
 export function SharedDataTable<TData, TValue>({
   columns,
   data,
   className,
+  loading,
 }: DataTableProps<TData, TValue>) {
+  console.log('data__', data);
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -47,7 +51,6 @@ export function SharedDataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -65,8 +68,13 @@ export function SharedDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className={cn('rounded-md border-none ', className)}>
-        <Table>
+      <div
+        className={cn(
+          'rounded-md border-none h-[500px] overflow-auto [&::-webkit-scrollbar]:hidden',
+          className
+        )}
+      >
+        <Table className="">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -86,7 +94,18 @@ export function SharedDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-[450px]">
+                  <div className="flex justify-center">
+                    <Loader2
+                      size={50}
+                      className="animate-spin text-primary  "
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

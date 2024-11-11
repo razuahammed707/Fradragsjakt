@@ -9,18 +9,25 @@ import { trpc } from '@/utils/trpc';
 
 function ExpenseOverviewSection() {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: expensesResponse } = trpc.expenses.getExpenses.useQuery(
-    {
-      page: currentPage,
-    },
-    {
-      keepPreviousData: true,
-    }
-  );
+  const [pageLimit, setPageLimit] = useState(10);
+
+  const { data: expensesResponse, isLoading } =
+    trpc.expenses.getExpenses.useQuery(
+      {
+        page: currentPage,
+        limit: pageLimit,
+      },
+      {
+        keepPreviousData: true,
+      }
+    );
   console.log('expense_data: ', expensesResponse);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+  const handlePageLimitChange = (page: number) => {
+    setPageLimit(page);
   };
 
   return (
@@ -28,14 +35,16 @@ function ExpenseOverviewSection() {
       <ExpenseOverviewHeading />
       <div className="space-y-6">
         <SharedDataTable
-          className="min-h-[500px]"
+          loading={isLoading}
           columns={expenseDataTableColumns}
           data={expensesResponse?.data || []}
         />
         <SharedPagination
           currentPage={currentPage}
+          pageLimit={pageLimit}
           totalPages={expensesResponse?.pagination?.totalPages ?? 1}
           onPageChange={handlePageChange}
+          onPageLimitChange={handlePageLimitChange}
         />
       </div>
     </div>

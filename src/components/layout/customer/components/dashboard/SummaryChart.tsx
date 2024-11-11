@@ -39,7 +39,7 @@ const SummaryChart: React.FC = () => {
             },
             total: {
               show: true,
-              label: '$41,000',
+              label: 'NOK 41,000',
               fontSize: '22px',
               fontWeight: 600,
               color: '#1F2937',

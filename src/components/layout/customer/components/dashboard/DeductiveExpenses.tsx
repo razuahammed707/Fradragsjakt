@@ -15,7 +15,7 @@ const DeductiveExpenses = () => {
           <h4 className="text-sm  text-[#627A97] font-semibold">
             All Deductible Expenses
           </h4>
-          <p className="text-[32px] text-[#00104B] font-bold">$30,000</p>
+          <p className="text-[32px] text-[#00104B] font-bold">NOK 30,000</p>
         </div>
 
         <div className="mt-4 space-y-2 ">

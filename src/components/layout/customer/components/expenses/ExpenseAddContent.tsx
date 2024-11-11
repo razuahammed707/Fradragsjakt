@@ -142,9 +142,9 @@ function ExpenseAddContent({
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Add Expense
           </Button>
-          <Button className="w-full bg-[#F0EFFE] text-[#FF4444] hover:bg-[#F0EFFE] mt-3">
+          {/* <Button className="w-full bg-[#F0EFFE] text-[#FF4444] hover:bg-[#F0EFFE] mt-3">
             Discard
-          </Button>
+          </Button> */}
         </div>
       </form>
     </div>
