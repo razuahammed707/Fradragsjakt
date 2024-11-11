@@ -25,7 +25,25 @@ const createBulkExpenseSchema = z.array(
   })
 );
 
+// Schema for the expense update payload
+const expenseUpdatePayloadSchema = z.object({
+  rule: z.string(),
+  category: z.string(),
+  expense_type: z.string(),
+});
+
+// Schema for the updateBulkExpense API input
+const updateBulkExpenseSchema = z.object({
+  expenses: z.array(
+    z.object({
+      expenseUpdatePayload: expenseUpdatePayloadSchema, // Assuming this schema is defined elsewhere
+      _id: z.string(), // The ID of the expense to be updated
+    })
+  ),
+});
+
 export const expenseValidation = {
   createExpenseSchema,
   createBulkExpenseSchema,
+  updateBulkExpenseSchema,
 };

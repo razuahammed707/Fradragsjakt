@@ -8,7 +8,9 @@ import ExpenseModel from '@/server/db/models/expense';
 import { ApiError } from '@/lib/exceptions';
 import { expenseValidation } from './expenses.validation';
 import { ExpenseHelpers } from '@/server/helpers/expense';
-import { IExpense } from '@/server/db/interfaces/expense';
+import { ExpenseType, IExpense } from '@/server/db/interfaces/expense';
+import { errorHandler } from '@/server/middlewares/error-handler';
+import RuleModel from '@/server/db/models/rules';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -29,7 +31,8 @@ export const expenseRouter = router({
         });
         const expenses = await ExpenseModel.find({ user: loggedUser?.id })
           .skip(skip)
-          .limit(limit);
+          .limit(limit)
+          .sort({ createdAt: -1 });
 
         return {
           status: 200,
@@ -43,12 +46,74 @@ export const expenseRouter = router({
           },
         } as ApiResponse<typeof expenses>;
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new ApiError(
-          httpStatus.BAD_REQUEST,
-          `Failed to fetch expenses: ${errorMessage}`
-        );
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
+  getUnknownExpensesWithMatchedRules: protectedProcedure
+    .input(
+      z.object({
+        page: z.number().default(1),
+        limit: z.number().default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+        const { page, limit } = input;
+
+        const total = await ExpenseModel.countDocuments({
+          user: loggedUser?.id,
+          expense_type: ExpenseType.unknown,
+          category: ExpenseType.unknown,
+        });
+
+        const rules = await RuleModel.find({ user: loggedUser?.id });
+
+        // Use Promise.all to ensure all async operations complete
+        const expensesWithRules = (
+          await Promise.all(
+            rules.map(async (rule) => {
+              const expenses = await ExpenseModel.find({
+                user: loggedUser?.id,
+                expense_type: ExpenseType.unknown,
+                category: ExpenseType.unknown,
+                description: rule.description_contains,
+              })
+                .sort({ createdAt: -1 })
+                .select('amount description category expense_type')
+                .lean();
+
+              // Only return rules with matched expenses
+              return expenses.length > 0
+                ? {
+                    rule: rule.description_contains,
+                    expensePayload: {
+                      rule: rule._id,
+                      category: rule.category_title,
+                      expense_type: rule.expense_type,
+                    },
+                    expenses,
+                  }
+                : null;
+            })
+          )
+        ).filter((result) => result !== null);
+
+        return {
+          status: 200,
+          message: 'Expenses fetched with matched rules',
+          data: expensesWithRules,
+          pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+          },
+        } as ApiResponse<typeof expensesWithRules>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
 
@@ -69,12 +134,8 @@ export const expenseRouter = router({
           data: expense,
         } as ApiResponse<typeof expense>;
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new ApiError(
-          httpStatus.BAD_REQUEST,
-          `Failed to create expense: ${errorMessage}`
-        );
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
   createBulkExpenses: protectedProcedure
@@ -82,14 +143,6 @@ export const expenseRouter = router({
     .mutation(async ({ ctx, input: expenses }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        console.log('expenses_from_api', expenses);
-
-        // Array of expenses to be created in bulk
-        // const expenses = [
-        //   { description: 'Foodpanda', amount: 20 },
-        //   { description: 'Dhaka to Chittagong', amount: 100 },
-        //   { description: 'Charity', amount: 500 },
-        // ];
 
         const createdExpenses = await Promise.all(
           expenses.map(async (singleExpense) => {
@@ -106,12 +159,44 @@ export const expenseRouter = router({
           data: createdExpenses,
         } as ApiResponse<typeof createdExpenses>;
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new ApiError(
-          httpStatus.BAD_REQUEST,
-          `Failed to create expenses: ${errorMessage}`
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
+  updateBulkExpense: protectedProcedure
+    .input(expenseValidation.updateBulkExpenseSchema)
+
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+        const { expenses } = input;
+
+        // Update all specified expenses for the logged-in user
+        const updatedExpenses = await Promise.all(
+          expenses.map(async (expense) => {
+            return await ExpenseModel.findByIdAndUpdate(
+              { _id: expense?._id, user: loggedUser?.id },
+              { $set: expense.expenseUpdatePayload },
+              { new: true }
+            ).lean();
+          })
         );
+
+        if (!updatedExpenses) {
+          throw new ApiError(
+            httpStatus.NOT_FOUND,
+            'Some expenses were not found or not accessible.'
+          );
+        }
+
+        return {
+          status: 200,
+          message: 'Expenses updated successfully',
+          data: updatedExpenses,
+        } as ApiResponse<typeof updatedExpenses>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
       }
     }),
 });

@@ -4,6 +4,7 @@ import CategoryModel from '../db/models/category';
 import ExpenseModel from '../db/models/expense';
 import RuleModel from '../db/models/rules';
 import httpStatus from 'http-status';
+import { errorHandler } from '../middlewares/error-handler';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
@@ -15,12 +16,8 @@ async function findMatchingRule(description: string, userId: string) {
       user: userId,
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred';
-    throw new ApiError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      `Erro finding matched rule: ${errorMessage}`
-    );
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 }
 
@@ -67,12 +64,8 @@ async function createExpenseRecord(input: IExpense, userId: string) {
       rule: updatedRule?._id,
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred';
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      `Failed to create expenses: ${errorMessage}`
-    );
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 }
 
@@ -81,32 +74,30 @@ async function createExpenseFromBulkInput(
   userId: string
 ) {
   try {
-    // check rule
+    // Check rule
     const rule = await findMatchingRule(input.description, userId);
 
-    if (rule) {
-      return await ExpenseModel.create({
-        ...input,
-        user: userId,
-        expense_type: rule.expense_type || ExpenseType.unknown,
-        category: rule.category_title || 'unknown',
-        rule: rule._id,
-      });
-    }
-
-    // Create the expense record with default values if no rule found
-    return await ExpenseModel.create({
+    const expenseData = {
       ...input,
       user: userId,
-      expense_type: ExpenseType.unknown,
-      category: 'unknown',
-    });
+      expense_type: rule?.expense_type || ExpenseType.unknown,
+      category: rule?.category_title || 'unknown',
+      rule: rule?._id,
+    };
+
+    return await ExpenseModel.findOneAndUpdate(
+      { description: input.description, user: userId },
+      expenseData,
+      { upsert: true, new: true }
+    );
   } catch (error) {
-    console.log('bulk expense error:', error);
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 }
 
 export const ExpenseHelpers = {
   createExpenseRecord,
   createExpenseFromBulkInput,
+  findMatchingRule,
 };
