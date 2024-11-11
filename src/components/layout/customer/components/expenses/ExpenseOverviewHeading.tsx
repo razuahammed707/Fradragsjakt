@@ -6,25 +6,48 @@ import Image from 'next/image';
 import FilterIcon from '../../../../../../public/images/expenses/filter.png';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
-import ExpenseAddContent from './ExpenseAddContent';
 import ExpenseRuleUpdateOrCreateContent from './ExpenseRuleUpdateOrCreateContent';
 import ExpenseWriteOffSummary from './ExpenseWriteOffSummary';
 import SharedModal from '../../../../SharedModal';
-import ExpenseUploadStatementContent from './ExpenseUploadStatementContent';
+import ExpenseUploadContent from './ExpenseUploadContent';
+import { trpc } from '@/utils/trpc';
+import ExpenseAddContent from './ExpenseAddContent';
+import { usePathname, useRouter } from 'next/navigation';
 
 const buttons = [
   { text: 'Filter By', icon: FilterIcon },
-  { text: 'Rule', icon: RuleIcon },
+  { text: 'Apply Rule', icon: RuleIcon },
   { text: 'Show Write-offs', icon: WriteOffIcon },
 ];
 
-function ExpenseOverviewHeading() {
+function ExpenseOverviewHeading({}) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<{
     title: string;
   }>({
     title: '',
   });
+
+  const { data: categories } = trpc.categories.getCategories.useQuery(
+    {
+      page: 1,
+      limit: 50,
+    },
+    {
+      keepPreviousData: true,
+    }
+  );
+  const manipulateCategories = categories?.data
+    ? categories?.data?.map((category) => {
+        return {
+          title: category.title,
+          value: category.title,
+        };
+      })
+    : [];
 
   const handleButtonClick = (title: string) => {
     setModalContent({ title });
@@ -33,13 +56,19 @@ function ExpenseOverviewHeading() {
 
   const renderContent = () => {
     return modalContent.title === 'Add expense' ? (
-      <ExpenseAddContent />
-    ) : modalContent.title === 'Rule' ? (
-      <ExpenseRuleUpdateOrCreateContent />
+      <ExpenseAddContent
+        setModalOpen={setModalOpen}
+        categories={manipulateCategories}
+      />
+    ) : modalContent.title === 'Apply Rule' ? (
+      <ExpenseRuleUpdateOrCreateContent
+        categories={manipulateCategories}
+        modalClose={setModalOpen}
+      />
     ) : modalContent.title === 'Show Write-offs' ? (
       <ExpenseWriteOffSummary />
     ) : modalContent.title === 'Upload statements' ? (
-      <ExpenseUploadStatementContent />
+      <ExpenseUploadContent setModalOpen={setModalOpen} />
     ) : (
       <></>
     );
@@ -74,16 +103,29 @@ function ExpenseOverviewHeading() {
             <SearchInput className="hidden md:block" />
           </div>
           <div className="mt-5 flex space-x-2">
-            {buttons.map((button, index) => (
-              <Button
-                key={index}
-                variant="purple"
-                onClick={() => handleButtonClick(button.text)}
-              >
-                <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
-                {button.text}
-              </Button>
-            ))}
+            {buttons.map((button, index) =>
+              button.text === 'Show Write-offs' ? (
+                <Button
+                  key={index}
+                  variant="purple"
+                  onClick={() =>
+                    router.push(`/${pathname.split('/')[1]}/write-offs`)
+                  }
+                >
+                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
+                  {button.text}
+                </Button>
+              ) : (
+                <Button
+                  key={index}
+                  variant="purple"
+                  onClick={() => handleButtonClick(button.text)}
+                >
+                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
+                  {button.text}
+                </Button>
+              )
+            )}
           </div>
         </div>
       </div>

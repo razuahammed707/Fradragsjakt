@@ -28,7 +28,7 @@ function ExpenseRuleUpdateOrCreateContent({
     defaultValues: { expense_type: 'business' }, // Optional default value
   });
 
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
       toast.success('Rule created successfully');
@@ -105,7 +105,7 @@ function ExpenseRuleUpdateOrCreateContent({
 
         <div className="py-3">
           <Button type="submit" className="w-full text-white">
-            Apply Update
+            Create
           </Button>
           <Button
             type="button" // Change to button to avoid form submission

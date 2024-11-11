@@ -10,7 +10,7 @@ import { HeaderMappingModal } from './components/expenses/ExpenseMappingModal';
 
 export default function Testmodal() {
   return (
-    <div className="flex flex-col gap-2 m-2">
+    <div className="flex flex-col border border-gray-300 divide-y divide-gray-300">
       <ContentBank />
       <ContentDonation />
       <ContentForeignIncome />

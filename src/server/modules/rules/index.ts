@@ -8,6 +8,7 @@ import { z } from 'zod';
 import CategoryModel from '@/server/db/models/category';
 import httpStatus from 'http-status';
 import { ApiError, AuthError } from '@/lib/exceptions';
+import { errorHandler } from '@/server/middlewares/error-handler';
 
 export const rulesRouter = router({
   getRules: protectedProcedure
@@ -59,6 +60,19 @@ export const rulesRouter = router({
           throw new AuthError('You must be logged in to create this rule.');
         }
 
+        const rule = await RuleModel.findOne({
+          user: sessionUser.id,
+          description_contains: input.description_contains,
+          category_title: input.category,
+          expense_type: input.expense_type,
+        });
+
+        if (rule) {
+          throw new ApiError(
+            httpStatus.BAD_REQUEST,
+            'The rule is already created.'
+          );
+        }
         const categoryQuery = { title: input.category };
 
         const category = await CategoryModel.findOneAndUpdate(
@@ -87,9 +101,33 @@ export const rulesRouter = router({
           status: 200,
           data: createRule,
         } as ApiResponse<typeof createRule>;
-      } catch (error) {
-        console.log(error);
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create rule');
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.BAD_REQUEST, message);
+      }
+    }),
+  deleteRule: protectedProcedure
+    .input(ruleValidation.deleteRuleSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        console.log('delete rule input', input);
+        const { _id } = input;
+        const sessionUser = ctx.user as JwtPayload;
+
+        if (!sessionUser?.email) {
+          throw new Error('Authentication required');
+        }
+
+        const rule = await RuleModel.findByIdAndDelete(_id);
+
+        return {
+          message: 'Rule deleted successfully',
+          status: 200,
+          data: rule,
+        } as ApiResponse<typeof rule>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
 });

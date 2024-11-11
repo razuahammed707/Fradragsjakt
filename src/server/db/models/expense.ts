@@ -32,6 +32,11 @@ const ExpenseSchema = new Schema<IExpense>(
       ref: 'user',
       required: true,
     },
+    rule: {
+      type: Schema.Types.ObjectId,
+      ref: 'rule',
+      //required: true,
+    },
   },
   {
     timestamps: true,

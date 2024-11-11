@@ -65,6 +65,7 @@ export default function CategoryTable() {
       </div>
       <div className="mt-10">
         <SharedDataTable
+          className="min-h-[500px]"
           columns={CategoryTableColumns}
           data={data?.data ?? []}
         />

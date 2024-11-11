@@ -18,4 +18,5 @@ export interface IExpense extends Document {
   amount: number;
   deduction_status: DeductionStatus;
   user: Types.ObjectId;
+  rule: Types.ObjectId;
 }
