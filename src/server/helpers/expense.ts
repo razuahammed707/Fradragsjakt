@@ -99,4 +99,5 @@ async function createExpenseFromBulkInput(
 export const ExpenseHelpers = {
   createExpenseRecord,
   createExpenseFromBulkInput,
+  findMatchingRule,
 };
