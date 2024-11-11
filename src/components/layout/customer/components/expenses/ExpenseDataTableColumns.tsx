@@ -2,6 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
+import { NumericFormat } from 'react-number-format';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +26,6 @@ import {
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import ExpenseCategoryCell from './ExpenseCategoryCell';
 import formatDate from '@/utils/helpers/formatDate';
-import { ReactNode } from 'react';
 
 export type ExpenseColumnProps = {
   id: string;
@@ -163,9 +163,16 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const amount_to_render = row.getValue('amount') as ReactNode;
+      const amount_to_render = row.getValue('amount') as number;
       return (
-        <span className="text-[#00104B]">{`NOK ${amount_to_render}`}</span>
+        <span className="text-[#00104B]">
+          <NumericFormat
+            value={amount_to_render}
+            displayType="text"
+            thousandSeparator={true}
+            prefix="NOK "
+          />
+        </span>
       );
     },
   },
