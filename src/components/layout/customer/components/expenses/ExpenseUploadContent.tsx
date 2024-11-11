@@ -54,13 +54,39 @@ const parseFileData = (data: string[][]): ParsedFileResult => {
     key: `column_${index}`,
   }));
 
+  console.log('headers', headers);
+
   const parsedData: FileRowData[] = data
     .slice(1)
-    .filter((row) => {
-      return row.slice(1).some((cell) => cell && cell.trim() !== '');
-    })
+    .filter((row) => row.slice(1).some((cell) => cell && cell.trim() !== ''))
     .map((row, rowIndex) => {
-      const processedRow = row.slice(1).reduce(
+      // Clean and merge split numeric cells for each row
+      const cleanedRow = [];
+      let tempValue = '';
+
+      for (let i = 1; i < row.length; i++) {
+        const cell = row[i].trim();
+
+        // Detect if the cell starts or ends with a quote, indicating a split value
+        if (cell.startsWith('"') && !cell.endsWith('"')) {
+          // Start of a new quoted value
+          tempValue = cell;
+        } else if (!cell.startsWith('"') && cell.endsWith('"') && tempValue) {
+          // End of a split value
+          tempValue += `,${cell}`;
+          cleanedRow.push(tempValue.replace(/["',]/g, '')); // Remove quotes and commas
+          tempValue = ''; // Reset tempValue
+        } else if (tempValue) {
+          // Continuation of a split value
+          tempValue += `,${cell}`;
+        } else {
+          // Normal cell value, push as is after removing commas
+          cleanedRow.push(cell.replace(/,/g, ''));
+        }
+      }
+
+      // Convert cleaned row to the correct format with column indexes
+      const processedRow = cleanedRow.reduce(
         (acc: FileRowData, val: string, colIndex: number) => {
           if (val && val.trim() !== '') {
             acc[`column_${colIndex}`] = val.trim();

@@ -15,10 +15,10 @@ const CategorySchema: Schema = new Schema<ICategory>(
   { timestamps: true }
 );
 
-CategorySchema.index({ title: 1 });
+CategorySchema.index({ title: 1, creator_id: 1 });
 
 const CategoryModel =
-  mongoose.models.Category ||
-  mongoose.model<ICategory>('Category', CategorySchema);
+  mongoose.models.category ||
+  mongoose.model<ICategory>('category', CategorySchema);
 
 export default CategoryModel;

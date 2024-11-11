@@ -82,14 +82,6 @@ export const expenseRouter = router({
     .mutation(async ({ ctx, input: expenses }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        console.log('expenses_from_api', expenses);
-
-        // Array of expenses to be created in bulk
-        // const expenses = [
-        //   { description: 'Foodpanda', amount: 20 },
-        //   { description: 'Dhaka to Chittagong', amount: 100 },
-        //   { description: 'Charity', amount: 500 },
-        // ];
 
         const createdExpenses = await Promise.all(
           expenses.map(async (singleExpense) => {
