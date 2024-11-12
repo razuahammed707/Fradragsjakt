@@ -21,17 +21,9 @@ function ExpenseOverviewSection() {
         keepPreviousData: true,
       }
     );
-  const { data: expensesWithMatchedRules } =
-    trpc.expenses.getUnknownExpensesWithMatchedRules.useQuery(
-      {
-        page: currentPage,
-        limit: pageLimit,
-      },
-      {
-        keepPreviousData: true,
-      }
-    );
-  console.log('expensesWithMatchedRules: ', expensesWithMatchedRules);
+  const { data: categoryWiseExpenses } =
+    trpc.expenses.getCategoryWiseExpenses.useQuery();
+  console.log('categoryWiseExpenses: ', categoryWiseExpenses);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

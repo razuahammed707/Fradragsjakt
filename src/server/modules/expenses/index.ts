@@ -11,6 +11,7 @@ import { ExpenseHelpers } from '@/server/helpers/expense';
 import { ExpenseType, IExpense } from '@/server/db/interfaces/expense';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
+import mongoose from 'mongoose';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -50,6 +51,47 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  getCategoryWiseExpenses: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const loggedUser = ctx.user as JwtPayload;
+
+      const expenses = await ExpenseModel.aggregate([
+        {
+          $match: {
+            user: new mongoose.Types.ObjectId(loggedUser?.id),
+          },
+        },
+        {
+          $group: {
+            _id: '$category',
+            totalAmount: {
+              $sum: '$amount',
+            },
+            totalItems: {
+              $sum: 1,
+            },
+          },
+        },
+        {
+          $project: {
+            category: '$_id',
+            totalItemByCategory: '$totalItems',
+            amount: '$totalAmount',
+            _id: 0,
+          },
+        },
+      ]);
+
+      return {
+        status: 200,
+        message: 'Category wise expenses fetched successfully',
+        data: expenses,
+      } as ApiResponse<typeof expenses>;
+    } catch (error: unknown) {
+      const { message } = errorHandler(error);
+      throw new ApiError(httpStatus.NOT_FOUND, message);
+    }
+  }),
   getUnknownExpensesWithMatchedRules: protectedProcedure
     .input(
       z.object({
