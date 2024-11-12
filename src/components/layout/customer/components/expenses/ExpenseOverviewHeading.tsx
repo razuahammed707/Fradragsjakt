@@ -49,7 +49,10 @@ function ExpenseOverviewHeading() {
     return modalContent.title === 'Add expense' ? (
       <ExpenseAddContent setModalOpen={setModalOpen} />
     ) : modalContent.title === 'Apply Rule' ? (
-      <ApplyRuleModalContent expenses={expensesWithMatchedRules?.data} />
+      <ApplyRuleModalContent
+        expenses={expensesWithMatchedRules?.data || []}
+        setModalOpen={setModalOpen}
+      />
     ) : modalContent.title === 'Upload statements' ? (
       <ExpenseUploadContent setModalOpen={setModalOpen} />
     ) : (

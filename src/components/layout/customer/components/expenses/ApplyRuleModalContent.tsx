@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableColumns';
 import { Button } from '@/components/ui/button';
-/* import { trpc } from '@/utils/trpc';
-import toast from 'react-hot-toast'; */
+import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
 
 type CategoryType = { title: string; value: string };
 type ExpensesType = {
@@ -25,28 +25,44 @@ type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
   categories?: CategoryType[];
   expenses?: ExpensesType[];
+  setModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-function ApplyRuleModalContent({ expenses }: ExpenseRuleContentProps) {
+function ApplyRuleModalContent({
+  expenses,
+  setModalOpen,
+}: ExpenseRuleContentProps) {
   const [selectedRule, setSelectedRule] = useState<string>(
     expenses?.[0]?.rule || ''
   );
-  //const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  //const utils = trpc.useUtils();
+  const selectedRuleData = expenses?.find((exp) => exp.rule === selectedRule);
 
-  /* const mutation = trpc.expenses.updateBulkExpense.useMutation({
+  const utils = trpc.useUtils();
+
+  const mutation = trpc.expenses.updateBulkExpense.useMutation({
     onSuccess: () => {
       toast.success('Expenses upadted successfully!', {
         duration: 4000,
       });
       utils.expenses.getExpenses.invalidate();
-      setIsModalOpen(false);
+      setModalOpen(false);
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to create expenses');
     },
-  }); */
-  const selectedRuleData = expenses?.find((exp) => exp.rule === selectedRule);
+  });
+
+  const handleApplyRule = () => {
+    const expenses = selectedRuleData?.expenses?.map((expense) => {
+      return {
+        expenseUpdatePayload: selectedRuleData?.expensePayload,
+        _id: expense?._id,
+      };
+    });
+    console.log({ expenses });
+    if (!expenses) return;
+    mutation.mutate({ expenses: expenses });
+  };
   return (
     <div className="space-y-8">
       <h1 className="font-bold text-xl text-[#5B52F9] mt-6 mb-8">
@@ -73,8 +89,12 @@ function ApplyRuleModalContent({ expenses }: ExpenseRuleContentProps) {
         columns={ApplyRuleModalContentTableColumns}
         data={selectedRuleData?.expenses || []}
       />
-      <Button type="submit" className="w-full text-white">
-        Apply Update
+      <Button
+        onClick={handleApplyRule}
+        type="button"
+        className="w-full text-white"
+      >
+        Apply Rule
       </Button>
     </div>
   );
