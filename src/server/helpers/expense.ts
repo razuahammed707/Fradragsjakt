@@ -8,19 +8,31 @@ import { errorHandler } from '../middlewares/error-handler';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
-    // Escape special regex characters in the description
-    const escapedDescription = description.replace(
-      /[-/\\^$*+?.()|[\]{}]/g,
-      '\\$&'
-    );
+    // Step 1: Normalize both the input description and stored rules to handle special characters
+    const normalizedDescription = description
+      .toLowerCase()
+      .normalize('NFKD') // Decompose combined characters
+      .replace(/[^\w\s]/g, ''); // Remove special characters but keep spaces
 
-    return await RuleModel.findOne({
-      $or: [
-        { description_contains: { $regex: escapedDescription, $options: 'i' } },
-        { category_title: { $regex: escapedDescription, $options: 'i' } },
-      ],
+    console.log('Normalized Description:', normalizedDescription);
+
+    // Step 2: Query the database to find rules, then filter in memory for exact substring match
+    const rules = await RuleModel.find({
       user: userId,
     });
+
+    // Step 3: Find the first matching rule by checking if normalized rule text is contained in description
+    const matchingRule = rules.find((rule) => {
+      const normalizedRule = rule.description_contains
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[^\w\s]/g, '');
+
+      console.log('Checking rule:', normalizedRule);
+      return normalizedDescription.includes(normalizedRule);
+    });
+
+    return matchingRule || null;
   } catch (error) {
     const { message } = errorHandler(error);
     throw new ApiError(httpStatus.NOT_FOUND, message);
@@ -90,6 +102,8 @@ async function createExpenseFromBulkInput(
       category: rule?.category_title || 'unknown',
       rule: rule?._id,
     };
+
+    // console.log('expense data', expenseData);
 
     return await ExpenseModel.findOneAndUpdate(
       { description: input.description, user: userId },
