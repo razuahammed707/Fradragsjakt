@@ -1,79 +1,77 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { SharedDataTable } from '@/components/SharedDataTable';
-import { transactions } from '@/utils/dummy';
 import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableColumns';
 import { Button } from '@/components/ui/button';
-
-/* type RuleFormData = {
-  description_contains: string;
-  expense_type: 'business' | 'personal';
-  category: string;
-}; */
+/* import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast'; */
 
 type CategoryType = { title: string; value: string };
+type ExpensesType = {
+  expenses: {
+    [x: string]: any;
+    [x: number]: any;
+  }[];
+  expensePayload: {
+    expense_type?: any;
+    category?: any;
+    rule?: any;
+  };
+  rule?: any;
+};
 
 type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
   categories?: CategoryType[];
-  expenses?: [];
+  expenses?: ExpensesType[];
 };
 
-function ApplyRuleModalContent(
-  {
-    /*  modalClose,
-  categories = [], */
-  }: ExpenseRuleContentProps
-) {
-  /*   const utils = trpc.useUtils();
-   */ /*  const ruleMutation = trpc.rules.createRule.useMutation({
+function ApplyRuleModalContent({ expenses }: ExpenseRuleContentProps) {
+  const [selectedRule, setSelectedRule] = useState<string>(
+    expenses?.[0]?.rule || ''
+  );
+  //const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  //const utils = trpc.useUtils();
+
+  /* const mutation = trpc.expenses.updateBulkExpense.useMutation({
     onSuccess: () => {
-      toast.success('Rule created successfully');
-      if (modalClose) {
-        modalClose(false);
-      }
-      utils.rules.getRules.invalidate(); // Invalidate and refetch getRules query
+      toast.success('Expenses upadted successfully!', {
+        duration: 4000,
+      });
+      utils.expenses.getExpenses.invalidate();
+      setIsModalOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || 'Failed to create expenses');
     },
   }); */
-
-  /*  const onSubmit = (data: RuleFormData) => {
-    ruleMutation.mutate(data);
-  }; */
-
-  /*   const defaultCategories = [
-    { title: 'Transport', value: 'Transport' },
-    { title: 'Meals', value: 'Meals' },
-    { title: 'Gas', value: 'Gas' },
-  ]; */
-
-  /* const manipulatedCategories = Array.from(
-    new Map(
-      [...categories, ...defaultCategories].map((cat) => [cat.value, cat])
-    ).values()
-  ); */
-
+  const selectedRuleData = expenses?.find((exp) => exp.rule === selectedRule);
   return (
-    <div className="space-y-4">
-      <h1 className="font-bold text-xl text-[#5B52F9] mb-6">
-        There are the available expenses to matched with the Rules
+    <div className="space-y-8">
+      <h1 className="font-bold text-xl text-[#5B52F9] mt-6 mb-8">
+        Available rules that can be applied to the following expenses
       </h1>
-      <div className="grid grid-cols-12 gap-3">
-        {[...Array(10)].map((_, i) => (
+      <div className="flex flex-wrap gap-2">
+        {expenses?.map((expenseRule) => (
           <Badge
-            key={i}
-            className="col-span-2 rounded-[28px] py-1 bg-[#EEF0F4]  flex  justify-center   text-[#5B52F9]"
+            key={expenseRule.rule}
+            className={`rounded-[28px] py-1 cursor-pointer ${
+              selectedRule === expenseRule.rule
+                ? 'bg-[#5B52F9] text-white'
+                : 'bg-[#EEF0F4] text-[#5B52F9]'
+            }`}
+            onClick={() => setSelectedRule(expenseRule.rule)}
           >
-            Rule{i + 1} <span className="ms-1">(1)</span>
+            {expenseRule.rule}{' '}
+            <span className="ms-1">({expenseRule.expenses.length})</span>
           </Badge>
         ))}
       </div>
       <SharedDataTable
-        className="max-h-[250px]  "
+        className="max-h-[250px]"
         columns={ApplyRuleModalContentTableColumns}
-        data={transactions}
+        data={selectedRuleData?.expenses || []}
       />
       <Button type="submit" className="w-full text-white">
         Apply Update

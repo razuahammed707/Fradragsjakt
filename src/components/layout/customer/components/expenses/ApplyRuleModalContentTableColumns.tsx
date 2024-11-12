@@ -1,14 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { NumericFormat } from 'react-number-format';
 
-export type ExpenseColumnProps = {
-  description: string;
-  category: string;
-  type: string;
-  amount: number;
-};
+export type ExpenseColumnProps = { [x: string]: any; [x: number]: any };
 
 export const ApplyRuleModalContentTableColumns: ColumnDef<ExpenseColumnProps>[] =
   [
@@ -32,10 +28,12 @@ export const ApplyRuleModalContentTableColumns: ColumnDef<ExpenseColumnProps>[] 
       },
     },
     {
-      accessorKey: 'type',
+      accessorKey: 'expense_type',
       header: 'Type',
       cell: ({ row }) => {
-        return <span className="text-[#00104B]">{row.getValue('type')}</span>;
+        return (
+          <span className="text-[#00104B]">{row.getValue('expense_type')}</span>
+        );
       },
     },
     {

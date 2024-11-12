@@ -39,7 +39,7 @@ function ExpenseOverviewHeading() {
         keepPreviousData: true,
       }
     );
-  console.log('expensesWithMatchedRules: ', expensesWithMatchedRules);
+  console.log('expensesWithMatchedRules: ', expensesWithMatchedRules?.data);
   const handleButtonClick = (title: string) => {
     setModalContent({ title });
     setModalOpen(true);
@@ -49,7 +49,7 @@ function ExpenseOverviewHeading() {
     return modalContent.title === 'Add expense' ? (
       <ExpenseAddContent setModalOpen={setModalOpen} />
     ) : modalContent.title === 'Apply Rule' ? (
-      <ApplyRuleModalContent />
+      <ApplyRuleModalContent expenses={expensesWithMatchedRules?.data} />
     ) : modalContent.title === 'Upload statements' ? (
       <ExpenseUploadContent setModalOpen={setModalOpen} />
     ) : (
@@ -108,7 +108,7 @@ function ExpenseOverviewHeading() {
         <SharedModal
           open={isModalOpen}
           onOpenChange={setModalOpen}
-          customClassName="max-w-[500px]"
+          customClassName="max-w-[650px]"
         >
           <div className="bg-white">{renderContent()}</div>
         </SharedModal>
