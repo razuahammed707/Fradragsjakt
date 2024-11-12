@@ -8,10 +8,16 @@ import { errorHandler } from '../middlewares/error-handler';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
+    // Escape special regex characters in the description
+    const escapedDescription = description.replace(
+      /[-/\\^$*+?.()|[\]{}]/g,
+      '\\$&'
+    );
+
     return await RuleModel.findOne({
       $or: [
-        { description_contains: { $regex: description, $options: 'i' } },
-        { category_title: { $regex: description, $options: 'i' } },
+        { description_contains: { $regex: escapedDescription, $options: 'i' } },
+        { category_title: { $regex: escapedDescription, $options: 'i' } },
       ],
       user: userId,
     });

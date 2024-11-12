@@ -74,11 +74,18 @@ export const expenseRouter = router({
         const expensesWithRules = (
           await Promise.all(
             rules.map(async (rule) => {
+              const escapedDescription = rule.description_contains.replace(
+                /[-/\\^$*+?.()|[\]{}]/g,
+                '\\$&'
+              );
               const expenses = await ExpenseModel.find({
                 user: loggedUser?.id,
                 expense_type: ExpenseType.unknown,
                 category: ExpenseType.unknown,
-                description: rule.description_contains,
+                description: {
+                  $regex: escapedDescription,
+                  $options: 'i',
+                },
               })
                 .sort({ createdAt: -1 })
                 .select('amount description category expense_type')
