@@ -20,7 +20,7 @@ type ExpenseRuleContentProps = {
   categories?: CategoryType[];
 };
 
-function ExpenseRuleUpdateOrCreateContent({
+function CreateRuleModalContent({
   modalClose,
   categories = [],
 }: ExpenseRuleContentProps) {
@@ -120,4 +120,4 @@ function ExpenseRuleUpdateOrCreateContent({
   );
 }
 
-export default ExpenseRuleUpdateOrCreateContent;
+export default CreateRuleModalContent;

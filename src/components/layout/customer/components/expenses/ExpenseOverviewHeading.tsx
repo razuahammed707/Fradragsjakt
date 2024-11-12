@@ -6,13 +6,14 @@ import Image from 'next/image';
 import FilterIcon from '../../../../../../public/images/expenses/filter.png';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
-import ExpenseRuleUpdateOrCreateContent from './ExpenseRuleUpdateOrCreateContent';
 import ExpenseWriteOffSummary from './ExpenseWriteOffSummary';
 import SharedModal from '../../../../SharedModal';
 import ExpenseUploadContent from './ExpenseUploadContent';
 import { trpc } from '@/utils/trpc';
 import ExpenseAddContent from './ExpenseAddContent';
 import { usePathname, useRouter } from 'next/navigation';
+import ApplyRuleModalContent from './ApplyRuleModalContent';
+import { cn } from '@/lib/utils';
 
 const buttons = [
   { text: 'Filter By', icon: FilterIcon },
@@ -61,7 +62,7 @@ function ExpenseOverviewHeading({}) {
         categories={manipulateCategories}
       />
     ) : modalContent.title === 'Apply Rule' ? (
-      <ExpenseRuleUpdateOrCreateContent
+      <ApplyRuleModalContent
         categories={manipulateCategories}
         modalClose={setModalOpen}
       />
@@ -134,7 +135,10 @@ function ExpenseOverviewHeading({}) {
         <SharedModal
           open={isModalOpen}
           onOpenChange={setModalOpen}
-          customClassName="max-w-[500px]"
+          customClassName={cn(
+            'max-w-[500px]',
+            modalContent.title === 'Apply Rule' && 'max-w-[918px]'
+          )}
         >
           <div className="bg-white">{renderContent()}</div>
         </SharedModal>
