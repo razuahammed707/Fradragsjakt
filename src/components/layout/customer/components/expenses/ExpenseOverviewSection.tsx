@@ -21,9 +21,6 @@ function ExpenseOverviewSection() {
         keepPreviousData: true,
       }
     );
-  const { data: categoryWiseExpenses } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
-  console.log('categoryWiseExpenses: ', categoryWiseExpenses);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
