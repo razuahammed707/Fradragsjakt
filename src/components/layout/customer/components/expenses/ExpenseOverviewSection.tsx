@@ -22,7 +22,7 @@ function ExpenseOverviewSection() {
       }
     );
   const { data: categoryWiseExpenses } =
-    trpc.expenses.getCategoryWiseExpenses.useQuery();
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
   console.log('categoryWiseExpenses: ', categoryWiseExpenses);
 
   const handlePageChange = (page: number) => {
