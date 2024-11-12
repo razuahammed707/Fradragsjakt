@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 import { MdOutlineSignpost } from 'react-icons/md';
-import ExpenseRuleUpdateOrCreateContent from '../expenses/ExpenseRuleUpdateOrCreateContent';
 import SharedModal from '@/components/SharedModal';
 import { trpc } from '@/utils/trpc';
+import CreateRuleModalContent from './CreateRuleModalContent';
 
 export default function CreateRuleModal() {
   const { data: categories } = trpc.categories.getCategories.useQuery(
@@ -44,7 +44,7 @@ export default function CreateRuleModal() {
           customClassName="max-w-[500px]"
         >
           <div className="bg-white">
-            <ExpenseRuleUpdateOrCreateContent
+            <CreateRuleModalContent
               modalClose={setModalOpen}
               categories={manipulateCategories}
             />

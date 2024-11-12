@@ -6,13 +6,13 @@ import Image from 'next/image';
 import FilterIcon from '../../../../../../public/images/expenses/filter.png';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
-import ExpenseRuleUpdateOrCreateContent from './ExpenseRuleUpdateOrCreateContent';
-import ExpenseWriteOffSummary from './ExpenseWriteOffSummary';
+import ExpenseAddContent from './ExpenseAddContent';
 import SharedModal from '../../../../SharedModal';
 import ExpenseUploadContent from './ExpenseUploadContent';
+import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
-import ExpenseAddContent from './ExpenseAddContent';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 const buttons = [
   { text: 'Filter By', icon: FilterIcon },
@@ -20,35 +20,26 @@ const buttons = [
   { text: 'Show Write-offs', icon: WriteOffIcon },
 ];
 
-function ExpenseOverviewHeading({}) {
-  const router = useRouter();
-  const pathname = usePathname();
-
+function ExpenseOverviewHeading() {
   const [isModalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
+  const { data: user } = useSession();
   const [modalContent, setModalContent] = useState<{
     title: string;
   }>({
     title: '',
   });
-
-  const { data: categories } = trpc.categories.getCategories.useQuery(
-    {
-      page: 1,
-      limit: 50,
-    },
-    {
-      keepPreviousData: true,
-    }
-  );
-  const manipulateCategories = categories?.data
-    ? categories?.data?.map((category) => {
-        return {
-          title: category.title,
-          value: category.title,
-        };
-      })
-    : [];
-
+  const { data: expensesWithMatchedRules } =
+    trpc.expenses.getUnknownExpensesWithMatchedRules.useQuery(
+      {
+        page: 1,
+        limit: 10,
+      },
+      {
+        keepPreviousData: true,
+      }
+    );
+  console.log('expensesWithMatchedRules: ', expensesWithMatchedRules?.data);
   const handleButtonClick = (title: string) => {
     setModalContent({ title });
     setModalOpen(true);
@@ -56,17 +47,9 @@ function ExpenseOverviewHeading({}) {
 
   const renderContent = () => {
     return modalContent.title === 'Add expense' ? (
-      <ExpenseAddContent
-        setModalOpen={setModalOpen}
-        categories={manipulateCategories}
-      />
+      <ExpenseAddContent setModalOpen={setModalOpen} />
     ) : modalContent.title === 'Apply Rule' ? (
-      <ExpenseRuleUpdateOrCreateContent
-        categories={manipulateCategories}
-        modalClose={setModalOpen}
-      />
-    ) : modalContent.title === 'Show Write-offs' ? (
-      <ExpenseWriteOffSummary />
+      <ApplyRuleModalContent expenses={expensesWithMatchedRules?.data} />
     ) : modalContent.title === 'Upload statements' ? (
       <ExpenseUploadContent setModalOpen={setModalOpen} />
     ) : (
@@ -103,29 +86,20 @@ function ExpenseOverviewHeading({}) {
             <SearchInput className="hidden md:block" />
           </div>
           <div className="mt-5 flex space-x-2">
-            {buttons.map((button, index) =>
-              button.text === 'Show Write-offs' ? (
-                <Button
-                  key={index}
-                  variant="purple"
-                  onClick={() =>
-                    router.push(`/${pathname.split('/')[1]}/write-offs`)
-                  }
-                >
-                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
-                  {button.text}
-                </Button>
-              ) : (
-                <Button
-                  key={index}
-                  variant="purple"
-                  onClick={() => handleButtonClick(button.text)}
-                >
-                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
-                  {button.text}
-                </Button>
-              )
-            )}
+            {buttons.map((button, index) => (
+              <Button
+                key={index}
+                variant="purple"
+                onClick={() =>
+                  button.text === 'Show Write-offs'
+                    ? router.push(`/${user?.user?.role}/write-offs`)
+                    : handleButtonClick(button.text)
+                }
+              >
+                <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
+                {button.text}
+              </Button>
+            ))}
           </div>
         </div>
       </div>
@@ -134,7 +108,7 @@ function ExpenseOverviewHeading({}) {
         <SharedModal
           open={isModalOpen}
           onOpenChange={setModalOpen}
-          customClassName="max-w-[500px]"
+          customClassName="max-w-[650px]"
         >
           <div className="bg-white">{renderContent()}</div>
         </SharedModal>
