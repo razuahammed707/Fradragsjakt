@@ -249,3 +249,35 @@ export const summaryWriteOffs = [
     amount: '$2,086',
   },
 ];
+export const transactions = [
+  {
+    description: 'Uber One Sydney AU Aus',
+    category: 'Transport',
+    type: 'Business',
+    amount: 100.55,
+  },
+  {
+    description: 'foodpanda.com Dhaka BGD card',
+    category: 'Meals',
+    type: "Don't know",
+    amount: 30.65,
+  },
+  {
+    description: 'International Transaction Fee',
+    category: 'Travel',
+    type: 'Personal',
+    amount: 30.65,
+  },
+  {
+    description: 'Uber One Sydney AU Aus',
+    category: 'Transport',
+    type: 'Personal',
+    amount: 30.65,
+  },
+  {
+    description: 'BFC Dhaka BGD',
+    category: 'Meals',
+    type: 'Business',
+    amount: 30.65,
+  },
+];
