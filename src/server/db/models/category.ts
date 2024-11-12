@@ -3,7 +3,7 @@ import { ICategory } from '../interfaces/category';
 
 const CategorySchema: Schema = new Schema<ICategory>(
   {
-    title: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
     created_by: {
       type: String,
       enum: ['USER', 'SYSTEM'],
