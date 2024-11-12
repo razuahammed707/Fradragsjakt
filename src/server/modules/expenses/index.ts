@@ -11,6 +11,7 @@ import { ExpenseHelpers } from '@/server/helpers/expense';
 import { ExpenseType, IExpense } from '@/server/db/interfaces/expense';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
+import mongoose from 'mongoose';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -50,6 +51,72 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  getCategoryAndExpenseTypeWiseExpenses: protectedProcedure.query(
+    async ({ ctx }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        // Single aggregate query using $facet
+        const expenses = await ExpenseModel.aggregate([
+          {
+            $match: {
+              user: new mongoose.Types.ObjectId(loggedUser?.id),
+            },
+          },
+          {
+            $facet: {
+              // Group by `category`
+              categoryWiseExpenses: [
+                {
+                  $group: {
+                    _id: '$category',
+                    totalAmount: { $sum: '$amount' },
+                    totalItems: { $sum: 1 },
+                  },
+                },
+                {
+                  $project: {
+                    category: '$_id',
+                    totalItemByCategory: '$totalItems',
+                    amount: '$totalAmount',
+                    _id: 0,
+                  },
+                },
+              ],
+              // Group by `expense_type`
+              expenseTypeWiseExpenses: [
+                {
+                  $group: {
+                    _id: '$expense_type',
+                    totalAmount: { $sum: '$amount' },
+                    totalItems: { $sum: 1 },
+                  },
+                },
+                {
+                  $project: {
+                    expense_type: '$_id',
+                    totalItemByExpenseType: '$totalItems',
+                    amount: '$totalAmount',
+                    _id: 0,
+                  },
+                },
+              ],
+            },
+          },
+        ]);
+
+        return {
+          status: 200,
+          message:
+            'Category-wise and expense_type-wise expenses fetched successfully',
+          data: expenses[0],
+        } as ApiResponse<(typeof expenses)[0]>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }
+  ),
   getUnknownExpensesWithMatchedRules: protectedProcedure
     .input(
       z.object({
