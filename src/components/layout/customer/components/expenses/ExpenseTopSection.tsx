@@ -8,8 +8,13 @@ import ExpenseType from './ExpenseType';
 import PlusIcon from '../../../../../../public/images/expenses/plus.png';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { trpc } from '@/utils/trpc';
 
 function ExpenseTopSection() {
+  const { data: expenses } =
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
+  console.log('expenses_', expenses);
+
   const { data: user } = useSession();
   return (
     <div className="grid grid-cols-2 gap-3">
