@@ -11,7 +11,6 @@ import { ExpenseHelpers } from '@/server/helpers/expense';
 import { ExpenseType, IExpense } from '@/server/db/interfaces/expense';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
-import mongoose from 'mongoose';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -56,54 +55,8 @@ export const expenseRouter = router({
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        // Single aggregate query using $facet
-        const expenses = await ExpenseModel.aggregate([
-          {
-            $match: {
-              user: new mongoose.Types.ObjectId(loggedUser?.id),
-            },
-          },
-          {
-            $facet: {
-              // Group by `category`
-              categoryWiseExpenses: [
-                {
-                  $group: {
-                    _id: '$category',
-                    totalAmount: { $sum: '$amount' },
-                    totalItems: { $sum: 1 },
-                  },
-                },
-                {
-                  $project: {
-                    category: '$_id',
-                    totalItemByCategory: '$totalItems',
-                    amount: '$totalAmount',
-                    _id: 0,
-                  },
-                },
-              ],
-              // Group by `expense_type`
-              expenseTypeWiseExpenses: [
-                {
-                  $group: {
-                    _id: '$expense_type',
-                    totalAmount: { $sum: '$amount' },
-                    totalItems: { $sum: 1 },
-                  },
-                },
-                {
-                  $project: {
-                    expense_type: '$_id',
-                    totalItemByExpenseType: '$totalItems',
-                    amount: '$totalAmount',
-                    _id: 0,
-                  },
-                },
-              ],
-            },
-          },
-        ]);
+        const expenses =
+          await ExpenseHelpers.getCategoryAndExpenseTypeAnalytics(loggedUser);
 
         return {
           status: 200,
@@ -138,46 +91,20 @@ export const expenseRouter = router({
         const rules = await RuleModel.find({ user: loggedUser?.id });
 
         // Use Promise.all to ensure all async operations complete
-        const expensesWithRules = (
-          await Promise.all(
-            rules.map(async (rule) => {
-              const escapedDescription = rule.description_contains.replace(
-                /[-/\\^$*+?.()|[\]{}]/g,
-                '\\$&'
-              );
-              const expenses = await ExpenseModel.find({
-                user: loggedUser?.id,
-                expense_type: ExpenseType.unknown,
-                category: ExpenseType.unknown,
-                description: {
-                  $regex: escapedDescription,
-                  $options: 'i',
-                },
-              })
-                .sort({ createdAt: -1 })
-                .select('amount description category expense_type')
-                .lean();
+        const expensesWithRules = await ExpenseHelpers.getExpensesWithRules(
+          rules,
+          loggedUser
+        );
 
-              // Only return rules with matched expenses
-              return expenses.length > 0
-                ? {
-                    rule: rule.description_contains,
-                    expensePayload: {
-                      rule: rule._id,
-                      category: rule.category_title,
-                      expense_type: rule.expense_type,
-                    },
-                    expenses,
-                  }
-                : null;
-            })
-          )
-        ).filter((result) => result !== null);
+        const expensesWithAllRules = {
+          expensesWithRules,
+          rules,
+        };
 
         return {
           status: 200,
           message: 'Expenses fetched with matched rules',
-          data: expensesWithRules,
+          data: expensesWithAllRules as object,
           pagination: {
             total,
             page,
