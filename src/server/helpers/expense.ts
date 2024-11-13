@@ -5,6 +5,9 @@ import ExpenseModel from '../db/models/expense';
 import RuleModel from '../db/models/rules';
 import httpStatus from 'http-status';
 import { errorHandler } from '../middlewares/error-handler';
+import { IRule } from '../db/interfaces/rules';
+import { JwtPayload } from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
@@ -116,8 +119,110 @@ async function createExpenseFromBulkInput(
   }
 }
 
+const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
+  try {
+    const expensesWithRules = (
+      await Promise.all(
+        rules.map(async (rule) => {
+          const escapedDescription = rule.description_contains.replace(
+            /[-/\\^$*+?.()|[\]{}]/g,
+            '\\$&'
+          );
+          const expenses = await ExpenseModel.find({
+            user: loggedUser?.id,
+            expense_type: ExpenseType.unknown,
+            category: ExpenseType.unknown,
+            description: {
+              $regex: escapedDescription,
+              $options: 'i',
+            },
+          })
+            .sort({ createdAt: -1 })
+            .select('amount description category expense_type')
+            .lean();
+
+          // Only return rules with matched expenses
+          return expenses.length > 0
+            ? {
+                rule: rule.description_contains,
+                expensePayload: {
+                  rule: rule._id,
+                  category: rule.category_title,
+                  expense_type: rule.expense_type,
+                },
+                expenses,
+              }
+            : null;
+        })
+      )
+    ).filter((result) => result !== null);
+    return expensesWithRules;
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+};
+
+const getCategoryAndExpenseTypeAnalytics = async (loggedUser: JwtPayload) => {
+  try {
+    // Single aggregate query using $facet
+    return await ExpenseModel.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(loggedUser?.id),
+        },
+      },
+      {
+        $facet: {
+          // Group by `category`
+          categoryWiseExpenses: [
+            {
+              $group: {
+                _id: '$category',
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                category: '$_id',
+                totalItemByCategory: '$totalItems',
+                amount: '$totalAmount',
+                _id: 0,
+              },
+            },
+          ],
+          // Group by `expense_type`
+          expenseTypeWiseExpenses: [
+            {
+              $group: {
+                _id: '$expense_type',
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                expense_type: '$_id',
+                totalItemByExpenseType: '$totalItems',
+                amount: '$totalAmount',
+                _id: 0,
+              },
+            },
+          ],
+        },
+      },
+    ]);
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+};
+
 export const ExpenseHelpers = {
   createExpenseRecord,
   createExpenseFromBulkInput,
   findMatchingRule,
+  getExpensesWithRules,
+  getCategoryAndExpenseTypeAnalytics,
 };
