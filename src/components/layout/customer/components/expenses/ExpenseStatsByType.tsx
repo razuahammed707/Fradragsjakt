@@ -5,7 +5,7 @@ type ExpenseStatsProps = {
   type: string;
   percentage: number;
   month: string;
-  amount: string;
+  amount: number;
 };
 
 const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
@@ -22,7 +22,7 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
         in {month}
       </h2>
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">NOK {amount}</h1>
+        <h1 className="text-3xl font-bold">NOK {amount?.toFixed(2)}</h1>
         <ExpenseStats title={type} />
       </div>
     </div>

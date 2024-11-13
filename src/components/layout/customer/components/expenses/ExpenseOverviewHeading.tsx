@@ -39,7 +39,6 @@ function ExpenseOverviewHeading() {
         keepPreviousData: true,
       }
     );
-  console.log('expensesWithMatchedRules: ', expensesWithMatchedRules?.data);
   const handleButtonClick = (title: string) => {
     setModalContent({ title });
     setModalOpen(true);
