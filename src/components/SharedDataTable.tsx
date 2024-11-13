@@ -38,8 +38,6 @@ export function SharedDataTable<TData, TValue>({
   className,
   loading,
 }: DataTableProps<TData, TValue>) {
-  console.log('data__', data);
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
