@@ -1,4 +1,4 @@
-import { Document, Types } from 'mongoose';
+import { Date, Document, Types } from 'mongoose';
 
 export enum ExpenseType {
   business = 'business',
@@ -16,7 +16,12 @@ export interface IExpense extends Document {
   category: string;
   expense_type: ExpenseType;
   amount: number;
+  transaction_date?: Date;
   deduction_status: DeductionStatus;
   user: Types.ObjectId;
   rule: Types.ObjectId;
+  receipt?: {
+    link: string;
+    mimeType: string;
+  };
 }
