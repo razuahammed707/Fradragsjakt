@@ -22,6 +22,13 @@ const ExpenseSchema = new Schema<IExpense>(
       type: Number,
       required: true,
     },
+    receipt: {
+      link: String,
+      mimeType: String,
+    },
+    transaction_date: {
+      type: Date,
+    },
     deduction_status: {
       type: String,
       enum: Object.values(DeductionStatus),
