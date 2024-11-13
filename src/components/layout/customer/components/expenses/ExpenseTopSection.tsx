@@ -24,7 +24,6 @@ interface ExpenseType {
 function ExpenseTopSection() {
   const { data: expenses } =
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
-  console.log('expenses_', expenses?.data);
 
   const { data: user } = useSession();
 
