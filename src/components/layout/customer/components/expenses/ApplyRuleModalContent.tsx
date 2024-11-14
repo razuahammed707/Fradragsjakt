@@ -5,7 +5,7 @@ import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableC
 import { Button } from '@/components/ui/button';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
-import RuleSelectInput from '@/components/layout/customer/components/expenses/RuleSelectInput';
+import SelectInput from '@/components/SelectInput';
 
 type CategoryType = { title: string; value: string };
 
@@ -67,13 +67,6 @@ function ApplyRuleModalContent({
 
   const handleRuleChange = (value: string) => {
     setSelectedInput(value);
-    const filteredExpenses = expensesWithRules?.filter(
-      (item) => item?.rule === value
-    );
-
-    if (filteredExpenses?.length > 0) {
-      setSelectedRule(value);
-    }
   };
   const handleRuleClick = (rule: string) => {
     setSelectedRule(rule);
@@ -100,19 +93,26 @@ function ApplyRuleModalContent({
       );
 
       if (matchedRule?._id === selectedRuleData?.expensePayload?.rule)
-        return selectedRuleData?.expensePayload;
+        return (
+          selectedRuleData?.expensePayload || {
+            category: '',
+            expense_type: '',
+            rule: '',
+          }
+        );
       else
         return {
-          category: matchedRule?.category_title,
-          expense_type: matchedRule?.expense_type,
-          rule: matchedRule?._id,
+          category: matchedRule?.category_title || '',
+          expense_type: matchedRule?.expense_type || '',
+          rule: matchedRule?._id || '',
         };
     };
 
-    const expenses = selectedRuleData?.expenses?.map((expense) => ({
-      expenseUpdatePayload: manipulatedPayload(),
-      _id: expense._id,
-    }));
+    const expenses =
+      selectedRuleData?.expenses?.map((expense) => ({
+        _id: expense._id,
+        expenseUpdatePayload: manipulatedPayload(),
+      })) || [];
     if (!expenses) return;
     mutation.mutate({ expenses });
   };
@@ -138,10 +138,16 @@ function ApplyRuleModalContent({
           </Badge>
         ))}
       </div>
-      <RuleSelectInput
-        rules={rules}
+      <SelectInput
+        label="Choose Rule"
+        options={rules?.map((rule) => {
+          return {
+            title: rule?.description_contains,
+            value: rule?.description_contains,
+          };
+        })}
         onChange={handleRuleChange}
-        selectedInput={selectedInput}
+        selectedOption={selectedInput}
       />
       <SharedDataTable
         className="max-h-[250px]"
