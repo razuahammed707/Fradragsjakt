@@ -26,7 +26,11 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
         <p className="text-[#71717A] p-6">Drop the CSV file here ...</p>
       ) : (
         <div className="flex flex-col space-y-5 justify-center items-center">
-          {loading ? <Loader2 /> : <Image src={UploadIcon} alt="upload icon" />}
+          {loading ? (
+            <Loader2 size={40} className="animate-spin text-primary  " />
+          ) : (
+            <Image src={UploadIcon} alt="upload icon" />
+          )}
           <p className="text-[#71717A]">Drag a file or click to browse</p>
         </div>
       )}
