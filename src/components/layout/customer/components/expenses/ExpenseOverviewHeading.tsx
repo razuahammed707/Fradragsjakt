@@ -39,6 +39,7 @@ function ExpenseOverviewHeading() {
         keepPreviousData: true,
       }
     );
+
   const handleButtonClick = (title: string) => {
     setModalContent({ title });
     setModalOpen(true);
@@ -90,6 +91,10 @@ function ExpenseOverviewHeading() {
           <div className="mt-5 flex space-x-2">
             {buttons.map((button, index) => (
               <Button
+                disabled={
+                  button.text === 'Apply Rule' &&
+                  expensesWithMatchedRules?.data?.expensesWithRules?.length == 0
+                }
                 key={index}
                 variant="purple"
                 onClick={() =>

@@ -1,5 +1,6 @@
 import React from 'react';
 import ExpenseStats from './ExpenseStats';
+import { NumericFormat } from 'react-number-format';
 
 type ExpenseStatsProps = {
   type: string;
@@ -22,7 +23,14 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
         in {month}
       </h2>
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">NOK {amount?.toFixed(2)}</h1>
+        <h1 className="text-xl font-bold">
+          <NumericFormat
+            value={amount}
+            displayType="text"
+            thousandSeparator={true}
+            prefix="NOK "
+          />
+        </h1>
         <ExpenseStats title={type} />
       </div>
     </div>

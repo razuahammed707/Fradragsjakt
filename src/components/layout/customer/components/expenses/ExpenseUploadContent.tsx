@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 type FormData = {
   Description: string;
   Amount: string;
+  Date?: string;
 };
 
 type Column = {
@@ -27,6 +28,7 @@ type FileRowData = {
 type ExpenseData = {
   description: string;
   amount: number;
+  date?: string;
 };
 
 const targetColumns: Column[] = [
@@ -39,6 +41,11 @@ const targetColumns: Column[] = [
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
+  },
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
   },
 ];
 
@@ -145,7 +152,12 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const utils = trpc.useUtils();
-  const { handleSubmit, control, reset } = useForm<FormData>();
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { isDirty, isValid },
+  } = useForm<FormData>();
   const [fileLink, setFileLink] = useState<File | null>(null);
 
   const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
@@ -198,6 +210,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   });
 
   const onSubmit = (formData: FormData): void => {
+    console.log({ formData });
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
     setLoading(true);
     mutation.mutate(mappedExpenses);
@@ -271,7 +284,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
                   type="select"
                   placeholder={column.title}
                   options={headerOptions}
-                  required
+                  required={column.title === 'Date' ? false : true}
                 />
               </div>
             ))}
@@ -279,7 +292,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
               type="submit"
               className="w-full mt-7 text-white "
               variant="purple"
-              disabled={loading}
+              disabled={loading || !isDirty || !isValid}
             >
               Process Expense Data
             </Button>
