@@ -13,6 +13,10 @@ const createExpenseSchema = z.object({
   amount: z.number({
     required_error: 'Amount is required',
   }),
+  receipt: z.object({
+    link: z.string(),
+    mimeType: z.string(),
+  }),
 });
 const createBulkExpenseSchema = z.array(
   z.object({

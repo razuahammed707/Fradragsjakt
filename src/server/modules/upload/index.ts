@@ -6,6 +6,13 @@ import { errorHandler } from '@/server/middlewares/error-handler';
 import cloudinary from '@/server/config/cloudinary';
 import { uploadFileValidation } from './upload.validation';
 
+type UploadPayload = {
+  link: string;
+  mimeType: string;
+  width?: number;
+  height?: number;
+};
+
 export const uploadRouter = router({
   uploadFile: protectedProcedure
     .input(uploadFileValidation.uploadFileSchema)
@@ -29,10 +36,20 @@ export const uploadRouter = router({
           );
         }
 
+        const uploadedPayload = {
+          link: uploadResult.secure_url,
+          mimeType: fileExtension,
+        } as UploadPayload;
+
+        if (uploadResult?.width && uploadResult?.height) {
+          uploadedPayload.width = uploadResult?.width;
+          uploadedPayload.height = uploadResult?.height;
+        }
+
         return {
           success: true,
           message: 'File uploaded successfully',
-          data: uploadResult.secure_url,
+          data: uploadedPayload,
         };
       } catch (error: unknown) {
         const { message } = errorHandler(error);
