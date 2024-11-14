@@ -9,7 +9,7 @@ import { trpc } from '@/utils/trpc';
 
 function ExpenseOverviewSection() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageLimit, setPageLimit] = useState(50);
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
