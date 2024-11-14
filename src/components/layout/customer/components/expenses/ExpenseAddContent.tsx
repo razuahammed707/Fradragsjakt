@@ -130,7 +130,7 @@ function ExpenseAddContent({
 
   useEffect(() => {
     if (fileLink) handleFileUpload(fileLink);
-  }, []);
+  }, [fileLink]);
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
