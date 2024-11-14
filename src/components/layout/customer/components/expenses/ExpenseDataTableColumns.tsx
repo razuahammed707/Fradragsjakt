@@ -99,7 +99,7 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
       const defaultType = row.getValue('category') as string;
       return (
         <Select
-          defaultValue={defaultType}
+          defaultValue={defaultType.toLowerCase()}
           onValueChange={(value) => console.log('Updated type:', value)}
         >
           <SelectTrigger className="w-[162px]">

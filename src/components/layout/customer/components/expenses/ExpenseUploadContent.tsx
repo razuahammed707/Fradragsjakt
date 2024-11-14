@@ -7,6 +7,7 @@ import DragAndDropFile from '@/components/DragAndDropFile';
 import { useDropzone } from 'react-dropzone';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 
 type FormData = {
   Description: string;
@@ -294,6 +295,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
               variant="purple"
               disabled={loading || !isDirty || !isValid}
             >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Process Expense Data
             </Button>
           </form>

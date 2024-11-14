@@ -139,7 +139,7 @@ function ApplyRuleModalContent({
         ))}
       </div>
       <SelectInput
-        label="Choose Rule"
+        label="You can choose different rule"
         options={rules?.map((rule) => {
           return {
             title: rule?.description_contains,
