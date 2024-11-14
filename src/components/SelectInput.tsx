@@ -42,7 +42,7 @@ const SelectInput = ({
         <Label
           htmlFor={id}
           className={
-            error ? 'text-destructive' : 'text-xs text-muted-foreground'
+            error ? 'text-destructive' : 'text-sm text-muted-foreground mb-2'
           }
         >
           {label}

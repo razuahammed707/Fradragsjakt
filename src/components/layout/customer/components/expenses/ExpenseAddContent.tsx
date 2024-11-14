@@ -71,8 +71,8 @@ function ExpenseAddContent({
 
   const mutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
-      toast.success('Expense created successfully!', { duration: 4000 });
       utils.expenses.getExpenses.invalidate();
+      toast.success('Expense created successfully!', { duration: 4000 });
       reset();
       setModalOpen(false);
       setLoading(false);

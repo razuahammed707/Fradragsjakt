@@ -7,6 +7,7 @@ import DragAndDropFile from '@/components/DragAndDropFile';
 import { useDropzone } from 'react-dropzone';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 
 type FormData = {
   Description: string;
@@ -67,32 +68,25 @@ const parseFileData = (data: string[][]): ParsedFileResult => {
     .slice(1)
     .filter((row) => row.slice(1).some((cell) => cell && cell.trim() !== ''))
     .map((row, rowIndex) => {
-      // Clean and merge split numeric cells for each row
       const cleanedRow = [];
       let tempValue = '';
 
       for (let i = 1; i < row.length; i++) {
         const cell = row[i].trim();
 
-        // Detect if the cell starts or ends with a quote, indicating a split value
         if (cell.startsWith('"') && !cell.endsWith('"')) {
-          // Start of a new quoted value
           tempValue = cell;
         } else if (!cell.startsWith('"') && cell.endsWith('"') && tempValue) {
-          // End of a split value
           tempValue += `,${cell}`;
-          cleanedRow.push(tempValue.replace(/["',]/g, '')); // Remove quotes and commas
-          tempValue = ''; // Reset tempValue
+          cleanedRow.push(tempValue.replace(/["',]/g, ''));
+          tempValue = '';
         } else if (tempValue) {
-          // Continuation of a split value
           tempValue += `,${cell}`;
         } else {
-          // Normal cell value, push as is after removing commas
           cleanedRow.push(cell.replace(/,/g, ''));
         }
       }
 
-      // Convert cleaned row to the correct format with column indexes
       const processedRow = cleanedRow.reduce(
         (acc: FileRowData, val: string, colIndex: number) => {
           if (val && val.trim() !== '') {
@@ -195,10 +189,10 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
 
   const mutation = trpc.expenses.createBulkExpenses.useMutation({
     onSuccess: () => {
+      utils.expenses.getExpenses.invalidate();
       toast.success('Expenses created successfully!', {
         duration: 4000,
       });
-      utils.expenses.getExpenses.invalidate();
       reset();
       setModalOpen(false);
       setLoading(false);
@@ -294,6 +288,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
               variant="purple"
               disabled={loading || !isDirty || !isValid}
             >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Process Expense Data
             </Button>
           </form>

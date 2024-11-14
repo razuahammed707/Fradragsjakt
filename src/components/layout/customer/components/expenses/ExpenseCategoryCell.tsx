@@ -22,7 +22,7 @@ const ExpenseCategoryCell = () => {
     ? categories?.data?.map((category) => {
         return {
           title: transformToUppercase(category.title),
-          value: category.title,
+          value: category.title.toLowerCase(),
         };
       })
     : [];
