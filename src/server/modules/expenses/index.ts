@@ -17,7 +17,7 @@ export const expenseRouter = router({
     .input(
       z.object({
         page: z.number().default(1),
-        limit: z.number().default(10),
+        limit: z.number().default(50),
       })
     )
     .query(async ({ ctx, input }) => {
