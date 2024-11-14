@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import SelectInput from '@/components/SelectInput';
+import { Loader2 } from 'lucide-react';
 
 type CategoryType = { title: string; value: string };
 
@@ -52,6 +53,7 @@ function ApplyRuleModalContent({
   expenses: { expensesWithRules, rules },
   setModalOpen,
 }: ExpenseRuleContentProps) {
+  const [loading, setLoading] = useState(false);
   const [selectedRule, setSelectedRule] = useState<string>(
     expensesWithRules[0]?.rule || ''
   );
@@ -75,10 +77,11 @@ function ApplyRuleModalContent({
 
   const mutation = trpc.expenses.updateBulkExpense.useMutation({
     onSuccess: () => {
+      utils.expenses.getExpenses.invalidate();
       toast.success('Expenses updated successfully!', {
         duration: 4000,
       });
-      utils.expenses.getExpenses.invalidate();
+      setLoading(false);
       setModalOpen(false);
     },
     onError: (error) => {
@@ -87,6 +90,7 @@ function ApplyRuleModalContent({
   });
 
   const handleApplyRule = () => {
+    setLoading(true);
     const manipulatedPayload = () => {
       const matchedRule = rules?.find(
         (rule) => rule?.description_contains === selectedInput
@@ -155,10 +159,12 @@ function ApplyRuleModalContent({
         data={selectedRuleData?.expenses || []}
       />
       <Button
+        disabled={loading}
         onClick={handleApplyRule}
         type="button"
         className="w-full text-white"
       >
+        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Apply Rule
       </Button>
     </div>
