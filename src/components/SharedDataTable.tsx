@@ -11,6 +11,7 @@ import {
   getFilteredRowModel,
   getCoreRowModel,
   useReactTable,
+  //getPaginationRowModel,
 } from '@tanstack/react-table';
 
 import {
@@ -56,6 +57,7 @@ export function SharedDataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    //getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
