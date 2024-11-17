@@ -33,7 +33,7 @@ To get started with **Fradragsjakt**, make sure you have [Node.js](https://nodej
 
 ```bash
 git clone https://github.com/razuahammed707/Fradragsjakt.git
-cd fradragsjakt
+cd Fradragsjakt
 ```
 
 ### Step 2: Install Dependencies
