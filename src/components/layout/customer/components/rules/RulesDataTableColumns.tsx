@@ -3,16 +3,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-
 import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
@@ -83,27 +73,10 @@ export const RulesDataTableColumns: ColumnDef<IRule>[] = [
       );
     },
     cell: ({ row }) => {
-      const initialValue = row.getValue('expense_type') as string;
-
       return (
-        <Select
-          value={initialValue}
-          onValueChange={(value) => {
-            // setSelectedOption(value);
-            console.log('Updated expense type:', value);
-            // Add any additional logic to persist the change here if needed
-          }}
-        >
-          <SelectTrigger className="w-[120px] text-foreground">
-            <SelectValue>{transformToUppercase(initialValue)}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="Business">Business</SelectItem>
-              <SelectItem value="Personal">Personal</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="text-left">
+          {transformToUppercase(row.getValue('expense_type'))}
+        </div>
       );
     },
   },
@@ -122,12 +95,9 @@ export const RulesDataTableColumns: ColumnDef<IRule>[] = [
       );
     },
     cell: ({ row }) => (
-      <Input
-        type="text"
-        defaultValue={transformToUppercase(row.getValue('category_title'))}
-        className="w-[150px]"
-        onChange={(e) => console.log('Updated category:', e.target.value)}
-      />
+      <div className="text-left">
+        {transformToUppercase(row.getValue('category_title'))}
+      </div>
     ),
   },
   {
