@@ -18,18 +18,29 @@ export const expenseRouter = router({
       z.object({
         page: z.number().default(1),
         limit: z.number().default(50),
+        searchTerm: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        const { page, limit } = input;
+        const { page, limit, searchTerm } = input;
         const skip = (page - 1) * limit;
 
-        const total = await ExpenseModel.countDocuments({
-          user: loggedUser?.id,
-        });
-        const expenses = await ExpenseModel.find({ user: loggedUser?.id })
+        // Base query to filter expenses by user
+        const query: Record<string, unknown> = { user: loggedUser?.id };
+
+        // If a search term is provided, add a condition to match fields
+        if (searchTerm) {
+          query.$or = [
+            { description: { $regex: searchTerm, $options: 'i' } },
+            { category: { $regex: searchTerm, $options: 'i' } },
+            { expense_type: { $regex: searchTerm, $options: 'i' } },
+          ];
+        }
+
+        const total = await ExpenseModel.countDocuments(query);
+        const expenses = await ExpenseModel.find(query)
           .skip(skip)
           .limit(limit)
           .sort({ createdAt: -1 });
