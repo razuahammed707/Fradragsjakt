@@ -50,6 +50,10 @@ const ExpenseSchema = new Schema<IExpense>(
   }
 );
 
+ExpenseSchema.index({ description: 1 });
+ExpenseSchema.index({ category: 1 });
+ExpenseSchema.index({ expense_type: 1 });
+
 const ExpenseModel =
   mongoose.models.expense || mongoose.model<IExpense>('expense', ExpenseSchema);
 

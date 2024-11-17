@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
 import { IoMdAdd } from 'react-icons/io';
@@ -13,6 +13,11 @@ import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { debounce } from '@/lib/utils';
+
+type ExpenseOverviewSectionProps = {
+  setSearchTerm: (value: string) => void;
+};
 
 const buttons = [
   { text: 'Filter By', icon: FilterIcon },
@@ -20,7 +25,9 @@ const buttons = [
   { text: 'Show Write-offs', icon: WriteOffIcon },
 ];
 
-function ExpenseOverviewHeading() {
+function ExpenseOverviewHeading({
+  setSearchTerm,
+}: ExpenseOverviewSectionProps) {
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const { data: user } = useSession();
@@ -60,6 +67,15 @@ function ExpenseOverviewHeading() {
     );
   };
 
+  // Debounced version of setSearchTerm
+  const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm), [
+    setSearchTerm,
+  ]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSetSearchTerm(e.target.value);
+  };
+
   return (
     <div className="grid grid-cols-2 gap-4">
       <div>
@@ -86,7 +102,10 @@ function ExpenseOverviewHeading() {
       <div className="flex justify-end">
         <div className="flex flex-col justify-end">
           <div className="flex justify-end">
-            <SearchInput className="hidden md:block" />
+            <SearchInput
+              className="hidden md:block"
+              onChange={handleSearchChange}
+            />
           </div>
           <div className="mt-5 flex space-x-2">
             {buttons.map((button, index) => (
