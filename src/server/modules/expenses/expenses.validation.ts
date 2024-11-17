@@ -26,6 +26,7 @@ const createBulkExpenseSchema = z.array(
     amount: z.number({
       required_error: 'Amount is required',
     }),
+    transaction_date: z.any().optional(),
   })
 );
 

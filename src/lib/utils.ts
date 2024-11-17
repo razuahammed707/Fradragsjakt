@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const debounce = <T extends (...args: unknown[]) => void>(
+export const debounce = <T extends (...args: string[]) => void>(
   func: T,
   delay = 500
 ) => {
