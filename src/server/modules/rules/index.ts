@@ -15,20 +15,31 @@ export const rulesRouter = router({
     .input(
       z.object({
         page: z.number().default(1),
-        limit: z.number().default(10),
+        limit: z.number().default(50),
+        searchTerm: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        const { page, limit } = input;
+        const { page, limit, searchTerm } = input;
         const skip = (page - 1) * limit;
 
-        const total = await RuleModel.countDocuments({ user: loggedUser?.id });
-        const rules = await RuleModel.find({ user: loggedUser?.id })
-          .skip(skip)
-          .limit(limit);
+        const query: Record<string, unknown> = { user: loggedUser?.id };
+
+        // If a search term is provided, add a condition to match fields
+        if (searchTerm) {
+          query.$or = [
+            { description_contains: { $regex: searchTerm, $options: 'i' } },
+            { category_title: { $regex: searchTerm, $options: 'i' } },
+          ];
+        }
+
+        const total = await RuleModel.countDocuments(query);
+        const rules = await RuleModel.find(query).skip(skip).limit(limit);
+
+        console.log('searched rules', rules);
 
         return {
           status: 200,
