@@ -8,9 +8,11 @@ import { cn } from '@/lib/utils';
 export default function SearchInput({
   className,
   placeholder = 'Search',
+  onChange, // Accept onChange as a prop
 }: {
   className?: string;
   placeholder?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Define the type
 }) {
   const form = useForm({
     defaultValues: {
@@ -18,7 +20,7 @@ export default function SearchInput({
     },
   });
 
-  const searchValue = form.watch('search'); // Watch the value of the search input
+  const searchValue = form.watch('search');
 
   return (
     <form>
@@ -31,6 +33,12 @@ export default function SearchInput({
           placeholder={placeholder}
           className="w-full appearance-none bg-background py-2 pl-3 shadow-none placeholder:text-[#71717A] placeholder:text-sm"
           {...form.register('search')}
+          onChange={(e) => {
+            form.setValue('search', e.target.value); // Update internal state
+            if (onChange) {
+              onChange(e); // Call the parent's onChange handler
+            }
+          }}
         />
       </div>
     </form>
