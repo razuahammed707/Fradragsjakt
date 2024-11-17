@@ -8,6 +8,7 @@ import { useDropzone } from 'react-dropzone';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
+import moment from 'moment';
 
 type FormData = {
   Description: string;
@@ -29,7 +30,7 @@ type FileRowData = {
 type ExpenseData = {
   description: string;
   amount: number;
-  date?: string;
+  transaction_date?: string | null;
 };
 
 const targetColumns: Column[] = [
@@ -120,17 +121,32 @@ const mapToExpenseData = (
       const amountColumnIndex = headers.findIndex(
         (col) => col.title === formData.Amount
       );
+      const dateColumnIndex = headers.findIndex(
+        (col) => col.title === formData.Date
+      );
 
       const description = row[`column_${descriptionColumnIndex}`];
       const amount = row[`column_${amountColumnIndex}`];
+      const date = row[`column_${dateColumnIndex}`];
 
       if (description && amount) {
         const parsedAmount = parseFloat(amount.replace(/[^\d.-]/g, ''));
         if (!isNaN(parsedAmount)) {
-          return {
+          const parsedDate = moment(date, 'DD/MM/YYYY', true);
+
+          const payload = {
             description: description.trim(),
             amount: parsedAmount,
+            transaction_date: new Date(),
+          } as {
+            description: string;
+            amount: number;
+            transaction_date?: unknown;
           };
+          if (parsedDate) {
+            payload.transaction_date = parsedDate || new Date();
+          }
+          return payload;
         }
       }
       return null;
@@ -206,6 +222,8 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   const onSubmit = (formData: FormData): void => {
     console.log({ formData });
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
+
+    console.log('mapped expenses', mappedExpenses);
     setLoading(true);
     mutation.mutate(mappedExpenses);
   };
