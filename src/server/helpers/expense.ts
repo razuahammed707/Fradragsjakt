@@ -17,8 +17,6 @@ async function findMatchingRule(description: string, userId: string) {
       .normalize('NFKD') // Decompose combined characters
       .replace(/[^\w\s]/g, ''); // Remove special characters but keep spaces
 
-    console.log('Normalized Description:', normalizedDescription);
-
     // Step 2: Query the database to find rules, then filter in memory for exact substring match
     const rules = await RuleModel.find({
       user: userId,
@@ -31,7 +29,6 @@ async function findMatchingRule(description: string, userId: string) {
         .normalize('NFKD')
         .replace(/[^\w\s]/g, '');
 
-      console.log('Checking rule:', normalizedRule);
       return normalizedDescription.includes(normalizedRule);
     });
 

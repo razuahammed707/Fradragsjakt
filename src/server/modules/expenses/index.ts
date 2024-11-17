@@ -156,6 +156,8 @@ export const expenseRouter = router({
       try {
         const loggedUser = ctx.user as JwtPayload;
 
+        console.log('expenses payload', expenses);
+
         const createdExpenses = await Promise.all(
           expenses.map(async (singleExpense) => {
             return await ExpenseHelpers.createExpenseFromBulkInput(

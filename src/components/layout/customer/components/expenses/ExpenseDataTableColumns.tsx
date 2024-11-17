@@ -62,13 +62,18 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'transaction_date',
     header: 'Date',
     cell: ({ row }) => {
-      const date_to_render = row.getValue('createdAt') as string;
-      return (
-        <span className="text-[#00104B]">{formatDate(date_to_render)}</span>
-      );
+      const transactionDate = row.getValue('transaction_date') as
+        | string
+        | undefined;
+      const createdAt = row.getValue('createdAt') as string;
+
+      // Use transaction_date if available, otherwise fallback to createdAt
+      const dateToRender = transactionDate || createdAt;
+
+      return <span className="text-[#00104B]">{formatDate(dateToRender)}</span>;
     },
   },
   {
