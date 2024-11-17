@@ -58,6 +58,7 @@ function ApplyRuleModalContent({
     expensesWithRules[0]?.rule || ''
   );
   const [tableData, setTableData] = useState<ExpenseType[]>([]);
+  const [deletedExpenseIds, setDeletedExpenseIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
 
@@ -102,21 +103,27 @@ function ApplyRuleModalContent({
   });
 
   const handleDelete = (expenseId: string) => {
-    setTableData((prev) =>
-      prev?.filter((expense) => expense._id !== expenseId)
-    );
+    setDeletedExpenseIds((prev) => [...prev, expenseId]);
+    setTableData((prev) => prev.filter((expense) => expense._id !== expenseId));
   };
 
   const handleApplyRule = () => {
     setLoading(true);
     if (selectedRuleData?.expensePayload) {
       const expenses =
-        tableData?.map((expense) => ({
-          _id: expense._id,
-          expenseUpdatePayload: selectedRuleData.expensePayload,
-        })) || [];
+        tableData
+          ?.filter((expense) => !deletedExpenseIds.includes(expense._id))
+          .map((expense) => ({
+            _id: expense._id,
+            expenseUpdatePayload: selectedRuleData.expensePayload,
+          })) || [];
 
-      if (!expenses) return;
+      if (expenses.length === 0) {
+        toast.error('No expenses available to update');
+        setLoading(false);
+        return;
+      }
+
       mutation.mutate({ expenses });
     }
   };
