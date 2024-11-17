@@ -12,20 +12,24 @@ export const categoryRouter = router({
       z.object({
         page: z.number().default(1),
         limit: z.number().default(10),
+        searchTerm: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        const { page, limit } = input;
+        const { page, limit, searchTerm } = input;
         const skip = (page - 1) * limit;
 
-        const total = await Category.countDocuments({
-          creator_id: loggedUser?.id,
-        });
-        const categories = await Category.find({ creator_id: loggedUser?.id })
-          .skip(skip)
-          .limit(limit);
+        const query: Record<string, unknown> = { creator_id: loggedUser?.id };
+
+        // If a search term is provided, add a condition to match fields
+        if (searchTerm) {
+          query.title = { $regex: searchTerm, $options: 'i' };
+        }
+
+        const total = await Category.countDocuments(query);
+        const categories = await Category.find(query).skip(skip).limit(limit);
 
         return {
           status: 200,

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import { CategoryTableColumns } from './CategoryTableColumns';
 import SharedPagination from '@/components/SharedPagination';
@@ -9,6 +9,7 @@ import CategoryAddModal from './CategoryAddModal';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
+import { debounce } from '@/lib/utils';
 
 export type FormData = {
   title: string;
@@ -18,6 +19,7 @@ export default function CategoryTable() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { handleSubmit, control, reset } = useForm<FormData>();
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const utils = trpc.useUtils();
 
   const handlePageChange = (page: number) => {
@@ -47,17 +49,27 @@ export default function CategoryTable() {
   const { data } = trpc.categories.getCategories.useQuery(
     {
       page: currentPage,
+      limit: 50,
+      searchTerm,
     },
     {
       keepPreviousData: true,
     }
   );
+
+  const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm), [
+    setSearchTerm,
+  ]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSetSearchTerm(e.target.value);
+  };
   return (
     <div className="rounded-2xl mt-2 p-6 bg-white">
       <div className="flex justify-between items-center mb-4  ">
         <h2 className="text-xl text-[#101010] font-bold">Category Overview</h2>
         <div className="flex gap-2">
-          <SearchInput className="" />
+          <SearchInput className="" onChange={handleSearchChange} />
           <Button onClick={() => setOpen(true)} variant="purple">
             + Add category
           </Button>
