@@ -281,3 +281,15 @@ export const transactions = [
     amount: 30.65,
   },
 ];
+
+export const categories = [
+  // { label: 'Supplies', amount: 0, image: '/Supplies.svg' },
+  { label: 'Clothing', amount: 0, image: '/Clothing.png' },
+  { label: 'Travel', amount: 0, image: '/Travel.png' },
+  { label: 'Transport', amount: 0, image: '/Transport.png' },
+  { label: 'Gas', amount: 0, image: '/Gas.png' },
+  { label: 'Meals', amount: 0, image: '/Meals.png' },
+  { label: 'Insurance', amount: 0, image: '/Insurance.png' },
+  { label: 'Payment', amount: 0, image: '/Payment.png' },
+  { label: 'More', amount: 'NOK 500', image: '/More.png' },
+];
