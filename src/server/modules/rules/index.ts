@@ -117,6 +117,44 @@ export const rulesRouter = router({
         throw new ApiError(httpStatus.BAD_REQUEST, message);
       }
     }),
+  updateRule: protectedProcedure
+    .input(ruleValidation.updateRuleSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const { _id, ...restPayload } = input;
+        const sessionUser = ctx.user as JwtPayload;
+
+        if (!sessionUser?.email) {
+          throw new Error('Authentication required');
+        }
+
+        const categoryQuery = {
+          title: input.category,
+          creator_id: sessionUser.id,
+        };
+
+        const category = await CategoryModel.findOne(categoryQuery);
+
+        const updateRule = await RuleModel.findByIdAndUpdate(
+          { _id },
+          {
+            ...restPayload,
+            category: category._id,
+            category_title: category.title,
+          },
+          { new: true }
+        );
+
+        return {
+          message: 'Rule is updated successfully',
+          status: 200,
+          category: updateRule,
+        };
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
   deleteRule: protectedProcedure
     .input(ruleValidation.deleteRuleSchema)
     .mutation(async ({ ctx, input }) => {

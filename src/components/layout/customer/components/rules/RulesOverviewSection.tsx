@@ -37,8 +37,6 @@ export default function RulesOverviewSection() {
     debouncedSetSearchTerm(e.target.value);
   };
 
-  console.log('rules', rulesResponse);
-
   return (
     <div className="rounded-2xl mt-2 p-6 bg-white">
       <div className="flex justify-between items-center mb-4">
@@ -50,9 +48,6 @@ export default function RulesOverviewSection() {
             onChange={handleSearchChange}
           />
           <CreateRuleModal />
-          {/* <Button className="text-white w-[124px] text-sm font-medium">
-            Save
-          </Button> */}
         </div>
       </div>
       <div className="mt-10">

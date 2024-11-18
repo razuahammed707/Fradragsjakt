@@ -22,7 +22,9 @@ export interface FormInputProps {
   control?: Control<any>;
   required?: boolean;
   customClassName?: string;
+  defaultValue?: string;
 }
+
 export function FormInput({
   name,
   placeholder,
@@ -31,6 +33,7 @@ export function FormInput({
   control,
   required = false,
   customClassName,
+  defaultValue = '',
 }: FormInputProps) {
   if (type === 'select') {
     return (
@@ -38,6 +41,7 @@ export function FormInput({
         name={name}
         control={control}
         rules={{ required }}
+        defaultValue={defaultValue}
         render={({ field }) => (
           <Select value={field.value} onValueChange={field.onChange}>
             <SelectTrigger className={`w-full ${customClassName}`}>
@@ -63,12 +67,13 @@ export function FormInput({
       name={name}
       control={control}
       rules={{ required }}
+      defaultValue={defaultValue}
       render={({ field }) => (
         <input
           {...field}
           type={type}
           placeholder={placeholder}
-          className={`w-full p-2 border border-gray-300  text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
+          className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
           required={required}
         />
       )}

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import { IRule } from '@/server/db/interfaces/rules';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
+import CreateRuleModal from './CreateRuleModal';
 
 export const RulesDataTableColumns: ColumnDef<IRule>[] = [
   {
@@ -68,10 +69,16 @@ export const RulesDataTableColumns: ColumnDef<IRule>[] = [
   {
     id: 'actions',
     cell: ({ row }) => (
-      <SharedDeleteActionCell
-        itemId={row.original._id as string}
-        itemOrigin="rule"
-      />
+      <div className="flex items-center">
+        <CreateRuleModal
+          origin="rule update"
+          updateRulePayload={row?.original}
+        />
+        <SharedDeleteActionCell
+          itemId={row.original._id as string}
+          itemOrigin="rule"
+        />
+      </div>
     ),
   },
 ];
