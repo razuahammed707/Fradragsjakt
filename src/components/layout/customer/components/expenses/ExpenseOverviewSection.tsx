@@ -24,18 +24,7 @@ function ExpenseOverviewSection() {
         keepPreviousData: true,
       }
     );
-  // const deleteRowMutation = trpc.expenses.deleteExpense.useMutation({
-  //   onSuccess: () => {
-  //     utils.expenses.getExpenses.invalidate();
-  //     toast.success('Expense deleted successfully');
-  //   },
-  //   onError: (error) => {
-  //     toast.error(error?.message || 'Failed to delete expense');
-  //   },
-  // });
-  // const handleRowDelete = (expenseId: string) => {
-  //   deleteRowMutation.mutate({ expenseId });
-  // };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -43,7 +32,6 @@ function ExpenseOverviewSection() {
     setPageLimit(page);
   };
 
-  console.log('search term', searchTerm);
   return (
     <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
       <ExpenseOverviewHeading setSearchTerm={setSearchTerm} />

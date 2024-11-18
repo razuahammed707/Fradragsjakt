@@ -19,9 +19,7 @@ export default function CustomerWriteOffs() {
             categoryWiseExpenses={expenses?.data?.categoryWiseExpenses}
             expenseTypeWiseExpenses={expenses?.data?.expenseTypeWiseExpenses}
           />
-          <WriteOffsTableSection
-            categoryWiseExpenses={expenses?.data?.categoryWiseExpenses || []}
-          />
+          <WriteOffsTableSection />
         </div>
         <QuestionnairesReviewSection />
       </div>
