@@ -26,7 +26,7 @@ type CategoryType = { title: string; value: string };
 type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
   categories?: CategoryType[];
-  updateRulePayload: UpdateRuleProps;
+  updateRulePayload?: UpdateRuleProps;
   origin: string | undefined;
 };
 
@@ -68,7 +68,7 @@ function CreateRuleModalContent({
   });
 
   const onSubmit = (data: RuleFormData) => {
-    if (origin) {
+    if (origin && updateRulePayload) {
       ruleUpdateMutation.mutate({ _id: updateRulePayload?._id, ...data });
     } else {
       ruleMutation.mutate(data);
