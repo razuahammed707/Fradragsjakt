@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
+import { Edit2, MoreHorizontal, Trash2 } from 'lucide-react';
 import { NumericFormat } from 'react-number-format';
 
 import { Button } from '@/components/ui/button';
@@ -16,27 +16,24 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
-import ExpenseCategoryCell from './ExpenseCategoryCell';
 import formatDate from '@/utils/helpers/formatDate';
 
 export type ExpenseColumnProps = {
+  _id: string;
   id: string;
-  date: string;
+  transaction_date?: string;
+  createdAt?: string;
   description: string;
   category: string;
-  expenseType: string;
+  expense_type: string;
   amount: number;
 };
 
-export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
+export const expenseDataTableColumns = (
+  onDelete: (id: string) => void
+): ColumnDef<ExpenseColumnProps>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -65,13 +62,9 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
     accessorKey: 'transaction_date',
     header: 'Date',
     cell: ({ row }) => {
-      const transactionDate = row.getValue('transaction_date') as
-        | string
-        | undefined;
-      const createdAt = row.getValue('createdAt') as string;
-
-      // Use transaction_date if available, otherwise fallback to createdAt
-      const dateToRender = transactionDate || createdAt;
+      const transactionDate = row.getValue('transaction_date') as string;
+      const createdAt = row.original.createdAt;
+      const dateToRender = transactionDate || createdAt || '';
 
       return <span className="text-[#00104B]">{formatDate(dateToRender)}</span>;
     },
@@ -101,19 +94,10 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const defaultType = row.getValue('category') as string;
       return (
-        <Select
-          defaultValue={defaultType.toLowerCase()}
-          onValueChange={(value) => console.log('Updated type:', value)}
-        >
-          <SelectTrigger className="w-[162px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <ExpenseCategoryCell />
-          </SelectContent>
-        </Select>
+        <span className="">
+          {transformToUppercase(row.getValue('category'))}
+        </span>
       );
     },
   },
@@ -132,23 +116,10 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const defaultType = row.getValue('expense_type') as string;
       return (
-        <Select
-          defaultValue={defaultType}
-          onValueChange={(value) => console.log('Updated type:', value)}
-        >
-          <SelectTrigger className="w-[162px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {['unknown', 'personal', 'business'].map((type, i) => (
-              <SelectItem key={i} value={type}>
-                {transformToUppercase(type)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <span className="">
+          {transformToUppercase(row.getValue('expense_type'))}
+        </span>
       );
     },
   },
@@ -184,8 +155,6 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const payment = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -197,13 +166,14 @@ export const expenseDataTableColumns: ColumnDef<ExpenseColumnProps>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => onDelete(row.original._id as string)}
             >
-              Copy payment ID
+              <Trash2 /> Delete
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => console.log(row.original?._id)}>
+              <Edit2 /> Edit
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -215,6 +215,30 @@ const getCategoryAndExpenseTypeAnalytics = async (loggedUser: JwtPayload) => {
     throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 };
+const deleteExpenseRecord = async (expenseId: string, userId: string) => {
+  try {
+    console.log({ expenseId, userId });
+
+    const expense = await ExpenseModel.findOne({
+      _id: expenseId,
+      user: userId,
+    });
+    if (!expense) {
+      throw new Error('Expense not found or unauthorized');
+    }
+
+    const deletedExpense = await ExpenseModel.findByIdAndDelete(expenseId);
+
+    if (!deletedExpense) {
+      throw new Error('Failed to delete expense');
+    }
+
+    return deletedExpense;
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+  }
+};
 
 export const ExpenseHelpers = {
   createExpenseRecord,
@@ -222,4 +246,5 @@ export const ExpenseHelpers = {
   findMatchingRule,
   getExpensesWithRules,
   getCategoryAndExpenseTypeAnalytics,
+  deleteExpenseRecord,
 };

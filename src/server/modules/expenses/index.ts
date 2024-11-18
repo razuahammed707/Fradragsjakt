@@ -213,4 +213,29 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
       }
     }),
+  deleteExpense: protectedProcedure
+    .input(
+      z.object({
+        expenseId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input: { expenseId } }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        const expense = await ExpenseHelpers.deleteExpenseRecord(
+          expenseId,
+          loggedUser.id
+        );
+
+        return {
+          status: 200,
+          message: 'Expense deleted successfully',
+          data: expense,
+        } as ApiResponse<typeof expense>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+      }
+    }),
 });
