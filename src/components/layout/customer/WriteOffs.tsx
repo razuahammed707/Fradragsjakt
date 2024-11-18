@@ -11,8 +11,6 @@ export default function CustomerWriteOffs() {
   const { data: expenses } =
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
 
-  console.log('expenses', expenses);
-
   return (
     <ProtectedLayout>
       <div className="grid grid-cols-12 gap-2">
