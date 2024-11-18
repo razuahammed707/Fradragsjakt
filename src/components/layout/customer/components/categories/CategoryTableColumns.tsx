@@ -52,7 +52,10 @@ export const CategoryTableColumns: ColumnDef<Category>[] = [
     cell: ({ row }) => (
       <div className="flex space-x-0 items-center">
         <Edit2 className="h-4 w-4 text-[#5B52F9] cursor-pointer" />
-        <SharedDeleteActionCell itemId={row.original._id as string} />
+        <SharedDeleteActionCell
+          itemId={row.original._id as string}
+          itemOrigin="category"
+        />
       </div>
     ),
   },

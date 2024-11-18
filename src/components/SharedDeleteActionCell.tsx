@@ -1,11 +1,21 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import SharedModal from './SharedModal';
 import DeleteConfirmationContent from './DeleteConfirmationContent';
 
-const SharedDeleteActionCell = ({ itemId }: { itemId: string }) => {
+const SharedDeleteActionCell = ({
+  textVisible,
+  itemId,
+  itemOrigin,
+}: {
+  itemId: string;
+  itemOrigin: string;
+  textVisible?: boolean;
+}) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  console.log('__isOpen', isModalOpen);
 
   const handleDelete = () => {
     setModalOpen(true);
@@ -13,11 +23,13 @@ const SharedDeleteActionCell = ({ itemId }: { itemId: string }) => {
 
   return (
     <div className="flex items-center space-x-2">
-      <Button variant="ghost" className="h-8 w-8 p-0">
-        <Trash2
-          className="h-4 w-4 text-[#5B52F9] cursor-pointer"
-          onClick={handleDelete}
-        />
+      <Button
+        onClick={handleDelete}
+        variant="ghost"
+        className={cn('h-8 w-full flex justify-start px-2')}
+      >
+        <Trash2 className="h-4 w-4 text-[#5B52F9] cursor-pointer" />
+        {textVisible && <span className="ms-2">Delete</span>}
         <div className="bg-white z-50">
           <SharedModal
             open={isModalOpen}
@@ -25,7 +37,8 @@ const SharedDeleteActionCell = ({ itemId }: { itemId: string }) => {
             customClassName="max-w-[500px]"
           >
             <DeleteConfirmationContent
-              ruleId={itemId}
+              itemId={itemId}
+              itemOrigin={itemOrigin}
               setModalOpen={setModalOpen}
             />
           </SharedModal>

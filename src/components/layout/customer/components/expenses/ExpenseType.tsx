@@ -3,7 +3,6 @@ import React from 'react';
 import { NumericFormat } from 'react-number-format';
 
 export type ExpenseProps = {
-  key: number;
   imageSrc: string | StaticImageData;
   amount: number;
   type: string;
@@ -15,10 +14,9 @@ const ExpenseType: React.FC<ExpenseProps> = ({
   amount,
   type,
   quantity,
-  key,
 }) => {
   return (
-    <div className="bg-white rounded-xl flex items-center  py-5" key={key}>
+    <div className="bg-white rounded-xl flex items-center  py-5">
       <Image src={imageSrc} alt={`${type} image`} width={40} height={40} />
       <div className=" ">
         <h3 className="text-sm font-semibold">

@@ -7,7 +7,7 @@ const categorySchema = z.object({
     .max(50, 'Category title must not exceed 50 characters'),
 });
 const deleteCategorySchema = z.object({
-  id: z.string().min(1, 'Category ID is required'),
+  _id: z.string().min(1, 'Category ID is required'),
 });
 const updateCategorySchema = z.object({
   id: z.string().min(1, 'Category ID is required'),

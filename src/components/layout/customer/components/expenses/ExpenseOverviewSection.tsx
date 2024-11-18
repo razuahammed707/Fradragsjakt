@@ -11,6 +11,7 @@ function ExpenseOverviewSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  //const utils = trpc.useUtils();
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -23,7 +24,18 @@ function ExpenseOverviewSection() {
         keepPreviousData: true,
       }
     );
-
+  // const deleteRowMutation = trpc.expenses.deleteExpense.useMutation({
+  //   onSuccess: () => {
+  //     utils.expenses.getExpenses.invalidate();
+  //     toast.success('Expense deleted successfully');
+  //   },
+  //   onError: (error) => {
+  //     toast.error(error?.message || 'Failed to delete expense');
+  //   },
+  // });
+  // const handleRowDelete = (expenseId: string) => {
+  //   deleteRowMutation.mutate({ expenseId });
+  // };
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -38,7 +50,7 @@ function ExpenseOverviewSection() {
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
-          columns={expenseDataTableColumns}
+          columns={expenseDataTableColumns()}
           data={expensesResponse?.data || []}
         />
         <SharedPagination

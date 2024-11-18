@@ -22,7 +22,7 @@ const DeleteActionCell = ({ ruleId }: { ruleId: string }) => {
     <div className="flex items-center space-x-2">
       <Button
         variant="ghost"
-        className="h-8 w-8 p-0"
+        className="h-8 w-full p-0"
         onClick={() => console.log('Delete transaction:', ruleId)}
       >
         <Trash2 className="h-4 w-4 text-[#5B52F9]" onClick={handleDelete} />
@@ -33,7 +33,8 @@ const DeleteActionCell = ({ ruleId }: { ruleId: string }) => {
             customClassName="max-w-[500px]"
           >
             <DeleteConfirmationContent
-              ruleId={ruleId}
+              itemOrigin="rule"
+              itemId={ruleId}
               setModalOpen={setModalOpen}
             />
           </SharedModal>
