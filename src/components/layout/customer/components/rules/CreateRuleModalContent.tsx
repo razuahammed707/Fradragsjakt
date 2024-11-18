@@ -13,16 +13,28 @@ type RuleFormData = {
   category: string;
 };
 
+type UpdateRuleProps = {
+  _id: string;
+  description_contains: string;
+  category: string;
+  category_title: string;
+  expense_type: string;
+};
+
 type CategoryType = { title: string; value: string };
 
 type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
   categories?: CategoryType[];
+  updateRulePayload: UpdateRuleProps;
+  origin: string | undefined;
 };
 
 function CreateRuleModalContent({
   modalClose,
   categories = [],
+  updateRulePayload,
+  origin,
 }: ExpenseRuleContentProps) {
   const { handleSubmit, control } = useForm<RuleFormData>({
     defaultValues: { expense_type: 'business' }, // Optional default value
@@ -42,8 +54,25 @@ function CreateRuleModalContent({
     },
   });
 
+  const ruleUpdateMutation = trpc.rules.updateRule.useMutation({
+    onSuccess: () => {
+      toast.success('Rule is updated successfully');
+      if (modalClose) {
+        modalClose(false);
+      }
+      utils.rules.getRules.invalidate(); // Invalidate and refetch getRules query
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const onSubmit = (data: RuleFormData) => {
-    ruleMutation.mutate(data);
+    if (origin) {
+      ruleUpdateMutation.mutate({ _id: updateRulePayload?._id, ...data });
+    } else {
+      ruleMutation.mutate(data);
+    }
   };
 
   const defaultCategories = [
@@ -70,6 +99,7 @@ function CreateRuleModalContent({
             placeholder="Description contain"
             control={control}
             customClassName="w-full mt-2"
+            defaultValue={updateRulePayload?.description_contains}
             required
           />
         </div>
@@ -82,6 +112,7 @@ function CreateRuleModalContent({
             customClassName="w-full mt-2"
             type="select"
             control={control}
+            defaultValue={updateRulePayload?.expense_type}
             placeholder="Select type"
             options={[
               { title: 'Business', value: 'business' },
@@ -98,6 +129,7 @@ function CreateRuleModalContent({
             type="select"
             control={control}
             placeholder="Select category"
+            defaultValue={updateRulePayload?.category_title}
             options={manipulatedCategories}
             required
           />
@@ -105,7 +137,7 @@ function CreateRuleModalContent({
 
         <div className="py-3">
           <Button type="submit" className="w-full text-white">
-            Create
+            {!origin ? 'Create' : 'Update'}
           </Button>
           <Button
             type="button" // Change to button to avoid form submission

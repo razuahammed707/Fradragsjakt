@@ -9,9 +9,19 @@ const ruleSchema = z.object({
     required_error: 'Category is required',
   }),
 });
+const updateRuleSchema = z.object({
+  _id: z.string().min(1, 'Rule ID is required'),
+  description_contains: z.string().optional(),
+  expense_type: z.enum(['personal', 'business']).optional(),
+  category: z.string().optional(),
+});
 
 const deleteRuleSchema = z.object({
   _id: z.string().min(1, 'Rule ID is required'),
 });
 
-export const ruleValidation = { ruleSchema, deleteRuleSchema };
+export const ruleValidation = {
+  ruleSchema,
+  updateRuleSchema,
+  deleteRuleSchema,
+};

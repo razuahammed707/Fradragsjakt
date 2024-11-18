@@ -2,13 +2,10 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { NumericFormat } from 'react-number-format';
-
 import { Button } from '@/components/ui/button';
-
 import { Checkbox } from '@/components/ui/checkbox';
 import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
-
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import formatDate from '@/utils/helpers/formatDate';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
@@ -149,7 +146,6 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => [
       return (
         <>
           <SharedDeleteActionCell
-            textVisible
             itemOrigin="expense"
             itemId={row.original._id as string}
           />
