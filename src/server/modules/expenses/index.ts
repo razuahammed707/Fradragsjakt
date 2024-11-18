@@ -8,7 +8,11 @@ import ExpenseModel from '@/server/db/models/expense';
 import { ApiError } from '@/lib/exceptions';
 import { expenseValidation } from './expenses.validation';
 import { ExpenseHelpers } from '@/server/helpers/expense';
-import { ExpenseType, IExpense } from '@/server/db/interfaces/expense';
+import {
+  ExpenseType,
+  IExpense,
+  IExpenseUpdate,
+} from '@/server/db/interfaces/expense';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
 
@@ -236,6 +240,27 @@ export const expenseRouter = router({
       } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+      }
+    }),
+  updateExpense: protectedProcedure
+    .input(expenseValidation.createExpenseSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        const expense = await ExpenseHelpers.updateExpenseRecord(
+          input as IExpenseUpdate,
+          loggedUser.id
+        );
+
+        return {
+          status: 200,
+          message: 'Expense updated successfully',
+          data: expense,
+        } as ApiResponse<typeof expense>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
 });

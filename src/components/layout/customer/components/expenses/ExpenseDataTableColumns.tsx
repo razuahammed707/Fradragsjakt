@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import formatDate from '@/utils/helpers/formatDate';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
+import ExpenseUpdateModal from './ExpenseUpdateModal';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -144,12 +145,13 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => [
     id: 'actions',
     cell: ({ row }) => {
       return (
-        <>
+        <div className="flex items-center space-x-1">
+          <ExpenseUpdateModal payload={row.original} />
           <SharedDeleteActionCell
             itemOrigin="expense"
             itemId={row.original._id as string}
           />
-        </>
+        </div>
       );
     },
   },

@@ -1,5 +1,9 @@
 import { ApiError } from '@/lib/exceptions';
-import { ExpenseType, IExpense } from '../db/interfaces/expense';
+import {
+  ExpenseType,
+  IExpense,
+  IExpenseUpdate,
+} from '../db/interfaces/expense';
 import CategoryModel from '../db/models/category';
 import ExpenseModel from '../db/models/expense';
 import RuleModel from '../db/models/rules';
@@ -239,8 +243,28 @@ const deleteExpenseRecord = async (expenseId: string, userId: string) => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
   }
 };
+const updateExpenseRecord = async (input: IExpenseUpdate, userId: string) => {
+  try {
+    const { id, ...updateData } = input;
+    const expense = await ExpenseModel.findOneAndUpdate(
+      { _id: id, user: userId },
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+    if (!expense) {
+      throw new Error(
+        'Expense not found or you do not have permission to update'
+      );
+    }
+    return expense;
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+  }
+};
 
 export const ExpenseHelpers = {
+  updateExpenseRecord,
   createExpenseRecord,
   createExpenseFromBulkInput,
   findMatchingRule,

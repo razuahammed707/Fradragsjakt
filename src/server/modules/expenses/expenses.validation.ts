@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const createExpenseSchema = z.object({
+  id: z.string({}).optional(),
   description: z.string({
     required_error: 'Description is required',
   }),
