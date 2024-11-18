@@ -23,6 +23,7 @@ interface SharedPaginationProps {
   onPageChange: (page: number) => void;
   pageLimit?: number;
   onPageLimitChange?: (page: number) => void;
+  justifyEnd?: boolean;
 }
 
 const SharedPagination: React.FC<SharedPaginationProps> = ({
@@ -30,6 +31,7 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
   totalPages: rawTotalPages = 1,
   onPageChange,
   pageLimit = 10,
+  justifyEnd,
   onPageLimitChange = () => {},
 }) => {
   const totalPages = rawTotalPages === 0 ? 1 : rawTotalPages;
@@ -86,7 +88,7 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
   };
 
   return (
-    <Pagination className="relative">
+    <Pagination className={cn('relative', justifyEnd && ' justify-end')}>
       <PaginationContent>
         <div className="absolute left-0">
           <div className="flex items-center space-x-2">

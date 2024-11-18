@@ -1,12 +1,12 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { SharedDataTable } from '@/components/SharedDataTable';
-import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableColumns';
 import { Button } from '@/components/ui/button';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
-import SelectInput from '@/components/SelectInput';
 import { Loader2 } from 'lucide-react';
+import { ApplyRuleModalContentTableColumnse } from './ApplyRuleModalContentTableColumns';
+import SharedPagination from '@/components/SharedPagination';
 
 type CategoryType = { title: string; value: string };
 
@@ -50,16 +50,17 @@ interface ExpenseRuleContentProps {
 }
 
 function ApplyRuleModalContent({
-  expenses: { expensesWithRules, rules },
+  expenses: { expensesWithRules },
   setModalOpen,
 }: ExpenseRuleContentProps) {
   const [loading, setLoading] = useState(false);
   const [selectedRule, setSelectedRule] = useState<string>(
     expensesWithRules[0]?.rule || ''
   );
-  const [selectedInput, setSelectedInput] = useState<string>(
-    expensesWithRules[0]?.rule || ''
-  );
+  const [tableData, setTableData] = useState<ExpenseType[]>([]);
+  const [deletedExpenseIds, setDeletedExpenseIds] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
 
   const selectedRuleData = expensesWithRules.find(
     (exp) => exp.rule === selectedRule
@@ -67,12 +68,24 @@ function ApplyRuleModalContent({
 
   const utils = trpc.useUtils();
 
-  const handleRuleChange = (value: string) => {
-    setSelectedInput(value);
-  };
+  const totalItems = tableData.length;
+  const totalPages = Math.ceil(totalItems / pageLimit);
+  const startIndex = (currentPage - 1) * pageLimit;
+  const endIndex = Math.min(startIndex + pageLimit, totalItems);
+  const paginatedData = tableData.slice(startIndex, endIndex);
+
   const handleRuleClick = (rule: string) => {
     setSelectedRule(rule);
-    setSelectedInput(rule);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageLimitChange = (limit: number) => {
+    setPageLimit(limit);
+    setCurrentPage(1);
   };
 
   const mutation = trpc.expenses.updateBulkExpense.useMutation({
@@ -89,37 +102,38 @@ function ApplyRuleModalContent({
     },
   });
 
+  const handleDelete = (expenseId: string) => {
+    setDeletedExpenseIds((prev) => [...prev, expenseId]);
+    setTableData((prev) => prev.filter((expense) => expense._id !== expenseId));
+  };
+
   const handleApplyRule = () => {
     setLoading(true);
-    const manipulatedPayload = () => {
-      const matchedRule = rules?.find(
-        (rule) => rule?.description_contains === selectedInput
-      );
+    if (selectedRuleData?.expensePayload) {
+      const expenses =
+        tableData
+          ?.filter((expense) => !deletedExpenseIds.includes(expense._id))
+          .map((expense) => ({
+            _id: expense._id,
+            expenseUpdatePayload: selectedRuleData.expensePayload,
+          })) || [];
 
-      if (matchedRule?._id === selectedRuleData?.expensePayload?.rule)
-        return (
-          selectedRuleData?.expensePayload || {
-            category: '',
-            expense_type: '',
-            rule: '',
-          }
-        );
-      else
-        return {
-          category: matchedRule?.category_title || '',
-          expense_type: matchedRule?.expense_type || '',
-          rule: matchedRule?._id || '',
-        };
-    };
+      if (expenses.length === 0) {
+        toast.error('No expenses available to update');
+        setLoading(false);
+        return;
+      }
 
-    const expenses =
-      selectedRuleData?.expenses?.map((expense) => ({
-        _id: expense._id,
-        expenseUpdatePayload: manipulatedPayload(),
-      })) || [];
-    if (!expenses) return;
-    mutation.mutate({ expenses });
+      mutation.mutate({ expenses });
+    }
   };
+
+  useEffect(() => {
+    if (selectedRuleData?.expenses) {
+      setTableData(selectedRuleData.expenses);
+      setCurrentPage(1);
+    }
+  }, [selectedRuleData]);
 
   return (
     <div className="space-y-8">
@@ -142,22 +156,22 @@ function ApplyRuleModalContent({
           </Badge>
         ))}
       </div>
-      <SelectInput
-        label="You can choose different rule"
-        options={rules?.map((rule) => {
-          return {
-            title: rule?.description_contains,
-            value: rule?.description_contains,
-          };
-        })}
-        onChange={handleRuleChange}
-        selectedOption={selectedInput}
-      />
+
       <SharedDataTable
         className="max-h-[250px]"
-        columns={ApplyRuleModalContentTableColumns}
-        data={selectedRuleData?.expenses || []}
+        columns={ApplyRuleModalContentTableColumnse(handleDelete)}
+        data={paginatedData}
       />
+
+      <SharedPagination
+        justifyEnd
+        currentPage={currentPage}
+        pageLimit={pageLimit}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onPageLimitChange={handlePageLimitChange}
+      />
+
       <Button
         disabled={loading}
         onClick={handleApplyRule}
