@@ -1,19 +1,13 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import ArrowUpDown from '../../../../../../public/sort.png';
 import { EnumValues } from 'zod';
+import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
+import { Edit2 } from 'lucide-react';
 
 export type Category = {
   _id: string;
@@ -55,30 +49,11 @@ export const CategoryTableColumns: ColumnDef<Category>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const category = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(category._id)}
-            >
-              Copy category ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit category</DropdownMenuItem>
-            <DropdownMenuItem>Delete category</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="flex space-x-0 items-center">
+        <Edit2 className="h-4 w-4 text-[#5B52F9] cursor-pointer" />
+        <SharedDeleteActionCell itemId={row.original._id as string} />
+      </div>
+    ),
   },
 ];

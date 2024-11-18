@@ -1,3 +1,4 @@
+import httpStatus from 'http-status';
 import { protectedProcedure } from '@/server/middlewares/with-auth';
 import { router } from '@/server/trpc';
 import { JwtPayload } from 'jsonwebtoken';
@@ -5,6 +6,8 @@ import { categoryValidation } from './categories.validation';
 import Category from '@/server/db/models/category';
 import { ApiResponse } from '@/server/db/types';
 import { z } from 'zod';
+import { errorHandler } from '@/server/middlewares/error-handler';
+import { ApiError } from '@/lib/exceptions';
 
 export const categoryRouter = router({
   getCategories: protectedProcedure
@@ -43,9 +46,8 @@ export const categoryRouter = router({
           },
         } as ApiResponse<typeof categories>;
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new Error(`Failed to fetch categories: ${errorMessage}`);
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
 
@@ -77,9 +79,8 @@ export const categoryRouter = router({
           data: id,
         } as ApiResponse<typeof category>;
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new Error(`Failed to delete category: ${errorMessage}`);
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
 
@@ -92,23 +93,6 @@ export const categoryRouter = router({
 
         if (!sessionUser?.email) {
           throw new Error('Authentication required');
-        }
-
-        const existingCategory = await Category.findById(id);
-        if (!existingCategory) {
-          throw new Error('Category not found');
-        }
-
-        if (existingCategory.creator_id.toString() !== sessionUser.id) {
-          throw new Error('Unauthorized to update this category');
-        }
-
-        const duplicateName = await Category.findOne({
-          title,
-          _id: { $ne: id },
-        });
-        if (duplicateName) {
-          throw new Error('Category with this name already exists');
         }
 
         const updatedCategory = await Category.findByIdAndUpdate(
@@ -125,9 +109,8 @@ export const categoryRouter = router({
           category: updatedCategory,
         };
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new Error(`Failed to update category: ${errorMessage}`);
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
 
@@ -167,9 +150,8 @@ export const categoryRouter = router({
           data: category,
         } as ApiResponse<typeof category>;
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new Error(`Failed to create category: ${errorMessage}`);
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
 });
