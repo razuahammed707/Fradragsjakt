@@ -55,14 +55,14 @@ export const categoryRouter = router({
     .input(categoryValidation.deleteCategorySchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const { id } = input;
+        const { _id } = input;
         const sessionUser = ctx.user as JwtPayload;
 
         if (!sessionUser?.email) {
           throw new Error('Authentication required');
         }
 
-        const category = await Category.findById(id);
+        const category = await Category.findById(_id);
         if (!category) {
           throw new Error('Category not found');
         }
@@ -71,12 +71,12 @@ export const categoryRouter = router({
           throw new Error('Unauthorized to delete this category');
         }
 
-        await Category.findByIdAndDelete(id);
+        await Category.findByIdAndDelete(_id);
 
         return {
           message: 'Category deleted successfully',
           status: 200,
-          data: id,
+          data: _id,
         } as ApiResponse<typeof category>;
       } catch (error: unknown) {
         const { message } = errorHandler(error);

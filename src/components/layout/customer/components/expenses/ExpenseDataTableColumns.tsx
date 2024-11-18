@@ -1,24 +1,17 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Edit2, MoreHorizontal, Trash2 } from 'lucide-react';
 import { NumericFormat } from 'react-number-format';
 
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+
 import { Checkbox } from '@/components/ui/checkbox';
 import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
 
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import formatDate from '@/utils/helpers/formatDate';
+import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -31,9 +24,7 @@ export type ExpenseColumnProps = {
   amount: number;
 };
 
-export const expenseDataTableColumns = (
-  onDelete: (id: string) => void
-): ColumnDef<ExpenseColumnProps>[] => [
+export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -156,26 +147,18 @@ export const expenseDataTableColumns = (
     id: 'actions',
     cell: ({ row }) => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => onDelete(row.original._id as string)}
-            >
-              <Trash2 /> Delete
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => console.log(row.original?._id)}>
-              <Edit2 /> Edit
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <SharedDeleteActionCell
+            textVisible
+            itemOrigin="expense"
+            itemId={row.original._id as string}
+          />
+          <SharedDeleteActionCell
+            textVisible
+            itemOrigin="expense"
+            itemId={row.original._id as string}
+          />
+        </>
       );
     },
   },

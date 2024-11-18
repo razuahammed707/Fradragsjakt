@@ -216,15 +216,15 @@ export const expenseRouter = router({
   deleteExpense: protectedProcedure
     .input(
       z.object({
-        expenseId: z.string(),
+        _id: z.string(),
       })
     )
-    .mutation(async ({ ctx, input: { expenseId } }) => {
+    .mutation(async ({ ctx, input: { _id } }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
 
         const expense = await ExpenseHelpers.deleteExpenseRecord(
-          expenseId,
+          _id,
           loggedUser.id
         );
 
