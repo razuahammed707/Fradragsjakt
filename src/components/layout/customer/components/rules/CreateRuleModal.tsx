@@ -19,8 +19,8 @@ export default function CreateRuleModal({
   updateRulePayload,
   origin,
 }: {
-  updateRulePayload: UpdateRuleProps;
-  origin: string;
+  updateRulePayload?: UpdateRuleProps;
+  origin?: string;
 }) {
   const { data: categories } = trpc.categories.getCategories.useQuery(
     {
