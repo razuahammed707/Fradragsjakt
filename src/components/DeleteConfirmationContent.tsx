@@ -70,7 +70,7 @@ function DeleteConfirmationContent({
         />
         <p className="text-xl">{`Do you really want to delete the ${itemOrigin}?.`}</p>
       </div>
-      <div className="mt-5">
+      <div className="mt-5 flex justify-center">
         <Button className="bg-red-500 text-white mr-3" onClick={handleDelete}>
           Confirm
         </Button>

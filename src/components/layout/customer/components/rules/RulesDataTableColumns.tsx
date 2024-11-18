@@ -1,48 +1,12 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import { IRule } from '@/server/db/interfaces/rules';
-import SharedModal from '@/components/SharedModal';
-import DeleteConfirmationContent from '@/components/DeleteConfirmationContent';
-import { useState } from 'react';
-
-const DeleteActionCell = ({ ruleId }: { ruleId: string }) => {
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
-
-  const handleDelete = () => {
-    setModalOpen(true);
-  };
-
-  return (
-    <div className="flex items-center space-x-2">
-      <Button
-        variant="ghost"
-        className="h-8 w-full p-0"
-        onClick={() => console.log('Delete transaction:', ruleId)}
-      >
-        <Trash2 className="h-4 w-4 text-[#5B52F9]" onClick={handleDelete} />
-        <div className="bg-white z-50">
-          <SharedModal
-            open={isModalOpen}
-            onOpenChange={setModalOpen}
-            customClassName="max-w-[500px]"
-          >
-            <DeleteConfirmationContent
-              itemOrigin="rule"
-              itemId={ruleId}
-              setModalOpen={setModalOpen}
-            />
-          </SharedModal>
-        </div>
-      </Button>
-    </div>
-  );
-};
+import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 
 export const RulesDataTableColumns: ColumnDef<IRule>[] = [
   {
@@ -103,6 +67,11 @@ export const RulesDataTableColumns: ColumnDef<IRule>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <DeleteActionCell ruleId={row.original._id as string} />,
+    cell: ({ row }) => (
+      <SharedDeleteActionCell
+        itemId={row.original._id as string}
+        itemOrigin="rule"
+      />
+    ),
   },
 ];

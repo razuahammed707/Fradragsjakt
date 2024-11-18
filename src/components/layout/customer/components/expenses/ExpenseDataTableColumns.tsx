@@ -153,11 +153,6 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => [
             itemOrigin="expense"
             itemId={row.original._id as string}
           />
-          <SharedDeleteActionCell
-            textVisible
-            itemOrigin="expense"
-            itemId={row.original._id as string}
-          />
         </>
       );
     },
