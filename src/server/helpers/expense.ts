@@ -215,6 +215,69 @@ const getCategoryAndExpenseTypeAnalytics = async (loggedUser: JwtPayload) => {
     throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 };
+
+const getWriteOffSummary = async (
+  skip: number,
+  limit: number,
+  searchQuery: Record<string, unknown>
+) => {
+  try {
+    // Single aggregate query using $facet
+    return await ExpenseModel.aggregate([
+      {
+        $match: searchQuery,
+      },
+      {
+        $group: {
+          _id: '$category',
+          totalAmount: { $sum: '$amount' },
+          totalItems: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          category: '$_id',
+          totalItemByCategory: '$totalItems',
+          amount: '$totalAmount',
+          _id: 0,
+        },
+      },
+      {
+        $skip: Number(skip),
+      },
+      {
+        $limit: Number(limit),
+      },
+    ]);
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+};
+
+const getTotalUniqueExpenseCategories = async (loggedUser: JwtPayload) => {
+  try {
+    // Single aggregate query using $facet
+    return await ExpenseModel.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(loggedUser?.id),
+        },
+      },
+      {
+        $group: {
+          _id: '$category',
+        },
+      },
+      {
+        $count: 'uniqueCategories',
+      },
+    ]);
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+};
 const deleteExpenseRecord = async (expenseId: string, userId: string) => {
   try {
     console.log({ expenseId, userId });
@@ -247,4 +310,6 @@ export const ExpenseHelpers = {
   getExpensesWithRules,
   getCategoryAndExpenseTypeAnalytics,
   deleteExpenseRecord,
+  getWriteOffSummary,
+  getTotalUniqueExpenseCategories,
 };

@@ -11,6 +11,7 @@ import { ExpenseHelpers } from '@/server/helpers/expense';
 import { ExpenseType, IExpense } from '@/server/db/interfaces/expense';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
+import mongoose from 'mongoose';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -81,6 +82,55 @@ export const expenseRouter = router({
       }
     }
   ),
+  getWriteOffs: protectedProcedure
+    .input(
+      z.object({
+        page: z.number().default(1),
+        limit: z.number().default(50),
+        searchTerm: z.string().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        const { page, limit, searchTerm } = input;
+        const skip = (page - 1) * limit;
+
+        // Base query to filter expenses by user
+        const query: Record<string, unknown> = {
+          user: new mongoose.Types.ObjectId(loggedUser?.id),
+        };
+
+        if (searchTerm) {
+          query.$or = [{ category: { $regex: searchTerm, $options: 'i' } }];
+        }
+        const total =
+          await ExpenseHelpers.getTotalUniqueExpenseCategories(loggedUser);
+
+        const totalUniqueCategories = total[0]?.uniqueCategories;
+        const expenses = await ExpenseHelpers.getWriteOffSummary(
+          skip,
+          limit,
+          query
+        );
+
+        return {
+          status: 200,
+          message: 'Write off summary fetched successfully',
+          data: expenses,
+          pagination: {
+            total: totalUniqueCategories,
+            page,
+            limit,
+            totalPages: Math.ceil(totalUniqueCategories / limit),
+          },
+        } as unknown as ApiResponse<typeof totalUniqueCategories>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
   getUnknownExpensesWithMatchedRules: protectedProcedure
     .input(
       z.object({
