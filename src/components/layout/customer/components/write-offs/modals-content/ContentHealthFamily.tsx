@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Accordion,
   AccordionContent,
@@ -15,8 +16,22 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { Questionnaire } from '@/types/questionnaire';
+import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 
-export function ContentHealthFamily() {
+type AccordionItemData = {
+  id: string;
+  title: string;
+  content: React.ReactNode;
+};
+
+type ContentHealthFamilyProps = {
+  questionnaire?: Questionnaire;
+};
+
+export function ContentHealthFamily({
+  questionnaire,
+}: ContentHealthFamilyProps) {
   const [openItems, setOpenItems] = useState<string[]>([]);
 
   const handleToggle = (value: string) => {
@@ -27,8 +42,7 @@ export function ContentHealthFamily() {
     );
   };
 
-  // Array of accordion items for cleaner code
-  const accordionData = [
+  const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title: 'Have children aged 11 years or younger',
@@ -39,7 +53,7 @@ export function ContentHealthFamily() {
           years of age. The deduction is up to NOK 25,000 for the first child
           and an additional NOK 15,000 per additional child under 12.
           <p className="text-black pt-[12px] pb-[6px]">
-            How many children do you have under the Age of 12
+            How many children do you have under the age of 12?
           </p>
           <Input type="text" placeholder="2" />
         </>
@@ -76,7 +90,7 @@ export function ContentHealthFamily() {
         <>
           Have additional travel distance or expenses related to dropping off
           the child in a child day care centre or after-school supervision
-          scheme
+          scheme.
         </>
       ),
     },
@@ -105,12 +119,17 @@ export function ContentHealthFamily() {
       ),
     },
   ];
+  const answers = questionnaire?.answers || [];
+  const matchedAccordionData = matchQuestionnaireModalQuestion({
+    questionnaire: answers,
+    accordionData,
+  });
 
   return (
     <div>
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <Accordion type="multiple" className="w-full">
-        {accordionData.map((item) => (
+        {matchedAccordionData.map((item) => (
           <AccordionItem key={item.id} value={item.id}>
             <AccordionTrigger
               onClick={() => handleToggle(item.id)}

@@ -7,9 +7,17 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
+import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 import { useState } from 'react';
 
-export function ContentForeignIncome() {
+type ContentForeignIncomeProps = {
+  questionnaire?: Questionnaire;
+};
+
+export function ContentForeignIncome({
+  questionnaire,
+}: ContentForeignIncomeProps) {
   const [openItems, setOpenItems] = useState<string[]>([]);
 
   const handleToggle = (value: string) => {
@@ -21,7 +29,7 @@ export function ContentForeignIncome() {
   };
 
   // Define an array with the items' title and content
-  const accordionData = [
+  const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title:
@@ -31,11 +39,17 @@ export function ContentForeignIncome() {
     },
   ];
 
+  const answers = questionnaire?.answers || [];
+  const matchedAccordionData = matchQuestionnaireModalQuestion({
+    questionnaire: answers,
+    accordionData,
+  });
+
   return (
     <div className=" ">
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <Accordion type="multiple" className="w-full">
-        {accordionData.map((item) => (
+        {matchedAccordionData.map((item) => (
           <AccordionItem key={item.id} value={item.id}>
             <AccordionTrigger
               onClick={() => handleToggle(item.id)}

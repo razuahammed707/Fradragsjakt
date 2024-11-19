@@ -1,4 +1,5 @@
 'use client';
+
 import { Pencil } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -8,68 +9,88 @@ import CrossIcon from '../../../../../../public/images/dashboard/cross.svg';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import SharedModal from '@/components/SharedModal';
+import { trpc } from '@/utils/trpc';
+import { questionMatcherEngine } from '@/utils/helpers/questionMatcherEngine';
+
+// Modal content components
 import { ContentHealthFamily } from './modals-content/ContentHealthFamily';
 import { ContentBank } from './modals-content/ContentBank';
 import { ContentWork } from './modals-content/ContentWork';
 import { ContentHobby } from './modals-content/ContentHobby';
 import { ContentDonation } from './modals-content/ContentDonation';
 import { ContentForeignIncome } from './modals-content/ContentForeignIncome';
-type ItemType = {
-  title: string;
-  amount: number;
-  type: 'approved' | 'rejected';
+import { Questionnaire } from '@/types/questionnaire';
+
+// Modal content mappings with props support
+const modalContentMap: Record<
+  string,
+  (props: { questionnaire: Questionnaire }) => React.ReactNode
+> = {
+  'Health and Family': ({ questionnaire }) => (
+    <ContentHealthFamily questionnaire={questionnaire} />
+  ),
+  'Bank and Loans': ({ questionnaire }) => (
+    <ContentBank questionnaire={questionnaire} />
+  ),
+  'Work and Education': ({ questionnaire }) => (
+    <ContentWork questionnaire={questionnaire} />
+  ),
+  'Hobby, Odd jobs, and Extra incomes': ({ questionnaire }) => (
+    <ContentHobby questionnaire={questionnaire} />
+  ),
+  'Gifts/Donations': () => <ContentDonation />,
+  'Foreign Income': ({ questionnaire }) => (
+    <ContentForeignIncome questionnaire={questionnaire} />
+  ),
 };
 
-const data: ItemType[] = [
-  { title: 'Health & Family', amount: 200, type: 'approved' },
-  { title: 'Banks & Loans', amount: 200, type: 'approved' },
-  { title: 'Work & Education', amount: 200, type: 'approved' },
-  { title: 'Housing & Property', amount: 0, type: 'rejected' },
+const data = [
+  { title: 'Health and Family', amount: 200, type: 'approved' },
+  { title: 'Bank and Loans', amount: 200, type: 'approved' },
+  { title: 'Work and Education', amount: 200, type: 'approved' },
+  { title: 'Housing and Property', amount: 0, type: 'rejected' },
   { title: 'Gifts/Donations', amount: 0, type: 'rejected' },
   {
-    title: 'Hobby, Odd jobs & Extra incomes',
+    title: 'Hobby, Odd jobs, and Extra incomes',
     amount: 200,
     type: 'approved',
   },
   { title: 'Foreign Income', amount: 0, type: 'rejected' },
 ];
+
 const QuestionnairesReviewSection = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState<{
-    title: string;
-  }>({
-    title: '',
-  });
+  const [selectedTitle, setSelectedTitle] = useState<string>('');
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
 
   const handleButtonClick = (title: string) => {
-    setModalContent({ title });
+    setSelectedTitle(title);
     setModalOpen(true);
   };
 
-  const renderContent = () => {
-    return modalContent.title === 'Health & Family' ? (
-      <ContentHealthFamily />
-    ) : modalContent.title === 'Banks & Loans' ? (
-      <ContentBank />
-    ) : modalContent.title === 'Work & Education' ? (
-      <ContentWork />
-    ) : modalContent.title === 'Hobby, Odd jobs & Extra incomes' ? (
-      <ContentHobby />
-    ) : modalContent.title === 'Gifts/Donations' ? (
-      <ContentDonation />
-    ) : modalContent.title === 'Foreign Income' ? (
-      <ContentForeignIncome />
+  const renderModalContent = () => {
+    const userQuestionnaires = user?.questionnaires || [];
+    const matchedQuestionnaire = questionMatcherEngine(
+      selectedTitle,
+      userQuestionnaires
+    ) as Questionnaire;
+    console.log('Matched Questionnaire:', matchedQuestionnaire);
+
+    const ModalContent = modalContentMap[selectedTitle];
+    return ModalContent ? (
+      ModalContent({ questionnaire: matchedQuestionnaire })
     ) : (
       <></>
     );
   };
+
   return (
-    <div className="col-span-3 flex border  flex-col justify-between bg-white sticky top-0 rounded-2xl h-[calc(100vh-116px)] p-6">
+    <div className="col-span-3 flex border flex-col justify-between bg-white sticky top-0 rounded-2xl h-[calc(100vh-116px)] p-6">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <Image
             src={QuestionedAvatar}
-            alt="questined avatar image"
+            alt="Questioned Avatar"
             height={52}
             width={54}
           />
@@ -77,34 +98,32 @@ const QuestionnairesReviewSection = () => {
         </div>
         <div>
           <h4 className="text-sm text-[#101010] font-semibold">
-            Review questionnaire{' '}
+            Review questionnaire
           </h4>
           <p className="text-xs text-[#71717A] font-medium">
             (write-off eligibility based on answers)
           </p>
         </div>
       </div>
-      <div className="text-sm text-[#101010]">
-        <div className="space-y-4">
-          {data?.map((question, i) => (
-            <div
-              key={i}
-              onClick={() => handleButtonClick(question?.title)}
-              className="flex justify-between items-center p-2 bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100"
-            >
-              <div className="flex space-x-2">
-                <Image
-                  src={question?.amount === 0 ? CrossIcon : MarkIcon}
-                  alt="titleImg1"
-                  height={18}
-                  width={18}
-                />
-                <p>{question?.title}</p>
-              </div>
-              {question?.amount !== 0 && <p> NOK {question?.amount} </p>}
+      <div className="text-sm text-[#101010] space-y-4">
+        {data.map((question, i) => (
+          <div
+            key={i}
+            onClick={() => handleButtonClick(question.title)}
+            className="flex justify-between items-center p-2 bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100"
+          >
+            <div className="flex space-x-2">
+              <Image
+                src={question.amount === 0 ? CrossIcon : MarkIcon}
+                alt="titleImg1"
+                height={18}
+                width={18}
+              />
+              <p>{question.title}</p>
             </div>
-          ))}
-        </div>
+            {question.amount !== 0 && <p>NOK {question.amount}</p>}
+          </div>
+        ))}
         <Separator className="bg-[#E4E4E7] my-6" />
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -112,7 +131,7 @@ const QuestionnairesReviewSection = () => {
             <p className="font-medium">NOK 800</p>
           </div>
           <div className="flex justify-between items-center">
-            <p>Petntial Savings</p>
+            <p>Potential Savings</p>
             <p className="font-medium">NOK 2,086</p>
           </div>
         </div>
@@ -127,7 +146,7 @@ const QuestionnairesReviewSection = () => {
         onOpenChange={setModalOpen}
         customClassName="max-w-[500px]"
       >
-        <div className="bg-white">{renderContent()}</div>
+        <div className="bg-white">{renderModalContent()}</div>
       </SharedModal>
       <Button className="text-white text-sm font-medium">Edit response</Button>
     </div>

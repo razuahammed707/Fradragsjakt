@@ -1,16 +1,22 @@
 'use client';
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
+import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 import { useState } from 'react';
 
-export function ContentWork() {
+type ContentWorkProps = {
+  questionnaire?: Questionnaire;
+};
+
+export function ContentWork({ questionnaire }: ContentWorkProps) {
   const [openItems, setOpenItems] = useState<string[]>([]);
 
   const handleToggle = (value: string) => {
@@ -21,8 +27,7 @@ export function ContentWork() {
     );
   };
 
-  // Array of accordion items for cleaner code
-  const accordionData = [
+  const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title:
@@ -35,7 +40,7 @@ export function ContentWork() {
           will be eligible for this deduction. The number of journeys and the
           travel distance are used to compute the deduction. The days that you
           worked from home are not deductible.
-          <p className="text-black pt-[12px] pb-[6px]">
+          <p className="text-black pt-3 pb-1">
             The return distance between home and work
           </p>
           <Input type="text" placeholder="50KM" />
@@ -52,11 +57,11 @@ export function ContentWork() {
           opposed to taking public transportation in order to qualify for a
           deduction for road toll and/or ferry costs. Queues and delays cannot
           be taken into account. You need to make a comparison with the typical
-          travel time.You can receive a discount for using the least expensive
+          travel time. You can receive a discount for using the least expensive
           payment option if you save at least two hours. This implies that you
           need to account for subscription discounts and the like. For you to be
           eligible for a deduction, your expenses must total at least NOK 3,300.
-          <p className="text-black pt-[12px] pb-[6px]">
+          <p className="text-black pt-3 pb-1">
             Amount you pay on toll or ferry
           </p>
           <Input type="text" placeholder="NOK 6000" />
@@ -76,25 +81,29 @@ export function ContentWork() {
     },
   ];
 
+  const answers = questionnaire?.answers || [];
+  const matchedAccordionData = matchQuestionnaireModalQuestion({
+    questionnaire: answers,
+    accordionData,
+  });
+
   return (
     <div>
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <Accordion type="multiple" className="w-full">
-        {accordionData.map((item) => (
+        {matchedAccordionData.map((item) => (
           <AccordionItem key={item.id} value={item.id}>
             <AccordionTrigger
               onClick={() => handleToggle(item.id)}
               className={`${
                 openItems.includes(item.id) ? 'text-violet-600' : ''
-              } no-underline font-bold text-start`}
+              } font-bold text-start`}
             >
               {item.title}
             </AccordionTrigger>
-            {openItems.includes(item.id) && (
-              <AccordionContent className="text-gray-500 text-xs">
-                {item.content}
-              </AccordionContent>
-            )}
+            <AccordionContent className="text-gray-500 text-xs">
+              {item.content}
+            </AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
