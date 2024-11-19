@@ -22,7 +22,7 @@ export interface FormInputProps {
   control?: Control<any>;
   required?: boolean;
   customClassName?: string;
-  defaultValue?: string;
+  defaultValue?: string | number;
 }
 
 export function FormInput({

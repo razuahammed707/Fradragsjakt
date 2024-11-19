@@ -25,3 +25,18 @@ export interface IExpense extends Document {
     mimeType: string;
   };
 }
+export interface IExpenseUpdate extends Document {
+  id: string;
+  description: string;
+  category: string;
+  expense_type: ExpenseType;
+  amount: number;
+  transaction_date?: Date;
+  deduction_status: DeductionStatus;
+  user: Types.ObjectId;
+  rule: Types.ObjectId;
+  receipt?: {
+    link: string;
+    mimeType: string;
+  };
+}

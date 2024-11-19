@@ -17,6 +17,7 @@ import { useDropzone } from 'react-dropzone';
 import SharedTooltip from '@/components/SharedTooltip';
 import Link from 'next/link';
 import Image from 'next/image';
+import { PayloadType } from './ExpenseUpdateModal';
 
 type UploadedImageType = {
   link: string;
@@ -38,9 +39,10 @@ export type FormData = {
 };
 
 const defaultCategories = [
-  { title: 'Transport', value: 'Transport' },
-  { title: 'Meals', value: 'Meals' },
-  { title: 'Gas', value: 'Gas' },
+  { title: 'Transport', value: 'transport' },
+  { title: 'Meals', value: 'meals' },
+  { title: 'Gas', value: 'gas' },
+  { title: 'Unknown', value: 'unknown' },
 ];
 
 type CategoryType = { title: string; value: string };
@@ -48,11 +50,15 @@ type CategoryType = { title: string; value: string };
 interface ExpenseAddContentProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
   categories?: CategoryType[];
+  payload?: PayloadType;
+  origin?: string;
 }
 
 function ExpenseAddContent({
   categories = [],
   setModalOpen,
+  origin,
+  payload,
 }: ExpenseAddContentProps) {
   const { handleSubmit, control, reset } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
@@ -65,11 +71,14 @@ function ExpenseAddContent({
 
   const manipulatedCategories = Array.from(
     new Map(
-      [...categories, ...defaultCategories].map((cat) => [cat.value, cat])
+      [...categories, ...defaultCategories].map((cat) => [
+        cat.value.toLowerCase(),
+        cat,
+      ])
     ).values()
   );
 
-  const mutation = trpc.expenses.createExpense.useMutation({
+  const createMutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
       toast.success('Expense created successfully!', { duration: 4000 });
@@ -79,6 +88,19 @@ function ExpenseAddContent({
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to create expense');
+      setLoading(false);
+    },
+  });
+  const updateMutation = trpc.expenses.updateExpense.useMutation({
+    onSuccess: () => {
+      utils.expenses.getExpenses.invalidate();
+      toast.success('Expense updated successfully!', { duration: 4000 });
+      reset();
+      setModalOpen(false);
+      setLoading(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update expense');
       setLoading(false);
     },
   });
@@ -134,14 +156,25 @@ function ExpenseAddContent({
 
   const onSubmit = (data: FormData) => {
     setLoading(true);
-    mutation.mutate({
-      ...data,
-      amount: Number(data.amount),
-      receipt: {
-        link: uploadedImage?.link || '',
-        mimeType: uploadedImage?.mimeType || '',
-      },
-    });
+    if (origin) {
+      updateMutation.mutate({
+        id: payload?._id,
+        ...data,
+        amount: Number(data.amount),
+        receipt: {
+          link: uploadedImage?.link || '',
+          mimeType: uploadedImage?.mimeType || '',
+        },
+      });
+    } else
+      createMutation.mutate({
+        ...data,
+        amount: Number(data.amount),
+        receipt: {
+          link: uploadedImage?.link || '',
+          mimeType: uploadedImage?.mimeType || '',
+        },
+      });
   };
 
   console.log('uploaded file', uploadedImage);
@@ -159,6 +192,9 @@ function ExpenseAddContent({
             <FormInput
               type={field === 'amount' ? 'number' : 'text'}
               name={field}
+              defaultValue={
+                field === 'amount' ? payload?.amount : payload?.description
+              }
               placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
               control={control}
               customClassName="w-full mt-2"
@@ -170,6 +206,7 @@ function ExpenseAddContent({
           {
             name: 'expense_type',
             label: 'Expense type',
+            defaultValue: payload?.expense_type,
             options: [
               { title: 'Business', value: 'business' },
               { title: 'Personal', value: 'personal' },
@@ -179,13 +216,15 @@ function ExpenseAddContent({
           {
             name: 'category',
             label: 'Category',
+            defaultValue: payload?.category?.toLowerCase(),
             options: manipulatedCategories,
           },
-        ].map(({ name, label, options }) => (
+        ].map(({ name, label, options, defaultValue }) => (
           <div key={name}>
             <Label htmlFor={name}>{label}</Label>
             <FormInput
               name={name}
+              defaultValue={defaultValue}
               customClassName="w-full mt-2"
               type="select"
               control={control}
@@ -232,7 +271,7 @@ function ExpenseAddContent({
             className="w-full text-white"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Add Expense
+            {origin === 'expense update' ? 'Update' : 'Add'} Expense
           </Button>
         </div>
       </form>
