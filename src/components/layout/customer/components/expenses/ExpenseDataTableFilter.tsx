@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import FilterIcon from '../../../../../../public/images/expenses/filter.png';
 import {
@@ -99,63 +98,58 @@ export default function ExpenseDataTableFilter({
           Filter By
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-60">
-        <ScrollArea className="max-h-[230px] min-h-[150px] pr-4">
-          <div className="space-y-4">
-            <div>
-              <h4 className="mb-4 text-sm font-medium leading-none">
-                Category
-              </h4>
-              <div className="grid gap-2">
-                {categoryOptions.map((category) => (
-                  <div
-                    key={category.id}
-                    className="flex items-center space-x-2"
+      <PopoverContent className="w-60 border-none shadow-lg">
+        <div className="space-y-4 max-h-[230px] min-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+          <div>
+            <h4 className="mb-4 text-sm font-medium leading-none text-gray-500">
+              Category
+            </h4>
+            <div className="grid gap-2">
+              {categoryOptions.map((category) => (
+                <div key={category.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    className="data-[state=checked]:text-white"
+                    id={category.id}
+                    checked={selectedCategories.includes(category.id)}
+                    onCheckedChange={() => toggleCategory(category.id)}
+                  />
+                  <Label
+                    htmlFor={category.id}
+                    className="text-sm font-normal  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    <Checkbox
-                      className="data-[state=checked]:text-white"
-                      id={category.id}
-                      checked={selectedCategories.includes(category.id)}
-                      onCheckedChange={() => toggleCategory(category.id)}
-                    />
-                    <Label
-                      htmlFor={category.id}
-                      className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      {category.label}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Separator className="my-4" />
-
-            <div>
-              <h4 className="mb-4 text-sm font-medium leading-none">
-                Expense Type
-              </h4>
-              <div className="grid gap-2">
-                {expenseTypes.map((type) => (
-                  <div key={type.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      className="data-[state=checked]:text-white"
-                      id={type.id}
-                      checked={selectedTypes.includes(type.id)}
-                      onCheckedChange={() => toggleType(type.id)}
-                    />
-                    <Label
-                      htmlFor={type.id}
-                      className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      {type.label}
-                    </Label>
-                  </div>
-                ))}
-              </div>
+                    {category.label}
+                  </Label>
+                </div>
+              ))}
             </div>
           </div>
-        </ScrollArea>
+
+          <Separator className="my-4" />
+
+          <div>
+            <h4 className="mb-4  text-gray-500 text-sm font-medium leading-none">
+              Expense Type
+            </h4>
+            <div className="grid gap-2">
+              {expenseTypes.map((type) => (
+                <div key={type.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    className="data-[state=checked]:text-white"
+                    id={type.id}
+                    checked={selectedTypes.includes(type.id)}
+                    onCheckedChange={() => toggleType(type.id)}
+                  />
+                  <Label
+                    htmlFor={type.id}
+                    className="text-sm  font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {type.label}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </PopoverContent>
     </Popover>
   );
