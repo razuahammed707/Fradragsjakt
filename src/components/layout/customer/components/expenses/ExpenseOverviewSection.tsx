@@ -11,7 +11,9 @@ function ExpenseOverviewSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  //const utils = trpc.useUtils();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [filterString, setFilterString] = useState<string>('');
+  console.log({ filterString });
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -34,7 +36,10 @@ function ExpenseOverviewSection() {
 
   return (
     <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
-      <ExpenseOverviewHeading setSearchTerm={setSearchTerm} />
+      <ExpenseOverviewHeading
+        setSearchTerm={setSearchTerm}
+        setFilterString={setFilterString}
+      />
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
