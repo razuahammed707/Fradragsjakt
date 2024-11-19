@@ -10,7 +10,9 @@ import { manipulatedCategories } from '@/utils/helpers/categoryManipulation';
 
 export default function CategoryCard() {
   const { data: expenses } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
+      expense_type: '',
+    });
 
   const manipulateCategories = expenses?.data?.categoryWiseExpenses
     ? manipulatedCategories(expenses?.data)

@@ -9,7 +9,9 @@ import { trpc } from '@/utils/trpc';
 
 export default function CustomerWriteOffs() {
   const { data: expenses } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
+      expense_type: 'business',
+    });
 
   return (
     <ProtectedLayout>

@@ -39,8 +39,6 @@ export const rulesRouter = router({
         const total = await RuleModel.countDocuments(query);
         const rules = await RuleModel.find(query).skip(skip).limit(limit);
 
-        console.log('searched rules', rules);
-
         return {
           status: 200,
           message: 'Rules fetched successfully',

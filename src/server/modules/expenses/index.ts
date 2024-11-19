@@ -66,13 +66,29 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  getCategoryAndExpenseTypeWiseExpenses: protectedProcedure.query(
-    async ({ ctx }) => {
+  getCategoryAndExpenseTypeWiseExpenses: protectedProcedure
+    .input(
+      z.object({
+        expense_type: z.string().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
       try {
+        const { expense_type } = input;
         const loggedUser = ctx.user as JwtPayload;
 
+        const query: Record<string, unknown> = {
+          user: new mongoose.Types.ObjectId(loggedUser?.id),
+        };
+
+        if (expense_type) {
+          query.expense_type = ExpenseType.business;
+        }
+
         const expenses =
-          await ExpenseHelpers.getCategoryAndExpenseTypeAnalytics(loggedUser);
+          await ExpenseHelpers.getCategoryAndExpenseTypeAnalytics(query);
+
+        console.log('expenses', expenses);
 
         return {
           status: 200,
@@ -84,8 +100,7 @@ export const expenseRouter = router({
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
-    }
-  ),
+    }),
   getWriteOffs: protectedProcedure
     .input(
       z.object({
@@ -104,6 +119,7 @@ export const expenseRouter = router({
         // Base query to filter expenses by user
         const query: Record<string, unknown> = {
           user: new mongoose.Types.ObjectId(loggedUser?.id),
+          expense_type: ExpenseType.business,
         };
 
         if (searchTerm) {
