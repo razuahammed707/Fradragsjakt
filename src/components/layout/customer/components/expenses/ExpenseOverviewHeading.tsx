@@ -3,7 +3,6 @@ import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
 import { IoMdAdd } from 'react-icons/io';
 import Image from 'next/image';
-import FilterIcon from '../../../../../../public/images/expenses/filter.png';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
 import ExpenseAddContent from './ExpenseAddContent';
@@ -14,19 +13,21 @@ import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { debounce } from '@/lib/utils';
+import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
+  setFilterString: (value: string) => void;
 };
 
 const buttons = [
-  { text: 'Filter By', icon: FilterIcon },
   { text: 'Apply Rule', icon: RuleIcon },
   { text: 'Show Write-offs', icon: WriteOffIcon },
 ];
 
 function ExpenseOverviewHeading({
   setSearchTerm,
+  setFilterString,
 }: ExpenseOverviewSectionProps) {
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
@@ -108,6 +109,7 @@ function ExpenseOverviewHeading({
             />
           </div>
           <div className="mt-5 flex space-x-2">
+            <ExpenseDataTableFilter setFilterString={setFilterString} />
             {buttons.map((button, index) => (
               <Button
                 disabled={
