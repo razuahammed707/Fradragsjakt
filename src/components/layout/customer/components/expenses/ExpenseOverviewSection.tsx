@@ -13,7 +13,6 @@ function ExpenseOverviewSection() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filterString, setFilterString] = useState<string>('');
-  console.log({ filterString });
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -21,6 +20,7 @@ function ExpenseOverviewSection() {
         page: currentPage,
         limit: pageLimit,
         searchTerm,
+        filterString,
       },
       {
         keepPreviousData: true,

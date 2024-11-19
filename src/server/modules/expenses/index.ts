@@ -16,6 +16,7 @@ import {
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
 import mongoose from 'mongoose';
+import { parseFilterString } from '@/utils/helpers/parseFilterString';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -24,16 +25,21 @@ export const expenseRouter = router({
         page: z.number().default(1),
         limit: z.number().default(50),
         searchTerm: z.string().optional(),
+        filterString: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        const { page, limit, searchTerm } = input;
+        const { page, limit, searchTerm, filterString } = input;
         const skip = (page - 1) * limit;
 
         // Base query to filter expenses by user
         const query: Record<string, unknown> = { user: loggedUser?.id };
+
+        // Parse and add filters from filterString
+        const filters = parseFilterString(filterString);
+        Object.assign(query, filters);
 
         // If a search term is provided, add a condition to match fields
         if (searchTerm) {
@@ -43,6 +49,8 @@ export const expenseRouter = router({
             { expense_type: { $regex: searchTerm, $options: 'i' } },
           ];
         }
+
+        console.log('expense query', query);
 
         const total = await ExpenseModel.countDocuments(query);
         const expenses = await ExpenseModel.find(query)
