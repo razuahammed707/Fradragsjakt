@@ -39,7 +39,9 @@ const ExpenseTopSection = () => {
   });
 
   const { data: expenses } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery();
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
+      expense_type: '',
+    });
   const { data: user } = useSession();
 
   useEffect(() => {

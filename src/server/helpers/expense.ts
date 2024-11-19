@@ -164,14 +164,14 @@ const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
   }
 };
 
-const getCategoryAndExpenseTypeAnalytics = async (loggedUser: JwtPayload) => {
+const getCategoryAndExpenseTypeAnalytics = async (
+  query: Record<string, unknown>
+) => {
   try {
     // Single aggregate query using $facet
     return await ExpenseModel.aggregate([
       {
-        $match: {
-          user: new mongoose.Types.ObjectId(loggedUser?.id),
-        },
+        $match: query,
       },
       {
         $facet: {
@@ -266,6 +266,7 @@ const getTotalUniqueExpenseCategories = async (loggedUser: JwtPayload) => {
       {
         $match: {
           user: new mongoose.Types.ObjectId(loggedUser?.id),
+          expense_type: ExpenseType.business,
         },
       },
       {
