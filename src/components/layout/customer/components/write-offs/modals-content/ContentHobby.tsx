@@ -8,9 +8,15 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
+import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 import { useState } from 'react';
 
-export function ContentHobby() {
+type ContentHobbyProps = {
+  questionnaire?: Questionnaire;
+};
+
+export function ContentHobby({ questionnaire }: ContentHobbyProps) {
   const [openItems, setOpenItems] = useState<string[]>([]);
 
   const handleToggle = (value: string) => {
@@ -21,7 +27,7 @@ export function ContentHobby() {
     );
   };
 
-  const accordionData = [
+  const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title: 'I have a sole proprietorship',
@@ -82,11 +88,17 @@ export function ContentHobby() {
     },
   ];
 
+  const answers = questionnaire?.answers || [];
+  const matchedAccordionData = matchQuestionnaireModalQuestion({
+    questionnaire: answers,
+    accordionData,
+  });
+
   return (
     <div className="">
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <Accordion type="multiple" className="w-full">
-        {accordionData.map(({ id, title, content }) => (
+        {matchedAccordionData.map(({ id, title, content }) => (
           <AccordionItem key={id} value={id}>
             <AccordionTrigger
               onClick={() => handleToggle(id)}

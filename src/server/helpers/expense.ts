@@ -285,8 +285,6 @@ const getTotalUniqueExpenseCategories = async (loggedUser: JwtPayload) => {
 };
 const deleteExpenseRecord = async (expenseId: string, userId: string) => {
   try {
-    console.log({ expenseId, userId });
-
     const expense = await ExpenseModel.findOne({
       _id: expenseId,
       user: userId,
