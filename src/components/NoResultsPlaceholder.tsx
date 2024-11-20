@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import looking from '../../public/Looking.svg';
 
 interface NoResultsPlaceholderProps {
   message?: string;
@@ -22,7 +23,7 @@ export function NoResultsPlaceholder({
     >
       <div className="relative w-full max-w-[250px] h-auto aspect-[250/160]">
         <Image
-          src="/Looking.svg"
+          src={looking}
           alt="Looking illustration"
           fill
           className="rounded object-contain"
