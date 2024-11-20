@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { ApexOptions } from 'apexcharts';
 import { Handshake, SquareUserRound } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const YearlyExpenseGraph = () => {
   const [showPersonal, setShowPersonal] = useState(true);
+  const dict = useTranslation();
 
   const getOptions = (isPersonal: boolean): ApexOptions => ({
     chart: { toolbar: { show: false }, animations: { enabled: true } },
@@ -95,8 +97,12 @@ const YearlyExpenseGraph = () => {
     <Card className="col-span-7 border border-[#EEF0F4] flex flex-col justify-between shadow-none pt-4 px-4 rounded-2xl">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-lg text-[#101010] font-semibold">Yearly Graph</h2>
-          <p className="text-xs text-[#71717A]">Please check your docs</p>
+          <h2 className="text-lg text-[#101010] font-semibold">
+            {dict.page.dashboard.title}
+          </h2>
+          <p className="text-xs text-[#71717A]">
+            {dict.page.dashboard.subTitle}
+          </p>
         </div>
         <div className="flex">
           <button

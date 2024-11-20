@@ -5,6 +5,8 @@ import GasImg from '../../public/images/expenses/gas.png';
 import MealsImg from '../../public/images/expenses/meals.png';
 import SuppliesImg from '../../public/images/expenses/supplies.png';
 import InsuranceImg from '../../public/images/expenses/insurance.png';
+import PaymentImg from '../../public/payment.png';
+import MoreImg from '../../public/More.png';
 
 import {
   LayoutDashboard,
@@ -284,12 +286,12 @@ export const transactions = [
 
 export const categories = [
   // { label: 'Supplies', amount: 0, image: '/Supplies.svg' },
-  { label: 'Clothing', amount: 0, image: '/Clothing.png' },
-  { label: 'Travel', amount: 0, image: '/Travel.png' },
-  { label: 'Transport', amount: 0, image: '/Transport.png' },
-  { label: 'Gas', amount: 0, image: '/Gas.png' },
-  { label: 'Meals', amount: 0, image: '/Meals.png' },
-  { label: 'Insurance', amount: 0, image: '/Insurance.png' },
-  { label: 'Payment', amount: 0, image: '/Payment.png' },
-  { label: 'More', amount: 'NOK 500', image: '/More.png' },
+  { label: 'Clothing', amount: 0, image: ClothingImg },
+  { label: 'Travel', amount: 0, image: TravelImg },
+  { label: 'Transport', amount: 0, image: TransportImg },
+  { label: 'Gas', amount: 0, image: GasImg },
+  { label: 'Meals', amount: 0, image: MealsImg },
+  { label: 'Insurance', amount: 0, image: InsuranceImg },
+  { label: 'Payment', amount: 0, image: PaymentImg },
+  { label: 'More', amount: 'NOK 500', image: MoreImg },
 ];
