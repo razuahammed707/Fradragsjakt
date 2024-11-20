@@ -5,6 +5,7 @@ import './globals.css';
 import { getServerSession } from 'next-auth';
 import { ClientProviders } from './components/ClientProviders';
 import { Toaster } from 'react-hot-toast';
+import Providers from '@/lib/StoreProviders';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,9 +24,10 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <ClientProviders session={session}>{children}</ClientProviders>
-        {/* <Toaster /> */}
-        <Toaster position="top-center" />
+        <Providers>
+          <ClientProviders session={session}>{children}</ClientProviders>
+          <Toaster position="top-center" />
+        </Providers>
       </body>
     </html>
   );
