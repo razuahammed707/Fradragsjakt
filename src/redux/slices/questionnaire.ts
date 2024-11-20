@@ -38,7 +38,20 @@ const questionnaireSlice = createSlice({
       state,
       action: PayloadAction<{ question: string; answers: Answer[] }>
     ) {
-      state.questionnaires.push(action.payload);
+      const existingIndex = state.questionnaires.findIndex(
+        (item) => item.question === action.payload.question
+      );
+
+      if (existingIndex !== -1) {
+        // Replace existing question's answers
+        state.questionnaires[existingIndex] = {
+          ...state.questionnaires[existingIndex],
+          answers: action.payload.answers,
+        };
+      } else {
+        // Add new question
+        state.questionnaires.push(action.payload);
+      }
     },
   },
 });

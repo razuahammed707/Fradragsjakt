@@ -32,7 +32,11 @@ export function ContentHealthFamily({
   questionnaire,
 }: ContentHealthFamilyProps) {
   const [openItem, setOpenItem] = useState<string | null>(null);
-  const { handleSubmit, control } = useForm();
+  const {
+    handleSubmit,
+    control,
+    formState: { isDirty, isValid },
+  } = useForm();
 
   const appDispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
@@ -58,7 +62,7 @@ export function ContentHealthFamily({
           <FormInput
             name="Have children aged 11 years or younger.How many children do you have under the age of 12"
             customClassName="w-full"
-            type="text"
+            type="number"
             control={control}
             placeholder="children under 12"
             required
@@ -167,7 +171,11 @@ export function ContentHealthFamily({
             </AccordionItem>
           ))}
         </Accordion>
-        <Button type="submit" className="text-white w-full mt-4">
+        <Button
+          disabled={!isDirty || !isValid}
+          type="submit"
+          className="text-white w-full mt-4"
+        >
           Done
         </Button>
       </form>
