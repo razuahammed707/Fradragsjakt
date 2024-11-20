@@ -21,7 +21,7 @@ export function NoResultsPlaceholder({
         className
       )}
     >
-      <div className="relative w-full max-w-[250px] h-auto aspect-[250/160]">
+      <div className="relative w-full max-w-[200px] h-auto aspect-[200/120]">
         <Image
           src={looking}
           alt="Looking illustration"
