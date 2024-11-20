@@ -122,7 +122,7 @@ export function SharedDataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24">
-                  <NoResultsPlaceholder message="We couldn’t find anything. Try adding expenses or uploading statements." />
+                  <NoResultsPlaceholder message="We couldn’t find anything." />
                 </TableCell>
               </TableRow>
             )}
