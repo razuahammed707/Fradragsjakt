@@ -1,5 +1,6 @@
 'use client';
 
+import { FormInput } from '@/components/FormInput';
 import {
   Accordion,
   AccordionContent,
@@ -7,24 +8,35 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import {
+  addQuestionnaire,
+  questionnaireSelector,
+} from '@/redux/slices/questionnaire';
 import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
 import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
+import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 type ContentWorkProps = {
   questionnaire?: Questionnaire;
 };
 
 export function ContentWork({ questionnaire }: ContentWorkProps) {
-  const [openItems, setOpenItems] = useState<string[]>([]);
+  const [openItem, setOpenItem] = useState<string | null>(null);
+  const {
+    handleSubmit,
+    control,
+    formState: { isDirty, isValid },
+  } = useForm();
+
+  const appDispatch = useAppDispatch();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  console.log(questionnaires);
 
   const handleToggle = (value: string) => {
-    setOpenItems((prevItems) =>
-      prevItems.includes(value)
-        ? prevItems.filter((item) => item !== value)
-        : [...prevItems, value]
-    );
+    setOpenItem((prevItem) => (prevItem === value ? null : value));
   };
 
   const accordionData: AccordionItemData[] = [
@@ -43,7 +55,14 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           <p className="text-black pt-3 pb-1">
             The return distance between home and work
           </p>
-          <Input type="text" placeholder="50KM" />
+          <FormInput
+            name="The return distance between home and work is more than 37 kilometres.The return distance between home and work"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="distance between home and work"
+            required
+          />
         </>
       ),
     },
@@ -64,7 +83,14 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           <p className="text-black pt-3 pb-1">
             Amount you pay on toll or ferry
           </p>
-          <Input type="text" placeholder="NOK 6000" />
+          <FormInput
+            name="Have expenses for road toll or ferry when travelling between your home and workplace.Amount you pay on toll or ferry"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="toll or ferry payment"
+            required
+          />
         </>
       ),
     },
@@ -87,27 +113,44 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
     accordionData,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = (formData: any) => {
+    const question = questionnaire?.question || '';
+    const payload = transformFormDataToPayload(question, formData);
+    appDispatch(addQuestionnaire(payload));
+  };
+
   return (
     <div>
       <p className="text-xs text-gray-500">Review Questionnaire</p>
-      <Accordion type="multiple" className="w-full">
-        {matchedAccordionData.map((item) => (
-          <AccordionItem key={item.id} value={item.id}>
-            <AccordionTrigger
-              onClick={() => handleToggle(item.id)}
-              className={`${
-                openItems.includes(item.id) ? 'text-violet-600' : ''
-              } font-bold text-start`}
-            >
-              {item.title}
-            </AccordionTrigger>
-            <AccordionContent className="text-gray-500 text-xs">
-              {item.content}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-      <Button className="text-white w-full mt-4">Done</Button>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Accordion type="multiple" className="w-full">
+          {matchedAccordionData.map((item) => (
+            <AccordionItem key={item.id} value={item.id}>
+              <AccordionTrigger
+                onClick={() => handleToggle(item.id)}
+                className={`${
+                  openItem === item.id ? 'text-violet-600' : ''
+                } no-underline font-bold text-start`}
+              >
+                {item.title}
+              </AccordionTrigger>
+              {openItem === item.id && (
+                <AccordionContent className="text-gray-500 text-xs">
+                  {item.content}
+                </AccordionContent>
+              )}
+            </AccordionItem>
+          ))}
+        </Accordion>{' '}
+        <Button
+          disabled={!isDirty || !isValid}
+          type="submit"
+          className="text-white w-full mt-4"
+        >
+          Done
+        </Button>
+      </form>
     </div>
   );
 }

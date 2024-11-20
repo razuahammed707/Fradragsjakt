@@ -5,14 +5,32 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useForm } from 'react-hook-form';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
+import {
+  addQuestionnaire,
+  questionnaireSelector,
+} from '@/redux/slices/questionnaire';
+import { FormInput } from '@/components/FormInput';
 
 export function ContentDonation() {
+  const { handleSubmit, control } = useForm();
+
+  const appDispatch = useAppDispatch();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  console.log(questionnaires);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = (formData: any) => {
+    const question = 'Gifts/Donations';
+    const payload = transformFormDataToPayload(question, formData);
+    appDispatch(addQuestionnaire(payload));
+  };
   return (
     <Card className="border-none shadow-none p-0">
       <p className="text-xs  text-gray-500">Review Questionnaire</p>
@@ -27,18 +45,25 @@ export function ContentDonation() {
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Donation Amount</Label>
-              <Input id="name" placeholder="$200" type={''} />
+              <FormInput
+                name="Gifts to voluntary organisations.Donation Amount"
+                customClassName="w-full"
+                type="number"
+                control={control}
+                placeholder="Donation amount"
+                required
+              />
             </div>
           </div>
+          <Button type="submit" className="text-white w-full">
+            Done
+          </Button>
         </form>
       </CardContent>
-      <CardFooter className="flex px-0">
-        <Button className="text-white w-full">Done</Button>
-      </CardFooter>
     </Card>
   );
 }
