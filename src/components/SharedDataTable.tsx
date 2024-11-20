@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { NoResultsPlaceholder } from './NoResultsPlaceholder';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -98,10 +99,7 @@ export function SharedDataTable<TData, TValue>({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-[450px]">
                   <div className="flex justify-center">
-                    <Loader2
-                      size={50}
-                      className="animate-spin text-primary  "
-                    />
+                    <Loader2 size={50} className="animate-spin text-primary" />
                   </div>
                 </TableCell>
               </TableRow>
@@ -123,11 +121,8 @@ export function SharedDataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
+                <TableCell colSpan={columns.length} className="h-24">
+                  <NoResultsPlaceholder message="We couldn’t find anything." />
                 </TableCell>
               </TableRow>
             )}
