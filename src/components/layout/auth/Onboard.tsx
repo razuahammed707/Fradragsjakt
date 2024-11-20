@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import { trpc } from '@/utils/trpc';
 import QuestionnairesStepper from '@/components/QuestionnairesStepper';
 import { useSession } from 'next-auth/react';
-import Loading from '@/app/loading';
+import Loading from '@/app/[lang]/loading';
 
 export type SelectedAnswer = {
   question: string;

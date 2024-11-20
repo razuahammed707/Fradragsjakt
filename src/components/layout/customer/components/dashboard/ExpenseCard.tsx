@@ -1,15 +1,21 @@
 import { Card, CardTitle } from '@/components/ui/card';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import React from 'react';
+import Icon1 from '../../../../../../public/images/dashboard/expense-card/icon1.svg';
+import Icon2 from '../../../../../../public/images/dashboard/expense-card/icon2.svg';
+import Icon3 from '../../../../../../public/images/dashboard/expense-card/icon3.svg';
+import Icon4 from '../../../../../../public/images/dashboard/expense-card/icon4.svg';
+import Icon5 from '../../../../../../public/images/dashboard/expense-card/icon5.svg';
+import Icon6 from '../../../../../../public/images/dashboard/expense-card/icon6.svg';
 
 export const expenses = [
-  { title: 'Personal Spending (non deductable)', amount: 10250 },
-  { title: 'Travel & Meals', amount: 10250 },
-  { title: 'Office Expenses', amount: 10250 },
-  { title: 'Car Expenses', amount: 2050 },
-  { title: 'Taxes/Licenses', amount: 6150 },
-  { title: 'Legal/Professional Services', amount: 4100 },
+  { title: 'Personal Spending (non deductable)', amount: 10250, image: Icon1 },
+  { title: 'Travel & Meals', amount: 10250, image: Icon2 },
+  { title: 'Office Expenses', amount: 10250, image: Icon3 },
+  { title: 'Car Expenses', amount: 2050, image: Icon4 },
+  { title: 'Taxes/Licenses', amount: 6150, image: Icon5 },
+  { title: 'Legal/Professional Services', amount: 4100, image: Icon6 },
 ];
 
 interface ExpenseCardProps {
@@ -17,6 +23,7 @@ interface ExpenseCardProps {
   expense: {
     title: string;
     amount: number;
+    image: StaticImageData;
   };
 }
 const ExpenseCard = ({ expense, index }: ExpenseCardProps) => {
@@ -32,7 +39,7 @@ const ExpenseCard = ({ expense, index }: ExpenseCardProps) => {
         </p>
       </div>
       <Image
-        src={`/images/dashboard/expense-card/icon${index + 1}.svg`}
+        src={expense.image}
         alt={`icon${index + 1}`}
         height={51}
         width={52}

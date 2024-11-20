@@ -1,0 +1,20 @@
+{
+  "navigation": {
+    "home": "Home",
+    "about": "About"
+  },
+  "page": {
+    "home": {
+      "title": "Welcome to NextJs dutch language",
+      "description": "Internationalization in NextJs 13 App router"
+    },
+    "dashboard": {
+      "title": "årlig graf",
+      "subTitle": "Vennligst sjekk dokumentene dine"
+    },
+    "about": {
+      "title": "About Us",
+      "description": "This is the about page"
+    }
+  }
+}

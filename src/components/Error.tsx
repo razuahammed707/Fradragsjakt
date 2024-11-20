@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from './ui/button';
 import Link from 'next/link';
+import ErrorImg from '../../public/ErrorFace.svg';
 
 interface ErrorProps {
   error: Error;
@@ -22,7 +23,7 @@ const Error: React.FC<ErrorProps> = ({ error, reset }) => {
         <h2 className="text-2xl font-bold text-black mb-4 justify-items-center">
           {' '}
           <Image
-            src="/ErrorFace.svg"
+            src={ErrorImg}
             width={160}
             height={160}
             alt="Picture of the error"

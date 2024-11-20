@@ -4,16 +4,24 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { NumericFormat } from 'react-number-format';
+import ClothingImg from '../../../../../../public/images/expenses/clothing.png';
+import TravelImg from '../../../../../../public/images/expenses/travel.png';
+import TransportImg from '../../../../../../public/images/expenses/transport.png';
+import GasImg from '../../../../../../public/images/expenses/gas.png';
+import MealsImg from '../../../../../../public/images/expenses/meals.png';
+import SuppliesImg from '../../../../../../public/images/expenses/supplies.png';
+import PaymentImg from '../../../../../../public/payment.png';
+import MoreImg from '../../../../../../public/More.png';
 
 const categories = [
-  { label: 'Meals', amount: 0, image: '/Meals.png' },
-  { label: 'Clothing', amount: 0, image: '/Clothing.png' },
-  { label: 'Travel', amount: 0, image: '/Travel.png' },
-  { label: 'Supplies', amount: 0, image: '/Supplies.svg' },
-  { label: 'Payment', amount: 0, image: '/Payment.png' },
-  { label: 'Gas', amount: 0, image: '/Gas.png' },
-  { label: 'Transport', amount: 0, image: '/Transport.png' },
-  { label: 'Others', amount: 0, image: '/Transport.png' },
+  { label: 'Meals', amount: 0, image: MealsImg },
+  { label: 'Clothing', amount: 0, image: ClothingImg },
+  { label: 'Travel', amount: 0, image: TravelImg },
+  { label: 'Supplies', amount: 0, image: SuppliesImg },
+  { label: 'Payment', amount: 0, image: PaymentImg },
+  { label: 'Gas', amount: 0, image: GasImg },
+  { label: 'Transport', amount: 0, image: TransportImg },
+  { label: 'Others', amount: 0, image: MoreImg },
 ];
 
 export default function WriteOffsTopSection({
