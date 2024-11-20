@@ -65,13 +65,18 @@ function DeleteConfirmationContent({
     <div className="bg-white w-full mt-5">
       <div className="flex flex-col items-center">
         <CrossCircledIcon
-          className="text-red-400 w-12 h-12 mb-3"
+          className="w-12 h-12 mb-3"
+          style={{ color: '#5B52F9' }}
           onClick={() => setModalOpen(false)}
         />
-        <p className="text-xl">{`Do you really want to delete the ${itemOrigin}?.`}</p>
+        <p className="text-l">{`Do you really want to delete the ${itemOrigin}?`}</p>
       </div>
       <div className="mt-5 flex justify-center">
-        <Button className="bg-red-500 text-white mr-3" onClick={handleDelete}>
+        <Button
+          className=" text-white mr-3"
+          onClick={handleDelete}
+          variant={'purple'}
+        >
           Confirm
         </Button>
         <Button
