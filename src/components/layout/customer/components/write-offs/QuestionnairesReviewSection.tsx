@@ -74,9 +74,9 @@ const QuestionnairesReviewSection = () => {
       selectedTitle,
       userQuestionnaires
     ) as Questionnaire;
-    console.log('Matched Questionnaire:', matchedQuestionnaire);
 
     const ModalContent = modalContentMap[selectedTitle];
+
     return ModalContent ? (
       ModalContent({ questionnaire: matchedQuestionnaire })
     ) : (
