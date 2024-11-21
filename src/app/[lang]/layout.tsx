@@ -29,7 +29,7 @@ export default async function RootLayout({
   params: { lang: Locale };
 }>) {
   const session = await getServerSession();
-  const dictionary = await getDictionary(lang); // Add this
+  const dictionary = await getDictionary(lang);
 
   return (
     <html lang={lang} suppressHydrationWarning>

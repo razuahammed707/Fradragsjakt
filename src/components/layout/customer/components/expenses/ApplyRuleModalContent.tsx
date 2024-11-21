@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
-import { ApplyRuleModalContentTableColumnse } from './ApplyRuleModalContentTableColumns';
+import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableColumns';
 import SharedPagination from '@/components/SharedPagination';
 
 type CategoryType = { title: string; value: string };
@@ -159,7 +159,7 @@ function ApplyRuleModalContent({
 
       <SharedDataTable
         className="max-h-[250px]"
-        columns={ApplyRuleModalContentTableColumnse(handleDelete)}
+        columns={ApplyRuleModalContentTableColumns(handleDelete)}
         data={paginatedData}
       />
 

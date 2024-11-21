@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
   addQuestionnaire,
   questionnaireSelector,
+  showModal,
 } from '@/redux/slices/questionnaire';
 import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
 import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
@@ -25,7 +26,10 @@ export function ContentForeignIncome({
   questionnaire,
 }: ContentForeignIncomeProps) {
   const [openItem, setOpenItem] = useState<string | null>(null);
-  const { handleSubmit /* control */ } = useForm();
+  const {
+    handleSubmit /* control */,
+    formState: { isDirty, isValid },
+  } = useForm();
 
   const appDispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
@@ -56,6 +60,7 @@ export function ContentForeignIncome({
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
     appDispatch(addQuestionnaire(payload));
+    appDispatch(showModal(false));
   };
   return (
     <div className=" ">
@@ -80,7 +85,12 @@ export function ContentForeignIncome({
             </AccordionItem>
           ))}
         </Accordion>
-        <Button className="text-white w-full mt-4">Done</Button>
+        <Button
+          disabled={!isDirty || !isValid}
+          className="text-white w-full mt-4"
+        >
+          Done
+        </Button>
       </form>
     </div>
   );

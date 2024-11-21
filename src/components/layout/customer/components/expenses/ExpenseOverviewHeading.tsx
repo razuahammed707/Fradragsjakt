@@ -47,7 +47,24 @@ function ExpenseOverviewHeading({
         keepPreviousData: true,
       }
     );
+  const { data: categories } = trpc.categories.getCategories.useQuery(
+    {
+      page: 1,
+      limit: 50,
+    },
+    {
+      keepPreviousData: true,
+    }
+  );
 
+  const manipulatedCategories = categories?.data
+    ? categories?.data?.map((category) => {
+        return {
+          title: category.title,
+          value: category.title,
+        };
+      })
+    : [];
   const handleButtonClick = (title: string) => {
     setModalContent({ title });
     setModalOpen(true);
@@ -55,7 +72,10 @@ function ExpenseOverviewHeading({
 
   const renderContent = () => {
     return modalContent.title === 'Add expense' ? (
-      <ExpenseAddContent setModalOpen={setModalOpen} />
+      <ExpenseAddContent
+        setModalOpen={setModalOpen}
+        categories={manipulatedCategories}
+      />
     ) : modalContent.title === 'Apply Rule' ? (
       <ApplyRuleModalContent
         expenses={expensesWithMatchedRules?.data || []}

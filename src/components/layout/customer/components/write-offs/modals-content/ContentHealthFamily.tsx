@@ -16,6 +16,7 @@ import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsP
 import {
   addQuestionnaire,
   questionnaireSelector,
+  showModal,
 } from '@/redux/slices/questionnaire';
 
 type AccordionItemData = {
@@ -146,6 +147,7 @@ export function ContentHealthFamily({
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
     appDispatch(addQuestionnaire(payload));
+    appDispatch(showModal(false));
   };
 
   return (

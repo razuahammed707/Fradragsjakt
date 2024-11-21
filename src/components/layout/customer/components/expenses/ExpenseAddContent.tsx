@@ -39,10 +39,10 @@ export type FormData = {
 };
 
 const defaultCategories = [
-  { title: 'Transport', value: 'transport' },
-  { title: 'Meals', value: 'meals' },
-  { title: 'Gas', value: 'gas' },
-  { title: 'Unknown', value: 'unknown' },
+  { title: 'Transport', value: 'Transport' },
+  { title: 'Meals', value: 'Meals' },
+  { title: 'Gas', value: 'Gas' },
+  { title: 'Unknown', value: 'Unknown' },
 ];
 
 type CategoryType = { title: string; value: string };
@@ -60,6 +60,8 @@ function ExpenseAddContent({
   origin,
   payload,
 }: ExpenseAddContentProps) {
+  console.log({ payload });
+
   const { handleSubmit, control, reset } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
   const [fileLink, setFileLink] = useState<File | null>(null);
@@ -71,10 +73,7 @@ function ExpenseAddContent({
 
   const manipulatedCategories = Array.from(
     new Map(
-      [...categories, ...defaultCategories].map((cat) => [
-        cat.value.toLowerCase(),
-        cat,
-      ])
+      [...categories, ...defaultCategories].map((cat) => [cat.value, cat])
     ).values()
   );
 
@@ -187,7 +186,7 @@ function ExpenseAddContent({
         {['description', 'amount'].map((field) => (
           <div key={field}>
             <Label htmlFor={field}>
-              {field === 'description' ? 'Description' : 'Amount'}
+              {field === 'description' ? 'Description' : 'Amount (NOK)'}
             </Label>
             <FormInput
               type={field === 'amount' ? 'number' : 'text'}
@@ -216,7 +215,7 @@ function ExpenseAddContent({
           {
             name: 'category',
             label: 'Category',
-            defaultValue: payload?.category?.toLowerCase(),
+            defaultValue: payload?.category,
             options: manipulatedCategories,
           },
         ].map(({ name, label, options, defaultValue }) => (
