@@ -1,8 +1,4 @@
 {
-  "navigation": {
-    "home": "Hjem",
-    "about": "Om oss"
-  },
   "page": {
     "home": {
       "title": "Velkommen til NextJs norsk språk",
