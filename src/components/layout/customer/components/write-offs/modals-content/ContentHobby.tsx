@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
   addQuestionnaire,
   questionnaireSelector,
+  showModal,
 } from '@/redux/slices/questionnaire';
 import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
 import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
@@ -117,6 +118,7 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
     appDispatch(addQuestionnaire(payload));
+    appDispatch(showModal(false));
   };
   return (
     <div className="">

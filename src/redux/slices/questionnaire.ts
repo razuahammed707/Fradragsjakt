@@ -31,9 +31,6 @@ const questionnaireSlice = createSlice({
     showModal(state, { payload }: PayloadAction<boolean>) {
       state.isModalOpen = payload;
     },
-    closeModal(state, { payload }: PayloadAction<boolean>) {
-      state.isModalOpen = payload;
-    },
     addQuestionnaire(
       state,
       action: PayloadAction<{ question: string; answers: Answer[] }>
@@ -56,8 +53,7 @@ const questionnaireSlice = createSlice({
   },
 });
 
-export const { showModal, closeModal, addQuestionnaire } =
-  questionnaireSlice.actions;
+export const { showModal, addQuestionnaire } = questionnaireSlice.actions;
 
 export const questionnaireSelector = (state: RootState) => state.questionnaire;
 

@@ -19,7 +19,11 @@ import {
 import { FormInput } from '@/components/FormInput';
 
 export function ContentDonation() {
-  const { handleSubmit, control } = useForm();
+  const {
+    handleSubmit,
+    control,
+    formState: { isDirty, isValid },
+  } = useForm();
 
   const appDispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
@@ -29,6 +33,7 @@ export function ContentDonation() {
   const onSubmit = (formData: any) => {
     const question = 'Gifts/Donations';
     const payload = transformFormDataToPayload(question, formData);
+
     appDispatch(addQuestionnaire(payload));
   };
   return (
@@ -59,7 +64,11 @@ export function ContentDonation() {
               />
             </div>
           </div>
-          <Button type="submit" className="text-white w-full">
+          <Button
+            disabled={!isDirty || !isValid}
+            type="submit"
+            className="text-white w-full"
+          >
             Done
           </Button>
         </form>

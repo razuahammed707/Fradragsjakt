@@ -3,6 +3,7 @@ import { CrossCircledIcon } from '@radix-ui/react-icons';
 import React from 'react';
 import { Button } from './ui/button';
 import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
 
 interface IDeleteProps {
   itemId: string;
@@ -55,6 +56,7 @@ function DeleteConfirmationContent({
       { _id: itemId },
       {
         onSuccess: () => {
+          toast.success(`Deleted ${itemOrigin} row successfully`);
           invalidateQuery();
           setModalOpen(false);
         },

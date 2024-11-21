@@ -8,7 +8,7 @@ import { NumericFormat } from 'react-number-format';
 
 export type ExpenseColumnProps = { [x: string]: any; [x: number]: any };
 
-export const ApplyRuleModalContentTableColumnse = (
+export const ApplyRuleModalContentTableColumns = (
   onDelete: (id: string) => void
 ): ColumnDef<ExpenseColumnProps>[] => [
   {
