@@ -7,12 +7,19 @@ import { SharedDataTable } from '@/components/SharedDataTable';
 import { expenseDataTableColumns } from './ExpenseDataTableColumns';
 import { trpc } from '@/utils/trpc';
 
-function ExpenseOverviewSection() {
+type IFilterProps = {
+  filterString: string;
+  setFilterString: React.Dispatch<React.SetStateAction<string>>;
+};
+
+function ExpenseOverviewSection({
+  filterString,
+  setFilterString,
+}: IFilterProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [filterString, setFilterString] = useState<string>('');
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(

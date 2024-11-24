@@ -30,7 +30,11 @@ interface CategoryCard {
   amount: number;
 }
 
-const ExpenseTopSection = () => {
+type IFilterProps = {
+  filterString: string;
+};
+
+const ExpenseTopSection = ({ filterString }: IFilterProps) => {
   const [categoryCards, setCategoryCards] =
     useState<CategoryCard[]>(expense_categories);
   const [expenseStats, setExpenseStats] = useState({
@@ -41,6 +45,7 @@ const ExpenseTopSection = () => {
   const { data: expenses } =
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
       expense_type: '',
+      filterString,
     });
   const { data: user } = useSession();
 

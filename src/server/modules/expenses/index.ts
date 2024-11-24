@@ -78,11 +78,12 @@ export const expenseRouter = router({
     .input(
       z.object({
         expense_type: z.string().optional(),
+        filterString: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
-        const { expense_type } = input;
+        const { expense_type, filterString } = input;
         const loggedUser = ctx.user as JwtPayload;
 
         const query: Record<string, unknown> = {
@@ -93,10 +94,12 @@ export const expenseRouter = router({
           query.expense_type = ExpenseType.business;
         }
 
+        // Parse and add filters from filterString
+        const filters = parseFilterString(filterString);
+        Object.assign(query, filters);
+
         const expenses =
           await ExpenseHelpers.getCategoryAndExpenseTypeAnalytics(query);
-
-        console.log('expenses', expenses);
 
         return {
           status: 200,
