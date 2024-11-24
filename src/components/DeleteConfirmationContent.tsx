@@ -67,17 +67,15 @@ function DeleteConfirmationContent({
     <div className="bg-white w-full mt-5">
       <div className="flex flex-col items-center">
         <CrossCircledIcon
-          className="w-12 h-12 mb-3"
-          style={{ color: '#5B52F9' }}
+          className="w-12 h-12 mb-3 text-[#FF6347]" // Tomato color
           onClick={() => setModalOpen(false)}
         />
         <p className="text-l">{`Do you really want to delete the ${itemOrigin}?`}</p>
       </div>
       <div className="mt-5 flex justify-center">
         <Button
-          className=" text-white mr-3"
+          className="text-white mr-3 bg-[#FF6347] hover:bg-[#D94F33]" // Tomato color with hover
           onClick={handleDelete}
-          variant={'purple'}
         >
           Confirm
         </Button>

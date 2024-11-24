@@ -35,9 +35,9 @@ type ExpenseData = {
 
 const targetColumns: Column[] = [
   {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
   },
   {
     title: 'Amount',
@@ -45,9 +45,9 @@ const targetColumns: Column[] = [
     key: 'amount',
   },
   {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
+    title: 'Description',
+    dataIndex: 'description',
+    key: 'description',
   },
 ];
 
@@ -239,7 +239,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
 
   return (
     <div className="mt-4">
-      <h1 className="font-bold text-xl text-[#5B52F9] mb-4">
+      <h1 className="font-normal text-base text-black mb-4">
         {fileLink?.name ? 'Return' : 'Upload expense statement'}
       </h1>
       {fileLink?.name ? (
