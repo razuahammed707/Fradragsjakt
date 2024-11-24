@@ -239,7 +239,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
 
   return (
     <div className="mt-4">
-      <h1 className="font-normal text-base text-black mb-4">
+      <h1 className="font-medium text-lg text-black mb-4">
         {fileLink?.name ? 'Return' : 'Upload expense statement'}
       </h1>
       {fileLink?.name ? (
