@@ -1,4 +1,5 @@
 'use client';
+
 import { signIn, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -11,6 +12,7 @@ import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import CompanyLogo from '@/components/CompanyLogo';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type FormData = {
   firstName: string;
@@ -26,6 +28,7 @@ export default function SignUp() {
 
   const router = useRouter();
   const { handleSubmit, control, reset } = useForm<FormData>();
+  const dict = useTranslation(); // Localization dictionary
 
   useEffect(() => {
     if (
@@ -45,17 +48,14 @@ export default function SignUp() {
 
   const mutation = trpc.auth.signup.useMutation({
     onSuccess: () => {
-      toast.success(
-        'Email verification link has been sent to your email. Please check.',
-        {
-          duration: 4000,
-        }
-      );
+      toast.success(dict.page.signup.verification_email_sent, {
+        duration: 4000,
+      });
       reset();
       setLoading(false);
     },
     onError: (error) => {
-      setError(error.message || 'Failed to register. Please try again.');
+      setError(error.message || dict.page.signup.error_message);
       setLoading(false);
     },
   });
@@ -72,8 +72,8 @@ export default function SignUp() {
 
       <div className="w-full max-w-md p-8 space-y-6 text-center bg-white rounded-lg shadow-md">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">Sign up </h2>
-          <p className="text-sm">Create a new account</p>
+          <h2 className="text-2xl font-bold">{dict.page.signup.title}</h2>
+          <p className="text-sm">{dict.page.signup.subtitle}</p>
         </div>
         {error && <p className="text-red-500">{error}</p>}
 
@@ -83,14 +83,14 @@ export default function SignUp() {
               name="firstName"
               control={control}
               type="text"
-              placeholder="First Name"
+              placeholder={dict.page.signup.first_name}
               required
             />
             <FormInput
               name="lastName"
               control={control}
               type="text"
-              placeholder="Last Name"
+              placeholder={dict.page.signup.last_name}
               required
             />
           </div>
@@ -99,7 +99,7 @@ export default function SignUp() {
             name="email"
             control={control}
             type="email"
-            placeholder="Email"
+            placeholder={dict.page.signup.email}
             required
           />
 
@@ -107,21 +107,9 @@ export default function SignUp() {
             name="password"
             control={control}
             type="password"
-            placeholder="Password"
+            placeholder={dict.page.signup.password}
             required
           />
-
-          {/* <FormInput
-            name="role"
-            control={control}
-            type="select"
-            placeholder="Select Role"
-            options={[
-              { title: 'Auditor', value: 'auditor' },
-              { title: 'Customer', value: 'customer' },
-            ]}
-            required
-          /> */}
 
           <Button
             type="submit"
@@ -129,14 +117,14 @@ export default function SignUp() {
             disabled={loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Sign Up
+            {dict.page.signup.sign_up}
           </Button>
         </form>
 
         <div className="flex items-center justify-between">
           <span className="border-t w-full inline-block"></span>
-          <span className="px-4 min-w-[155px] text-gray-500">
-            or continue with
+          <span className="px-4 min-w-[200px] text-gray-500">
+            {dict.page.signup.or_continue_with}
           </span>
           <span className="border-t w-full inline-block"></span>
         </div>
@@ -148,14 +136,14 @@ export default function SignUp() {
         >
           <FcGoogle className="text-lg" />
           <span className="flex-1 text-center ms-[-16px] text-[#1B1B28] font-medium">
-            Google
+            {dict.page.signup.google}
           </span>
         </Button>
 
         <p className="text-sm text-[#71717A] font-medium">
-          Already have an account?{' '}
+          {dict.page.signup.already_have_account}{' '}
           <Link href="/login" className="text-[#00104B]">
-            Sign In
+            {dict.page.signup.sign_in}
           </Link>
         </p>
       </div>
