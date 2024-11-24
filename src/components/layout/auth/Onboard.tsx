@@ -1,11 +1,12 @@
 'use client';
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { trpc } from '@/utils/trpc';
 import QuestionnairesStepper from '@/components/QuestionnairesStepper';
 import { useSession } from 'next-auth/react';
 import Loading from '@/app/[lang]/loading';
+import { questionnaires } from '@/lib/questionnaires';
 
 export type SelectedAnswer = {
   question: string;
@@ -14,31 +15,10 @@ export type SelectedAnswer = {
 export default function Onboard() {
   const router = useRouter();
   const { data: user, status } = useSession();
-  const [loading, setLoading] = useState(false);
-  const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>([]);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+
   const hasToasted = useRef(false);
 
-  const updateQuestionnaires = trpc.users.updateUser.useMutation();
-
-  const mutateUpdateQestionnaires = useCallback(() => {
-    updateQuestionnaires.mutate(
-      { questionnaires: selectedAnswers },
-      {
-        onSuccess: () => {
-          toast.success('Congrats! you have successfully onboarded');
-          router.push(`/${user?.user.role}/dashboard`);
-        },
-        onError: (error) => {
-          console.error('Failed to update questionnaires:', error);
-        },
-      }
-    );
-  }, [selectedAnswers, router, updateQuestionnaires, user?.user.role]);
-
-  const handleComplete = async () => {
-    setLoading(true);
-    mutateUpdateQestionnaires();
-  };
   const { data: fetcheduser } = trpc.users.getUserByEmail.useQuery();
 
   useEffect(() => {
@@ -62,12 +42,17 @@ export default function Onboard() {
         <Loading />
       ) : (
         <div className="min-h-screen ">
-          <QuestionnairesStepper
-            selectedAnswers={selectedAnswers}
-            setSelectedAnswers={setSelectedAnswers}
-            handleComplete={handleComplete}
-            loading={loading}
-          />
+          <div className="py-4 px-12">
+            <span className="text-sm text-[#71717A] font-medium">
+              Step {currentStepIndex + 1}/{questionnaires.length}
+            </span>
+          </div>
+          <div className="flex h-[calc(100vh-64px)] justify-center items-center">
+            <QuestionnairesStepper
+              currentStepIndex={currentStepIndex}
+              setCurrentStepIndex={setCurrentStepIndex}
+            />
+          </div>
         </div>
       )}
     </>

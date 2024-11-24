@@ -22,8 +22,8 @@ import { ContentForeignIncome } from './modals-content/ContentForeignIncome';
 import { Questionnaire } from '@/types/questionnaire';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector, showModal } from '@/redux/slices/questionnaire';
-import QuestionnairesStepper from '@/components/QuestionnairesStepper';
-
+import EditResponseModalContent from './modals-content/EditResponseModalContent';
+import { cn } from '@/lib/utils';
 // Modal content mappings with props support
 const modalContentMap: Record<
   string,
@@ -45,14 +45,7 @@ const modalContentMap: Record<
   'Foreign Income': ({ questionnaire }) => (
     <ContentForeignIncome questionnaire={questionnaire} />
   ),
-  'Edit Response': () => (
-    <QuestionnairesStepper
-      selectedAnswers={[] /* selectedAnswers */}
-      setSelectedAnswers={() => {} /* setSelectedAnswers */}
-      //handleComplete={handleComplete}
-      //loading={loading}
-    />
-  ),
+  'Edit Response': () => <EditResponseModalContent />,
 };
 
 const data = [
@@ -70,10 +63,11 @@ const data = [
 ];
 
 const QuestionnairesReviewSection = () => {
+  const [selectedTitle, setSelectedTitle] = useState<string>('');
+
   const dispatch = useAppDispatch();
   const { isModalOpen } = useAppSelector(questionnaireSelector);
 
-  const [selectedTitle, setSelectedTitle] = useState<string>('');
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 
   const handleButtonClick = (title: string) => {
@@ -113,7 +107,10 @@ const QuestionnairesReviewSection = () => {
               height={52}
               width={54}
             />
-            <Pencil className="h-4 w-4 text-[#5B52F9]" />
+            <Pencil
+              onClick={() => handleButtonClick('Edit Response')}
+              className="h-4 w-4 text-[#5B52F9] cursor-pointer"
+            />
           </div>
           <div>
             <h4 className="text-sm text-[#101010] font-semibold">
@@ -170,7 +167,10 @@ const QuestionnairesReviewSection = () => {
       <SharedModal
         open={isModalOpen}
         onOpenChange={handleOpenChange}
-        customClassName="max-w-[500px]"
+        customClassName={cn(
+          'max-w-[500px]',
+          selectedTitle === 'Edit Response' && 'max-w-[608px]'
+        )}
       >
         <div className="bg-white">{renderModalContent()}</div>
       </SharedModal>
