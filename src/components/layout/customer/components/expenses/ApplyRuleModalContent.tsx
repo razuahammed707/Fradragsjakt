@@ -137,8 +137,8 @@ function ApplyRuleModalContent({
 
   return (
     <div className="space-y-8">
-      <h1 className="font-bold text-xl text-[#5B52F9] mt-6 mb-8">
-        Available rules that can be applied to the following expenses
+      <h1 className="font-medium text-xl text-[#000] mt-6 mb-8">
+        Rules that can be applied to the following expenses
       </h1>
       <div className="flex flex-wrap gap-2">
         {expensesWithRules.map((expenseRule) => (
