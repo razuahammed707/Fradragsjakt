@@ -87,7 +87,7 @@ export default function CategoryAddModal({
           customClassName="max-w-[500px]"
         >
           <>
-            <DialogTitle className="font-normal text-base text-black leading-tight mb-6">
+            <DialogTitle className="font-medium text-lg text-black leading-tight mb-6">
               {!origin ? 'Add Category' : 'Update Category'}
             </DialogTitle>
 

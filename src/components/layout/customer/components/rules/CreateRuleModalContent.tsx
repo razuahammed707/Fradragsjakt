@@ -89,7 +89,7 @@ function CreateRuleModalContent({
 
   return (
     <div>
-      <h1 className="font-normal text-base text-black mb-4">IF</h1>
+      <h1 className="font-medium text-lg text-black mb-4">IF</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label htmlFor="description_contains">Description contain</Label>
@@ -104,7 +104,7 @@ function CreateRuleModalContent({
           />
         </div>
 
-        <h1 className="font-normal text-base text-black mb-4">Then</h1>
+        <h1 className="font-medium text-lg text-black mb-4">Then</h1>
         <div>
           <Label htmlFor="expense_type">Expense type</Label>
           <FormInput
