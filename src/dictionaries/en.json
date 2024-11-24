@@ -1,20 +1,29 @@
 {
-  "navigation": {
-    "home": "Home",
-    "about": "About"
-  },
   "page": {
     "home": {
-      "title": "Welcome to NextJs i18n",
-      "description": "Internationalization in NextJs 13 App router"
+      "title": "Welcome to NextJs English Language",
+      "description": "Internationalization in NextJs 13 App Router"
     },
     "dashboard": {
-      "title": "Yearly Graph",
-      "subTitle": "Please check your docs"
+      "title": "Annual Chart",
+      "subTitle": "Please check your documents"
     },
     "about": {
       "title": "About Us",
       "description": "This is the about page"
+    },
+    "login": {
+      "welcome_back": "Welcome Back",
+      "log_in_to_continue": "Log in to your account to continue",
+      "email": "Email",
+      "password": "Password",
+      "sign_in": "Sign In",
+      "remember_me": "Remember me",
+      "forgot_password": "Forgot password",
+      "continue_with": "or continue with",
+      "google": "Google",
+      "no_account": "Don’t have an account?",
+      "sign_up": "Sign up"
     }
   }
 }

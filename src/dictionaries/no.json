@@ -1,20 +1,29 @@
 {
-  "navigation": {
-    "home": "Home",
-    "about": "About"
-  },
   "page": {
     "home": {
-      "title": "Welcome to NextJs dutch language",
-      "description": "Internationalization in NextJs 13 App router"
+      "title": "Velkommen til NextJs norsk språk",
+      "description": "Internasjonalisering i NextJs 13 App Router"
     },
     "dashboard": {
-      "title": "årlig graf",
+      "title": "Årlig graf",
       "subTitle": "Vennligst sjekk dokumentene dine"
     },
     "about": {
-      "title": "About Us",
-      "description": "This is the about page"
+      "title": "Om oss",
+      "description": "Dette er om oss-siden"
+    },
+    "login": {
+      "welcome_back": "Velkommen tilbake",
+      "log_in_to_continue": "Logg inn på kontoen din for å fortsette",
+      "email": "E-post",
+      "password": "Passord",
+      "sign_in": "Logg inn",
+      "remember_me": "Husk meg",
+      "forgot_password": "Glemt passord",
+      "continue_with": "eller fortsett med",
+      "google": "Google",
+      "no_account": "Har du ikke en konto?",
+      "sign_up": "Registrer deg"
     }
   }
 }
