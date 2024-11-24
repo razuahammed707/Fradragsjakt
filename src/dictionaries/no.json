@@ -24,6 +24,21 @@
       "google": "Google",
       "no_account": "Har du ikke en konto?",
       "sign_up": "Registrer deg"
+    },
+    "signup": {
+      "title": "Registrer deg",
+      "subtitle": "Opprett en ny konto",
+      "first_name": "Fornavn",
+      "last_name": "Etternavn",
+      "email": "E-post",
+      "password": "Passord",
+      "sign_up": "Registrer deg",
+      "or_continue_with": "eller fortsett med",
+      "google": "Google",
+      "already_have_account": "Har du allerede en konto?",
+      "sign_in": "Logg inn",
+      "verification_email_sent": "En lenke for e-postbekreftelse er sendt til e-posten din. Vennligst sjekk.",
+      "error_message": "Kunne ikke registrere deg. Prøv igjen."
     }
   }
 }
