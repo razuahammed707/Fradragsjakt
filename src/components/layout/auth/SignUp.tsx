@@ -110,6 +110,17 @@ export default function SignUp() {
             placeholder={dict.page.signup.password}
             required
           />
+          {/* <FormInput
+            name="role"
+            control={control}
+            type="select"
+            placeholder="Select Role"
+            options={[
+              { title: 'Auditor', value: 'auditor' },
+              { title: 'Customer', value: 'customer' },
+            ]}
+            required
+          /> */}
 
           <Button
             type="submit"
