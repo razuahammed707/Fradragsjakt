@@ -53,7 +53,6 @@ interface ExpenseAddContentProps {
   payload?: PayloadType;
   origin?: string;
 }
-
 function ExpenseAddContent({
   categories = [],
   setModalOpen,
@@ -179,8 +178,10 @@ function ExpenseAddContent({
   console.log('uploaded file', uploadedImage);
   return (
     <div>
-      <h1 className="font-bold text-xl text-[#5B52F9] mb-4">
-        Manually add expense
+      <h1 className="font-normal text-base text-black mb-4">
+        {origin === 'expense update'
+          ? 'Update Expense'
+          : 'Manually add expense'}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {['description', 'amount'].map((field) => (
