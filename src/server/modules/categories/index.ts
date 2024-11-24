@@ -8,6 +8,7 @@ import { ApiResponse } from '@/server/db/types';
 import { z } from 'zod';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import { ApiError } from '@/lib/exceptions';
+import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 
 export const categoryRouter = router({
   getCategories: protectedProcedure
@@ -124,9 +125,10 @@ export const categoryRouter = router({
         if (!sessionUser || !sessionUser?.email) {
           throw new Error('You must be logged in to update this data.');
         }
+        const transformedTitle = transformToUppercase(title);
 
         const categoryExist = await Category.findOne({
-          title,
+          title: transformedTitle,
           creator_id: sessionUser.id,
         });
         if (categoryExist) {
@@ -134,7 +136,7 @@ export const categoryRouter = router({
         }
 
         const category = new Category({
-          title,
+          title: transformedTitle,
           creator_id: sessionUser.id,
         });
 
