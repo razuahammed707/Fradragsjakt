@@ -2,9 +2,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import { i18n } from '../i18n.config';
+import { Locale, i18n } from '../i18n.config';
 
 function getLocale(request: NextRequest): string | undefined {
+  // Check for a preferred-language cookie
+  const preferredLanguage = request.cookies.get('preferred-language')
+    ?.value as Locale;
+
+  if (preferredLanguage && i18n.locales.includes(preferredLanguage)) {
+    return preferredLanguage;
+  }
+
   const negotiatorHeaders: Record<string, string> = {};
   request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
   // @ts-expect-error locales are readonly
