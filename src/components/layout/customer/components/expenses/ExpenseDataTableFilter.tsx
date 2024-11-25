@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 import { trpc } from '@/utils/trpc';
+import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 
 interface FilterItem {
   id: string;
@@ -105,7 +106,7 @@ export default function ExpenseDataTableFilter({
             className="px-1 h-9 cursor-pointer hover:bg-gray-400 text-sm  font-normal bg-gray-300 flex items-center gap-1"
             onClick={() => handleBadgeClick(item)}
           >
-            {item}
+            {transformToUppercase(item)}
             <X className="h-3 w-3" />
           </Badge>
         ))}
