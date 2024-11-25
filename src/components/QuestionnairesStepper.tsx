@@ -21,6 +21,7 @@ export default function QuestionnairesStepper({
   setCurrentStepIndex,
 }: QuestionnairesStepperProps) {
   const { data: user } = useSession();
+  const utils = trpc.useUtils();
   const { data: loggedUser } = trpc.users.getUserByEmail.useQuery();
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function QuestionnairesStepper({
               : 'You have successfully updated your answers'
           );
           setLoading(false);
+          utils.users.getUserByEmail.invalidate();
           dispatch(showModal(false));
           if (pathname.split('/').pop() !== 'write-offs')
             router.push(`/${user?.user.role}/dashboard`);
