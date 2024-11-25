@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 import { trpc } from '@/utils/trpc';
 
@@ -84,73 +86,101 @@ export default function ExpenseDataTableFilter({
     );
   };
 
+  const handleBadgeClick = (item: string) => {
+    if (selectedCategories.includes(item)) {
+      toggleCategory(item);
+    } else if (selectedTypes.includes(item)) {
+      toggleType(item);
+    }
+  };
+
+  const totalSelectedFilters = selectedCategories.length + selectedTypes.length;
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="purple">
-          <Image
-            src={FilterIcon}
-            alt="button icon"
-            className="mr-2"
-            width={20}
-            height={20}
-          />
-          Filter By
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-60 border-none shadow-lg">
-        <div className="space-y-4 max-h-[230px] min-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
-          <div>
-            <h4 className="mb-4 text-sm font-medium leading-none text-gray-500">
-              Category
-            </h4>
-            <div className="grid gap-2">
-              {categoryOptions.map((category) => (
-                <div key={category.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    className="data-[state=checked]:text-white"
-                    id={category.id}
-                    checked={selectedCategories.includes(category.id)}
-                    onCheckedChange={() => toggleCategory(category.id)}
-                  />
-                  <Label
-                    htmlFor={category.id}
-                    className="text-sm font-normal  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+    <div className="flex items-center space-x-2">
+      <div className="flex flex-nowrap gap-1">
+        {[...selectedCategories, ...selectedTypes]?.map((item, i) => (
+          <Badge
+            key={i}
+            className="px-1 h-9 cursor-pointer hover:bg-gray-400 text-sm  font-normal bg-gray-300 flex items-center gap-1"
+            onClick={() => handleBadgeClick(item)}
+          >
+            {item}
+            <X className="h-3 w-3" />
+          </Badge>
+        ))}
+      </div>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="purple">
+            <Image
+              src={FilterIcon}
+              alt="button icon"
+              className="mr-2"
+              width={20}
+              height={20}
+            />
+            Filter By {!!totalSelectedFilters && `(${totalSelectedFilters})`}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-60 border-none shadow-lg">
+          <div className="space-y-4 max-h-[230px] min-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+            <div>
+              <h4 className="mb-4 text-sm font-medium leading-none text-gray-500">
+                Category
+              </h4>
+              <div className="grid gap-2">
+                {categoryOptions.map((category) => (
+                  <div
+                    key={category.id}
+                    className="flex items-center space-x-2"
                   >
-                    {category.label}
-                  </Label>
-                </div>
-              ))}
+                    <Checkbox
+                      className="data-[state=checked]:text-white"
+                      id={category.id}
+                      checked={selectedCategories.includes(category.id)}
+                      onCheckedChange={() => toggleCategory(category.id)}
+                    />
+                    <Label
+                      htmlFor={category.id}
+                      className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {category.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Separator className="my-4" />
+
+            <div>
+              <h4 className="mb-4 text-gray-500 text-sm font-medium leading-none">
+                Expense Type
+              </h4>
+              <div className="grid gap-2">
+                {expenseTypes.map((type) => (
+                  <div key={type.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      className="data-[state=checked]:text-white"
+                      id={type.id}
+                      checked={selectedTypes.includes(type.id)}
+                      onCheckedChange={() => toggleType(type.id)}
+                    />
+                    <Label
+                      htmlFor={type.id}
+                      className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {type.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-
-          <Separator className="my-4" />
-
-          <div>
-            <h4 className="mb-4  text-gray-500 text-sm font-medium leading-none">
-              Expense Type
-            </h4>
-            <div className="grid gap-2">
-              {expenseTypes.map((type) => (
-                <div key={type.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    className="data-[state=checked]:text-white"
-                    id={type.id}
-                    checked={selectedTypes.includes(type.id)}
-                    onCheckedChange={() => toggleType(type.id)}
-                  />
-                  <Label
-                    htmlFor={type.id}
-                    className="text-sm  font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {type.label}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }

@@ -9,6 +9,7 @@ import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import moment from 'moment';
+import { cn } from '@/lib/utils';
 
 type FormData = {
   Description: string;
@@ -169,6 +170,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
     formState: { isDirty, isValid },
   } = useForm<FormData>();
   const [fileLink, setFileLink] = useState<File | null>(null);
+  console.log({ fileLink });
 
   const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
   const [fileData, setFileData] = useState<FileRowData[]>([]);
@@ -188,15 +190,14 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
       setIsFileProcessed(true);
       setMediaUploadLoading(false);
     };
+    if (!file) setMediaUploadLoading(false);
     reader.readAsText(file);
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    console.log('file__', file);
-
     setFileLink(file);
-    //setMediaUploadLoading(true);
+    setMediaUploadLoading(true);
     handleFileProcessing(file);
   }, []);
 
@@ -256,20 +257,32 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
           </p>
         </div>
       ) : (
-        <div className="rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]">
+        <>
           <div
-            {...getRootProps()}
-            className="h-full w-full flex items-center justify-center"
+            className={cn(
+              'rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]',
+              fileLink === undefined && 'mb-2'
+            )}
           >
-            <DragAndDropFile
-              setFileLink={setFileLink}
-              fileLink={fileLink}
-              loading={mediaUploadLoading}
-              getInputProps={getInputProps}
-              isDragActive={isDragActive}
-            />
+            <div
+              {...getRootProps()}
+              className="h-full w-full flex items-center justify-center"
+            >
+              <DragAndDropFile
+                setFileLink={setFileLink}
+                fileLink={fileLink}
+                loading={mediaUploadLoading}
+                getInputProps={getInputProps}
+                isDragActive={isDragActive}
+              />
+            </div>
           </div>
-        </div>
+          {fileLink === undefined && (
+            <span className="text-destructive">
+              Only CSV files are allowed to upload!
+            </span>
+          )}
+        </>
       )}
 
       {isFileProcessed && (

@@ -98,14 +98,22 @@ function ExpenseOverviewHeading({
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <h1 className="text-xl font-semibold">Total Expenses Overview</h1>
-        <h2 className="text-sm text-gray-600 font-light mb-0">
-          <strong className="text-[#00B386] font-semibold">+2%</strong> in
-          August
-        </h2>
-        <div className="mt-5 flex gap-2">
+    <>
+      <div className="flex justify-between">
+        <div>
+          <h1 className="text-xl font-semibold">Total Expenses Overview</h1>
+          <h2 className="text-sm text-gray-600 font-light mb-0">
+            <strong className="text-[#00B386] font-semibold">+2%</strong> in
+            August
+          </h2>
+        </div>
+        <SearchInput
+          className="hidden md:block"
+          onChange={handleSearchChange}
+        />
+      </div>
+      <div className="flex justify-between mt-5">
+        <div className=" flex gap-2">
           <Button
             variant="purple"
             onClick={() => handleButtonClick('Add expense')}
@@ -119,49 +127,38 @@ function ExpenseOverviewHeading({
             <IoMdAdd className="font-bold mr-2" /> Upload Statements
           </Button>
         </div>
-      </div>
-      <div className="flex justify-end">
-        <div className="flex flex-col justify-end">
-          <div className="flex justify-end">
-            <SearchInput
-              className="hidden md:block"
-              onChange={handleSearchChange}
-            />
-          </div>
-          <div className="mt-5 flex space-x-2">
-            <ExpenseDataTableFilter setFilterString={setFilterString} />
-            {buttons.map((button, index) => (
-              <Button
-                disabled={
-                  button.text === 'Apply Rule' &&
-                  expensesWithMatchedRules?.data?.expensesWithRules?.length == 0
-                }
-                key={index}
-                variant="purple"
-                onClick={() =>
-                  button.text === 'Show Write-offs'
-                    ? router.push(`/${user?.user?.role}/write-offs`)
-                    : handleButtonClick(button.text)
-                }
-              >
-                <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
-                {button.text}
-              </Button>
-            ))}
-          </div>
+        <div className=" flex space-x-2 ">
+          <ExpenseDataTableFilter setFilterString={setFilterString} />
+          {buttons.map((button, index) => (
+            <Button
+              disabled={
+                button.text === 'Apply Rule' &&
+                expensesWithMatchedRules?.data?.expensesWithRules?.length == 0
+              }
+              key={index}
+              variant="purple"
+              onClick={() =>
+                button.text === 'Show Write-offs'
+                  ? router.push(`/${user?.user?.role}/write-offs`)
+                  : handleButtonClick(button.text)
+              }
+            >
+              <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
+              {button.text}
+            </Button>
+          ))}
+        </div>
+        <div className="bg-white absolute z-50">
+          <SharedModal
+            open={isModalOpen}
+            onOpenChange={setModalOpen}
+            customClassName="max-w-[650px]"
+          >
+            <div className="bg-white">{renderContent()}</div>
+          </SharedModal>
         </div>
       </div>
-
-      <div className="bg-white z-50">
-        <SharedModal
-          open={isModalOpen}
-          onOpenChange={setModalOpen}
-          customClassName="max-w-[650px]"
-        >
-          <div className="bg-white">{renderContent()}</div>
-        </SharedModal>
-      </div>
-    </div>
+    </>
   );
 }
 

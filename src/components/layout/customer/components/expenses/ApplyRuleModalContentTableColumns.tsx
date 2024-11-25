@@ -59,16 +59,19 @@ export const ApplyRuleModalContentTableColumns = (
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
         <SharedTooltip
+          align="end"
           visibleContent={
             <Button
-              className="h-6 w-16 font-bold bg-white shadow-none border-none hover:text-white"
+              className="h-6 w-16 text-red-500 bg-white shadow-none border-none hover:bg-white  "
               onClick={() => onDelete(row.original._id as string)}
             >
               Remove
             </Button>
           }
         >
-          Don&apos;t worry! you can still find this item on reapply
+          <div className="w-36">
+            Don&apos;t worry! you can still find this item on reapply
+          </div>
         </SharedTooltip>
       </div>
     ),
