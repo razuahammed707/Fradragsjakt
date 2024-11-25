@@ -5,6 +5,7 @@ import CompanyLogo from './CompanyLogo';
 import SearchInput from './SearchInput';
 import { BellDot } from 'lucide-react';
 import ProfileDropdown from './Dropdown';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface TopbarProps {
   role: string;
@@ -22,6 +23,7 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
       </div>
       <div className="flex items-center space-x-8">
         <SearchInput className="hidden md:block" />
+        <LanguageSwitcher />
         <BellDot size={24} color="#FFFF" />
         <ProfileDropdown />
       </div>
