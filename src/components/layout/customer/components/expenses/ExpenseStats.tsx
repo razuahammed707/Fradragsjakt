@@ -8,31 +8,49 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), {
 });
 
 const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
+  const weekDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+
   const chartOptions = {
     series: [
       {
-        name: 'Inflation',
-        data: [2.3, 3.1, 4.0, 4.0, 3.6, 3.2, 2.3],
+        name: 'Transactions',
+        data: [2300, 3100, 4000, 5000, 3600, 3200, 2300],
       },
     ] as ApexAxisChartSeries,
     options: {
       chart: {
-        height: '30%',
         type: 'bar',
         toolbar: {
           show: false,
         },
+        sparkline: {
+          enabled: true,
+        },
+        animations: {
+          enabled: true,
+          speed: 200,
+        },
       },
       plotOptions: {
         bar: {
-          barHeight: '80%',
+          columnWidth: '60%',
           borderRadius: 2,
+          distributed: true,
         },
       },
       dataLabels: {
         enabled: false,
       },
       xaxis: {
+        categories: weekDays,
         axisBorder: {
           show: false,
         },
@@ -59,9 +77,48 @@ const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
       },
       grid: {
         show: false,
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+        },
       },
       tooltip: {
-        enabled: false,
+        enabled: true,
+        theme: 'dark',
+        y: {
+          formatter: function (value: number) {
+            return `$${value.toLocaleString()}`;
+          },
+        },
+        custom: function ({
+          series,
+          seriesIndex,
+          dataPointIndex,
+          w,
+        }: {
+          series: number[][];
+          seriesIndex: number;
+          dataPointIndex: number;
+          w: unknown;
+        }) {
+          const value = series[seriesIndex][dataPointIndex];
+          const day = w.globals.labels[dataPointIndex];
+
+          return `<div class="custom-tooltip shadow-md" style="padding: 8px;">
+            <h1 style="color: #fff">${day}</h1>
+            <span style="color: #fff">NOK ${value.toLocaleString()}</span>
+          </div>`;
+        },
+      },
+      states: {
+        hover: {
+          filter: {
+            type: 'darken',
+            value: 0.9,
+          },
+        },
       },
       title: {
         text: undefined,
@@ -75,7 +132,7 @@ const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
       options={chartOptions.options}
       series={chartOptions.series}
       type="bar"
-      height={100}
+      height={60}
       width={120}
     />
   );

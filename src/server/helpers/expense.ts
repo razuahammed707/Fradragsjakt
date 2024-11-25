@@ -220,6 +220,145 @@ const getCategoryAndExpenseTypeAnalytics = async (
   }
 };
 
+const getBusinessAndPersonalExpenseAnalytics = async (
+  query: Record<string, unknown>
+) => {
+  try {
+    // Get the current date and calculate the date for 7 days ago
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7); // Subtract 7 days from today's date
+
+    // Generate an array of the last 7 days (including today)
+    const dateArray = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      dateArray.push(date.toISOString().split('T')[0]); // Add the date in YYYY-MM-DD format
+    }
+
+    // Single aggregate query using $facet
+    return await ExpenseModel.aggregate([
+      {
+        $match: {
+          ...query, // Apply any filters passed in the query
+          transaction_date: {
+            $gte: sevenDaysAgo, // Only include records from the last 7 days
+            $lte: today, // Ensure we're also including today
+          },
+        },
+      },
+      {
+        $facet: {
+          // Business Expense Analytics grouped by day
+          businessExpenseAnalytics: [
+            {
+              $match: {
+                expense_type: 'business',
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: '%Y-%m-%d',
+                    date: '$transaction_date',
+                  },
+                }, // Group by day
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                date: '$_id',
+                totalAmount: '$totalAmount',
+                totalItems: '$totalItems',
+                _id: 0,
+              },
+            },
+            {
+              $sort: { date: 1 }, // Sort by date (ascending order)
+            },
+            {
+              $addFields: {
+                date: { $ifNull: ['$date', dateArray[0]] }, // Ensure each day in the dateArray appears
+              },
+            },
+            {
+              $set: {
+                totalAmount: { $ifNull: ['$totalAmount', 0] }, // Set default values for missing days
+                totalItems: { $ifNull: ['$totalItems', 0] },
+              },
+            },
+            {
+              $match: {
+                date: { $in: dateArray }, // Ensure all 7 days are included
+              },
+            },
+            {
+              $limit: 7, // Ensure only 7 days worth of data
+            },
+          ],
+          // Personal Expense Analytics grouped by day
+          personalExpenseAnalytics: [
+            {
+              $match: {
+                expense_type: 'personal',
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: '%Y-%m-%d',
+                    date: '$transaction_date',
+                  },
+                }, // Group by day
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                date: '$_id',
+                totalAmount: '$totalAmount',
+                totalItems: '$totalItems',
+                _id: 0,
+              },
+            },
+            {
+              $sort: { date: 1 }, // Sort by date (ascending order)
+            },
+            {
+              $addFields: {
+                date: { $ifNull: ['$date', dateArray[0]] }, // Ensure each day in the dateArray appears
+              },
+            },
+            {
+              $set: {
+                totalAmount: { $ifNull: ['$totalAmount', 0] }, // Set default values for missing days
+                totalItems: { $ifNull: ['$totalItems', 0] },
+              },
+            },
+            {
+              $match: {
+                date: { $in: dateArray }, // Ensure all 7 days are included
+              },
+            },
+            {
+              $limit: 7, // Ensure only 7 days worth of data
+            },
+          ],
+        },
+      },
+    ]);
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+};
+
 const getWriteOffSummary = async (
   skip: number,
   limit: number,
@@ -335,4 +474,5 @@ export const ExpenseHelpers = {
   deleteExpenseRecord,
   getWriteOffSummary,
   getTotalUniqueExpenseCategories,
+  getBusinessAndPersonalExpenseAnalytics,
 };

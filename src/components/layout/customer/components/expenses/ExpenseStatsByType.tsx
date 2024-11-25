@@ -22,8 +22,8 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
         <strong className="text-[#00B386] font-semibold">+{percentage}%</strong>{' '}
         in {month}
       </h2>
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold">
+      <div className="flex justify-between items-center mt-7">
+        <h1 className="text-xl font-bold mt-6">
           <NumericFormat
             value={amount}
             displayType="text"
