@@ -15,8 +15,8 @@ function SharedTooltip({ children, visibleContent }: TooltipProps) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{visibleContent}</TooltipTrigger>
-        <TooltipContent>
+        <TooltipTrigger asChild>{visibleContent}</TooltipTrigger>
+        <TooltipContent className="bg-white shadow-lg border">
           <div className="bg-white">{children}</div>
         </TooltipContent>
       </Tooltip>

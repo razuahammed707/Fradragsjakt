@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import SharedTooltip from '@/components/SharedTooltip';
 import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
-import { Trash2 } from 'lucide-react';
 import { NumericFormat } from 'react-number-format';
 
 export type ExpenseColumnProps = { [x: string]: any; [x: number]: any };
@@ -58,13 +58,18 @@ export const ApplyRuleModalContentTableColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
-        <Button
-          variant="ghost"
-          className="h-8 w-8 p-0"
-          onClick={() => onDelete(row.original._id as string)}
+        <SharedTooltip
+          visibleContent={
+            <Button
+              className="h-6 w-16 font-bold bg-white shadow-none border-none hover:text-white"
+              onClick={() => onDelete(row.original._id as string)}
+            >
+              Remove
+            </Button>
+          }
         >
-          <Trash2 className="h-4 w-4 text-[#5B52F9]" />
-        </Button>
+          Don&apos;t worry! you can still find this item on reapply
+        </SharedTooltip>
       </div>
     ),
   },

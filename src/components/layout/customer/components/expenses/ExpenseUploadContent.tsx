@@ -193,8 +193,10 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
+    console.log('file__', file);
+
     setFileLink(file);
-    setMediaUploadLoading(true);
+    //setMediaUploadLoading(true);
     handleFileProcessing(file);
   }, []);
 
