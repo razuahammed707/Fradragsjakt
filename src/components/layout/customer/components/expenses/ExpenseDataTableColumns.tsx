@@ -10,6 +10,7 @@ import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import formatDate from '@/utils/helpers/formatDate';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import ExpenseUpdateModal from './ExpenseUpdateModal';
+import ExpenseDetailsModal from './ExpenseDetailsModal';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -146,6 +147,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-1">
+          <ExpenseDetailsModal payload={row.original} />
           <ExpenseUpdateModal payload={row.original} />
           <SharedDeleteActionCell
             itemOrigin="expense"

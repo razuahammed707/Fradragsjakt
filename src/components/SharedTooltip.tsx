@@ -9,14 +9,19 @@ import { ReactNode } from 'react';
 type TooltipProps = {
   children: ReactNode;
   visibleContent: ReactNode;
+  align: string;
 };
 
-function SharedTooltip({ children, visibleContent }: TooltipProps) {
+function SharedTooltip({
+  children,
+  visibleContent,
+  align = 'center',
+}: TooltipProps) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{visibleContent}</TooltipTrigger>
-        <TooltipContent>
+        <TooltipTrigger asChild>{visibleContent}</TooltipTrigger>
+        <TooltipContent align={align} className="bg-white shadow-lg border">
           <div className="bg-white">{children}</div>
         </TooltipContent>
       </Tooltip>
