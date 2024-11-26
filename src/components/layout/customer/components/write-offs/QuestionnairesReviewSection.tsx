@@ -24,6 +24,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector, showModal } from '@/redux/slices/questionnaire';
 import EditResponseModalContent from './modals-content/EditResponseModalContent';
 import { cn } from '@/lib/utils';
+import { ContentHousing } from './modals-content/ContentHousing';
 // Modal content mappings with props support
 const modalContentMap: Record<
   string,
@@ -40,6 +41,9 @@ const modalContentMap: Record<
   ),
   'Hobby, Odd jobs, and Extra incomes': ({ questionnaire }) => (
     <ContentHobby questionnaire={questionnaire} />
+  ),
+  'Housing and Property': ({ questionnaire }) => (
+    <ContentHousing questionnaire={questionnaire} />
   ),
   'Gifts/Donations': () => <ContentDonation />,
   'Foreign Income': ({ questionnaire }) => (
@@ -77,7 +81,6 @@ const QuestionnairesReviewSection = () => {
 
   const renderModalContent = () => {
     const userQuestionnaires = user?.questionnaires || [];
-    console.log({ userQuestionnaires });
 
     const matchedQuestionnaire = questionMatcherEngine(
       selectedTitle,
@@ -168,7 +171,8 @@ const QuestionnairesReviewSection = () => {
         open={isModalOpen}
         onOpenChange={handleOpenChange}
         customClassName={cn(
-          'max-w-[500px]',
+          'max-w-[500px] ',
+
           selectedTitle === 'Edit Response' && 'max-w-[608px]'
         )}
       >

@@ -74,10 +74,26 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have taken out a joint loan with someone?',
       content: (
         <>
-          For joint loans, each borrower can claim deductions on their portion
-          of the interest paid. You would each declare your individual share of
-          the interest payments on your tax returns. As with single loans, the
-          deduction rate is generally 22% of the interest paid.
+          Ensure the ownership percentage is documented, typically in the loan
+          agreement.
+          <p className="text-black pt-[12px] pb-[6px]">Interest amount</p>
+          <FormInput
+            name="Have taken out a joint loan with someone.Interest amount"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
+          <p className="text-black pt-[12px] pb-[6px]">Your ownership share</p>
+          <FormInput
+            name="Have taken out a joint loan with someone.Your ownership share"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
         </>
       ),
     },
@@ -88,8 +104,16 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
         <>
           Young people’s housing savings (BSU) is for people under 34 years of
           age. You can save up to NOK 27,500 per year. Then you get a tax
-          deduction of NOK 2,750 (10 percent). You can save up to a total of NOK
-          300,000.
+          deduction of NOK 2,750 (10 percent).
+          <p className="text-black pt-[12px] pb-[6px]">This years savings</p>
+          <FormInput
+            name="Have young people’s housing savings (BSU).This years savings"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
         </>
       ),
     },
@@ -100,7 +124,15 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
         <>
           Gains and losses on shares are taxable for the amount that exceeds the
           deductible risk-free return. Losses on sale of shares are deductible.
-          The tax rate for 2023 is 37.84 percent.
+          <p className="text-black pt-[12px] pb-[6px]">Total loss</p>
+          <FormInput
+            name="I have sold shares or securities at a loss.Total loss"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
         </>
       ),
     },

@@ -51,7 +51,7 @@ export const questionnaires = [
     answers: [
       'Housing in a housing association, housing company or jointly owned property',
       'I have rented out a residential property or a holiday home',
-      'Sold a residential property or holiday home profit or loss',
+      'Sold a residential property or holiday home with a loss',
     ],
     icon: frame3,
   },
@@ -64,7 +64,7 @@ export const questionnaires = [
     question: 'Hobby, Odd Jobs, and Extra Incomes',
     answers: [
       'I have a sole proprietorship',
-      'Sell goods or services, blog/influencer, practise e-sports (gaming), breed animals, or rent out property on a small scale.',
+      'Sell goods or services, blog/influencer, practise e-sports (gaming), breed animals on a small scale',
       'I have received salary from odd jobs and services',
     ],
     icon: frame5,

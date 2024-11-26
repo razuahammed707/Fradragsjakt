@@ -18,6 +18,7 @@ import {
   questionnaireSelector,
   showModal,
 } from '@/redux/slices/questionnaire';
+import { FormReceiptInput } from '@/components/FormReceiptInput';
 
 type AccordionItemData = {
   id: string;
@@ -35,6 +36,7 @@ export function ContentHealthFamily({
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { isDirty, isValid },
   } = useForm();
   const accordionData: AccordionItemData[] = [
@@ -95,6 +97,14 @@ export function ContentHealthFamily({
             placeholder="NOK 500"
             required
           />
+          <p className="text-black pt-[12px] pb-[6px]">
+            Upload verification document
+          </p>
+          <FormReceiptInput
+            name="I have children aged 12 or older with special care needs.Upload verification document"
+            control={control}
+            setValue={setValue}
+          />
         </>
       ),
     },
@@ -124,6 +134,14 @@ export function ContentHealthFamily({
             control={control}
             placeholder="50 km"
             required
+          />
+          <p className="text-black pt-[12px] pb-[6px]">
+            Upload verification document
+          </p>
+          <FormReceiptInput
+            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Upload verification document"
+            control={control}
+            setValue={setValue}
           />
         </>
       ),

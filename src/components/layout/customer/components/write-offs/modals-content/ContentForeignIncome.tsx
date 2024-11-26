@@ -1,4 +1,5 @@
 'use client';
+import { FormInput } from '@/components/FormInput';
 import {
   Accordion,
   AccordionContent,
@@ -26,7 +27,8 @@ export function ContentForeignIncome({
   questionnaire,
 }: ContentForeignIncomeProps) {
   const {
-    handleSubmit /* control */,
+    handleSubmit,
+    control,
     formState: { isDirty, isValid },
   } = useForm();
   // Define an array with the items' title and content
@@ -35,8 +37,40 @@ export function ContentForeignIncome({
       id: 'item-1',
       title:
         'Have income or wealth in another country than Norway and pay tax in the other country',
-      content:
-        'You must declare all your foreign income and wealth in the Norwegian tax return. This applies regardless of whether you’ve paid tax abroad or the income/wealth is tax free in the country in question.',
+      content: (
+        <>
+          You must declare all your foreign income and wealth in the Norwegian
+          tax return. This applies regardless of whether you’ve paid tax abroad
+          or the income/wealth is tax free in the country in question.
+          <p className="text-black pt-3 pb-1">Foreign income</p>
+          <FormInput
+            name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign income"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
+          <p className="text-black pt-3 pb-1">Foreign tax amount</p>
+          <FormInput
+            name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign tax amount"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="200 sq ft"
+            required
+          />
+          <p className="text-black pt-3 pb-1">Norway tax rate on this income</p>
+          <FormInput
+            name="Have income or wealth in another country than Norway and pay tax in the other country.Norway tax rate on this income"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="20%"
+            required
+          />
+        </>
+      ),
     },
   ];
 

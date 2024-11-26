@@ -21,7 +21,7 @@ import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsP
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-type ContentHobbyProps = {
+type ContentHousingProps = {
   questionnaire?: Questionnaire;
 };
 export type UploadedImageType = {
@@ -31,7 +31,7 @@ export type UploadedImageType = {
   height?: number;
 };
 
-export function ContentHobby({ questionnaire }: ContentHobbyProps) {
+export function ContentHousing({ questionnaire }: ContentHousingProps) {
   const {
     handleSubmit,
     control,
@@ -42,65 +42,27 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
-      title: 'I have a sole proprietorship',
-      content: (
-        <>
-          Proprietorship expense = Operating Expenses + Depreciation + Other
-          Deductions Report income and expenses in the RF-1030 or RF-1175 forms.
-          <p className="text-black pt-[12px] pb-[6px]">Revenue</p>
-          <FormInput
-            name="I have a sole proprietorship.Revenue"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="NOK 100"
-            required
-          />
-          <p className="text-black pt-[12px] pb-[6px]">
-            proprietorship expense
-          </p>
-          <FormInput
-            name="I have a sole proprietorship.proprietorship expense"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="NOK 100"
-            required
-          />
-        </>
-      ),
-    },
-    {
-      id: 'item-2',
       title:
-        'Sell goods or services, blog/influencer, practise e-sports (gaming), breed animals on a small scale',
+        'Housing in a housing association, housing company or jointly owned property',
       content: (
         <>
-          Only the portion exceeding the standard commuting deduction threshold
-          (37 km/day) is deductible. Keep records of all expenses.
-          <p className="text-black pt-[12px] pb-[6px]">Revenue</p>
+          you can deduct related expenses such as part of your mortgage
+          interest, electricity, insurance, and maintenance costs based on the
+          proportion of the property rented out.
+          <p className="text-black pt-[12px] pb-[6px]">Documented cost</p>
           <FormInput
-            name="Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale.Revenue"
+            name="Housing in a housing association housing company or jointly owned property.Documented cost"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 100"
-            required
-          />
-          <p className="text-black pt-[12px] pb-[6px]">Documented expense</p>
-          <FormInput
-            name="Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale.Documented expense"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="NOK 100"
+            placeholder="NOK 200"
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
             Upload verification document
           </p>
           <FormReceiptInput
-            name="Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale.Upload verification document"
+            name="Housing in a housing association housing company or jointly owned property.Upload verification document"
             control={control}
             setValue={setValue}
           />
@@ -108,18 +70,39 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
       ),
     },
     {
-      id: 'item-3',
-      title: 'I have received salary from odd jobs and services',
+      id: 'item-2',
+      title: 'I have rented out a residential property or a holiday home',
       content: (
         <>
-          Odd job income qualifies for the minimum deduction (45% of your total
-          income, capped at NOK 104,450 for 2023). This deduction automatically
-          applies to personal income and can lower your tax base.
+          Expenses: Include property maintenance, repairs, insurance, and a
+          portion of mortgage interest. If the property is used solely for
+          renting, you may be able to deduct 100% of the relevant expenses.
+          <p className="text-black pt-[12px] pb-[6px]">Expense</p>
+          <FormInput
+            name="I have rented out a residential property or a holiday home.Revenue"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
+        </>
+      ),
+    },
+    {
+      id: 'item-3',
+      title: 'Sold a residential property or holiday home with a loss',
+      content: (
+        <>
+          If the property has been your primary residence for at least 12 of the
+          last 24 months before the sale, the capital gains from the sale are
+          tax-free.
           <p className="text-black pt-[12px] pb-[6px]">
-            Received salary from odd jobs and services exceeding NOK 6000 ?
+            Was the property your primary residence for at least 12 of the last
+            24 months?
           </p>
           <FormInput
-            name="I have received salary from odd jobs and services.Received salary from odd jobs and services exceeding NOK 6000"
+            name="Sold a residential property or holiday home with a loss.Was the property your primary residence for at least 12 of the last 24 months"
             customClassName="w-full"
             type="select"
             control={control}
@@ -130,13 +113,13 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
             ]}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">Odd job income</p>
+          <p className="text-black pt-[12px] pb-[6px]">Capital gain</p>
           <FormInput
-            name="I have received salary from odd jobs and services.Odd job income"
+            name="Sold a residential property or holiday home with a loss.Capital gain"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 5000"
+            placeholder="NOK 200"
             required
           />
         </>
