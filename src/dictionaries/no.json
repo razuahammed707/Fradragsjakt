@@ -1,11 +1,14 @@
 {
   "page": {
+    "welcome": {
+      "message": "Velkommen"
+    },
     "home": {
-      "title": "Velkommen til NextJs norsk språk",
+      "title": "Velkommen",
       "description": "Internasjonalisering i NextJs 13 App Router"
     },
     "dashboard": {
-      "title": "Årlig graf",
+      "title": "Årlig Diagram",
       "subTitle": "Vennligst sjekk dokumentene dine"
     },
     "about": {
@@ -37,8 +40,50 @@
       "google": "Google",
       "already_have_account": "Har du allerede en konto?",
       "sign_in": "Logg inn",
-      "verification_email_sent": "En lenke for e-postbekreftelse er sendt til e-posten din. Vennligst sjekk.",
-      "error_message": "Kunne ikke registrere deg. Prøv igjen."
+      "verification_email_sent": "Verifikasjonslink har blitt sendt til e-posten din. Vennligst sjekk.",
+      "error_message": "Registreringen mislyktes. Vennligst prøv igjen."
+    },
+    "modal": {
+      "no_data": "Fant ingenting"
+    },
+    "pagination": {
+      "next": "Neste",
+      "previous": "Forrige",
+      "perpage": "Rader per side"
+    },
+    "expenseDataTableColumns": {
+      "date": "Dato",
+      "description": "Beskrivelse",
+      "category": "Kategori",
+      "type": "Type",
+      "amount": "Beløp"
+    },
+    "expenseoverview": {
+      "title": "Totalt utgiftsoversikt",
+      "subtitle": "i august",
+      "addExpense": "Legg til utgift",
+      "uploadStatements": "Last opp kontoutdrag"
+    },
+    "expensemodal": {
+      "addExpense": "Legg til utgift",
+      "uploadStatements": "Last opp kontoutdrag",
+      "applyRule": "Bruk regel"
+    },
+    "expensetopsection": {
+      "business": "Bedrift",
+      "personal": "Personlig",
+      "august": "August",
+      "more": "Mer"
+    },
+    "categoryTableColumns": {
+      "serialNo": "Serienummer",
+      "category": "Kategori",
+      "createdBy": "Opprettet av",
+      "actions": "Handlinger"
+    },
+    "RuleTopSection": {
+      "title": "Legg til og tilpass regler for enkelt å beregne dine fradrag",
+      "subtitle": "Tilpass regler for bedre styring"
     }
   }
 }

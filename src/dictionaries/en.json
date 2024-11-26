@@ -1,7 +1,10 @@
 {
   "page": {
+    "welcome": {
+      "message": "Welcome"
+    },
     "home": {
-      "title": "Welcome to NextJs English Language",
+      "title": "Welcome",
       "description": "Internationalization in NextJs 13 App Router"
     },
     "dashboard": {
@@ -39,6 +42,48 @@
       "sign_in": "Sign In",
       "verification_email_sent": "Email verification link has been sent to your email. Please check.",
       "error_message": "Failed to register. Please try again."
+    },
+    "modal": {
+      "no data": "Could not find anything"
+    },
+    "pagination": {
+      "next": "Next",
+      "previous": "Previous",
+      "perpage": "Rows per page"
+    },
+    "expenseDataTableColumns": {
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
+      "type": "Type",
+      "amount": "Amount"
+    },
+    "expenseoverview": {
+      "title": "Total Expenses Overview",
+      "subtitle": "in August",
+      "addExpense": "Add Expense",
+      "uploadStatements": "Upload Statements"
+    },
+    "expensemodal": {
+      "addExpense": "Add expense",
+      "uploadStatements": "Upload statements",
+      "applyRule": "Apply Rule"
+    },
+    "expensetopsection": {
+      "business": "Business",
+      "personal": "Personal",
+      "august": "August",
+      "more": "More"
+    },
+    "categoryTableColumns": {
+      "serialNo": "Serial no.",
+      "category": "Category",
+      "createdBy": "Created by",
+      "actions": "Actions"
+    },
+    "RuleTopSection": {
+      "title": "Add, Customize rules to calculate your deductions with ease",
+      "subtitle": "Customize rule for better management"
     }
   }
 }
