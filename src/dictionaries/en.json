@@ -59,10 +59,11 @@
       "amount": "Amount"
     },
     "expenseoverview": {
-      "title": "Total Expenses Overview",
+      "title": "Total Expense Overview",
       "subtitle": "in August",
       "addExpense": "Add Expense",
-      "uploadStatements": "Upload Statements"
+      "uploadStatements": "Upload Statements",
+      "search": "Search expenses"
     },
     "expensemodal": {
       "addExpense": "Add expense",
@@ -75,13 +76,17 @@
       "august": "August",
       "more": "More"
     },
+    "expenseUploadFile": {
+      "heading": "Upload receipt csv, pdf",
+      "uploadButton": "Upload"
+    },
     "categoryTableColumns": {
       "serialNo": "Serial no.",
       "category": "Category",
       "createdBy": "Created by",
       "actions": "Actions"
     },
-    "RuleTopSection": {
+    "ruletopsection": {
       "title": "Add, Customize rules to calculate your deductions with ease",
       "subtitle": "Customize rule for better management"
     }

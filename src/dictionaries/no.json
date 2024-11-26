@@ -62,7 +62,8 @@
       "title": "Totalt utgiftsoversikt",
       "subtitle": "i august",
       "addExpense": "Legg til utgift",
-      "uploadStatements": "Last opp kontoutdrag"
+      "uploadStatements": "Last opp kontoutdrag",
+      "search": "Søkekostnad"
     },
     "expensemodal": {
       "addExpense": "Legg til utgift",
@@ -75,13 +76,17 @@
       "august": "August",
       "more": "Mer"
     },
+    "expenseUploadFile": {
+      "heading": "Last opp kvittering csv, pdf",
+      "uploadButton": "Last opp"
+    },
     "categoryTableColumns": {
       "serialNo": "Serienummer",
       "category": "Kategori",
       "createdBy": "Opprettet av",
       "actions": "Handlinger"
     },
-    "RuleTopSection": {
+    "ruletopsection": {
       "title": "Legg til og tilpass regler for enkelt å beregne dine fradrag",
       "subtitle": "Tilpass regler for bedre styring"
     }

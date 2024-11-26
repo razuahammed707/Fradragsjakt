@@ -42,7 +42,11 @@ export default function CategoryTable() {
       <div className="flex justify-between items-center mb-4  ">
         <h2 className="text-xl text-[#101010] font-bold">Category Overview</h2>
         <div className="flex gap-2">
-          <SearchInput className="" onChange={handleSearchChange} />
+          <SearchInput
+            className=""
+            onChange={handleSearchChange}
+            placeholder="search category"
+          />
           {/*  */}
           <CategoryAddModal />
         </div>

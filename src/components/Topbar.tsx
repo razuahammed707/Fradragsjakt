@@ -26,7 +26,7 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
         </Link>
       </div>
       <div className="flex items-center space-x-8">
-        <SearchInput className="hidden md:block" />
+        <SearchInput className="hidden md:block" placeholder="search" />
         <LanguageSwitcher />
         <BellDot size={24} color="#FFFF" />
         <ProfileDropdown />

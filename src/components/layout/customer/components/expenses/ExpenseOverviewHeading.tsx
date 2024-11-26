@@ -65,7 +65,6 @@ function ExpenseOverviewHeading({
       })
     : [];
 
-  // Initialize translation dictionary
   const dict = useTranslation();
 
   const handleButtonClick = (title: string) => {
@@ -134,6 +133,7 @@ function ExpenseOverviewHeading({
           <div className="flex justify-end">
             <SearchInput
               className="hidden md:block"
+              placeholder={dict.page.expenseoverview.search}
               onChange={handleSearchChange}
             />
           </div>
@@ -155,7 +155,7 @@ function ExpenseOverviewHeading({
                 }
               >
                 <Image src={button.icon} alt="button icon" className="mr-2" />
-                {button.text} {/* Directly use the button.text */}
+                {button.text}
               </Button>
             ))}
           </div>
