@@ -8,6 +8,7 @@ import ExpenseOverviewSection from './components/expenses/ExpenseOverviewSection
 
 const CustomerExpenses: React.FC = () => {
   const [filterString, setFilterString] = useState<string>('');
+
   return (
     <ProtectedLayout>
       <ExpenseTopSection filterString={filterString} />

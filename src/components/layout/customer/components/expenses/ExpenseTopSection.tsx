@@ -95,12 +95,14 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
           amount={expenseStats.business}
           month="August"
           percentage={2}
+          filterString={filterString}
         />
         <ExpenseStatsByType
           type="Personal"
           amount={expenseStats.personal}
           month="August"
           percentage={2}
+          filterString={filterString}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
