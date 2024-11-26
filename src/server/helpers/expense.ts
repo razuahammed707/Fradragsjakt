@@ -220,31 +220,43 @@ const getCategoryAndExpenseTypeAnalytics = async (
   }
 };
 
+interface ExpenseAnalytics {
+  date: string;
+  totalAmount: number;
+  totalItems: number;
+  dayName: string;
+}
+
+interface ExpenseAnalyticsResult {
+  businessExpenseAnalytics: ExpenseAnalytics[];
+  personalExpenseAnalytics: ExpenseAnalytics[];
+}
+
 const getBusinessAndPersonalExpenseAnalytics = async (
   query: Record<string, unknown>
-) => {
+): Promise<ExpenseAnalyticsResult[]> => {
   try {
     // Get the current date and calculate the date for 7 days ago
     const today = new Date();
     const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 7); // Subtract 7 days from today's date
+    sevenDaysAgo.setDate(today.getDate() - 7);
 
     // Generate an array of the last 7 days (including today)
-    const dateArray = [];
+    const dateArray: string[] = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
-      dateArray.push(date.toISOString().split('T')[0]); // Add the date in YYYY-MM-DD format
+      dateArray.push(date.toISOString().split('T')[0]);
     }
 
     // Single aggregate query using $facet
-    return await ExpenseModel.aggregate([
+    const result = await ExpenseModel.aggregate<ExpenseAnalyticsResult>([
       {
         $match: {
-          ...query, // Apply any filters passed in the query
+          ...query,
           transaction_date: {
-            $gte: sevenDaysAgo, // Only include records from the last 7 days
-            $lte: today, // Ensure we're also including today
+            $gte: sevenDaysAgo,
+            $lte: today,
           },
         },
       },
@@ -264,7 +276,7 @@ const getBusinessAndPersonalExpenseAnalytics = async (
                     format: '%Y-%m-%d',
                     date: '$transaction_date',
                   },
-                }, // Group by day
+                },
                 totalAmount: { $sum: '$amount' },
                 totalItems: { $sum: 1 },
               },
@@ -278,26 +290,26 @@ const getBusinessAndPersonalExpenseAnalytics = async (
               },
             },
             {
-              $sort: { date: 1 }, // Sort by date (ascending order)
+              $sort: { date: 1 },
             },
             {
               $addFields: {
-                date: { $ifNull: ['$date', dateArray[0]] }, // Ensure each day in the dateArray appears
+                date: { $ifNull: ['$date', dateArray[0]] },
               },
             },
             {
               $set: {
-                totalAmount: { $ifNull: ['$totalAmount', 0] }, // Set default values for missing days
+                totalAmount: { $ifNull: ['$totalAmount', 0] },
                 totalItems: { $ifNull: ['$totalItems', 0] },
               },
             },
             {
               $match: {
-                date: { $in: dateArray }, // Ensure all 7 days are included
+                date: { $in: dateArray },
               },
             },
             {
-              $limit: 7, // Ensure only 7 days worth of data
+              $limit: 7,
             },
           ],
           // Personal Expense Analytics grouped by day
@@ -314,7 +326,7 @@ const getBusinessAndPersonalExpenseAnalytics = async (
                     format: '%Y-%m-%d',
                     date: '$transaction_date',
                   },
-                }, // Group by day
+                },
                 totalAmount: { $sum: '$amount' },
                 totalItems: { $sum: 1 },
               },
@@ -328,35 +340,77 @@ const getBusinessAndPersonalExpenseAnalytics = async (
               },
             },
             {
-              $sort: { date: 1 }, // Sort by date (ascending order)
+              $sort: { date: 1 },
             },
             {
               $addFields: {
-                date: { $ifNull: ['$date', dateArray[0]] }, // Ensure each day in the dateArray appears
+                date: { $ifNull: ['$date', dateArray[0]] },
               },
             },
             {
               $set: {
-                totalAmount: { $ifNull: ['$totalAmount', 0] }, // Set default values for missing days
+                totalAmount: { $ifNull: ['$totalAmount', 0] },
                 totalItems: { $ifNull: ['$totalItems', 0] },
               },
             },
             {
               $match: {
-                date: { $in: dateArray }, // Ensure all 7 days are included
+                date: { $in: dateArray },
               },
             },
             {
-              $limit: 7, // Ensure only 7 days worth of data
+              $limit: 7,
             },
           ],
         },
       },
     ]);
+
+    // Ensure complete data for both business and personal expenses
+    return result.map((analytics) => ({
+      businessExpenseAnalytics: ensureSevenDaysCoverage(
+        analytics.businessExpenseAnalytics,
+        dateArray
+      ),
+      personalExpenseAnalytics: ensureSevenDaysCoverage(
+        analytics.personalExpenseAnalytics,
+        dateArray
+      ),
+    }));
   } catch (error) {
     const { message } = errorHandler(error);
     throw new ApiError(httpStatus.NOT_FOUND, message);
   }
+};
+
+// Helper function to ensure 7 days of data with zero values for missing days
+const ensureSevenDaysCoverage = (
+  analytics: ExpenseAnalytics[],
+  dateArray: string[]
+): ExpenseAnalytics[] => {
+  // Create a map of existing analytics by date
+  const analyticsMap = new Map(analytics.map((item) => [item.date, item]));
+
+  // Generate full 7-day analytics with zero values for missing days
+  return dateArray.map((date) => {
+    // Get the day name
+    const dayName = new Date(date).toLocaleDateString('en-US', {
+      weekday: 'short',
+    });
+
+    // Return existing analytics or create a zero-value entry
+    return analyticsMap.get(date)
+      ? {
+          ...analyticsMap.get(date)!,
+          dayName,
+        }
+      : {
+          date,
+          dayName,
+          totalAmount: 0,
+          totalItems: 0,
+        };
+  });
 };
 
 const getWriteOffSummary = async (

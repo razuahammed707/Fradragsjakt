@@ -3,11 +3,24 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
+import { trpc } from '@/utils/trpc';
+import { chartItemsManipulation } from '@/utils/helpers/expenseChartItemsManipulation';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
-const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
+const ExpenseStats: React.FC<{ title: string; filterString?: string }> = ({
+  title,
+  filterString,
+}) => {
+  const { data: analytics } =
+    trpc.expenses.getBusinessAndPersonalExpenseAnalytics.useQuery({
+      expense_type: '',
+      filterString,
+    });
+
+  const businessExpenseAnalytics = analytics?.data?.businessExpenseAnalytics;
+  const personalExpenseAnalytics = analytics?.data?.personalExpenseAnalytics;
   const weekDays = [
     'Monday',
     'Tuesday',
@@ -18,11 +31,19 @@ const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
     'Sunday',
   ];
 
+  const { manipulateWeekDays, chartItemsByExpenseType } =
+    chartItemsManipulation(
+      title,
+      weekDays,
+      businessExpenseAnalytics,
+      personalExpenseAnalytics
+    );
+
   const chartOptions = {
     series: [
       {
         name: 'Transactions',
-        data: [2300, 3100, 4000, 5000, 3600, 3200, 2300],
+        data: chartItemsByExpenseType || [0],
       },
     ] as ApexAxisChartSeries,
     options: {
@@ -50,7 +71,7 @@ const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
         enabled: false,
       },
       xaxis: {
-        categories: weekDays,
+        categories: manipulateWeekDays,
         axisBorder: {
           show: false,
         },
@@ -74,6 +95,7 @@ const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
         labels: {
           show: false,
         },
+        min: 0,
       },
       grid: {
         show: false,
@@ -104,6 +126,7 @@ const ExpenseStats: React.FC<{ title: string }> = ({ title }) => {
           w: unknown;
         }) {
           const value = series[seriesIndex][dataPointIndex];
+          // @ts-expect-error: Suppress type checking for w
           const day = w.globals.labels[dataPointIndex];
 
           return `<div class="custom-tooltip shadow-md" style="padding: 8px;">
