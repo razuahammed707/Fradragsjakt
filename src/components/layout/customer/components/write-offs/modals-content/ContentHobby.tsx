@@ -25,21 +25,11 @@ type ContentHobbyProps = {
 };
 
 export function ContentHobby({ questionnaire }: ContentHobbyProps) {
-  const [openItem, setOpenItem] = useState<string | null>(null);
   const {
     handleSubmit,
     control,
     formState: { isDirty, isValid },
   } = useForm();
-
-  const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
-
-  const handleToggle = (value: string) => {
-    setOpenItem((prevItem) => (prevItem === value ? null : value));
-  };
-
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -113,6 +103,19 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
     questionnaire: answers,
     accordionData,
   });
+
+  const [openItem, setOpenItem] = useState<string | null>(
+    matchedAccordionData.length > 0 ? matchedAccordionData[0].id : null
+  );
+
+  const appDispatch = useAppDispatch();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  console.log(questionnaires);
+
+  const handleValueChange = (value: string) => {
+    setOpenItem((prevOpen) => (prevOpen === value ? null : value));
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
@@ -124,11 +127,15 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
     <div className="">
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Accordion type="multiple" className="w-full">
+        <Accordion
+          type="single"
+          className="w-full"
+          value={openItem || undefined}
+          onValueChange={handleValueChange}
+        >
           {matchedAccordionData.map(({ id, title, content }) => (
             <AccordionItem key={id} value={id}>
               <AccordionTrigger
-                onClick={() => handleToggle(id)}
                 className={`${
                   openItem === id ? 'text-violet-600' : ''
                 } no-underline font-bold text-start`}
