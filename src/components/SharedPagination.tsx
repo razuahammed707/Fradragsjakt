@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 interface SharedPaginationProps {
   currentPage: number;
@@ -53,6 +54,7 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
       onPageChange(page);
     }
   };
+  const dict = useTranslation();
 
   const renderPaginationItems = () => {
     const items = [];
@@ -92,7 +94,9 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
       <PaginationContent>
         <div className="absolute left-0">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Rows per page</p>
+            <p className="text-sm font-medium text-gray-400">
+              {dict.page.pagination.perpage}
+            </p>
             <Select
               value={`${pageLimit}`}
               onValueChange={(page) => onPageLimitChange(Number(page))}

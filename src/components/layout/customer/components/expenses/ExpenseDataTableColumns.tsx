@@ -11,6 +11,7 @@ import formatDate from '@/utils/helpers/formatDate';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import ExpenseUpdateModal from './ExpenseUpdateModal';
 import ExpenseDetailsModal from './ExpenseDetailsModal';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -23,129 +24,117 @@ export type ExpenseColumnProps = {
   amount: number;
 };
 
-export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        className="border border-[#E4E4E7] shadow-none rounded-none  data-[state=checked]:text-white"
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        className="border border-[#E4E4E7] shadow-none rounded-none  data-[state=checked]:text-white"
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'transaction_date',
-    header: 'Date',
-    cell: ({ row }) => {
-      const transactionDate = row.getValue('transaction_date') as string;
-      const createdAt = row.original.createdAt;
-      const dateToRender = transactionDate || createdAt || '';
+export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const dict = useTranslation();
 
-      return <span className="text-[#00104B]">{formatDate(dateToRender)}</span>;
+  return [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          className="border border-[#E4E4E7] shadow-none rounded-none  data-[state=checked]:text-white"
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          className="border border-[#E4E4E7] shadow-none rounded-none  data-[state=checked]:text-white"
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    accessorKey: 'description',
-    header: 'Description',
-    cell: ({ row }) => {
-      return (
+    {
+      accessorKey: 'transaction_date',
+      header: dict.page.expenseDataTableColumns.date, // Translate this header
+      cell: ({ row }) => {
+        const transactionDate = row.getValue('transaction_date') as string;
+        const createdAt = row.original.createdAt;
+        const dateToRender = transactionDate || createdAt || '';
+        return (
+          <span className="text-[#00104B]">{formatDate(dateToRender)}</span>
+        );
+      },
+    },
+    {
+      accessorKey: 'description',
+      header: dict.page.expenseDataTableColumns.description, // Translate this header
+      cell: ({ row }) => (
         <span className="text-[#00104B]">{row.getValue('description')}</span>
-      );
+      ),
     },
-  },
-  {
-    accessorKey: 'category',
-
-    header: ({ column }) => {
-      return (
+    {
+      accessorKey: 'category',
+      header: ({ column }) => (
         <Button
           variant="ghost"
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Category
+          {dict.page.expenseDataTableColumns.category}{' '}
+          {/* Translate this header */}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
-      );
+      ),
+      cell: ({ row }) => (
+        <span>{transformToUppercase(row.getValue('category'))}</span>
+      ),
     },
-    cell: ({ row }) => {
-      return (
-        <span className="">
-          {transformToUppercase(row.getValue('category'))}
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: 'expense_type',
-    header: ({ column }) => {
-      return (
+    {
+      accessorKey: 'expense_type',
+      header: ({ column }) => (
         <Button
           variant="ghost"
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Type
+          {dict.page.expenseDataTableColumns.type} {/* Translate this header */}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
-      );
+      ),
+      cell: ({ row }) => (
+        <span>{transformToUppercase(row.getValue('expense_type'))}</span>
+      ),
     },
-    cell: ({ row }) => {
-      return (
-        <span className="">
-          {transformToUppercase(row.getValue('expense_type'))}
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: 'amount',
-    header: ({ column }) => {
-      return (
+    {
+      accessorKey: 'amount',
+      header: ({ column }) => (
         <Button
           variant="ghost"
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Amount
-          {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
+          {dict.page.expenseDataTableColumns.amount}{' '}
+          {/* Translate this header */}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
-      );
+      ),
+      cell: ({ row }) => {
+        const amount_to_render = row.getValue('amount') as number;
+        return (
+          <span className="text-[#00104B]">
+            <NumericFormat
+              value={amount_to_render}
+              displayType="text"
+              thousandSeparator={true}
+              prefix="NOK "
+            />
+          </span>
+        );
+      },
     },
-    cell: ({ row }) => {
-      const amount_to_render = row.getValue('amount') as number;
-      return (
-        <span className="text-[#00104B]">
-          <NumericFormat
-            value={amount_to_render}
-            displayType="text"
-            thousandSeparator={true}
-            prefix="NOK "
-          />
-        </span>
-      );
-    },
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => {
-      return (
+    {
+      id: 'actions',
+      cell: ({ row }) => (
         <div className="flex items-center space-x-1">
           <ExpenseDetailsModal payload={row.original} />
           <ExpenseUpdateModal payload={row.original} />
@@ -154,7 +143,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => [
             itemId={row.original._id as string}
           />
         </div>
-      );
+      ),
     },
-  },
-];
+  ];
+};

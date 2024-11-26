@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslation } from '@/lib/TranslationProvider';
+
 import {
   ColumnDef,
   flexRender,
@@ -11,7 +13,6 @@ import {
   getFilteredRowModel,
   getCoreRowModel,
   useReactTable,
-  //getPaginationRowModel,
 } from '@tanstack/react-table';
 
 import {
@@ -48,6 +49,8 @@ export function SharedDataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const dict = useTranslation();
+
   const table = useReactTable({
     data,
     columns,
@@ -58,7 +61,6 @@ export function SharedDataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    //getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -122,7 +124,7 @@ export function SharedDataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24">
-                  <NoResultsPlaceholder message="We couldn’t find anything." />
+                  <NoResultsPlaceholder message={dict.page.modal.no_data} />
                 </TableCell>
               </TableRow>
             )}
