@@ -9,7 +9,7 @@ import { ReactNode } from 'react';
 type TooltipProps = {
   children: ReactNode;
   visibleContent: ReactNode;
-  align: string;
+  align?: 'center' | 'end' | 'start' | undefined;
 };
 
 function SharedTooltip({

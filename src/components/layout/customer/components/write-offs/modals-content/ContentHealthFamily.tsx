@@ -18,6 +18,7 @@ import {
   questionnaireSelector,
   showModal,
 } from '@/redux/slices/questionnaire';
+import { FormReceiptInput } from '@/components/FormReceiptInput';
 
 type AccordionItemData = {
   id: string;
@@ -32,21 +33,12 @@ type ContentHealthFamilyProps = {
 export function ContentHealthFamily({
   questionnaire,
 }: ContentHealthFamilyProps) {
-  const [openItem, setOpenItem] = useState<string | null>(null);
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { isDirty, isValid },
   } = useForm();
-
-  const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
-
-  const handleToggle = (value: string) => {
-    setOpenItem((prevItem) => (prevItem === value ? null : value));
-  };
-
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -65,7 +57,7 @@ export function ContentHealthFamily({
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="children under 12"
+            placeholder="2"
             required
           />
         </>
@@ -87,12 +79,31 @@ export function ContentHealthFamily({
             customClassName="w-full"
             type="select"
             control={control}
-            placeholder="special care needs children?"
+            placeholder="Yes"
             options={[
               { title: 'Yes', value: 'yes' },
               { title: 'No', value: 'no' },
             ]}
             required
+          />
+          <p className="text-black pt-[12px] pb-[6px]">
+            Documented care expenses
+          </p>
+          <FormInput
+            name="I have children aged 12 or older with special care needs.Documented care expenses"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 500"
+            required
+          />
+          <p className="text-black pt-[12px] pb-[6px]">
+            Upload verification document
+          </p>
+          <FormReceiptInput
+            name="I have children aged 12 or older with special care needs.Upload verification document"
+            control={control}
+            setValue={setValue}
           />
         </>
       ),
@@ -106,6 +117,32 @@ export function ContentHealthFamily({
           Have additional travel distance or expenses related to dropping off
           the child in a child day care centre or after-school supervision
           scheme.
+          <p className="text-black pt-[12px] pb-[6px]">Documented expenses</p>
+          <FormInput
+            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Documented expenses"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 500"
+            required
+          />
+          <p className="text-black pt-[12px] pb-[6px]">Extra travel distance</p>
+          <FormInput
+            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Extra travel distance"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="50 km"
+            required
+          />
+          <p className="text-black pt-[12px] pb-[6px]">
+            Upload verification document
+          </p>
+          <FormReceiptInput
+            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Upload verification document"
+            control={control}
+            setValue={setValue}
+          />
         </>
       ),
     },
@@ -113,27 +150,31 @@ export function ContentHealthFamily({
       id: 'item-4',
       title: 'I am a single parent',
       content: (
-        <>
-          Single parents receive a monthly allowance for each child under 18
-          years of age. As of 2023, the benefit is NOK 1,676 per month for
-          children under six and NOK 1,054 for children aged six and older. This
-          is not taxable income.
-          <p className="text-black pt-[12px] pb-[6px]">
-            Do you get allowance as a single parent?
+        <div>
+          <p className="">
+            Single parents now receive financial support through other
+            mechanisms, such as:
           </p>
-          <FormInput
-            name="I am a single parent.Do you get allowance as a single parent"
-            customClassName="w-full"
-            type="select"
-            control={control}
-            placeholder="get allowance?"
-            options={[
-              { title: 'Yes', value: 'yes' },
-              { title: 'No', value: 'no' },
-            ]}
-            required
-          />
-        </>
+
+          <ol>
+            <li>
+              <span className="font-semibold">
+                Extended Child Benefit (Utvidet barnetrygd)
+              </span>
+              : Single parents receive additional child benefits.
+            </li>
+            <li>
+              <span className="font-semibold">
+                Deductions for Childcare Expenses
+              </span>
+              : Deduct costs for day care and after-school programs.
+            </li>
+            <li>
+              <span className="font-semibold">Commuting Deductions</span>: For
+              extra travel costs related to children, such as drop-offs.
+            </li>
+          </ol>
+        </div>
       ),
     },
   ];
@@ -142,6 +183,14 @@ export function ContentHealthFamily({
     questionnaire: answers,
     accordionData,
   });
+  const [openItem, setOpenItem] = useState<string | null>(
+    matchedAccordionData.length > 0 ? matchedAccordionData[0].id : null
+  );
+
+  const appDispatch = useAppDispatch();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  console.log({ questionnaires });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
@@ -150,26 +199,32 @@ export function ContentHealthFamily({
     appDispatch(showModal(false));
   };
 
+  const handleValueChange = (value: string) => {
+    setOpenItem((prevOpen) => (prevOpen === value ? null : value));
+  };
+
   return (
     <div>
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Accordion type="single" className="w-full">
+        <Accordion
+          type="single"
+          value={openItem || undefined}
+          onValueChange={handleValueChange}
+          className="w-full"
+        >
           {matchedAccordionData.map((item) => (
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger
-                onClick={() => handleToggle(item.id)}
                 className={`${
                   openItem === item.id ? 'text-violet-600' : ''
                 } no-underline font-bold text-start`}
               >
                 {item.title}
               </AccordionTrigger>
-              {openItem === item.id && (
-                <AccordionContent className="text-gray-500 text-xs">
-                  {item.content}
-                </AccordionContent>
-              )}
+              <AccordionContent className="text-gray-500 text-xs">
+                {item.content}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

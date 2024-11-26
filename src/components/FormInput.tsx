@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Control, Controller } from 'react-hook-form';
+import { Input } from './ui/input';
 
 type Option = {
   title: string;
@@ -69,7 +70,7 @@ export function FormInput({
       rules={{ required }}
       defaultValue={defaultValue}
       render={({ field }) => (
-        <input
+        <Input
           {...field}
           type={type}
           placeholder={placeholder}

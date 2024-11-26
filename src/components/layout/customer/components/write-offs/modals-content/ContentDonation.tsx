@@ -15,13 +15,16 @@ import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsP
 import {
   addQuestionnaire,
   questionnaireSelector,
+  showModal,
 } from '@/redux/slices/questionnaire';
 import { FormInput } from '@/components/FormInput';
+import { FormReceiptInput } from '@/components/FormReceiptInput';
 
 export function ContentDonation() {
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { isDirty, isValid },
   } = useForm();
 
@@ -33,8 +36,8 @@ export function ContentDonation() {
   const onSubmit = (formData: any) => {
     const question = 'Gifts/Donations';
     const payload = transformFormDataToPayload(question, formData);
-
     appDispatch(addQuestionnaire(payload));
+    appDispatch(showModal(false));
   };
   return (
     <Card className="border-none shadow-none p-0">
@@ -61,6 +64,14 @@ export function ContentDonation() {
                 control={control}
                 placeholder="Donation amount"
                 required
+              />
+              <Label className="text-black pt-[12px] pb-[6px]">
+                Upload verification document
+              </Label>
+              <FormReceiptInput
+                name="Gifts to voluntary organisations.Upload verification document"
+                control={control}
+                setValue={setValue}
               />
             </div>
           </div>

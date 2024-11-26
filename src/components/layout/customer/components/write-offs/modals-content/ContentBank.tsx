@@ -25,38 +25,26 @@ type ContentBankProps = {
 };
 
 export function ContentBank({ questionnaire }: ContentBankProps) {
-  const [openItem, setOpenItem] = useState<string | null>(null);
   const {
     handleSubmit,
     control,
     formState: { isDirty, isValid },
   } = useForm();
-
-  const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
-
-  const handleToggle = (value: string) => {
-    setOpenItem((prevItem) => (prevItem === value ? null : value));
-  };
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title: 'Have a loan?',
       content: (
         <>
-          Norway allows you to deduct interest paid on loans, including mortgage
-          interest, student loans, and consumer loans, provided that the lender
-          has reported the loan to the Tax Administration. Interest payments on
-          loans in Norway are typically deductible at a rate of 22% (the
-          standard tax deduction rate).
-          <p className="text-black pt-[12px] pb-[6px]">Loan amount?</p>
+          The deduction rate for loan interest is 22% of the interest paid in
+          the tax year.
+          <p className="text-black pt-[12px] pb-[6px]">Total interest paid</p>
           <FormInput
-            name="Have a loan.Loan amount"
+            name="Have a loan.Total interest paid"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="Loan amount"
+            placeholder="NOK 200"
             required
           />
         </>
@@ -67,12 +55,17 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have refinanced a loan in the last year?',
       content: (
         <>
-          If you’ve refinanced a loan, you may still be eligible to deduct
-          interest expenses. Any fees associated with refinancing, such as loan
-          arrangement fees, are generally not deductible. However, the interest
-          paid after refinancing remains deductible, as long as it pertains to
-          your primary residence, real estate, or certain other qualifying
-          expenses.
+          Refinancing costs, such as fees and charges, are deductible alongside
+          interest. The same 22% rate applies.
+          <p className="text-black pt-[12px] pb-[6px]">Refinancing cost</p>
+          <FormInput
+            name="Have refinanced a loan in the last year.Refinancing cost"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
         </>
       ),
     },
@@ -81,10 +74,26 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have taken out a joint loan with someone?',
       content: (
         <>
-          For joint loans, each borrower can claim deductions on their portion
-          of the interest paid. You would each declare your individual share of
-          the interest payments on your tax returns. As with single loans, the
-          deduction rate is generally 22% of the interest paid.
+          Ensure the ownership percentage is documented, typically in the loan
+          agreement.
+          <p className="text-black pt-[12px] pb-[6px]">Interest amount</p>
+          <FormInput
+            name="Have taken out a joint loan with someone.Interest amount"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
+          <p className="text-black pt-[12px] pb-[6px]">Your ownership share</p>
+          <FormInput
+            name="Have taken out a joint loan with someone.Your ownership share"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
         </>
       ),
     },
@@ -95,8 +104,16 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
         <>
           Young people’s housing savings (BSU) is for people under 34 years of
           age. You can save up to NOK 27,500 per year. Then you get a tax
-          deduction of NOK 2,750 (10 percent). You can save up to a total of NOK
-          300,000.
+          deduction of NOK 2,750 (10 percent).
+          <p className="text-black pt-[12px] pb-[6px]">This years savings</p>
+          <FormInput
+            name="Have young people’s housing savings (BSU).This years savings"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
         </>
       ),
     },
@@ -107,17 +124,36 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
         <>
           Gains and losses on shares are taxable for the amount that exceeds the
           deductible risk-free return. Losses on sale of shares are deductible.
-          The tax rate for 2023 is 37.84 percent.
+          <p className="text-black pt-[12px] pb-[6px]">Total loss</p>
+          <FormInput
+            name="I have sold shares or securities at a loss.Total loss"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
         </>
       ),
     },
   ];
-
   const answers = questionnaire?.answers || [];
   const matchedAccordionData = matchQuestionnaireModalQuestion({
     questionnaire: answers,
     accordionData,
   });
+  const [openItem, setOpenItem] = useState<string | null>(
+    matchedAccordionData.length > 0 ? matchedAccordionData[0].id : null
+  );
+
+  const appDispatch = useAppDispatch();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  console.log(questionnaires);
+
+  const handleValueChange = (value: string) => {
+    setOpenItem((prevOpen) => (prevOpen === value ? null : value));
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
@@ -129,11 +165,15 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
     <div>
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Accordion type="multiple" className="w-full">
+        <Accordion
+          type="single"
+          className="w-full"
+          value={openItem || undefined}
+          onValueChange={handleValueChange}
+        >
           {matchedAccordionData.map((item) => (
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger
-                onClick={() => handleToggle(item.id)}
                 className={`${
                   openItem === item.id ? 'text-violet-600' : ''
                 } no-underline font-bold text-start`}
