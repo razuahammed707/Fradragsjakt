@@ -94,6 +94,20 @@
     "rulesTopSection": {
       "title": "Legg til, tilpass regler for å beregne fradragene dine med letthet",
       "subtitle": "Tilpass regel for bedre håndtering"
+    },
+    "writeOffsTopSection": {
+      "title": "Potensielle besparelser fra utgifter",
+      "categories": {
+        "Meals": "Måltider",
+        "Clothing": "Klær",
+        "Travel": "Reise",
+        "Supplies": "Forsyninger",
+        "Payment": "Betaling",
+        "Gas": "Gass",
+        "Transport": "Transport",
+        "Others": "Andre",
+        "search": "Søk avskrivninger"
+      }
     }
   },
   "components": {
@@ -125,5 +139,5 @@
       }
     }
   },
-  "default": "Oversettelse mangler"
+  "default": "Oversettelse mangler"
 }
