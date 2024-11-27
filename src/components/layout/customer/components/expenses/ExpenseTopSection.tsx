@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { trpc } from '@/utils/trpc';
 import { expense_categories } from '@/utils/dummy';
+import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
 
 interface CategoryExpense {
   category: string;
@@ -49,6 +50,9 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
     });
   const { data: user } = useSession();
 
+  // Initialize translation dictionary
+  const dict = useTranslation();
+
   useEffect(() => {
     if (!expenses?.data) return;
 
@@ -87,20 +91,23 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
       });
     }
   }, [expenses?.data]);
+
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="grid grid-cols-2 gap-3">
         <ExpenseStatsByType
-          type="Business"
+          type={dict.page.expensetopsection.business} // Translated
           amount={expenseStats.business}
-          month="August"
+          month={dict.page.expensetopsection.august} // Translated
           percentage={2}
+          filterString={filterString}
         />
         <ExpenseStatsByType
-          type="Personal"
+          type={dict.page.expensetopsection.personal} // Translated
           amount={expenseStats.personal}
-          month="August"
+          month={dict.page.expensetopsection.august} // Translated
           percentage={2}
+          filterString={filterString}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -117,7 +124,8 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
           href={`/${user?.user.role}/categories`}
           className="text-white flex items-center justify-center bg-[#5B52F9] p-4 rounded-xl font-bold cursor-pointer"
         >
-          <Image src={PlusIcon} alt="Plus icon" className="mr-3" /> More
+          <Image src={PlusIcon} alt="Plus icon" className="mr-3" />
+          {dict.page.expensetopsection.more} {/* Translated */}
         </Link>
       </div>
     </div>

@@ -112,6 +112,44 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  getBusinessAndPersonalExpenseAnalytics: protectedProcedure
+    .input(
+      z.object({
+        expense_type: z.string().optional(),
+        filterString: z.string().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const { expense_type, filterString } = input;
+        const loggedUser = ctx.user as JwtPayload;
+
+        const query: Record<string, unknown> = {
+          user: new mongoose.Types.ObjectId(loggedUser?.id),
+        };
+
+        if (expense_type) {
+          query.expense_type = ExpenseType.business;
+        }
+
+        // Parse and add filters from filterString
+        const filters = parseFilterString(filterString);
+        Object.assign(query, filters);
+
+        const expenses =
+          await ExpenseHelpers.getBusinessAndPersonalExpenseAnalytics(query);
+
+        return {
+          status: 200,
+          message: 'Analytics for business an personal expense are fetched.',
+          data: expenses[0],
+        } as ApiResponse<(typeof expenses)[0]>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
+
   getWriteOffs: protectedProcedure
     .input(
       z.object({

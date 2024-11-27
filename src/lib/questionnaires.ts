@@ -64,7 +64,7 @@ export const questionnaires = [
     question: 'Hobby, Odd Jobs, and Extra Incomes',
     answers: [
       'I have a sole proprietorship',
-      'Sell goods or services, blog/influencer, practise e-sports (gaming), breed animals, or rent out property on a small scale.',
+      'Sell goods or services, blog/influencer, practise e-sports (gaming), breed animals on a small scale',
       'I have received salary from odd jobs and services',
     ],
     icon: frame5,

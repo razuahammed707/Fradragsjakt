@@ -220,6 +220,199 @@ const getCategoryAndExpenseTypeAnalytics = async (
   }
 };
 
+interface ExpenseAnalytics {
+  date: string;
+  totalAmount: number;
+  totalItems: number;
+  dayName: string;
+}
+
+interface ExpenseAnalyticsResult {
+  businessExpenseAnalytics: ExpenseAnalytics[];
+  personalExpenseAnalytics: ExpenseAnalytics[];
+}
+
+const getBusinessAndPersonalExpenseAnalytics = async (
+  query: Record<string, unknown>
+): Promise<ExpenseAnalyticsResult[]> => {
+  try {
+    // Get the current date and calculate the date for 7 days ago
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+
+    // Generate an array of the last 7 days (including today)
+    const dateArray: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      dateArray.push(date.toISOString().split('T')[0]);
+    }
+
+    // Single aggregate query using $facet
+    const result = await ExpenseModel.aggregate<ExpenseAnalyticsResult>([
+      {
+        $match: {
+          ...query,
+          transaction_date: {
+            $gte: sevenDaysAgo,
+            $lte: today,
+          },
+        },
+      },
+      {
+        $facet: {
+          // Business Expense Analytics grouped by day
+          businessExpenseAnalytics: [
+            {
+              $match: {
+                expense_type: 'business',
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: '%Y-%m-%d',
+                    date: '$transaction_date',
+                  },
+                },
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                date: '$_id',
+                totalAmount: '$totalAmount',
+                totalItems: '$totalItems',
+                _id: 0,
+              },
+            },
+            {
+              $sort: { date: 1 },
+            },
+            {
+              $addFields: {
+                date: { $ifNull: ['$date', dateArray[0]] },
+              },
+            },
+            {
+              $set: {
+                totalAmount: { $ifNull: ['$totalAmount', 0] },
+                totalItems: { $ifNull: ['$totalItems', 0] },
+              },
+            },
+            {
+              $match: {
+                date: { $in: dateArray },
+              },
+            },
+            {
+              $limit: 7,
+            },
+          ],
+          // Personal Expense Analytics grouped by day
+          personalExpenseAnalytics: [
+            {
+              $match: {
+                expense_type: 'personal',
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: '%Y-%m-%d',
+                    date: '$transaction_date',
+                  },
+                },
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                date: '$_id',
+                totalAmount: '$totalAmount',
+                totalItems: '$totalItems',
+                _id: 0,
+              },
+            },
+            {
+              $sort: { date: 1 },
+            },
+            {
+              $addFields: {
+                date: { $ifNull: ['$date', dateArray[0]] },
+              },
+            },
+            {
+              $set: {
+                totalAmount: { $ifNull: ['$totalAmount', 0] },
+                totalItems: { $ifNull: ['$totalItems', 0] },
+              },
+            },
+            {
+              $match: {
+                date: { $in: dateArray },
+              },
+            },
+            {
+              $limit: 7,
+            },
+          ],
+        },
+      },
+    ]);
+
+    // Ensure complete data for both business and personal expenses
+    return result.map((analytics) => ({
+      businessExpenseAnalytics: ensureSevenDaysCoverage(
+        analytics.businessExpenseAnalytics,
+        dateArray
+      ),
+      personalExpenseAnalytics: ensureSevenDaysCoverage(
+        analytics.personalExpenseAnalytics,
+        dateArray
+      ),
+    }));
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+};
+
+// Helper function to ensure 7 days of data with zero values for missing days
+const ensureSevenDaysCoverage = (
+  analytics: ExpenseAnalytics[],
+  dateArray: string[]
+): ExpenseAnalytics[] => {
+  // Create a map of existing analytics by date
+  const analyticsMap = new Map(analytics.map((item) => [item.date, item]));
+
+  // Generate full 7-day analytics with zero values for missing days
+  return dateArray.map((date) => {
+    // Get the day name
+    const dayName = new Date(date).toLocaleDateString('en-US', {
+      weekday: 'short',
+    });
+
+    // Return existing analytics or create a zero-value entry
+    return analyticsMap.get(date)
+      ? {
+          ...analyticsMap.get(date)!,
+          dayName,
+        }
+      : {
+          date,
+          dayName,
+          totalAmount: 0,
+          totalItems: 0,
+        };
+  });
+};
+
 const getWriteOffSummary = async (
   skip: number,
   limit: number,
@@ -335,4 +528,5 @@ export const ExpenseHelpers = {
   deleteExpenseRecord,
   getWriteOffSummary,
   getTotalUniqueExpenseCategories,
+  getBusinessAndPersonalExpenseAnalytics,
 };

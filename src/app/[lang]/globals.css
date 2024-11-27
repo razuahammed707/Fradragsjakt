@@ -13,6 +13,21 @@ html body {
   height: 100%;
 }
 
+ol li {
+  counter-increment: item;
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 16px;
+}
+ol li::before {
+  content: counter(item) '. ';
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 600;
+  color: #333;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

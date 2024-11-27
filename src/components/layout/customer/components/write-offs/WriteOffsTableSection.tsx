@@ -40,7 +40,7 @@ export default function WriteOffsTableSection() {
         <div className="flex gap-2">
           <SearchInput
             className=""
-            placeholder="Search expenses"
+            placeholder="Search write-offs"
             onChange={handleSearchChange}
           />
         </div>

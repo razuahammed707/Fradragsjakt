@@ -133,7 +133,7 @@ const mapToExpenseData = (
       if (description && amount) {
         const parsedAmount = parseFloat(amount.replace(/[^\d.-]/g, ''));
         if (!isNaN(parsedAmount)) {
-          const parsedDate = moment(date, 'DD/MM/YYYY', true);
+          const parsedDate = moment.utc(date, 'DD/MM/YYYY', true);
 
           const payload = {
             description: description.trim(),

@@ -1,4 +1,5 @@
 'use client';
+import { FormInput } from '@/components/FormInput';
 import {
   Accordion,
   AccordionContent,
@@ -25,28 +26,51 @@ type ContentForeignIncomeProps = {
 export function ContentForeignIncome({
   questionnaire,
 }: ContentForeignIncomeProps) {
-  const [openItem, setOpenItem] = useState<string | null>(null);
   const {
-    handleSubmit /* control */,
+    handleSubmit,
+    control,
     formState: { isDirty, isValid },
   } = useForm();
-
-  const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
-
-  const handleToggle = (value: string) => {
-    setOpenItem((prevItem) => (prevItem === value ? null : value));
-  };
-
   // Define an array with the items' title and content
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title:
         'Have income or wealth in another country than Norway and pay tax in the other country',
-      content:
-        'You must declare all your foreign income and wealth in the Norwegian tax return. This applies regardless of whether you’ve paid tax abroad or the income/wealth is tax free in the country in question.',
+      content: (
+        <>
+          You must declare all your foreign income and wealth in the Norwegian
+          tax return. This applies regardless of whether you’ve paid tax abroad
+          or the income/wealth is tax free in the country in question.
+          <p className="text-black pt-3 pb-1">Foreign income</p>
+          <FormInput
+            name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign income"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            required
+          />
+          <p className="text-black pt-3 pb-1">Foreign tax amount</p>
+          <FormInput
+            name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign tax amount"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="200 sq ft"
+            required
+          />
+          <p className="text-black pt-3 pb-1">Norway tax rate on this income</p>
+          <FormInput
+            name="Have income or wealth in another country than Norway and pay tax in the other country.Norway tax rate on this income"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="20%"
+            required
+          />
+        </>
+      ),
     },
   ];
 
@@ -55,6 +79,18 @@ export function ContentForeignIncome({
     questionnaire: answers,
     accordionData,
   });
+  const [openItem, setOpenItem] = useState<string | null>(
+    matchedAccordionData.length > 0 ? matchedAccordionData[0].id : null
+  );
+
+  const appDispatch = useAppDispatch();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  console.log(questionnaires);
+
+  const handleValueChange = (value: string) => {
+    setOpenItem((prevOpen) => (prevOpen === value ? null : value));
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
@@ -66,11 +102,14 @@ export function ContentForeignIncome({
     <div className=" ">
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Accordion type="multiple" className="w-full">
+        <Accordion
+          type="single"
+          value={openItem || undefined}
+          onValueChange={handleValueChange}
+        >
           {matchedAccordionData.map((item) => (
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger
-                onClick={() => handleToggle(item.id)}
                 className={`${
                   openItem === item.id ? 'text-violet-600' : ''
                 } no-underline font-bold text-start`}
