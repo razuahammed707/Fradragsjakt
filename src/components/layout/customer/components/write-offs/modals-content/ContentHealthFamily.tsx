@@ -39,6 +39,20 @@ export function ContentHealthFamily({
     setValue,
     formState: { isDirty, isValid },
   } = useForm();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const foreignIncomeQuestionnaire = questionnaires.find(
+    (q) => q.question === questionnaire?.question
+  );
+
+  const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
+    const answers =
+      foreignIncomeQuestionnaire?.answers.find((answer) =>
+        Object.keys(answer).includes(accordionItemTitle)
+      )?.[accordionItemTitle] || [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
+  };
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -58,6 +72,10 @@ export function ContentHealthFamily({
             type="number"
             control={control}
             placeholder="2"
+            defaultValue={getDefaultValue(
+              'Have children aged 11 years or younger',
+              'How many children do you have under the age of 12'
+            )}
             required
           />
         </>
@@ -84,6 +102,10 @@ export function ContentHealthFamily({
               { title: 'Yes', value: 'yes' },
               { title: 'No', value: 'no' },
             ]}
+            defaultValue={getDefaultValue(
+              'I have children aged 12 or older with special care needs',
+              'Do you have children with needs for special care'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
@@ -95,6 +117,10 @@ export function ContentHealthFamily({
             type="number"
             control={control}
             placeholder="NOK 500"
+            defaultValue={getDefaultValue(
+              'I have children aged 12 or older with special care needs',
+              'Documented care expenses'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
@@ -104,6 +130,10 @@ export function ContentHealthFamily({
             name="I have children aged 12 or older with special care needs.Upload verification document"
             control={control}
             setValue={setValue}
+            defaultValue={getDefaultValue(
+              'I have children aged 12 or older with special care needs',
+              'Upload verification document'
+            )}
           />
         </>
       ),
@@ -124,6 +154,10 @@ export function ContentHealthFamily({
             type="number"
             control={control}
             placeholder="NOK 500"
+            defaultValue={getDefaultValue(
+              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
+              'Documented expenses'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">Extra travel distance</p>
@@ -133,6 +167,10 @@ export function ContentHealthFamily({
             type="number"
             control={control}
             placeholder="50 km"
+            defaultValue={getDefaultValue(
+              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
+              'Extra travel distance'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
@@ -142,6 +180,10 @@ export function ContentHealthFamily({
             name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Upload verification document"
             control={control}
             setValue={setValue}
+            defaultValue={getDefaultValue(
+              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
+              'Upload verification document'
+            )}
           />
         </>
       ),
@@ -188,8 +230,6 @@ export function ContentHealthFamily({
   );
 
   const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log({ questionnaires });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
@@ -207,27 +247,29 @@ export function ContentHealthFamily({
     <div>
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Accordion
-          type="single"
-          value={openItem || undefined}
-          onValueChange={handleValueChange}
-          className="w-full"
-        >
-          {matchedAccordionData.map((item) => (
-            <AccordionItem key={item.id} value={item.id}>
-              <AccordionTrigger
-                className={`${
-                  openItem === item.id ? 'text-violet-600' : ''
-                } no-underline font-bold text-start`}
-              >
-                {item.title}
-              </AccordionTrigger>
-              <AccordionContent className="text-gray-500 text-xs">
-                {item.content}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+          <Accordion
+            type="single"
+            value={openItem || undefined}
+            onValueChange={handleValueChange}
+            className="w-full"
+          >
+            {matchedAccordionData.map((item) => (
+              <AccordionItem key={item.id} value={item.id}>
+                <AccordionTrigger
+                  className={`${
+                    openItem === item.id ? 'text-violet-600' : ''
+                  } no-underline font-bold text-start`}
+                >
+                  {item.title}
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-500 text-xs">
+                  {item.content}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
         <Button
           disabled={!isDirty || !isValid}
           type="submit"

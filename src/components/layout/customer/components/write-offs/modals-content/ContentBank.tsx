@@ -30,6 +30,20 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
     control,
     formState: { isDirty, isValid },
   } = useForm();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const foreignIncomeQuestionnaire = questionnaires.find(
+    (q) => q.question === questionnaire?.question
+  );
+
+  const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
+    const answers =
+      foreignIncomeQuestionnaire?.answers.find((answer) =>
+        Object.keys(answer).includes(accordionItemTitle)
+      )?.[accordionItemTitle] || [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
+  };
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -45,6 +59,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue('Have a loan', 'Total interest paid')}
             required
           />
         </>
@@ -64,6 +79,10 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Have refinanced a loan in the last year',
+              'Refinancing cost'
+            )}
             required
           />
         </>
@@ -83,6 +102,10 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Have taken out a joint loan with someone',
+              'Interest amount'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">Your ownership share</p>
@@ -92,6 +115,10 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Have taken out a joint loan with someone',
+              'Your ownership share'
+            )}
             required
           />
         </>
@@ -112,6 +139,10 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Have young people’s housing savings (BSU)',
+              'This years savings'
+            )}
             required
           />
         </>
@@ -131,6 +162,10 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'I have sold shares or securities at a loss',
+              'Total loss'
+            )}
             required
           />
         </>
@@ -147,8 +182,6 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
   );
 
   const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
 
   const handleValueChange = (value: string) => {
     setOpenItem((prevOpen) => (prevOpen === value ? null : value));
@@ -165,29 +198,31 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
     <div>
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Accordion
-          type="single"
-          className="w-full"
-          value={openItem || undefined}
-          onValueChange={handleValueChange}
-        >
-          {matchedAccordionData.map((item) => (
-            <AccordionItem key={item.id} value={item.id}>
-              <AccordionTrigger
-                className={`${
-                  openItem === item.id ? 'text-violet-600' : ''
-                } no-underline font-bold text-start`}
-              >
-                {item.title}
-              </AccordionTrigger>
-              {openItem === item.id && (
-                <AccordionContent className="text-gray-500 text-xs">
-                  {item.content}
-                </AccordionContent>
-              )}
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+          <Accordion
+            type="single"
+            className="w-full"
+            value={openItem || undefined}
+            onValueChange={handleValueChange}
+          >
+            {matchedAccordionData.map((item) => (
+              <AccordionItem key={item.id} value={item.id}>
+                <AccordionTrigger
+                  className={`${
+                    openItem === item.id ? 'text-violet-600' : ''
+                  } no-underline font-bold text-start`}
+                >
+                  {item.title}
+                </AccordionTrigger>
+                {openItem === item.id && (
+                  <AccordionContent className="text-gray-500 text-xs">
+                    {item.content}
+                  </AccordionContent>
+                )}
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
         <Button
           disabled={!isDirty || !isValid}
           type="submit"
