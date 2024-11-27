@@ -64,7 +64,9 @@
     "CategoryDataTableColumns": {
       "serial_no": "Serienummer",
       "category": "kategori",
-      "created_by": "opprettet av"
+      "created_by": "opprettet av",
+      "search": "søkekategori",
+      "overview": "Kategorioversikt"
     },
     "WriteOffDataTableColumns": {
       "category": "Kategori",
