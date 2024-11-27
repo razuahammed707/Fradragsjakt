@@ -35,7 +35,7 @@ export const CategoryTableColumns = (): ColumnDef<Category>[] => {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Category
+          {translate('page.CategoryDataTableColumns.category', 'Category')}
           <Image src={ArrowUpDown} alt="sort icon" className="ml-2" />
         </Button>
       ),
