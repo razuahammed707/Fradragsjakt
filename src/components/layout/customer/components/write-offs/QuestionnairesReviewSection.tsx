@@ -25,7 +25,8 @@ import { questionnaireSelector, showModal } from '@/redux/slices/questionnaire';
 import EditResponseModalContent from './modals-content/EditResponseModalContent';
 import { cn } from '@/lib/utils';
 import { ContentHousing } from './modals-content/ContentHousing';
-// Modal content mappings with props support
+import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
+
 const modalContentMap: Record<
   string,
   (props: { questionnaire: Questionnaire }) => React.ReactNode
@@ -52,27 +53,33 @@ const modalContentMap: Record<
   'Edit Response': () => <EditResponseModalContent />,
 };
 
-const data = [
-  { title: 'Health and Family', amount: 200, type: 'approved' },
-  { title: 'Bank and Loans', amount: 200, type: 'approved' },
-  { title: 'Work and Education', amount: 200, type: 'approved' },
-  { title: 'Housing and Property', amount: 0, type: 'rejected' },
-  { title: 'Gifts/Donations', amount: 0, type: 'rejected' },
-  {
-    title: 'Hobby, Odd jobs, and Extra incomes',
-    amount: 200,
-    type: 'approved',
-  },
-  { title: 'Foreign Income', amount: 0, type: 'rejected' },
-];
-
 const QuestionnairesReviewSection = () => {
   const [selectedTitle, setSelectedTitle] = useState<string>('');
-
   const dispatch = useAppDispatch();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
   const { isModalOpen } = useAppSelector(questionnaireSelector);
-
   const { data: user } = trpc.users.getUserByEmail.useQuery();
+  const {
+    WorkAndEducationExpenseAmount,
+    healthAndFamilyExpenseAmount,
+    BankAndLoansExpenseAmount,
+    HobbyOddjobsAndExtraIncomesExpenseAmount,
+    HousingAndPropertyExpenseAmount,
+    GiftsOrDonationsExpenseAmount,
+    ForeignIncomeExpenseAmount,
+  } = savingExpenseCalculator(questionnaires);
+  const data = [
+    { title: 'Health and Family', amount: healthAndFamilyExpenseAmount },
+    { title: 'Bank and Loans', amount: BankAndLoansExpenseAmount },
+    { title: 'Work and Education', amount: WorkAndEducationExpenseAmount },
+    { title: 'Housing and Property', amount: HousingAndPropertyExpenseAmount },
+    { title: 'Gifts/Donations', amount: GiftsOrDonationsExpenseAmount },
+    {
+      title: 'Hobby, Odd jobs, and Extra incomes',
+      amount: HobbyOddjobsAndExtraIncomesExpenseAmount,
+    },
+    { title: 'Foreign Income', amount: ForeignIncomeExpenseAmount },
+  ];
 
   const handleButtonClick = (title: string) => {
     setSelectedTitle(title);
