@@ -4,18 +4,22 @@ import ExpenseCard, { expenses } from './ExpenseCard';
 import DeductiveExpenses from './DeductiveExpenses';
 import SummaryChart from './SummaryChart';
 import YearlyExpenseGraph from './YearlyExpenseGraph';
-import { useSession } from 'next-auth/react';
+import { trpc } from '@/utils/trpc';
 
 const DashboardSummarySection = () => {
-  const { data: session } = useSession();
+  const { data: expensesAnalytics } =
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
+      expense_type: '',
+    });
 
-  console.log('logged user session', session);
+  const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
+
   return (
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-5">
         <div className="grid grid-cols-12 gap-2">
           <DeductiveExpenses />
-          <SummaryChart />
+          <SummaryChart expenses={categoryAnalytics} />
         </div>
       </div>
 
