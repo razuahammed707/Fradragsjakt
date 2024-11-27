@@ -3,6 +3,9 @@
     "welcome": {
       "message": "Velkommen"
     },
+    "search": {
+      "write_off": "Søk avskrivninger"
+    },
     "home": {
       "title": "Velkommen",
       "description": "Internasjonalisering i NextJs 13 App Router"
@@ -65,6 +68,11 @@
       "search": "søkekategori",
       "overview": "Kategorioversikt"
     },
+    "WriteOffDataTableColumns": {
+      "category": "Kategori",
+      "total": "Totale varer",
+      "deduction": "Fradrag"
+    },
     "expenseoverview": {
       "title": "Totalt utgiftsoversikt",
       "subtitle": "i august",
@@ -107,6 +115,9 @@
         "Transport": "Transport",
         "Others": "Andre"
       }
+    },
+    "writeoffoverview": {
+      "title": "Rediger avskrivninger"
     }
   },
   "components": {

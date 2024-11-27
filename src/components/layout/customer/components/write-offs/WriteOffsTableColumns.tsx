@@ -1,6 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 export type WriteOffs = {
   id: string;
@@ -9,28 +10,31 @@ export type WriteOffs = {
   amount: number;
 };
 
-export const WriteOffsTableColumns: ColumnDef<WriteOffs>[] = [
-  {
-    accessorKey: 'category',
-    header: 'Category',
-    cell: ({ row }) => (
-      <div className="text-left pl-4">{row.getValue('category')}</div>
-    ),
-  },
-  {
-    accessorKey: 'totalItemByCategory',
-    header: 'Total Items',
-    cell: ({ row }) => (
-      <div className="text-left">{row.getValue('totalItemByCategory')}</div>
-    ),
-  },
-  {
-    accessorKey: 'amount',
-    header: 'Deduction',
-    cell: ({ row }) => (
-      <div className="text-left">
-        {`NOK ${(Number(row.getValue('amount')) || 0).toFixed(2)}`}
-      </div>
-    ),
-  },
-];
+export const WriteOffsTableColumns = (): ColumnDef<WriteOffs>[] => {
+  const { translate } = useTranslation();
+  return [
+    {
+      accessorKey: 'category',
+      header: translate('page.WriteOffDataTableColumns.category'),
+      cell: ({ row }) => (
+        <div className="text-left pl-4">{row.getValue('category')}</div>
+      ),
+    },
+    {
+      accessorKey: 'totalItemByCategory',
+      header: translate('page.WriteOffDataTableColumns.total'),
+      cell: ({ row }) => (
+        <div className="text-left">{row.getValue('totalItemByCategory')}</div>
+      ),
+    },
+    {
+      accessorKey: 'amount',
+      header: translate('page.WriteOffDataTableColumns.deduction'),
+      cell: ({ row }) => (
+        <div className="text-left">
+          {`NOK ${(Number(row.getValue('amount')) || 0).toFixed(2)}`}
+        </div>
+      ),
+    },
+  ];
+};
