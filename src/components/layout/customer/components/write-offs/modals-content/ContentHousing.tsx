@@ -38,7 +38,20 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
     setValue,
     formState: { isDirty, isValid },
   } = useForm();
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const foreignIncomeQuestionnaire = questionnaires.find(
+    (q) => q.question === questionnaire?.question
+  );
 
+  const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
+    const answers =
+      foreignIncomeQuestionnaire?.answers.find((answer) =>
+        Object.keys(answer).includes(accordionItemTitle)
+      )?.[accordionItemTitle] || [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
+  };
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -56,6 +69,10 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Housing in a housing association housing company or jointly owned property',
+              'Documented cost'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
@@ -65,6 +82,10 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
             name="Housing in a housing association housing company or jointly owned property.Upload verification document"
             control={control}
             setValue={setValue}
+            defaultValue={getDefaultValue(
+              'Housing in a housing association housing company or jointly owned property',
+              'Upload verification document'
+            )}
           />
         </>
       ),
@@ -84,6 +105,10 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'I have rented out a residential property or a holiday home',
+              'Revenue'
+            )}
             required
           />
         </>
@@ -111,6 +136,10 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
               { title: 'Yes', value: 'yes' },
               { title: 'No', value: 'no' },
             ]}
+            defaultValue={getDefaultValue(
+              'Sold a residential property or holiday home with a loss',
+              'Was the property your primary residence for at least 12 of the last 24 months'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">Capital gain</p>
@@ -120,6 +149,10 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Sold a residential property or holiday home with a loss',
+              'Capital gain'
+            )}
             required
           />
         </>
@@ -138,8 +171,6 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
   );
 
   const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
 
   const handleValueChange = (value: string) => {
     setOpenItem((prevOpen) => (prevOpen === value ? null : value));
@@ -156,29 +187,31 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
     <div className="">
       <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Accordion
-          type="single"
-          className="w-full"
-          value={openItem || undefined}
-          onValueChange={handleValueChange}
-        >
-          {matchedAccordionData.map(({ id, title, content }) => (
-            <AccordionItem key={id} value={id}>
-              <AccordionTrigger
-                className={`${
-                  openItem === id ? 'text-violet-600' : ''
-                } no-underline font-bold text-start`}
-              >
-                {title}
-              </AccordionTrigger>
-              {openItem === id && (
-                <AccordionContent className="text-gray-500 text-xs">
-                  {content}
-                </AccordionContent>
-              )}
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+          <Accordion
+            type="single"
+            className="w-full"
+            value={openItem || undefined}
+            onValueChange={handleValueChange}
+          >
+            {matchedAccordionData.map(({ id, title, content }) => (
+              <AccordionItem key={id} value={id}>
+                <AccordionTrigger
+                  className={`${
+                    openItem === id ? 'text-violet-600' : ''
+                  } no-underline font-bold text-start`}
+                >
+                  {title}
+                </AccordionTrigger>
+                {openItem === id && (
+                  <AccordionContent className="text-gray-500 text-xs">
+                    {content}
+                  </AccordionContent>
+                )}
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
         <Button
           disabled={!isDirty || !isValid}
           type="submit"

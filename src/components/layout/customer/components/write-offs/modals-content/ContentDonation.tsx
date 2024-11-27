@@ -27,10 +27,21 @@ export function ContentDonation() {
     setValue,
     formState: { isDirty, isValid },
   } = useForm();
-
-  const appDispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
+  const foreignIncomeQuestionnaire = questionnaires.find(
+    (q) => q.question === 'Gifts/Donations'
+  );
+
+  const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
+    const answers =
+      foreignIncomeQuestionnaire?.answers.find((answer) =>
+        Object.keys(answer).includes(accordionItemTitle)
+      )?.[accordionItemTitle] || [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
+  };
+  const appDispatch = useAppDispatch();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
@@ -63,6 +74,10 @@ export function ContentDonation() {
                 type="number"
                 control={control}
                 placeholder="Donation amount"
+                defaultValue={getDefaultValue(
+                  'Gifts to voluntary organisations',
+                  'Donation Amount'
+                )}
                 required
               />
               <Label className="text-black pt-[12px] pb-[6px]">
@@ -72,6 +87,10 @@ export function ContentDonation() {
                 name="Gifts to voluntary organisations.Upload verification document"
                 control={control}
                 setValue={setValue}
+                defaultValue={getDefaultValue(
+                  'Gifts to voluntary organisations',
+                  'Upload verification document'
+                )}
               />
             </div>
           </div>

@@ -51,7 +51,7 @@ export const questionnaires = [
     answers: [
       'Housing in a housing association, housing company or jointly owned property',
       'I have rented out a residential property or a holiday home',
-      'Sold a residential property or holiday home with a loss',
+      'Sold a residential property or holiday home profit or loss',
     ],
     icon: frame3,
   },

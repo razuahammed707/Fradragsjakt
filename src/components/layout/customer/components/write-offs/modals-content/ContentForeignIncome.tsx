@@ -31,7 +31,20 @@ export function ContentForeignIncome({
     control,
     formState: { isDirty, isValid },
   } = useForm();
-  // Define an array with the items' title and content
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const foreignIncomeQuestionnaire = questionnaires.find(
+    (q) => q.question === questionnaire?.question
+  );
+
+  const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
+    const answers =
+      foreignIncomeQuestionnaire?.answers.find((answer) =>
+        Object.keys(answer).includes(accordionItemTitle)
+      )?.[accordionItemTitle] || [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
+  };
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -49,6 +62,10 @@ export function ContentForeignIncome({
             type="number"
             control={control}
             placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Have income or wealth in another country than Norway and pay tax in the other country',
+              'Foreign income'
+            )}
             required
           />
           <p className="text-black pt-3 pb-1">Foreign tax amount</p>
@@ -57,6 +74,10 @@ export function ContentForeignIncome({
             customClassName="w-full"
             type="number"
             control={control}
+            defaultValue={getDefaultValue(
+              'Have income or wealth in another country than Norway and pay tax in the other country',
+              'Foreign tax amount'
+            )}
             placeholder="200 sq ft"
             required
           />
@@ -66,6 +87,10 @@ export function ContentForeignIncome({
             customClassName="w-full"
             type="number"
             control={control}
+            defaultValue={getDefaultValue(
+              'Have income or wealth in another country than Norway and pay tax in the other country',
+              'Norway tax rate on this income'
+            )}
             placeholder="20%"
             required
           />
@@ -74,9 +99,8 @@ export function ContentForeignIncome({
     },
   ];
 
-  const answers = questionnaire?.answers || [];
   const matchedAccordionData = matchQuestionnaireModalQuestion({
-    questionnaire: answers,
+    questionnaire: questionnaire?.answers || [],
     accordionData,
   });
   const [openItem, setOpenItem] = useState<string | null>(
@@ -84,8 +108,6 @@ export function ContentForeignIncome({
   );
 
   const appDispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log(questionnaires);
 
   const handleValueChange = (value: string) => {
     setOpenItem((prevOpen) => (prevOpen === value ? null : value));
