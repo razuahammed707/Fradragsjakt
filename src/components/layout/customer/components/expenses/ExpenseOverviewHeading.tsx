@@ -63,16 +63,12 @@ function ExpenseOverviewHeading({
 
   const buttons = [
     {
-      text: translate(
-        'components.buttons.expense_buttons.text.apply_rule',
-        translate('default')
-      ),
+      text: translate('components.buttons.expense_buttons.text.apply_rule'),
       icon: RuleIcon,
     },
     {
       text: translate(
-        'components.buttons.expense_buttons.text.show_write_offs',
-        translate('default')
+        'components.buttons.expense_buttons.text.show_write_offs'
       ),
       icon: WriteOffIcon,
     },
@@ -84,17 +80,18 @@ function ExpenseOverviewHeading({
   };
 
   const renderContent = () => {
-    return modalContent.title === dict.page.expensemodal.addExpense ? (
+    return modalContent.title === translate('page.expensemodal.addExpense') ? (
       <ExpenseAddContent
         setModalOpen={setModalOpen}
         categories={manipulatedCategories}
       />
-    ) : modalContent.title === dict.page.expensemodal.applyRule ? (
+    ) : modalContent.title === translate('page.expensemodal.applyRule') ? (
       <ApplyRuleModalContent
         expenses={expensesWithMatchedRules?.data || []}
         setModalOpen={setModalOpen}
       />
-    ) : modalContent.title === dict.page.expensemodal.uploadStatements ? (
+    ) : modalContent.title ===
+      translate('page.expensemodal.uploadStatements') ? (
       <ExpenseUploadContent setModalOpen={setModalOpen} />
     ) : (
       <></>
@@ -127,30 +124,27 @@ function ExpenseOverviewHeading({
         <SearchInput
           className="hidden md:block"
           onChange={handleSearchChange}
+          placeholder={translate('components.expenseOverview.search', 'Search')}
         />
       </div>
       <div className="flex justify-between mt-5">
         <div className="flex gap-2">
           <Button
             variant="purple"
-            onClick={() => handleButtonClick(dict.page.expensemodal.addExpense)}
+            onClick={() => handleButtonClick('Add expense')}
           >
             <IoMdAdd className="font-bold mr-2" />{' '}
-            {translate(
-              'components.buttons.expense_buttons.text.Add Expense',
-              'Add Expense'
-            )}
+            {translate('components.buttons.expense_buttons.text.add_expense')}
           </Button>
           <Button
             variant="purple"
             onClick={() =>
-              handleButtonClick(dict.page.expensemodal.uploadStatements)
+              handleButtonClick(translate('page.expensemodal.uploadStatements'))
             }
           >
             <IoMdAdd className="font-bold mr-2" />{' '}
             {translate(
-              'components.buttons.expense_buttons.text.Upload Statements',
-              'Upload Statements'
+              'components.buttons.expense_buttons.text.upload_statements'
             )}
           </Button>
         </div>
@@ -161,8 +155,7 @@ function ExpenseOverviewHeading({
               disabled={
                 button.text ===
                   translate(
-                    'components.buttons.expense_buttons.text.apply_rule',
-                    translate('default')
+                    'components.buttons.expense_buttons.text.apply_rule'
                   ) &&
                 expensesWithMatchedRules?.data?.expensesWithRules?.length === 0
               }
@@ -171,8 +164,7 @@ function ExpenseOverviewHeading({
               onClick={() =>
                 button.text ===
                 translate(
-                  'components.buttons.expense_buttons.text.show_write_offs',
-                  translate('default')
+                  'components.buttons.expense_buttons.text.show_write_offs'
                 )
                   ? router.push(`/${user?.user?.role}/write-offs`)
                   : handleButtonClick(button.text)

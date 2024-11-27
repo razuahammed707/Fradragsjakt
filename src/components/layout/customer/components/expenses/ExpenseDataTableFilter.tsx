@@ -15,6 +15,7 @@ import { X } from 'lucide-react';
 import Image from 'next/image';
 import { trpc } from '@/utils/trpc';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 interface FilterItem {
   id: string;
@@ -43,6 +44,7 @@ export default function ExpenseDataTableFilter({
   setFilterString: (value: string) => void;
 }): JSX.Element {
   const { data: categoryData } = trpc.categories.getCategories.useQuery({});
+  const { translate } = useTranslation();
 
   const categoryOptions: FilterItem[] = React.useMemo(() => {
     if (!categoryData?.data) return [];
@@ -122,7 +124,8 @@ export default function ExpenseDataTableFilter({
               width={20}
               height={20}
             />
-            Filter By {!!totalSelectedFilters && `(${totalSelectedFilters})`}
+            {translate('components.expenseoverview.filter_by', 'Filter By')}{' '}
+            {!!totalSelectedFilters && `(${totalSelectedFilters})`}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-60 border-none shadow-lg">

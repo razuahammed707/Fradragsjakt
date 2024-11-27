@@ -35,26 +35,20 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
   justifyEnd,
   onPageLimitChange = () => {},
 }) => {
-  const totalPages = rawTotalPages === 0 ? 1 : rawTotalPages;
+  const { translate } = useTranslation();
+  const totalPages = rawTotalPages || 1;
 
   const handlePrevious = () => {
-    if (currentPage > 1) {
-      onPageChange(currentPage - 1);
-    }
+    if (currentPage > 1) onPageChange(currentPage - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
-    }
+    if (currentPage < totalPages) onPageChange(currentPage + 1);
   };
 
   const handlePageChange = (page: number) => {
-    if (page !== currentPage) {
-      onPageChange(page);
-    }
+    if (page !== currentPage) onPageChange(page);
   };
-  const dict = useTranslation();
 
   const renderPaginationItems = () => {
     const items = [];
@@ -95,14 +89,16 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
         <div className="absolute left-0">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium text-gray-400">
-              {dict.page.pagination.perpage}
+              {translate('page.pagination.perpage')}
             </p>
             <Select
               value={`${pageLimit}`}
               onValueChange={(page) => onPageLimitChange(Number(page))}
             >
               <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue placeholder={'rtyry'} />
+                <SelectValue
+                  placeholder={translate('page.pagination.select')}
+                />
               </SelectTrigger>
               <SelectContent side="top">
                 {[10, 20, 30, 40, 50].map((pageLimit) => (

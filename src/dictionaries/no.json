@@ -58,12 +58,17 @@
       "type": "Type",
       "amount": "Beløp"
     },
+    "CategoryDataTableColumns": {
+      "serial_no": "Serienummer",
+      "category": "kategori",
+      "created_by": "opprettet av"
+    },
     "expenseoverview": {
       "title": "Totalt utgiftsoversikt",
       "subtitle": "i august",
       "addExpense": "Legg til utgift",
       "uploadStatements": "Last opp kontoutdrag",
-      "search": "Søkekostnad"
+      "search": "Søk utgift"
     },
     "expensemodal": {
       "addExpense": "Legg til utgift",
@@ -77,14 +82,8 @@
       "more": "Mer"
     },
     "expenseUploadFile": {
-      "heading": "Last opp kvittering csv, pdf",
+      "heading": "Last opp kvittering (CSV, PDF)",
       "uploadButton": "Last opp"
-    },
-    "categoryTableColumns": {
-      "serialNo": "Serienummer",
-      "category": "Kategori",
-      "createdBy": "Opprettet av",
-      "actions": "Handlinger"
     },
     "ruletopsection": {
       "title": "Legg til og tilpass regler for enkelt å beregne dine fradrag",
@@ -93,19 +92,32 @@
   },
   "components": {
     "expenseOverview": {
-      "heading": "Total Expenses Overview",
-      "subheading": "in August"
+      "heading": "Totalt utgiftsoversikt",
+      "subheading": "i august",
+      "search": "Søkeutgifter"
+    },
+    "expenseoverview": {
+      "filter_by": "Filtrer etter"
+    },
+    "filters": {
+      "category": "Kategori",
+      "expense_type": "Utgiftstype"
     },
     "buttons": {
       "expense_buttons": {
         "text": {
-          "apply_rule": "Apply Rulee",
-          "show_write_offs": "Show Write-offs eb",
-          "add_expense": "Add Expense no",
-          "upload_statements": "Upload Statements no"
+          "apply_rule": "Bruk regel",
+          "show_write_offs": "Vis avskrivninger",
+          "add_expense": "Legg til utgift",
+          "upload_statements": "Last opp kontoutdrag"
+        }
+      },
+      "category_buttons": {
+        "text": {
+          "add_category": "+ Legg til kategori"
         }
       }
     }
   },
-  "default": "Translation missing"
+  "default": "Oversettelse mangler"
 }

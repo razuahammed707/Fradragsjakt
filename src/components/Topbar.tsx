@@ -13,7 +13,7 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ role }) => {
-  const dict = useTranslation();
+  const { translate } = useTranslation();
   return (
     <header className="flex bg-[#00104B] justify-between h-14 items-center px-7  lg:h-[60px] lg:px-[128px]">
       <MobileNav role={role || ''} />
@@ -21,7 +21,7 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
         <Link href="/" className="">
           <CompanyLogo />
           <p className="text-xs text-white font-medium">
-            {dict.page.welcome.message}
+            {translate('page.welcome.message')}
           </p>
         </Link>
       </div>
