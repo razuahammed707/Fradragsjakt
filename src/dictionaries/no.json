@@ -90,5 +90,22 @@
       "title": "Legg til og tilpass regler for enkelt å beregne dine fradrag",
       "subtitle": "Tilpass regler for bedre styring"
     }
-  }
+  },
+  "components": {
+    "expenseOverview": {
+      "heading": "Total Expenses Overview",
+      "subheading": "in August"
+    },
+    "buttons": {
+      "expense_buttons": {
+        "text": {
+          "apply_rule": "Apply Rulee",
+          "show_write_offs": "Show Write-offs eb",
+          "add_expense": "Add Expense no",
+          "upload_statements": "Upload Statements no"
+        }
+      }
+    }
+  },
+  "default": "Translation missing"
 }

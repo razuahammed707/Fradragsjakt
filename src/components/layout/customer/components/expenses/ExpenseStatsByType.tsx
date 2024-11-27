@@ -7,6 +7,7 @@ type ExpenseStatsProps = {
   percentage: number;
   month: string;
   amount: number;
+  filterString?: string;
 };
 
 const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
@@ -14,6 +15,7 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
   type,
   percentage,
   month,
+  filterString,
 }) => {
   return (
     <div className="bg-white rounded-xl px-4 pt-4">
@@ -22,8 +24,8 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
         <strong className="text-[#00B386] font-semibold">+{percentage}%</strong>{' '}
         in {month}
       </h2>
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold">
+      <div className="flex justify-between items-center mt-7">
+        <h1 className="text-xl font-bold mt-6">
           <NumericFormat
             value={amount}
             displayType="text"
@@ -31,7 +33,7 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
             prefix="NOK "
           />
         </h1>
-        <ExpenseStats title={type} />
+        <ExpenseStats title={type} filterString={filterString} />
       </div>
     </div>
   );

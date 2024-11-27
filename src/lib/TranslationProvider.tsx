@@ -2,16 +2,19 @@
 
 import { createContext, useContext } from 'react';
 
-type Dictionary = unknown;
+// More specific type for nested translations
+type NestedTranslation = {
+  [key: string]: string | NestedTranslation;
+};
 
-const TranslationContext = createContext<Dictionary | null>(null);
+export const TranslationContext = createContext<NestedTranslation | null>(null);
 
 export const TranslationProvider = ({
   children,
   dict,
 }: {
   children: React.ReactNode;
-  dict: Dictionary;
+  dict: NestedTranslation;
 }) => {
   return (
     <TranslationContext.Provider value={dict}>
@@ -25,5 +28,27 @@ export const useTranslation = () => {
   if (!context) {
     throw new Error('useTranslation must be used within a TranslationProvider');
   }
-  return context;
+
+  const translate = (key: string, fallback?: string): string => {
+    const parts = key.split('.');
+    let current: NestedTranslation | string | undefined = context;
+
+    for (const part of parts) {
+      if (current && typeof current === 'object') {
+        current = current[part];
+      } else {
+        current = undefined;
+        break;
+      }
+    }
+
+    // Ensure we return a string
+    if (typeof current === 'string') {
+      return current;
+    }
+
+    return fallback ?? key;
+  };
+
+  return { translate };
 };

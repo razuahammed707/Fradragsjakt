@@ -90,5 +90,23 @@
       "title": "Add, Customize rules to calculate your deductions with ease",
       "subtitle": "Customize rule for better management"
     }
-  }
+  },
+
+  "components": {
+    "expenseOverview": {
+      "heading": "Total Expenses Overview",
+      "subheading": "in August"
+    },
+    "buttons": {
+      "expense_buttons": {
+        "text": {
+          "apply_rule": "Apply Rule",
+          "show_write_offs": "Show Write-offs",
+          "add_expense": "Add Expense",
+          "upload_statements": "Upload Statements"
+        }
+      }
+    }
+  },
+  "default": "Translation missing"
 }

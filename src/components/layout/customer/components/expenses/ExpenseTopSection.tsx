@@ -100,12 +100,14 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
           amount={expenseStats.business}
           month={dict.page.expensetopsection.august} // Translated
           percentage={2}
+          filterString={filterString}
         />
         <ExpenseStatsByType
           type={dict.page.expensetopsection.personal} // Translated
           amount={expenseStats.personal}
           month={dict.page.expensetopsection.august} // Translated
           percentage={2}
+          filterString={filterString}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
