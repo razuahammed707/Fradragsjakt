@@ -9,7 +9,7 @@ const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const YearlyExpenseGraph = () => {
   const [showPersonal, setShowPersonal] = useState(true);
-  const dict = useTranslation();
+  const { translate } = useTranslation();
 
   const getOptions = (isPersonal: boolean): ApexOptions => ({
     chart: { toolbar: { show: false }, animations: { enabled: true } },
@@ -98,10 +98,10 @@ const YearlyExpenseGraph = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-lg text-[#101010] font-semibold">
-            {dict.page.dashboard.title}
+            {translate('page.dashboard.title')}
           </h2>
           <p className="text-xs text-[#71717A]">
-            {dict.page.dashboard.subTitle}
+            {translate('page.dashboard.subTitle')}
           </p>
         </div>
         <div className="flex">

@@ -14,21 +14,18 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { debounce } from '@/lib/utils';
 import ExpenseDataTableFilter from './ExpenseDataTableFilter';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
   setFilterString: (value: string) => void;
 };
 
-const buttons = [
-  { text: 'Apply Rule', icon: RuleIcon },
-  { text: 'Show Write-offs', icon: WriteOffIcon },
-];
-
 function ExpenseOverviewHeading({
   setSearchTerm,
   setFilterString,
 }: ExpenseOverviewSectionProps) {
+  const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const { data: user } = useSession();
@@ -65,6 +62,24 @@ function ExpenseOverviewHeading({
         };
       })
     : [];
+
+  const buttons = [
+    {
+      text: translate(
+        'components.buttons.expense_buttons.text.apply_rule',
+        translate('default')
+      ),
+      icon: RuleIcon,
+    },
+    {
+      text: translate(
+        'components.buttons.expense_buttons.text.show_write_offs',
+        translate('default')
+      ),
+      icon: WriteOffIcon,
+    },
+  ];
+
   const handleButtonClick = (title: string) => {
     setModalContent({ title });
     setModalOpen(true);
@@ -88,7 +103,6 @@ function ExpenseOverviewHeading({
     );
   };
 
-  // Debounced version of setSearchTerm
   const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm), [
     setSearchTerm,
   ]);
@@ -101,10 +115,15 @@ function ExpenseOverviewHeading({
     <>
       <div className="flex justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Total Expenses Overview</h1>
+          <h1 className="text-xl font-semibold">
+            {translate(
+              'components.expenseOverview.heading',
+              'Total Expenses Overview'
+            )}
+          </h1>
           <h2 className="text-sm text-gray-600 font-light mb-0">
-            <strong className="text-[#00B386] font-semibold">+2%</strong> in
-            August
+            <strong className="text-[#00B386] font-semibold">+2%</strong>{' '}
+            {translate('components.expenseOverview.subheading', 'in August')}
           </h2>
         </div>
         <SearchInput
@@ -113,32 +132,48 @@ function ExpenseOverviewHeading({
         />
       </div>
       <div className="flex justify-between mt-5">
-        <div className=" flex gap-2">
+        <div className="flex gap-2">
           <Button
             variant="purple"
             onClick={() => handleButtonClick('Add expense')}
           >
-            <IoMdAdd className="font-bold mr-2" /> Add Expense
+            <IoMdAdd className="font-bold mr-2" />{' '}
+            {translate(
+              'components.buttons.expense_buttons.text.Add Expense',
+              'Add Expense'
+            )}
           </Button>
           <Button
             variant="purple"
             onClick={() => handleButtonClick('Upload statements')}
           >
-            <IoMdAdd className="font-bold mr-2" /> Upload Statements
+            <IoMdAdd className="font-bold mr-2" />{' '}
+            {translate(
+              'components.buttons.expense_buttons.text.Upload Statements',
+              'Upload Statements'
+            )}
           </Button>
         </div>
-        <div className=" flex space-x-2 ">
+        <div className="flex space-x-2">
           <ExpenseDataTableFilter setFilterString={setFilterString} />
           {buttons.map((button, index) => (
             <Button
               disabled={
-                button.text === 'Apply Rule' &&
-                expensesWithMatchedRules?.data?.expensesWithRules?.length == 0
+                button.text ===
+                  translate(
+                    'components.buttons.expense_buttons.text.apply_rule',
+                    translate('default')
+                  ) &&
+                expensesWithMatchedRules?.data?.expensesWithRules?.length === 0
               }
               key={index}
               variant="purple"
               onClick={() =>
-                button.text === 'Show Write-offs'
+                button.text ===
+                translate(
+                  'components.buttons.expense_buttons.text.show_write_offs',
+                  translate('default')
+                )
                   ? router.push(`/${user?.user?.role}/write-offs`)
                   : handleButtonClick(button.text)
               }

@@ -40,5 +40,22 @@
       "verification_email_sent": "En lenke for e-postbekreftelse er sendt til e-posten din. Vennligst sjekk.",
       "error_message": "Kunne ikke registrere deg. Prøv igjen."
     }
-  }
+  },
+  "components": {
+    "expenseOverview": {
+      "heading": "Total Expenses Overview",
+      "subheading": "in August"
+    },
+    "buttons": {
+      "expense_buttons": {
+        "text": {
+          "apply_rule": "Apply Rulee",
+          "show_write_offs": "Show Write-offs eb",
+          "add_expense": "Add Expense no",
+          "upload_statements": "Upload Statements no"
+        }
+      }
+    }
+  },
+  "default": "Translation missing"
 }

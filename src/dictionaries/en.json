@@ -40,5 +40,23 @@
       "verification_email_sent": "Email verification link has been sent to your email. Please check.",
       "error_message": "Failed to register. Please try again."
     }
-  }
+  },
+
+  "components": {
+    "expenseOverview": {
+      "heading": "Total Expenses Overview",
+      "subheading": "in August"
+    },
+    "buttons": {
+      "expense_buttons": {
+        "text": {
+          "apply_rule": "Apply Rule",
+          "show_write_offs": "Show Write-offs",
+          "add_expense": "Add Expense",
+          "upload_statements": "Upload Statements"
+        }
+      }
+    }
+  },
+  "default": "Translation missing"
 }
