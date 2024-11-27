@@ -90,6 +90,20 @@
     "rulesTopSection": {
       "title": "Add, Customize rules to calculate your deductions with ease",
       "subtitle": "Customize rule for better management"
+    },
+    "writeOffsTopSection": {
+      "title": "Potential saving from expenses",
+      "categories": {
+        "Meals": "Meals",
+        "Clothing": "Clothing",
+        "Travel": "Travel",
+        "Supplies": "Supplies",
+        "Payment": "Payment",
+        "Gas": "Gas",
+        "Transport": "Transport",
+        "Others": "Others",
+        "search": "Search Write-Offs"
+      }
     }
   },
   "components": {
