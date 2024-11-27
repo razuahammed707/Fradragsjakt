@@ -7,6 +7,7 @@ import SearchInput from '@/components/SearchInput';
 import CategoryAddModal from './CategoryAddModal';
 import { trpc } from '@/utils/trpc';
 import { debounce } from '@/lib/utils';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 export type FormData = {
   title: string;
@@ -14,6 +15,7 @@ export type FormData = {
 export default function CategoryTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { translate } = useTranslation();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -40,12 +42,20 @@ export default function CategoryTable() {
   return (
     <div className="rounded-2xl mt-2 p-6 bg-white">
       <div className="flex justify-between items-center mb-4  ">
-        <h2 className="text-xl text-[#101010] font-bold">Category Overview</h2>
+        <h2 className="text-xl text-[#101010] font-bold">
+          {translate(
+            'page.CategoryDataTableColumns.overview',
+            'Category Overview'
+          )}
+        </h2>
         <div className="flex gap-2">
           <SearchInput
             className=""
             onChange={handleSearchChange}
-            placeholder="search category"
+            placeholder={translate(
+              'page.CategoryDataTableColumns.search',
+              'Search category'
+            )}
           />
           {/*  */}
           <CategoryAddModal />

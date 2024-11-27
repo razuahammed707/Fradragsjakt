@@ -4,13 +4,14 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { NumericFormat } from 'react-number-format';
+import { useTranslation } from '@/lib/TranslationProvider';
+import MealsImg from '../../../../../../public/images/expenses/meals.png';
 import ClothingImg from '../../../../../../public/images/expenses/clothing.png';
 import TravelImg from '../../../../../../public/images/expenses/travel.png';
-import TransportImg from '../../../../../../public/images/expenses/transport.png';
-import GasImg from '../../../../../../public/images/expenses/gas.png';
-import MealsImg from '../../../../../../public/images/expenses/meals.png';
 import SuppliesImg from '../../../../../../public/images/expenses/supplies.png';
 import PaymentImg from '../../../../../../public/payment.png';
+import GasImg from '../../../../../../public/images/expenses/gas.png';
+import TransportImg from '../../../../../../public/images/expenses/transport.png';
 import MoreImg from '../../../../../../public/More.png';
 
 const categories = [
@@ -31,6 +32,8 @@ export default function WriteOffsTopSection({
   categoryWiseExpenses: { category: string; totalItemByCategory: number }[];
   expenseTypeWiseExpenses: { expense_type: string; amount: number }[];
 }) {
+  const { translate } = useTranslation();
+
   const manipulateCategories = categoryWiseExpenses?.length
     ? categories.map((category) => {
         const findExpenseCategory = categoryWiseExpenses.find(
@@ -40,7 +43,7 @@ export default function WriteOffsTopSection({
           ? {
               label: findExpenseCategory.category,
               amount: findExpenseCategory.totalItemByCategory,
-              image: category.image, // Use original image for each category
+              image: category.image,
             }
           : category;
       })
@@ -54,7 +57,7 @@ export default function WriteOffsTopSection({
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-4 p-6 bg-white flex flex-col justify-between rounded-2xl">
         <h3 className="text-xl text-[#101010] font-semibold">
-          Potential saving from expenses
+          {translate('page.writeOffsTopSection.title')}
         </h3>
         <p className="text-[32px] text-[#00104B] font-bold">
           <NumericFormat
@@ -81,7 +84,10 @@ export default function WriteOffsTopSection({
                   className="rounded-full"
                 />
                 <p className="text-[#71717A] text-xs font-semibold">
-                  {category.label} <span>{`(${category.amount})`}</span>
+                  {translate(
+                    `page.writeOffsTopSection.categories.${category.label}`
+                  )}{' '}
+                  <span>{`(${category.amount})`}</span>
                 </p>
               </CardContent>
             </Card>

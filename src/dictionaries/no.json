@@ -61,7 +61,9 @@
     "CategoryDataTableColumns": {
       "serial_no": "Serienummer",
       "category": "kategori",
-      "created_by": "opprettet av"
+      "created_by": "opprettet av",
+      "search": "søkekategori",
+      "overview": "Kategorioversikt"
     },
     "expenseoverview": {
       "title": "Totalt utgiftsoversikt",
@@ -88,6 +90,10 @@
     "ruletopsection": {
       "title": "Legg til og tilpass regler for enkelt å beregne dine fradrag",
       "subtitle": "Tilpass regler for bedre styring"
+    },
+    "rulesTopSection": {
+      "title": "Legg til, tilpass regler for å beregne fradragene dine med letthet",
+      "subtitle": "Tilpass regel for bedre håndtering"
     }
   },
   "components": {
