@@ -58,12 +58,19 @@
       "type": "Type",
       "amount": "Beløp"
     },
+    "CategoryDataTableColumns": {
+      "serial_no": "Serienummer",
+      "category": "kategori",
+      "created_by": "opprettet av",
+      "search": "søkekategori",
+      "overview": "Kategorioversikt"
+    },
     "expenseoverview": {
       "title": "Totalt utgiftsoversikt",
       "subtitle": "i august",
       "addExpense": "Legg til utgift",
       "uploadStatements": "Last opp kontoutdrag",
-      "search": "Søkekostnad"
+      "search": "Søk utgift"
     },
     "expensemodal": {
       "addExpense": "Legg til utgift",
@@ -77,18 +84,60 @@
       "more": "Mer"
     },
     "expenseUploadFile": {
-      "heading": "Last opp kvittering csv, pdf",
+      "heading": "Last opp kvittering (CSV, PDF)",
       "uploadButton": "Last opp"
-    },
-    "categoryTableColumns": {
-      "serialNo": "Serienummer",
-      "category": "Kategori",
-      "createdBy": "Opprettet av",
-      "actions": "Handlinger"
     },
     "ruletopsection": {
       "title": "Legg til og tilpass regler for enkelt å beregne dine fradrag",
       "subtitle": "Tilpass regler for bedre styring"
+    },
+    "rulesTopSection": {
+      "title": "Legg til, tilpass regler for å beregne fradragene dine med letthet",
+      "subtitle": "Tilpass regel for bedre håndtering"
+    },
+    "writeOffsTopSection": {
+      "title": "Potensielle besparelser fra utgifter",
+      "categories": {
+        "Meals": "Måltider",
+        "Clothing": "Klær",
+        "Travel": "Reise",
+        "Supplies": "Forsyninger",
+        "Payment": "Betaling",
+        "Gas": "Gass",
+        "Transport": "Transport",
+        "Others": "Andre",
+        "search": "Søk avskrivninger"
+      }
     }
-  }
+  },
+  "components": {
+    "expenseOverview": {
+      "heading": "Totalt utgiftsoversikt",
+      "subheading": "i august",
+      "search": "Søkeutgifter"
+    },
+    "expenseoverview": {
+      "filter_by": "Filtrer etter"
+    },
+    "filters": {
+      "category": "Kategori",
+      "expense_type": "Utgiftstype"
+    },
+    "buttons": {
+      "expense_buttons": {
+        "text": {
+          "apply_rule": "Bruk regel",
+          "show_write_offs": "Vis avskrivninger",
+          "add_expense": "Legg til utgift",
+          "upload_statements": "Last opp kontoutdrag"
+        }
+      },
+      "category_buttons": {
+        "text": {
+          "add_category": "+ Legg til kategori"
+        }
+      }
+    }
+  },
+  "default": "Oversettelse mangler"
 }

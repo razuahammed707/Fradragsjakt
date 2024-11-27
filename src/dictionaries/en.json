@@ -44,7 +44,7 @@
       "error_message": "Failed to register. Please try again."
     },
     "modal": {
-      "no data": "Could not find anything"
+      "no_data": "Could not find anything"
     },
     "pagination": {
       "next": "Next",
@@ -57,6 +57,13 @@
       "category": "Category",
       "type": "Type",
       "amount": "Amount"
+    },
+    "CategoryDataTableColumns": {
+      "serial_no": "Serial No.",
+      "category": "Category",
+      "created_by": "Created By",
+      "search": "Search Category",
+      "overview": "Category Overview"
     },
     "expenseoverview": {
       "title": "Total Expense Overview",
@@ -80,15 +87,53 @@
       "heading": "Upload receipt csv, pdf",
       "uploadButton": "Upload"
     },
-    "categoryTableColumns": {
-      "serialNo": "Serial no.",
-      "category": "Category",
-      "createdBy": "Created by",
-      "actions": "Actions"
-    },
-    "ruletopsection": {
+    "rulesTopSection": {
       "title": "Add, Customize rules to calculate your deductions with ease",
       "subtitle": "Customize rule for better management"
+    },
+    "writeOffsTopSection": {
+      "title": "Potential saving from expenses",
+      "categories": {
+        "Meals": "Meals",
+        "Clothing": "Clothing",
+        "Travel": "Travel",
+        "Supplies": "Supplies",
+        "Payment": "Payment",
+        "Gas": "Gas",
+        "Transport": "Transport",
+        "Others": "Others",
+        "search": "Search Write-Offs"
+      }
     }
-  }
+  },
+  "components": {
+    "expenseOverview": {
+      "heading": "Total Expenses Overview",
+      "subheading": "in August",
+      "search": "Search expenses"
+    },
+    "expenseoverview": {
+      "filter_by": "Filter by"
+    },
+    "filters": {
+      "category": "Category",
+      "expense_type": "Utgiftstype"
+    },
+    "buttons": {
+      "expense_buttons": {
+        "text": {
+          "apply_rule": "Apply Rule",
+          "show_write_offs": "Show Write-offs",
+          "add_expense": "Add Expense",
+          "upload_statements": "Upload Statements"
+        }
+      },
+      "category_buttons": {
+        "text": {
+          "add_category": "+ Add Category"
+        }
+      }
+    }
+  },
+  "default": "Translation missing"
 }
