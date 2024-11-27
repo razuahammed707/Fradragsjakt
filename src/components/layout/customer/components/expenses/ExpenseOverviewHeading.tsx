@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useCallback, useState } from 'react';
 import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
@@ -29,8 +31,8 @@ function ExpenseOverviewHeading({
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const { data: user } = useSession();
-  const [modalContent, setModalContent] = useState<{ title: string }>({
-    title: '',
+  const [modalContent, setModalContent] = useState<{ key: string }>({
+    key: '',
   });
   const { data: expensesWithMatchedRules } =
     trpc.expenses.getUnknownExpensesWithMatchedRules.useQuery(
@@ -63,10 +65,12 @@ function ExpenseOverviewHeading({
 
   const buttons = [
     {
+      key: 'applyRule',
       text: translate('components.buttons.expense_buttons.text.apply_rule'),
       icon: RuleIcon,
     },
     {
+      key: 'showWriteOffs',
       text: translate(
         'components.buttons.expense_buttons.text.show_write_offs'
       ),
@@ -74,28 +78,32 @@ function ExpenseOverviewHeading({
     },
   ];
 
-  const handleButtonClick = (title: string) => {
-    setModalContent({ title });
+  const handleButtonClick = (key: string) => {
+    setModalContent({ key });
     setModalOpen(true);
   };
 
   const renderContent = () => {
-    return modalContent.title === translate('page.expensemodal.addExpense') ? (
-      <ExpenseAddContent
-        setModalOpen={setModalOpen}
-        categories={manipulatedCategories}
-      />
-    ) : modalContent.title === translate('page.expensemodal.applyRule') ? (
-      <ApplyRuleModalContent
-        expenses={expensesWithMatchedRules?.data || []}
-        setModalOpen={setModalOpen}
-      />
-    ) : modalContent.title ===
-      translate('page.expensemodal.uploadStatements') ? (
-      <ExpenseUploadContent setModalOpen={setModalOpen} />
-    ) : (
-      <></>
-    );
+    if (modalContent.key === 'addExpense') {
+      return (
+        <ExpenseAddContent
+          setModalOpen={setModalOpen}
+          categories={manipulatedCategories}
+        />
+      );
+    }
+    if (modalContent.key === 'applyRule') {
+      return (
+        <ApplyRuleModalContent
+          expenses={expensesWithMatchedRules?.data || []}
+          setModalOpen={setModalOpen}
+        />
+      );
+    }
+    if (modalContent.key === 'uploadStatements') {
+      return <ExpenseUploadContent setModalOpen={setModalOpen} />;
+    }
+    return <></>;
   };
 
   const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm), [
@@ -131,16 +139,14 @@ function ExpenseOverviewHeading({
         <div className="flex gap-2">
           <Button
             variant="purple"
-            onClick={() => handleButtonClick('Add expense')}
+            onClick={() => handleButtonClick('addExpense')}
           >
             <IoMdAdd className="font-bold mr-2" />{' '}
             {translate('components.buttons.expense_buttons.text.add_expense')}
           </Button>
           <Button
             variant="purple"
-            onClick={() =>
-              handleButtonClick(translate('page.expensemodal.uploadStatements'))
-            }
+            onClick={() => handleButtonClick('uploadStatements')}
           >
             <IoMdAdd className="font-bold mr-2" />{' '}
             {translate(
@@ -153,21 +159,15 @@ function ExpenseOverviewHeading({
           {buttons.map((button, index) => (
             <Button
               disabled={
-                button.text ===
-                  translate(
-                    'components.buttons.expense_buttons.text.apply_rule'
-                  ) &&
+                button.key === 'applyRule' &&
                 expensesWithMatchedRules?.data?.expensesWithRules?.length === 0
               }
               key={index}
               variant="purple"
               onClick={() =>
-                button.text ===
-                translate(
-                  'components.buttons.expense_buttons.text.show_write_offs'
-                )
+                button.key === 'showWriteOffs'
                   ? router.push(`/${user?.user?.role}/write-offs`)
-                  : handleButtonClick(button.text)
+                  : handleButtonClick(button.key)
               }
             >
               <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
