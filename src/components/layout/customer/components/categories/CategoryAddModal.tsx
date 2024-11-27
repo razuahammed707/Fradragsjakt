@@ -9,6 +9,7 @@ import { FormData } from './CategoryTable';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type UpdateCategoryPayload = {
   _id: string;
@@ -27,6 +28,7 @@ export default function CategoryAddModal({
   const [loading, setLoading] = useState(false);
   const { handleSubmit, control, reset } = useForm<FormData>();
   const utils = trpc.useUtils();
+  const { translate } = useTranslation();
 
   const mutation = trpc.categories.createCategory.useMutation({
     onSuccess: () => {
@@ -72,7 +74,10 @@ export default function CategoryAddModal({
     <>
       {!origin ? (
         <Button onClick={() => setOpen(true)} variant="purple">
-          + Add category
+          {translate(
+            'components.buttons.category_buttons.text.add_category',
+            '+ Add Category'
+          )}
         </Button>
       ) : (
         <Edit2

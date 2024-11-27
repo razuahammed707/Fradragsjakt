@@ -49,7 +49,7 @@ export function SharedDataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const dict = useTranslation();
+  const { translate } = useTranslation();
 
   const table = useReactTable({
     data,
@@ -124,7 +124,9 @@ export function SharedDataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24">
-                  <NoResultsPlaceholder message={dict.page.modal.no_data} />
+                  <NoResultsPlaceholder
+                    message={translate('page.modal.no_data')}
+                  />
                 </TableCell>
               </TableRow>
             )}

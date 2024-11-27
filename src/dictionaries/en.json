@@ -61,9 +61,7 @@
     "CategoryDataTableColumns": {
       "serial_no": "Serial No.",
       "category": "Category",
-      "created_by": "Created By",
-      "search": "Search Category",
-      "overview": "Category Overview"
+      "created_by": "Created By"
     },
     "expenseoverview": {
       "title": "Total Expense Overview",
@@ -87,7 +85,7 @@
       "heading": "Upload receipt csv, pdf",
       "uploadButton": "Upload"
     },
-    "rulesTopSection": {
+    "ruletopsection": {
       "title": "Add, Customize rules to calculate your deductions with ease",
       "subtitle": "Customize rule for better management"
     },

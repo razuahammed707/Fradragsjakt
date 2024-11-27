@@ -26,7 +26,7 @@ export type ExpenseColumnProps = {
 
 export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const dict = useTranslation();
+  const { translate } = useTranslation();
 
   return [
     {
@@ -55,7 +55,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
     },
     {
       accessorKey: 'transaction_date',
-      header: dict.page.expenseDataTableColumns.date, // Translate this header
+      header: translate('page.expenseDataTableColumns.date', 'Date'),
       cell: ({ row }) => {
         const transactionDate = row.getValue('transaction_date') as string;
         const createdAt = row.original.createdAt;
@@ -67,7 +67,10 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
     },
     {
       accessorKey: 'description',
-      header: dict.page.expenseDataTableColumns.description, // Translate this header
+      header: translate(
+        'page.expenseDataTableColumns.description',
+        'Description'
+      ),
       cell: ({ row }) => (
         <span className="text-[#00104B]">{row.getValue('description')}</span>
       ),
@@ -80,8 +83,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {dict.page.expenseDataTableColumns.category}{' '}
-          {/* Translate this header */}
+          {translate('page.expenseDataTableColumns.category', 'Category')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
@@ -97,7 +99,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {dict.page.expenseDataTableColumns.type} {/* Translate this header */}
+          {translate('page.expenseDataTableColumns.type', 'Type')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
@@ -113,17 +115,16 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {dict.page.expenseDataTableColumns.amount}{' '}
-          {/* Translate this header */}
+          {translate('page.expenseDataTableColumns.amount', 'Amount')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
       cell: ({ row }) => {
-        const amount_to_render = row.getValue('amount') as number;
+        const amountToRender = row.getValue('amount') as number;
         return (
           <span className="text-[#00104B]">
             <NumericFormat
-              value={amount_to_render}
+              value={amountToRender}
               displayType="text"
               thousandSeparator={true}
               prefix="NOK "

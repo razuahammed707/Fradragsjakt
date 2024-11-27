@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { trpc } from '@/utils/trpc';
 import { expense_categories } from '@/utils/dummy';
-import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
+import { useTranslation } from '@/lib/TranslationProvider';
 
 interface CategoryExpense {
   category: string;
@@ -50,8 +50,7 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
     });
   const { data: user } = useSession();
 
-  // Initialize translation dictionary
-  const dict = useTranslation();
+  const { translate } = useTranslation();
 
   useEffect(() => {
     if (!expenses?.data) return;
@@ -96,16 +95,16 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
     <div className="grid grid-cols-2 gap-3">
       <div className="grid grid-cols-2 gap-3">
         <ExpenseStatsByType
-          type={dict.page.expensetopsection.business} // Translated
+          type={translate('page.expensetopsection.business')} // Translated
           amount={expenseStats.business}
-          month={dict.page.expensetopsection.august} // Translated
+          month={translate('page.expensetopsection.august')} // Translated
           percentage={2}
           filterString={filterString}
         />
         <ExpenseStatsByType
-          type={dict.page.expensetopsection.personal} // Translated
+          type={translate('page.expensetopsection.personal')} // Translated
           amount={expenseStats.personal}
-          month={dict.page.expensetopsection.august} // Translated
+          month={translate('page.expensetopsection.august')} // Translated
           percentage={2}
           filterString={filterString}
         />
@@ -125,7 +124,7 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
           className="text-white flex items-center justify-center bg-[#5B52F9] p-4 rounded-xl font-bold cursor-pointer"
         >
           <Image src={PlusIcon} alt="Plus icon" className="mr-3" />
-          {dict.page.expensetopsection.more} {/* Translated */}
+          {translate('page.expensetopsection.more')} {/* Translated */}
         </Link>
       </div>
     </div>
