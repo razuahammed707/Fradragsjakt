@@ -9,7 +9,7 @@ interface Answer {
   [mainQuestion: string]: SubAnswer[];
 }
 
-interface QuestionnaireItem {
+export interface QuestionnaireItem {
   question: string;
   answers: Answer[];
 }
