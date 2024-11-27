@@ -61,7 +61,9 @@
     "CategoryDataTableColumns": {
       "serial_no": "Serienummer",
       "category": "kategori",
-      "created_by": "opprettet av"
+      "created_by": "opprettet av",
+      "search": "søkekategori",
+      "overview": "Kategorioversikt"
     },
     "expenseoverview": {
       "title": "Totalt utgiftsoversikt",
@@ -92,20 +94,6 @@
     "rulesTopSection": {
       "title": "Legg til, tilpass regler for å beregne fradragene dine med letthet",
       "subtitle": "Tilpass regel for bedre håndtering"
-    },
-    "writeOffsTopSection": {
-      "title": "Potensielle besparelser fra utgifter",
-      "categories": {
-        "Meals": "Måltider",
-        "Clothing": "Klær",
-        "Travel": "Reise",
-        "Supplies": "Forsyninger",
-        "Payment": "Betaling",
-        "Gas": "Gass",
-        "Transport": "Transport",
-        "Others": "Andre",
-        "search": "Søk avskrivninger"
-      }
     }
   },
   "components": {
