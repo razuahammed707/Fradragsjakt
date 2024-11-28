@@ -12,7 +12,10 @@
     },
     "dashboard": {
       "title": "Årlig Diagram",
-      "subTitle": "Vennligst sjekk dokumentene dine"
+      "subTitle": "Vennligst sjekk dokumentene dine",
+      "help": "Trenger du hjelp?",
+      "check": "Vennligst sjekk dokumentene dine",
+      "documentation": "dokumentasjon"
     },
     "about": {
       "title": "Om oss",
