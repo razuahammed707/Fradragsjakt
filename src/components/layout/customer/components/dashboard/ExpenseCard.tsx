@@ -9,14 +9,20 @@ import Icon4 from '../../../../../../public/images/dashboard/expense-card/icon4.
 import Icon5 from '../../../../../../public/images/dashboard/expense-card/icon5.svg';
 import Icon6 from '../../../../../../public/images/dashboard/expense-card/icon6.svg';
 
-export const expenses = [
-  { title: 'Personal Spending (non deductable)', amount: 10250, image: Icon1 },
-  { title: 'Travel & Meals', amount: 10250, image: Icon2 },
-  { title: 'Office Expenses', amount: 10250, image: Icon3 },
-  { title: 'Car Expenses', amount: 2050, image: Icon4 },
-  { title: 'Taxes/Licenses', amount: 6150, image: Icon5 },
-  { title: 'Legal/Professional Services', amount: 4100, image: Icon6 },
-];
+export const expenses = (personalAmount: number) => {
+  return [
+    {
+      title: 'Personal Spending (non deductable)',
+      amount: personalAmount,
+      image: Icon1,
+    },
+    { title: 'Travel & Meals', amount: 10250, image: Icon2 },
+    { title: 'Office Expenses', amount: 10250, image: Icon3 },
+    { title: 'Car Expenses', amount: 0, image: Icon4 },
+    { title: 'Taxes/Licenses', amount: 0, image: Icon5 },
+    { title: 'Legal/Professional Services', amount: 0, image: Icon6 },
+  ];
+};
 
 interface ExpenseCardProps {
   index: number;
@@ -35,7 +41,7 @@ const ExpenseCard = ({ expense, index }: ExpenseCardProps) => {
         </CardTitle>
         <p className="text-[20px] text-[#00104B] font-bold">
           NOK {numberFormatter(expense?.amount)}{' '}
-          <span className="text-xs text-[#00B386] text-bold">+55%</span>
+          {/* <span className="text-xs text-[#00B386] text-bold">+55%</span> */}
         </p>
       </div>
       <Image
