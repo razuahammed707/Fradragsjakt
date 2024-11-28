@@ -12,7 +12,10 @@
     },
     "dashboard": {
       "title": "Annual Chart",
-      "subTitle": "Please check your documents"
+      "subTitle": "Please check your documents",
+      "help": "Need help?",
+      "check": "Please check your docs",
+      "documentation": "documentation"
     },
     "about": {
       "title": "About Us",
