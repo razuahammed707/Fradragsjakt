@@ -13,6 +13,8 @@ export default function CustomerWriteOffs() {
       expense_type: 'business',
     });
 
+  console.log('write off summary', expenses);
+
   return (
     <ProtectedLayout>
       <div className="grid grid-cols-12 gap-2">
