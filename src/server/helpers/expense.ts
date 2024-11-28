@@ -221,10 +221,11 @@ const getCategoryAndExpenseTypeAnalytics = async (
 };
 
 interface ExpenseAnalytics {
-  date: string;
+  date?: string;
   totalAmount: number;
   totalItems: number;
-  dayName: string;
+  dayName?: string;
+  month?: string;
 }
 
 interface ExpenseAnalyticsResult {
@@ -383,6 +384,164 @@ const getBusinessAndPersonalExpenseAnalytics = async (
   }
 };
 
+const getBusinessAndPersonalExpenseAnalyticsYearly = async (
+  query: Record<string, unknown>
+): Promise<ExpenseAnalyticsResult[]> => {
+  try {
+    // Get the current date and calculate the date for 12 months ago
+    const today = new Date();
+    const twelveMonthsAgo = new Date(today);
+    twelveMonthsAgo.setMonth(today.getMonth() - 11);
+
+    // Generate an array of the last 12 months (e.g., '2024-01')
+    const monthArray: string[] = [];
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(today);
+      date.setMonth(today.getMonth() - i);
+      const yearMonth = date.toISOString().split('T')[0].slice(0, 7);
+      monthArray.push(yearMonth);
+    }
+
+    // Single aggregate query using $facet
+    const result = await ExpenseModel.aggregate<ExpenseAnalyticsResult>([
+      {
+        $match: {
+          ...query,
+          transaction_date: {
+            $gte: twelveMonthsAgo,
+            $lte: today,
+          },
+        },
+      },
+      {
+        $facet: {
+          // Business Expense Analytics grouped by month
+          businessExpenseAnalytics: [
+            {
+              $match: {
+                expense_type: 'business',
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: '%Y-%m', // Group by year and month
+                    date: '$transaction_date',
+                  },
+                },
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                month: '$_id',
+                totalAmount: '$totalAmount',
+                totalItems: '$totalItems',
+                _id: 0,
+              },
+            },
+            {
+              $sort: { month: 1 },
+            },
+            {
+              $addFields: {
+                month: { $ifNull: ['$month', monthArray[0]] },
+              },
+            },
+            {
+              $set: {
+                totalAmount: { $ifNull: ['$totalAmount', 0] },
+                totalItems: { $ifNull: ['$totalItems', 0] },
+              },
+            },
+            {
+              $match: {
+                month: { $in: monthArray },
+              },
+            },
+          ],
+          // Personal Expense Analytics grouped by month
+          personalExpenseAnalytics: [
+            {
+              $match: {
+                expense_type: 'personal',
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: '%Y-%m', // Group by year and month
+                    date: '$transaction_date',
+                  },
+                },
+                totalAmount: { $sum: '$amount' },
+                totalItems: { $sum: 1 },
+              },
+            },
+            {
+              $project: {
+                month: '$_id',
+                totalAmount: '$totalAmount',
+                totalItems: '$totalItems',
+                _id: 0,
+              },
+            },
+            {
+              $sort: { month: 1 },
+            },
+            {
+              $addFields: {
+                month: { $ifNull: ['$month', monthArray[0]] },
+              },
+            },
+            {
+              $set: {
+                totalAmount: { $ifNull: ['$totalAmount', 0] },
+                totalItems: { $ifNull: ['$totalItems', 0] },
+              },
+            },
+            {
+              $match: {
+                month: { $in: monthArray },
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    // Ensure complete data for both business and personal expenses
+    return result.map((analytics) => ({
+      businessExpenseAnalytics: ensureTwelveMonthsCoverage(
+        analytics.businessExpenseAnalytics,
+        monthArray
+      ),
+      personalExpenseAnalytics: ensureTwelveMonthsCoverage(
+        analytics.personalExpenseAnalytics,
+        monthArray
+      ),
+    }));
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+};
+
+// Helper function to ensure data covers 12 months
+const ensureTwelveMonthsCoverage = (
+  analytics: ExpenseAnalytics[],
+  monthArray: string[]
+): ExpenseAnalytics[] => {
+  const analyticsMap = new Map(analytics.map((item) => [item.month, item]));
+  return monthArray.map(
+    (month) =>
+      analyticsMap.get(month) || { month, totalAmount: 0, totalItems: 0 }
+  );
+};
+
 // Helper function to ensure 7 days of data with zero values for missing days
 const ensureSevenDaysCoverage = (
   analytics: ExpenseAnalytics[],
@@ -529,4 +688,5 @@ export const ExpenseHelpers = {
   getWriteOffSummary,
   getTotalUniqueExpenseCategories,
   getBusinessAndPersonalExpenseAnalytics,
+  getBusinessAndPersonalExpenseAnalyticsYearly,
 };

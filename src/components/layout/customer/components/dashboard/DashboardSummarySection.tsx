@@ -19,13 +19,10 @@ const DashboardSummarySection = () => {
       (item: { expense_type: string }) => item.expense_type === 'personal'
     );
 
-  console.log('expensesAnalytics', personalExpenses?.amount);
-
   const mappedExpenses = updateExpenses(
     expenses(personalExpenses?.amount),
     categoryAnalytics
   );
-  console.log('updatedExpenses', mappedExpenses);
 
   return (
     <div className="grid grid-cols-12 gap-2">
