@@ -6,6 +6,7 @@ import SharedModal from '@/components/SharedModal';
 import { trpc } from '@/utils/trpc';
 import CreateRuleModalContent from './CreateRuleModalContent';
 import { Edit2 } from 'lucide-react';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type UpdateRuleProps = {
   _id: string;
@@ -45,7 +46,7 @@ export default function CreateRuleModal({
         };
       })
     : [];
-
+  const { translate } = useTranslation();
   console.log('update rule payload', updateRulePayload);
 
   return (
@@ -53,7 +54,7 @@ export default function CreateRuleModal({
       {!origin ? (
         <Button variant="purple" onClick={handleButtonClick}>
           <MdOutlineSignpost size={20} className="mr-2" />
-          Create Rule
+          {translate('page.rulesTopSection.create_rule')}
         </Button>
       ) : (
         <Edit2

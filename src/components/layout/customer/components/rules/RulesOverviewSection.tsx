@@ -7,9 +7,11 @@ import { RulesDataTableColumns } from './RulesDataTableColumns';
 import CreateRuleModal from './CreateRuleModal';
 import { trpc } from '@/config/trpc/client';
 import { debounce } from '@/lib/utils';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 export default function RulesOverviewSection() {
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { translate } = useTranslation();
   const { data: rulesResponse } = trpc.rules.getRules.useQuery(
     {
       page: 1,
@@ -40,11 +42,13 @@ export default function RulesOverviewSection() {
   return (
     <div className="rounded-2xl mt-2 p-6 bg-white">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl text-[#101010] font-bold">Edit Rules</h2>
+        <h2 className="text-xl text-[#101010] font-bold">
+          {translate('page.rulesTopSection.heading')}
+        </h2>
         <div className="flex gap-2">
           <SearchInput
             className=""
-            placeholder="Search Rules"
+            placeholder={translate('page.rulesTopSection.search')}
             onChange={handleSearchChange}
           />
           <CreateRuleModal />
@@ -52,7 +56,7 @@ export default function RulesOverviewSection() {
       </div>
       <div className="mt-10">
         <SharedDataTable
-          columns={RulesDataTableColumns}
+          columns={RulesDataTableColumns()}
           data={rulesResponse?.data || []}
         />
         <div className="mt-10">

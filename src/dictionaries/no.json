@@ -95,13 +95,18 @@
       "heading": "Last opp kvittering (CSV, PDF)",
       "uploadButton": "Last opp"
     },
-    "ruletopsection": {
-      "title": "Legg til og tilpass regler for enkelt å beregne dine fradrag",
-      "subtitle": "Tilpass regler for bedre styring"
-    },
     "rulesTopSection": {
       "title": "Legg til, tilpass regler for å beregne fradragene dine med letthet",
-      "subtitle": "Tilpass regel for bedre håndtering"
+      "subtitle": "Tilpass regel for bedre håndtering",
+      "search": "Søkeregel",
+      "create_rule": "Opprett regel",
+      "heading": "Rediger regler"
+    },
+    "rulesTableColumn": {
+      "serial_no": "Serienummer",
+      "description_contains": "Beskrivelse Inneholder",
+      "expense_type": "Kostnadstype",
+      "category": "Kategori"
     },
     "writeOffsTopSection": {
       "title": "Potensielle besparelser fra utgifter",

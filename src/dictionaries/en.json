@@ -97,7 +97,16 @@
     },
     "rulesTopSection": {
       "title": "Add, Customize rules to calculate your deductions with ease",
-      "subtitle": "Customize rule for better management"
+      "subtitle": "Customize rule for better management",
+      "search": "Search Rule",
+      "create_rule": "Create Rule",
+      "heading": "Edit Rules"
+    },
+    "rulesTableColumn": {
+      "serial_no": "Serial No.",
+      "description_contains": "Description Contains",
+      "expense_type": "Expense Type",
+      "category": "Category"
     },
     "writeOffsTopSection": {
       "title": "Potential saving from expenses",
