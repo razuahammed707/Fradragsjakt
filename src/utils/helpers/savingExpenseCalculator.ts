@@ -1,9 +1,9 @@
-import { QuestionnaireItem } from '@/redux/slices/questionnaire';
+import { QuestionnaireItem, SubAnswer } from '@/redux/slices/questionnaire';
 
-const safeParseNumber = (value: string | undefined): number => {
-  if (value === undefined) return 0;
+const safeParseNumber = (value: string): number => {
+  if (value === '') return 0;
 
-  const parsedNum = parseFloat(value.replace(/,/g, ''));
+  const parsedNum = parseFloat(value?.replace(/,/g, ''));
   return isNaN(parsedNum) ? 0 : parsedNum;
 };
 
@@ -92,49 +92,67 @@ const bankAndLoansExpenseCalculator = (
 
 const hobbyOddjobsAndExtraIncomesExpenseCalculator = (
   hobbyOddjobsPayload: QuestionnaireItem
-) => {
-  if (!hobbyOddjobsPayload || !hobbyOddjobsPayload.answers) return 0;
+): number => {
+  if (!hobbyOddjobsPayload?.answers) return 0;
 
-  const expenses = hobbyOddjobsPayload.answers.reduce((total, answer) => {
-    const expenseKeys = [
-      'I have a sole proprietorship',
-      'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',
-    ];
+  return hobbyOddjobsPayload.answers.reduce((total, answer) => {
+    const [key, value] = Object.entries(answer)[0];
 
-    expenseKeys.forEach((key) => {
-      const expense = safeParseNumber(
-        answer[key]?.[1]?.['proprietorship expense'] ||
-          answer[key]?.[1]?.['Documented expense']
-      );
-      total += expense;
-    });
+    const extractExpense = (field: string) =>
+      safeParseNumber(
+        value.find((item: SubAnswer) => field in item)?.[field] || ''
+      ) || 0;
 
-    return total;
+    switch (key) {
+      case 'I have a sole proprietorship':
+        return total + extractExpense('proprietorship expense');
+
+      case 'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale':
+        return total + extractExpense('Documented expense');
+
+      case 'I have received salary from odd jobs and services':
+        const salary = extractExpense('Odd job income');
+        return total + Math.min(salary, 6000);
+
+      default:
+        return total;
+    }
   }, 0);
-
-  return expenses;
 };
 
 const housingAndPropertyExpenseCalculator = (
   housingAndPropertyPayload: QuestionnaireItem
 ) => {
-  if (!housingAndPropertyPayload || !housingAndPropertyPayload.answers)
-    return 0;
+  console.log({ housingAndPropertyPayload });
 
-  const expenses = housingAndPropertyPayload.answers.reduce((total, answer) => {
-    const expenseKeys = [
-      'Housing in a housing association housing company or jointly owned property',
-    ];
+  if (!housingAndPropertyPayload?.answers) return 0;
 
-    expenseKeys.forEach((key) => {
-      const expense = safeParseNumber(answer[key]?.[0]?.['Documented cost']);
-      total += expense;
-    });
+  return housingAndPropertyPayload.answers.reduce((total, answer) => {
+    const [key, value] = Object.entries(answer)[0];
 
-    return total;
+    const extractExpense = (field: string) =>
+      safeParseNumber(
+        value.find((item: SubAnswer) => field in item)?.[field] || ''
+      ) || 0;
+
+    switch (key) {
+      case 'Housing in a housing association housing company or jointly owned property':
+        return total + extractExpense('Documented cost');
+
+      case 'I have rented out a residential property or a holiday home':
+        return total + extractExpense('Expense');
+
+      case 'Sold a residential property or holiday home profit or loss':
+        // const isCapitalGain = extractExpense(
+        //   'Was the property your primary residence for at least 12 of the last 24 months'
+        // );
+        const CapitatGainOrLoss = extractExpense('Odd job income');
+        return total + CapitatGainOrLoss;
+
+      default:
+        return total;
+    }
   }, 0);
-
-  return expenses;
 };
 
 const giftsOrDonationsExpenseCalculator = (
@@ -148,8 +166,7 @@ const giftsOrDonationsExpenseCalculator = (
     ]?.[0]?.['Donation Amount']
   );
 
-  // Rule: Return Donation Amount if > 500 NOK, max 25,000 NOK
-  if (donationAmount > 500) {
+  if (donationAmount >= 500) {
     return Math.min(donationAmount, 25000);
   }
 
@@ -158,31 +175,30 @@ const giftsOrDonationsExpenseCalculator = (
 
 const foreignIncomeExpenseCalculator = (
   foreignIncomePayload: QuestionnaireItem
-) => {
-  if (!foreignIncomePayload || !foreignIncomePayload.answers) return 0;
+): number => {
+  if (!foreignIncomePayload?.answers?.length) return 0;
 
   const foreignIncomeEntry =
     foreignIncomePayload.answers[0][
       'Have income or wealth in another country than Norway and pay tax in the other country'
     ];
 
-  const foreignIncome = safeParseNumber(
-    foreignIncomeEntry?.[0]?.['Foreign income']
-  );
-  const foreignTaxAmount = safeParseNumber(
-    foreignIncomeEntry?.[0]?.['Foreign tax amount']
-  );
-  const norwayTaxRateString =
-    foreignIncomeEntry?.[0]?.['Norway tax rate on this income'];
+  if (!foreignIncomeEntry) return 0;
 
-  const norwayTaxRate = norwayTaxRateString
-    ? parseFloat(norwayTaxRateString.replace('%', '').trim()) / 100
-    : 0;
+  const extractValue = (field: string) =>
+    safeParseNumber(
+      foreignIncomeEntry.find(
+        (item: Record<string, string>) => field in item
+      )?.[field] || ''
+    ) || 0;
 
+  const foreignIncome = extractValue('Foreign income');
   if (foreignIncome === 0) return 0;
-  console.log({ foreignTaxAmount, norwayTaxRate, foreignIncome });
 
-  return foreignTaxAmount * (norwayTaxRate / foreignIncome);
+  const foreignTaxAmount = extractValue('Foreign tax amount');
+  const norwayTaxRate = extractValue('Norway tax rate on this income');
+
+  return foreignTaxAmount * (norwayTaxRate / 100);
 };
 
 export const savingExpenseCalculator = (payload: QuestionnaireItem[]) => {

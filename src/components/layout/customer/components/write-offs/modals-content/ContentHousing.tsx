@@ -100,14 +100,14 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
           renting, you may be able to deduct 100% of the relevant expenses.
           <p className="text-black pt-[12px] pb-[6px]">Expense</p>
           <FormInput
-            name="I have rented out a residential property or a holiday home.Revenue"
+            name="I have rented out a residential property or a holiday home.Expense"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 200"
             defaultValue={getDefaultValue(
               'I have rented out a residential property or a holiday home',
-              'Revenue'
+              'Expense'
             )}
             required
           />
@@ -116,7 +116,7 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
     },
     {
       id: 'item-3',
-      title: 'Sold a residential property or holiday home with a loss',
+      title: 'Sold a residential property or holiday home profit or loss',
       content: (
         <>
           If the property has been your primary residence for at least 12 of the
@@ -127,7 +127,7 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
             24 months?
           </p>
           <FormInput
-            name="Sold a residential property or holiday home with a loss.Was the property your primary residence for at least 12 of the last 24 months"
+            name="Sold a residential property or holiday home profit or loss.Was the property your primary residence for at least 12 of the last 24 months"
             customClassName="w-full"
             type="select"
             control={control}
@@ -137,21 +137,21 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
               { title: 'No', value: 'no' },
             ]}
             defaultValue={getDefaultValue(
-              'Sold a residential property or holiday home with a loss',
+              'Sold a residential property or holiday home profit or loss',
               'Was the property your primary residence for at least 12 of the last 24 months'
             )}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">Capital gain</p>
+          <p className="text-black pt-[12px] pb-[6px]">Capital gain or loss</p>
           <FormInput
-            name="Sold a residential property or holiday home with a loss.Capital gain"
+            name="Sold a residential property or holiday home profit or loss.Capital gain or loss"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 200"
             defaultValue={getDefaultValue(
-              'Sold a residential property or holiday home with a loss',
-              'Capital gain'
+              'Sold a residential property or holiday home profit or loss',
+              'Capital gain or loss'
             )}
             required
           />
