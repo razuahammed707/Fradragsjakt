@@ -64,7 +64,9 @@
     "CategoryDataTableColumns": {
       "serial_no": "Serial No.",
       "category": "Category",
-      "created_by": "Created By"
+      "created_by": "Created By",
+      "search": "Search Category",
+      "overview": "Category Overview"
     },
     "WriteOffDataTableColumns": {
       "category": "Category",
@@ -93,7 +95,7 @@
       "heading": "Upload receipt csv, pdf",
       "uploadButton": "Upload"
     },
-    "ruletopsection": {
+    "rulesTopSection": {
       "title": "Add, Customize rules to calculate your deductions with ease",
       "subtitle": "Customize rule for better management"
     },
