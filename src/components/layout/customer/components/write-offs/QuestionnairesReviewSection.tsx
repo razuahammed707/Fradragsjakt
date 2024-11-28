@@ -60,25 +60,25 @@ const QuestionnairesReviewSection = () => {
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
   const {
-    WorkAndEducationExpenseAmount,
+    workAndEducationExpenseAmount,
     healthAndFamilyExpenseAmount,
-    BankAndLoansExpenseAmount,
-    HobbyOddjobsAndExtraIncomesExpenseAmount,
-    HousingAndPropertyExpenseAmount,
-    GiftsOrDonationsExpenseAmount,
-    ForeignIncomeExpenseAmount,
+    bankAndLoansExpenseAmount,
+    hobbyOddjobsAndExtraIncomesExpenseAmount,
+    housingAndPropertyExpenseAmount,
+    giftsOrDonationsExpenseAmount,
+    foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(questionnaires);
   const data = [
     { title: 'Health and Family', amount: healthAndFamilyExpenseAmount },
-    { title: 'Bank and Loans', amount: BankAndLoansExpenseAmount },
-    { title: 'Work and Education', amount: WorkAndEducationExpenseAmount },
-    { title: 'Housing and Property', amount: HousingAndPropertyExpenseAmount },
-    { title: 'Gifts/Donations', amount: GiftsOrDonationsExpenseAmount },
+    { title: 'Bank and Loans', amount: bankAndLoansExpenseAmount },
+    { title: 'Work and Education', amount: workAndEducationExpenseAmount },
+    { title: 'Housing and Property', amount: housingAndPropertyExpenseAmount },
+    { title: 'Gifts/Donations', amount: giftsOrDonationsExpenseAmount },
     {
       title: 'Hobby, Odd jobs, and Extra incomes',
-      amount: HobbyOddjobsAndExtraIncomesExpenseAmount,
+      amount: hobbyOddjobsAndExtraIncomesExpenseAmount,
     },
-    { title: 'Foreign Income', amount: ForeignIncomeExpenseAmount },
+    { title: 'Foreign Income', amount: foreignIncomeExpenseAmount },
   ];
 
   const handleButtonClick = (title: string) => {

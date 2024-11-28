@@ -1,7 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { QuestionnaireItem } from '@/redux/slices/questionnaire';
 
-// Utility function to safely parse numeric values
 const safeParseNumber = (value: string | undefined): number => {
   if (value === undefined) return 0;
 
@@ -9,46 +7,145 @@ const safeParseNumber = (value: string | undefined): number => {
   return isNaN(parsedNum) ? 0 : parsedNum;
 };
 
-const healthAndFamilyExpenseCalculator = () => {
-  return 0;
-};
+const healthAndFamilyExpenseCalculator = (
+  healthAndFamilyPayload: QuestionnaireItem
+) => {
+  if (!healthAndFamilyPayload || !healthAndFamilyPayload.answers) return 0;
 
-const WorkAndEducationExpenseCalculator = () => {
-  return 0;
-};
-
-const BankAndLoansExpenseCalculator = () => {
-  return 0;
-};
-
-const HobbyOddjobsAndExtraIncomesExpenseCalculator = () => {
-  return 0;
-};
-
-const HousingAndPropertyExpenseCalculator = () => {
-  return 0;
-};
-
-const GiftsOrDonationsExpenseCalculator = (payload: QuestionnaireItem[]) => {
-  // Find the Gifts/Donations section
-  const donationsSection = payload.find(
-    (item) => item.question === 'Gifts/Donations'
+  const childCareExpenses = safeParseNumber(
+    healthAndFamilyPayload.answers[0][
+      'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme'
+    ]?.[0]?.['Documented expenses']
   );
 
-  if (
-    !donationsSection ||
-    !donationsSection.answers ||
-    donationsSection.answers.length === 0
-  ) {
+  const specialCareExpenses = safeParseNumber(
+    healthAndFamilyPayload.answers[1][
+      'I have children aged 12 or older with special care needs'
+    ]?.[1]?.['Documented care expenses']
+  );
+
+  return childCareExpenses + specialCareExpenses;
+};
+
+const workAndEducationExpenseCalculator = (
+  workAndEducationPayload: QuestionnaireItem
+) => {
+  if (!workAndEducationPayload || !workAndEducationPayload.answers) return 0;
+
+  const expenses = workAndEducationPayload.answers.reduce((total, answer) => {
+    const expenseKeys = [
+      'Moved for a new job',
+      'I went to school last year',
+      'Have a separate room in your house used only as your home office',
+      'Disputation of a PhD',
+      'I Stay away from home overnight because of work',
+      'Have expenses for road toll or ferry when travelling between your home and workplace',
+    ];
+
+    expenseKeys.forEach((key) => {
+      const expense = safeParseNumber(
+        answer[key]?.[0]?.['Documented expenses'] ||
+          answer[key]?.[0]?.[
+            'Documented Education Expenses (if job-related)'
+          ] ||
+          answer[key]?.[0]?.['Operating Cost'] ||
+          answer[key]?.[0]?.['Meals and accommodation cost'] ||
+          answer[key]?.[0]?.[
+            'Documented Costs for Thesis Printing Travel and Defense Ceremony'
+          ]
+      );
+      total += expense;
+    });
+
+    return total;
+  }, 0);
+
+  return expenses;
+};
+
+const bankAndLoansExpenseCalculator = (
+  bankAndLoansPayload: QuestionnaireItem
+) => {
+  if (!bankAndLoansPayload || !bankAndLoansPayload.answers) return 0;
+
+  const expenses = bankAndLoansPayload.answers.reduce((total, answer) => {
+    const expenseKeys = [
+      'Have a loan',
+      'Have taken out a joint loan with someone',
+      'Have refinanced a loan in the last year',
+    ];
+
+    expenseKeys.forEach((key) => {
+      const expense = safeParseNumber(
+        answer[key]?.[0]?.['Total interest paid'] ||
+          answer[key]?.[0]?.['Interest amount'] ||
+          answer[key]?.[0]?.['Refinancing cost']
+      );
+      total += expense;
+    });
+
+    return total;
+  }, 0);
+
+  return expenses;
+};
+
+const hobbyOddjobsAndExtraIncomesExpenseCalculator = (
+  hobbyOddjobsPayload: QuestionnaireItem
+) => {
+  if (!hobbyOddjobsPayload || !hobbyOddjobsPayload.answers) return 0;
+
+  const expenses = hobbyOddjobsPayload.answers.reduce((total, answer) => {
+    const expenseKeys = [
+      'I have a sole proprietorship',
+      'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',
+    ];
+
+    expenseKeys.forEach((key) => {
+      const expense = safeParseNumber(
+        answer[key]?.[1]?.['proprietorship expense'] ||
+          answer[key]?.[1]?.['Documented expense']
+      );
+      total += expense;
+    });
+
+    return total;
+  }, 0);
+
+  return expenses;
+};
+
+const housingAndPropertyExpenseCalculator = (
+  housingAndPropertyPayload: QuestionnaireItem
+) => {
+  if (!housingAndPropertyPayload || !housingAndPropertyPayload.answers)
     return 0;
-  }
 
-  // Get the first entry in the donations section
-  const donationEntry = donationsSection.answers[0];
+  const expenses = housingAndPropertyPayload.answers.reduce((total, answer) => {
+    const expenseKeys = [
+      'Housing in a housing association housing company or jointly owned property',
+    ];
 
-  // Extract donation amount
+    expenseKeys.forEach((key) => {
+      const expense = safeParseNumber(answer[key]?.[0]?.['Documented cost']);
+      total += expense;
+    });
+
+    return total;
+  }, 0);
+
+  return expenses;
+};
+
+const giftsOrDonationsExpenseCalculator = (
+  giftsOrDonationsPayload: QuestionnaireItem
+) => {
+  if (!giftsOrDonationsPayload || !giftsOrDonationsPayload.answers) return 0;
+
   const donationAmount = safeParseNumber(
-    donationEntry['Gifts to voluntary organisations']?.[0]?.['Donation Amount']
+    giftsOrDonationsPayload.answers[0][
+      'Gifts to voluntary organisations'
+    ]?.[0]?.['Donation Amount']
   );
 
   // Rule: Return Donation Amount if > 500 NOK, max 25,000 NOK
@@ -59,70 +156,81 @@ const GiftsOrDonationsExpenseCalculator = (payload: QuestionnaireItem[]) => {
   return 0;
 };
 
-const ForeignIncomeExpenseCalculator = (payload: QuestionnaireItem[]) => {
-  // Find the Foreign Income section
-  const foreignIncomeSection = payload.find(
-    (item) => item.question === 'Foreign Income'
-  );
+const foreignIncomeExpenseCalculator = (
+  foreignIncomePayload: QuestionnaireItem
+) => {
+  if (!foreignIncomePayload || !foreignIncomePayload.answers) return 0;
 
-  if (
-    !foreignIncomeSection ||
-    !foreignIncomeSection.answers ||
-    foreignIncomeSection.answers.length === 0
-  ) {
-    return 0;
-  }
-
-  // Get the first entry in the foreign income section
-  const foreignIncomeEntry = foreignIncomeSection.answers[0];
-
-  // Extract required values
-  const foreignIncome = safeParseNumber(
-    foreignIncomeEntry[
+  const foreignIncomeEntry =
+    foreignIncomePayload.answers[0][
       'Have income or wealth in another country than Norway and pay tax in the other country'
-    ]?.[0]?.['Foreign income']
+    ];
+
+  const foreignIncome = safeParseNumber(
+    foreignIncomeEntry?.[0]?.['Foreign income']
   );
   const foreignTaxAmount = safeParseNumber(
-    foreignIncomeEntry[
-      'Have income or wealth in another country than Norway and pay tax in the other country'
-    ]?.[0]?.['Foreign tax amount']
+    foreignIncomeEntry?.[0]?.['Foreign tax amount']
   );
   const norwayTaxRateString =
-    foreignIncomeEntry[
-      'Have income or wealth in another country than Norway and pay tax in the other country'
-    ]?.[0]?.['Norway tax rate on this income'];
+    foreignIncomeEntry?.[0]?.['Norway tax rate on this income'];
 
-  // Handle norwayTaxRate in percentage format
   const norwayTaxRate = norwayTaxRateString
     ? parseFloat(norwayTaxRateString.replace('%', '').trim()) / 100
     : 0;
 
-  // Rule: Foreign tax amount × (Norway tax rate on this income / Foreign income)
   if (foreignIncome === 0) return 0;
+  console.log({ foreignTaxAmount, norwayTaxRate, foreignIncome });
 
   return foreignTaxAmount * (norwayTaxRate / foreignIncome);
 };
 
 export const savingExpenseCalculator = (payload: QuestionnaireItem[]) => {
-  console.log({ payload });
+  const {
+    'Health and Family': healthAndFamilyPayload = null,
+    'Work and Education': workAndEducationPayload = null,
+    'Bank and Loans': bankAndLoansPayload = null,
+    'Hobby, Odd Jobs, and Extra Incomes': hobbyOddjobsPayload = null,
+    'Housing and Property': housingAndPropertyPayload = null,
+    'Gifts/Donations': giftsOrDonationsPayload = null,
+    'Foreign Income': foreignIncomePayload = null,
+  } = payload.reduce(
+    (acc, item) => {
+      acc[item.question] = item;
+      return acc;
+    },
+    {} as Record<string, QuestionnaireItem | null>
+  );
 
-  const healthAndFamilyExpenseAmount = healthAndFamilyExpenseCalculator();
-  const WorkAndEducationExpenseAmount = WorkAndEducationExpenseCalculator();
-  const BankAndLoansExpenseAmount = BankAndLoansExpenseCalculator();
-  const HobbyOddjobsAndExtraIncomesExpenseAmount =
-    HobbyOddjobsAndExtraIncomesExpenseCalculator();
-  const HousingAndPropertyExpenseAmount = HousingAndPropertyExpenseCalculator();
-  const GiftsOrDonationsExpenseAmount =
-    GiftsOrDonationsExpenseCalculator(payload);
-  const ForeignIncomeExpenseAmount = ForeignIncomeExpenseCalculator(payload);
+  const healthAndFamilyExpenseAmount = healthAndFamilyPayload
+    ? healthAndFamilyExpenseCalculator(healthAndFamilyPayload)
+    : 0;
+  const workAndEducationExpenseAmount = workAndEducationPayload
+    ? workAndEducationExpenseCalculator(workAndEducationPayload)
+    : 0;
+  const bankAndLoansExpenseAmount = bankAndLoansPayload
+    ? bankAndLoansExpenseCalculator(bankAndLoansPayload)
+    : 0;
+  const hobbyOddjobsAndExtraIncomesExpenseAmount = hobbyOddjobsPayload
+    ? hobbyOddjobsAndExtraIncomesExpenseCalculator(hobbyOddjobsPayload)
+    : 0;
+  const housingAndPropertyExpenseAmount = housingAndPropertyPayload
+    ? housingAndPropertyExpenseCalculator(housingAndPropertyPayload)
+    : 0;
+  const giftsOrDonationsExpenseAmount = giftsOrDonationsPayload
+    ? giftsOrDonationsExpenseCalculator(giftsOrDonationsPayload)
+    : 0;
+  const foreignIncomeExpenseAmount = foreignIncomePayload
+    ? foreignIncomeExpenseCalculator(foreignIncomePayload)
+    : 0;
 
   return {
-    WorkAndEducationExpenseAmount,
+    workAndEducationExpenseAmount,
     healthAndFamilyExpenseAmount,
-    BankAndLoansExpenseAmount,
-    HobbyOddjobsAndExtraIncomesExpenseAmount,
-    HousingAndPropertyExpenseAmount,
-    GiftsOrDonationsExpenseAmount,
-    ForeignIncomeExpenseAmount,
+    bankAndLoansExpenseAmount,
+    hobbyOddjobsAndExtraIncomesExpenseAmount,
+    housingAndPropertyExpenseAmount,
+    giftsOrDonationsExpenseAmount,
+    foreignIncomeExpenseAmount,
   };
 };
