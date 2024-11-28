@@ -15,17 +15,17 @@ import {
 import ArrowUpDown from '../../../../../../public/sort.png';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
+import moment from 'moment';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Expense = {
-  id: string;
-  date: string;
-  expense_description: string;
+  _id: string;
   expense_type: string;
-  status: string;
-  category: string; // Adjust based on possible categories
+  deductible_status: string;
   amount: number;
+  description: string;
+  transaction_date: Date | string;
 };
 
 export const YearlyExpenseTableColumns: ColumnDef<Expense>[] = [
@@ -54,15 +54,19 @@ export const YearlyExpenseTableColumns: ColumnDef<Expense>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'date',
+    accessorKey: 'transaction_date',
     header: 'Date',
-    cell: ({ row }) => <div className="text-left">{row.getValue('date')}</div>, // Align date to the left
+    cell: ({ row }) => (
+      <div className="text-left">
+        {moment(row.getValue('transaction_date')).format('MMM Do YY')}
+      </div>
+    ), // Align date to the left
   },
   {
-    accessorKey: 'expense_description',
+    accessorKey: 'description',
     header: 'Expense description',
     cell: ({ row }) => (
-      <div className="pl-4">{row.getValue('expense_description')}</div>
+      <div className="pl-4">{row.getValue('description')}</div>
     ), // Center aligned
   },
   {
@@ -81,7 +85,7 @@ export const YearlyExpenseTableColumns: ColumnDef<Expense>[] = [
     ), // Center aligned
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'deduction_status',
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -91,7 +95,13 @@ export const YearlyExpenseTableColumns: ColumnDef<Expense>[] = [
         <Image src={ArrowUpDown} alt="sort icon" className="ml-2" />
       </Button>
     ),
-    cell: ({ row }) => <div className="pl-4">{row.getValue('status')}</div>, // Center aligned
+    cell: ({ row }) => (
+      <div className="pl-4">
+        {row.getValue('expense_type') === 'personal'
+          ? row.getValue('deduction_status')
+          : 'deductible'}
+      </div>
+    ), // Center aligned
   },
   {
     accessorKey: 'category',
@@ -141,7 +151,7 @@ export const YearlyExpenseTableColumns: ColumnDef<Expense>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(expense?.id)}
+              onClick={() => navigator.clipboard.writeText(expense?._id)}
             >
               Copy payment ID
             </DropdownMenuItem>

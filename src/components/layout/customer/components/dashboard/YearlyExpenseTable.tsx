@@ -3,52 +3,22 @@ import { SharedDataTable } from '@/components/SharedDataTable';
 import React from 'react';
 import { YearlyExpenseTableColumns } from './YearlyExpenseTableColumns';
 
-const YearlyExpenseTable = () => {
-  const data = [
-    {
-      id: '1',
-      date: '8/30/24',
-      expense_description: 'Chase',
-      expense_type: 'Private',
-      status: 'Deductible',
-      category: 'Clothing',
-      amount: 100,
-    },
-    {
-      id: '2',
-      date: '8/30/24',
-      expense_description: 'Chase',
-      expense_type: 'Public',
-      status: 'Non-deductible',
-      category: 'Travel',
-      amount: 100,
-    },
-    {
-      id: '3',
-      date: '8/30/24',
-      expense_description: 'Chase',
-      expense_type: 'Private',
-      status: 'Deductible',
-      category: 'Clothing',
-      amount: 100,
-    },
-    {
-      id: '4',
-      date: '8/30/24',
-      expense_description: 'Chase',
-      expense_type: 'Public',
-      status: 'Non-deductible',
-      category: 'Travel',
-      amount: 100,
-    },
-  ];
+// Define the type for a single expense item
+type YearlyExpenseItem = {
+  _id: string;
+  expense_type: string;
+  deductible_status: string;
+  amount: number;
+  description: string;
+  transaction_date: Date | string;
+};
 
-  /* const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 10; 
+// Correct the props type for the component
+type YearlyExpenseTableProps = {
+  data: YearlyExpenseItem[];
+};
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-   }; */
+const YearlyExpenseTable = ({ data }: YearlyExpenseTableProps) => {
   return (
     <div className="col-span-9 space-y-6 p-6 rounded-2xl bg-white">
       <div>
@@ -63,7 +33,7 @@ const YearlyExpenseTable = () => {
         <SharedDataTable
           className="max-h-[250px]"
           columns={YearlyExpenseTableColumns}
-          data={data}
+          data={data || []}
         />
       </div>
     </div>
