@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-interface SubAnswer {
+export interface SubAnswer {
   [subQuestion: string]: string;
 }
 
-interface Answer {
+export interface Answer {
   [mainQuestion: string]: SubAnswer[];
 }
 

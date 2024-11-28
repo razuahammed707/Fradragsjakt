@@ -78,7 +78,7 @@ export function ContentForeignIncome({
               'Have income or wealth in another country than Norway and pay tax in the other country',
               'Foreign tax amount'
             )}
-            placeholder="200 sq ft"
+            placeholder="NOK 200"
             required
           />
           <p className="text-black pt-3 pb-1">Norway tax rate on this income</p>
