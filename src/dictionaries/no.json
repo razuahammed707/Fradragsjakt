@@ -69,7 +69,10 @@
       "category": "kategori",
       "created_by": "opprettet av",
       "search": "søkekategori",
-      "overview": "Kategorioversikt"
+      "overview": "Kategorioversikt",
+      "CategoryTitle": "Legg til kategori",
+      "CategoryTitleUpdate": "Oppdater kategori",
+      "text": "Kategorinavn"
     },
     "WriteOffDataTableColumns": {
       "category": "Kategori",
@@ -156,6 +159,54 @@
         }
       }
     }
+  },
+  "componentsExpenseModal": {
+    "expense": {
+      "heading": {
+        "add_expense": "Legg til utgift manuelt",
+        "update_expense": "Oppdater Utgift"
+      },
+      "label": {
+        "description": "Beskrivelse",
+        "amount": "Beløp (NOK)",
+        "expense_type": "Utgiftstype",
+        "category": "Kategori"
+      },
+      "button": {
+        "add": "Legg til",
+        "update": "Oppdater",
+        "expense": "Utgift"
+      },
+      "toast": {
+        "create_success": "Utgiften ble opprettet!",
+        "create_failure": "Kunne ikke opprette utgift",
+        "update_success": "Utgiften ble oppdatert!",
+        "update_failure": "Kunne ikke oppdatere utgift"
+      },
+      "uploaded_receipt": "Lastet opp kvittering",
+      "upload": "Dra en fil eller klikk for å bla gjennom",
+      "uploadTitle": "Last opp utgiftsrapport"
+    }
+  },
+  "componentsRuleModal": {
+    "rule": {
+      "if": "HVIS",
+      "descriptionContains": "Beskrivelse inneholder",
+      "then": "Så",
+      "expenseType": "Utgiftstype",
+      "selectType": "Velg type",
+      "business": "Bedrift",
+      "personal": "Personlig",
+      "category": "Kategori",
+      "selectCategory": "Velg kategori",
+      "create": "Opprett",
+      "update": "Oppdater",
+      "discard": "Forkast"
+    }
+  },
+  "toast": {
+    "ruleCreatedSuccess": "Regel opprettet",
+    "ruleUpdatedSuccess": "Regel oppdatert"
   },
   "default": "Oversettelse mangler"
 }
