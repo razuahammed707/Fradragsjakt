@@ -1,4 +1,5 @@
 import { QuestionnaireItem, SubAnswer } from '@/redux/slices/questionnaire';
+import { IQuestionnaire } from '@/server/db/interfaces/user';
 
 const safeParseNumber = (value: string): number => {
   if (value === '') return 0;
@@ -12,55 +13,127 @@ const healthAndFamilyExpenseCalculator = (
 ) => {
   if (!healthAndFamilyPayload || !healthAndFamilyPayload.answers) return 0;
 
-  const childCareExpenses = safeParseNumber(
-    healthAndFamilyPayload.answers[0][
-      'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme'
-    ]?.[0]?.['Documented expenses']
-  );
+  return healthAndFamilyPayload.answers.reduce((total, answer) => {
+    const [key, value] = Object.entries(answer)[0];
 
-  const specialCareExpenses = safeParseNumber(
-    healthAndFamilyPayload.answers[1][
-      'I have children aged 12 or older with special care needs'
-    ]?.[1]?.['Documented care expenses']
-  );
+    const extractExpense = (field: string) =>
+      safeParseNumber(
+        value.find((item: SubAnswer) => field in item)?.[field] || ''
+      ) || 0;
 
-  return childCareExpenses + specialCareExpenses;
+    switch (key) {
+      case 'Have children aged 11 years or younger':
+        const deductionOnNumber =
+          extractExpense('How many children do you have under the age of 12') >
+          0
+            ? 25000 +
+              (extractExpense(
+                'How many children do you have under the age of 12'
+              ) -
+                1) *
+                15000
+            : 0;
+        return total + deductionOnNumber;
+
+      case 'I have children aged 12 or older with special care needs':
+        const haveSpecial =
+          value.find(
+            (item: SubAnswer) =>
+              'Do you have children with needs for special care' in item
+          )?.['Do you have children with needs for special care'] === 'yes';
+        const deductionOnSpecial12 = haveSpecial
+          ? extractExpense('Documented care expenses')
+          : 0;
+
+        return total + deductionOnSpecial12;
+
+      default:
+        return total;
+    }
+  }, 0);
 };
 
 const workAndEducationExpenseCalculator = (
-  workAndEducationPayload: QuestionnaireItem
+  workAndEducationPayload: QuestionnaireItem,
+  questionnaires: IQuestionnaire[]
 ) => {
   if (!workAndEducationPayload || !workAndEducationPayload.answers) return 0;
+  console.log({ questionnaires });
 
-  const expenses = workAndEducationPayload.answers.reduce((total, answer) => {
-    const expenseKeys = [
-      'Moved for a new job',
-      'I went to school last year',
-      'Have a separate room in your house used only as your home office',
-      'Disputation of a PhD',
-      'I Stay away from home overnight because of work',
-      'Have expenses for road toll or ferry when travelling between your home and workplace',
-    ];
+  return workAndEducationPayload.answers.reduce(
+    (total, answer) => {
+      const [key, value] = Object.entries(answer)[0];
 
-    expenseKeys.forEach((key) => {
-      const expense = safeParseNumber(
-        answer[key]?.[0]?.['Documented expenses'] ||
-          answer[key]?.[0]?.[
-            'Documented Education Expenses (if job-related)'
-          ] ||
-          answer[key]?.[0]?.['Operating Cost'] ||
-          answer[key]?.[0]?.['Meals and accommodation cost'] ||
-          answer[key]?.[0]?.[
-            'Documented Costs for Thesis Printing Travel and Defense Ceremony'
-          ]
-      );
-      total += expense;
-    });
+      const extractExpense = (field: string) =>
+        safeParseNumber(
+          value.find((item: SubAnswer) => field in item)?.[field] || ''
+        ) || 0;
 
-    return total;
-  }, 0);
+      switch (key) {
+        case 'Moved for a new job':
+          return total + extractExpense('Documented expenses');
 
-  return expenses;
+        case 'I work as a fisherman':
+          return (
+            total + Math.min(extractExpense('Fishing Income') * 0.3, 150000)
+          );
+
+        case 'I work as a seafarer':
+          return (
+            total + Math.min(extractExpense('Seafarer Income') * 0.3, 80000)
+          );
+
+        case 'I went to school last year':
+          return (
+            total +
+            extractExpense('Documented Education Expenses (if job-related)')
+          );
+        case 'Disputation of a PhD':
+          return (
+            total +
+            extractExpense(
+              'Documented Costs for Thesis Printing Travel and Defense Ceremony'
+            )
+          );
+        case 'I Stay away from home overnight because of work':
+          return total + extractExpense('Meals and accommodation cost');
+
+        case 'Have expenses for road toll or ferry when travelling between your home and workplace':
+          return total + extractExpense('Documented Expenses');
+        case 'I am a foreign employee':
+          return (
+            total + Math.min(extractExpense('Taxable Income') * 0.1, 40000)
+          );
+        case 'Have a separate room in your house used only as your home office':
+          const deductionOnSeperateRoom =
+            (extractExpense('Room Area') / extractExpense('Home Area')) *
+            extractExpense('Operating Cost');
+          return total + deductionOnSeperateRoom;
+
+        case 'The return distance between home and work is more than 37 kilometres':
+          const totalDistance = extractExpense('Distance') * 2;
+          const deductibleDistance = totalDistance - 37;
+          const deductionOnDistance =
+            deductibleDistance * 1.56 * extractExpense('Number of Workdays') >
+            23100
+              ? deductibleDistance *
+                  1.56 *
+                  extractExpense('Number of Workdays') -
+                23100
+              : 0;
+
+          return total + deductionOnDistance;
+
+        default:
+          return total;
+      }
+    },
+    questionnaires
+      ?.find((item) => item.question === 'Work and Education')
+      ?.answers.includes('Member of Trade Union')
+      ? 3850
+      : 0
+  );
 };
 
 const bankAndLoansExpenseCalculator = (
@@ -68,26 +141,45 @@ const bankAndLoansExpenseCalculator = (
 ) => {
   if (!bankAndLoansPayload || !bankAndLoansPayload.answers) return 0;
 
-  const expenses = bankAndLoansPayload.answers.reduce((total, answer) => {
-    const expenseKeys = [
-      'Have a loan',
-      'Have taken out a joint loan with someone',
-      'Have refinanced a loan in the last year',
-    ];
+  return bankAndLoansPayload.answers.reduce((total, answer) => {
+    const [key, value] = Object.entries(answer)[0];
 
-    expenseKeys.forEach((key) => {
-      const expense = safeParseNumber(
-        answer[key]?.[0]?.['Total interest paid'] ||
-          answer[key]?.[0]?.['Interest amount'] ||
-          answer[key]?.[0]?.['Refinancing cost']
-      );
-      total += expense;
-    });
+    const extractExpense = (field: string) =>
+      safeParseNumber(
+        value.find((item: SubAnswer) => field in item)?.[field] || ''
+      ) || 0;
 
-    return total;
+    switch (key) {
+      case 'Have a loan':
+        const deduction = extractExpense('Total interest paid') * 0.22; // 22%
+        return total + deduction;
+
+      case 'Have refinanced a loan in the last year':
+        const refinancedAmount = extractExpense('Refinancing cost') * 0.22;
+        return total + refinancedAmount;
+
+      case 'Have taken out a joint loan with someone':
+        const own_share =
+          extractExpense('Interest amount') *
+          (extractExpense('Your ownership share') / 100);
+
+        const deductionOnShare = own_share * 0.22;
+
+        return total + deductionOnShare;
+      case 'Have young people’s housing savings (BSU)':
+        const deductionOnBSU = Math.min(
+          extractExpense('This years savings') * 0.1,
+          27500
+        );
+
+        return total + deductionOnBSU;
+      case 'I have sold shares or securities at a loss':
+        return total + extractExpense('Total loss') * 0.22;
+
+      default:
+        return total;
+    }
   }, 0);
-
-  return expenses;
 };
 
 const hobbyOddjobsAndExtraIncomesExpenseCalculator = (
@@ -123,8 +215,6 @@ const hobbyOddjobsAndExtraIncomesExpenseCalculator = (
 const housingAndPropertyExpenseCalculator = (
   housingAndPropertyPayload: QuestionnaireItem
 ) => {
-  console.log({ housingAndPropertyPayload });
-
   if (!housingAndPropertyPayload?.answers) return 0;
 
   return housingAndPropertyPayload.answers.reduce((total, answer) => {
@@ -143,10 +233,18 @@ const housingAndPropertyExpenseCalculator = (
         return total + extractExpense('Expense');
 
       case 'Sold a residential property or holiday home profit or loss':
-        // const isCapitalGain = extractExpense(
-        //   'Was the property your primary residence for at least 12 of the last 24 months'
-        // );
-        const CapitatGainOrLoss = extractExpense('Odd job income');
+        const isCapitalGain =
+          value.find(
+            (item: SubAnswer) =>
+              'Was the property your primary residence for at least 12 of the last 24 months' in
+              item
+          )?.[
+            'Was the property your primary residence for at least 12 of the last 24 months'
+          ] === 'yes';
+        const CapitatGainOrLoss = isCapitalGain
+          ? extractExpense('Capital gain or loss')
+          : 0;
+
         return total + CapitatGainOrLoss;
 
       default:
@@ -201,7 +299,12 @@ const foreignIncomeExpenseCalculator = (
   return foreignTaxAmount * (norwayTaxRate / 100);
 };
 
-export const savingExpenseCalculator = (payload: QuestionnaireItem[]) => {
+export const savingExpenseCalculator = (
+  payload: QuestionnaireItem[],
+  questionnaires: IQuestionnaire[]
+) => {
+  console.log({ payload });
+
   const {
     'Health and Family': healthAndFamilyPayload = null,
     'Work and Education': workAndEducationPayload = null,
@@ -222,7 +325,7 @@ export const savingExpenseCalculator = (payload: QuestionnaireItem[]) => {
     ? healthAndFamilyExpenseCalculator(healthAndFamilyPayload)
     : 0;
   const workAndEducationExpenseAmount = workAndEducationPayload
-    ? workAndEducationExpenseCalculator(workAndEducationPayload)
+    ? workAndEducationExpenseCalculator(workAndEducationPayload, questionnaires)
     : 0;
   const bankAndLoansExpenseAmount = bankAndLoansPayload
     ? bankAndLoansExpenseCalculator(bankAndLoansPayload)

@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-interface IQuestionnaire {
+export interface IQuestionnaire {
   question: string; // E.g., 'Work and Education'
   answers: string[]; // Array of questions
 }

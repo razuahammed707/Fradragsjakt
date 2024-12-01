@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
@@ -35,19 +36,66 @@ const questionnaireSlice = createSlice({
       state,
       action: PayloadAction<{ question: string; answers: Answer[] }>
     ) {
+      const { question, answers } = action.payload;
+
+      const mergeAnswers = (
+        existingAnswers: Answer[],
+        newAnswers: Answer[]
+      ) => {
+        const mergedAnswers = existingAnswers.map((existingAnswer) => {
+          const existingKey = Object.keys(existingAnswer)[0];
+          const newAnswer = newAnswers.find(
+            (answer) => Object.keys(answer)[0] === existingKey
+          );
+
+          if (newAnswer) {
+            const mergedFields = [
+              ...Object.values(existingAnswer)[0].map(
+                (field: Record<string, any>) => {
+                  const fieldKey = Object.keys(field)[0];
+                  const matchingField = Object.values(newAnswer)[0].find(
+                    (newField: Record<string, any>) =>
+                      Object.keys(newField)[0] === fieldKey
+                  );
+                  return matchingField || field;
+                }
+              ),
+              ...Object.values(newAnswer)[0].filter(
+                (newField: Record<string, any>) =>
+                  !Object.values(existingAnswer)[0].some(
+                    (field: Record<string, any>) =>
+                      Object.keys(field)[0] === Object.keys(newField)[0]
+                  )
+              ),
+            ];
+            return { [existingKey]: mergedFields };
+          }
+          return existingAnswer;
+        });
+
+        const newAnswersToAdd = newAnswers.filter(
+          (newAnswer) =>
+            !existingAnswers.some(
+              (existingAnswer) =>
+                Object.keys(existingAnswer)[0] === Object.keys(newAnswer)[0]
+            )
+        );
+
+        return [...mergedAnswers, ...newAnswersToAdd];
+      };
+
       const existingIndex = state.questionnaires.findIndex(
-        (item) => item.question === action.payload.question
+        (item) => item.question === question
       );
 
       if (existingIndex !== -1) {
-        // Replace existing question's answers
+        const existingQuestionnaire = state.questionnaires[existingIndex];
         state.questionnaires[existingIndex] = {
-          ...state.questionnaires[existingIndex],
-          answers: action.payload.answers,
+          ...existingQuestionnaire,
+          answers: mergeAnswers(existingQuestionnaire.answers, answers),
         };
       } else {
-        // Add new question
-        state.questionnaires.push(action.payload);
+        state.questionnaires.push({ question, answers });
       }
     },
   },

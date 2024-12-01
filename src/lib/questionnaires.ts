@@ -12,7 +12,7 @@ export const questionnaires = [
     answers: [
       'Have children aged 11 years or younger',
       'I have children aged 12 or older with special care needs',
-      'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
+      /* 'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme', */
       'I am a single parent',
     ],
     icon: frame,

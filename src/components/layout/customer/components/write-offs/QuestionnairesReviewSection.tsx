@@ -67,7 +67,7 @@ const QuestionnairesReviewSection = () => {
     housingAndPropertyExpenseAmount,
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
-  } = savingExpenseCalculator(questionnaires);
+  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
   const data = [
     { title: 'Health and Family', amount: healthAndFamilyExpenseAmount },
     { title: 'Bank and Loans', amount: bankAndLoansExpenseAmount },
