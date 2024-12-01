@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import moment from 'moment';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type FormData = {
   Description: string;
@@ -239,11 +240,14 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
       })),
     [headers]
   );
+  const { translate } = useTranslation();
 
   return (
     <div className="mt-4">
       <h1 className="font-medium text-lg text-black mb-4">
-        {fileLink?.name ? 'Return' : 'Upload expense statement'}
+        {fileLink?.name
+          ? 'Return'
+          : translate('componentsExpenseModal.expense.uploadTitle')}
       </h1>
       {fileLink?.name ? (
         <div className="text-xs space-y-4">

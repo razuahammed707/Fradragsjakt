@@ -2,6 +2,7 @@ import { Loader2 } from 'lucide-react';
 import React from 'react';
 import UploadIcon from '../../public/upload.png';
 import Image from 'next/image';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type DragAndDropFileProps = {
   loading: boolean;
@@ -19,6 +20,7 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
   // fileLink,
   // setFileLink,
 }) => {
+  const { translate } = useTranslation();
   return (
     <div>
       <input hidden accept=".csv, text/csv" {...getInputProps()} />
@@ -31,7 +33,9 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
           ) : (
             <Image src={UploadIcon} alt="upload icon" />
           )}
-          <p className="text-[#71717A]">Drag a file or click to browse</p>
+          <p className="text-[#71717A]">
+            {translate('componentsExpenseModal.expense.upload')}
+          </p>
         </div>
       )}
     </div>

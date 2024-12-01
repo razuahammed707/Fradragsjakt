@@ -93,12 +93,16 @@ export default function CategoryAddModal({
         >
           <>
             <DialogTitle className="font-medium text-lg text-black leading-tight mb-6">
-              {!origin ? 'Add Category' : 'Update Category'}
+              {!origin
+                ? translate('page.CategoryDataTableColumns.CategoryTitle')
+                : translate(
+                    'page.CategoryDataTableColumns.CategoryTitleUpdate'
+                  )}
             </DialogTitle>
 
             <>
               <Label className="block mb-2 text-[#101010] text-xs font-medium">
-                Category Name
+                {translate('page.CategoryDataTableColumns.text')}
               </Label>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <FormInput
@@ -115,7 +119,11 @@ export default function CategoryAddModal({
                   className="w-full flex h-9 py-2 px-4 justify-center items-center gap-[10px] text-white text-sm font-medium"
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}{' '}
-                  {!origin ? 'Add' : 'Update'}
+                  {!origin
+                    ? translate('page.CategoryDataTableColumns.CategoryTitle')
+                    : translate(
+                        'page.CategoryDataTableColumns.CategoryTitleUpdate'
+                      )}
                 </Button>
               </form>
             </>

@@ -69,7 +69,10 @@
       "category": "Category",
       "created_by": "Created By",
       "search": "Search Category",
-      "overview": "Category Overview"
+      "overview": "Category Overview",
+      "CategoryTitle": "Add Category",
+      "CategoryTitleUpdate": "Update Category",
+      "text": "Category Name"
     },
     "WriteOffDataTableColumns": {
       "category": "Category",
@@ -139,7 +142,7 @@
     },
     "filters": {
       "category": "Category",
-      "expense_type": "Utgiftstype"
+      "expense_type": "Expense type"
     },
     "buttons": {
       "expense_buttons": {
@@ -156,6 +159,54 @@
         }
       }
     }
+  },
+  "componentsExpenseModal": {
+    "expense": {
+      "heading": {
+        "add_expense": "Manually add expense",
+        "update_expense": "Update Expense"
+      },
+      "label": {
+        "description": "Description",
+        "amount": "Amount (NOK)",
+        "expense_type": "Expense Type",
+        "category": "Category"
+      },
+      "button": {
+        "add": "Add",
+        "update": "Update",
+        "expense": "Expense"
+      },
+      "toast": {
+        "create_success": "Expense created successfully!",
+        "create_failure": "Failed to create expense",
+        "update_success": "Expense updated successfully!",
+        "update_failure": "Failed to update expense"
+      },
+      "uploaded_receipt": "Uploaded Receipt",
+      "upload": "Drag a file or click to browse",
+      "uploadTitle": "Upload Expense Statement"
+    }
+  },
+  "componentsRuleModal": {
+    "rule": {
+      "if": "IF",
+      "descriptionContains": "Description contain",
+      "then": "Then",
+      "expenseType": "Expense type",
+      "selectType": "Select type",
+      "business": "Business",
+      "personal": "Personal",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "create": "Create",
+      "update": "Update",
+      "discard": "Discard"
+    }
+  },
+  "toast": {
+    "ruleCreatedSuccess": "Rule created successfully",
+    "ruleUpdatedSuccess": "Rule updated successfully"
   },
   "default": "Translation missing"
 }

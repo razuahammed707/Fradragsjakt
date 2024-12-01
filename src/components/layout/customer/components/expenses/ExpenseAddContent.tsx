@@ -18,6 +18,7 @@ import SharedTooltip from '@/components/SharedTooltip';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PayloadType } from './ExpenseUpdateModal';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type UploadedImageType = {
   link: string;
@@ -53,14 +54,14 @@ interface ExpenseAddContentProps {
   payload?: PayloadType;
   origin?: string;
 }
+
 function ExpenseAddContent({
   categories = [],
   setModalOpen,
   origin,
   payload,
 }: ExpenseAddContentProps) {
-  console.log({ payload });
-
+  const { translate } = useTranslation();
   const { handleSubmit, control, reset } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
   const [fileLink, setFileLink] = useState<File | null>(null);
@@ -79,26 +80,38 @@ function ExpenseAddContent({
   const createMutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
-      toast.success('Expense created successfully!', { duration: 4000 });
+      toast.success(
+        translate('componentsExpenseModal.expense.toast.create_success'),
+        { duration: 4000 }
+      );
       reset();
       setModalOpen(false);
       setLoading(false);
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to create expense');
+      toast.error(
+        error.message ||
+          translate('componentsExpenseModal.expense.toast.create_failure')
+      );
       setLoading(false);
     },
   });
   const updateMutation = trpc.expenses.updateExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
-      toast.success('Expense updated successfully!', { duration: 4000 });
+      toast.success(
+        translate('componentsExpenseModal.expense.toast.update_success'),
+        { duration: 4000 }
+      );
       reset();
       setModalOpen(false);
       setLoading(false);
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to update expense');
+      toast.error(
+        error.message ||
+          translate('componentsExpenseModal.expense.toast.update_failure')
+      );
       setLoading(false);
     },
   });
@@ -175,19 +188,20 @@ function ExpenseAddContent({
       });
   };
 
-  console.log('uploaded file', uploadedImage);
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
         {origin === 'expense update'
-          ? 'Update Expense'
-          : 'Manually add expense'}
+          ? translate('componentsExpenseModal.expense.heading.update_expense')
+          : translate('componentsExpenseModal.expense.heading.add_expense')}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {['description', 'amount'].map((field) => (
           <div key={field}>
             <Label htmlFor={field}>
-              {field === 'description' ? 'Description' : 'Amount (NOK)'}
+              {field === 'description'
+                ? translate('componentsExpenseModal.expense.label.description')
+                : translate('componentsExpenseModal.expense.label.amount')}
             </Label>
             <FormInput
               type={field === 'amount' ? 'number' : 'text'}
@@ -195,7 +209,11 @@ function ExpenseAddContent({
               defaultValue={
                 field === 'amount' ? payload?.amount : payload?.description
               }
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+              placeholder={
+                field === 'description'
+                  ? 'Enter description'
+                  : 'Enter amount (NOK)'
+              }
               control={control}
               customClassName="w-full mt-2"
               required
@@ -205,7 +223,9 @@ function ExpenseAddContent({
         {[
           {
             name: 'expense_type',
-            label: 'Expense type',
+            label: translate(
+              'componentsExpenseModal.expense.label.expense_type'
+            ),
             defaultValue: payload?.expense_type,
             options: [
               { title: 'Business', value: 'business' },
@@ -215,7 +235,7 @@ function ExpenseAddContent({
           },
           {
             name: 'category',
-            label: 'Category',
+            label: translate('componentsExpenseModal.expense.label.category'),
             defaultValue: payload?.category,
             options: manipulatedCategories,
           },
@@ -252,7 +272,7 @@ function ExpenseAddContent({
           <SharedTooltip
             visibleContent={
               <Link href="/" className="underline font-medium text-blue-500">
-                {'Uploaded Receipt'}
+                {translate('componentsExpenseModal.expense.uploaded_receipt')}
               </Link>
             }
           >
@@ -271,7 +291,10 @@ function ExpenseAddContent({
             className="w-full text-white"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {origin === 'expense update' ? 'Update' : 'Add'} Expense
+            {origin === 'expense update'
+              ? translate('componentsExpenseModal.expense.button.update')
+              : translate('componentsExpenseModal.expense.button.add')}{' '}
+            {translate('componentsExpenseModal.expense.button.expense')}
           </Button>
         </div>
       </form>
