@@ -138,7 +138,7 @@ export function ContentHealthFamily({
         </>
       ),
     },
-    {
+    /* {
       id: 'item-3',
       title:
         'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
@@ -187,9 +187,9 @@ export function ContentHealthFamily({
           />
         </>
       ),
-    },
+    }, */
     {
-      id: 'item-4',
+      id: 'item-3',
       title: 'I am a single parent',
       content: (
         <div>

@@ -114,7 +114,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 200"
+            placeholder="50 %"
             defaultValue={getDefaultValue(
               'Have taken out a joint loan with someone',
               'Your ownership share'

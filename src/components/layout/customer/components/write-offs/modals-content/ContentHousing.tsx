@@ -180,6 +180,8 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
+    console.log({ payload });
+
     appDispatch(addQuestionnaire(payload));
     appDispatch(showModal(false));
   };

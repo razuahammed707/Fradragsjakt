@@ -57,6 +57,19 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           If your home is more than 37 km away from your workplace, you may
           qualify for a commuting deduction. This is to compensate for the extra
           time and cost of commuting.
+          <p className="text-black pt-3 pb-1">Number of Workdays</p>
+          <FormInput
+            name="The return distance between home and work is more than 37 kilometres.Number of Workdays"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="40 km"
+            defaultValue={getDefaultValue(
+              'The return distance between home and work is more than 37 kilometres',
+              'Number of Workdays'
+            )}
+            required
+          />
           <p className="text-black pt-3 pb-1">Distance</p>
           <FormInput
             name="The return distance between home and work is more than 37 kilometres.Distance"
