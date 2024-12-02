@@ -25,7 +25,13 @@ export const categoryRouter = router({
         const { page, limit, searchTerm } = input;
         const skip = (page - 1) * limit;
 
-        const query: Record<string, unknown> = { creator_id: loggedUser?.id };
+        const query: Record<string, unknown> = {
+          $and: [
+            {
+              $or: [{ creator_id: loggedUser?.id }, { created_by: 'SYSTEM' }],
+            },
+          ],
+        };
 
         // If a search term is provided, add a condition to match fields
         if (searchTerm) {
@@ -138,6 +144,7 @@ export const categoryRouter = router({
         const category = new Category({
           title: transformedTitle,
           creator_id: sessionUser.id,
+          created_by: 'SYSTEM',
         });
 
         await category.save();
