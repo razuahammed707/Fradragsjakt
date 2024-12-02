@@ -58,82 +58,73 @@ const workAndEducationExpenseCalculator = (
   questionnaires: IQuestionnaire[]
 ) => {
   if (!workAndEducationPayload || !workAndEducationPayload.answers) return 0;
-  console.log({ questionnaires });
 
-  return workAndEducationPayload.answers.reduce(
-    (total, answer) => {
-      const [key, value] = Object.entries(answer)[0];
+  const initialAmount = questionnaires
+    ?.find((item) => item.question === 'Work and Education')
+    ?.answers.some((answer) =>
+      Object.keys(answer).some((key) => key === 'Member of Trade Union')
+    )
+    ? 3850
+    : 0;
+  return workAndEducationPayload.answers.reduce((total, answer) => {
+    const [key, value] = Object.entries(answer)[0];
 
-      const extractExpense = (field: string) =>
-        safeParseNumber(
-          value.find((item: SubAnswer) => field in item)?.[field] || ''
-        ) || 0;
+    const extractExpense = (field: string) =>
+      safeParseNumber(
+        value.find((item: SubAnswer) => field in item)?.[field] || ''
+      ) || 0;
 
-      switch (key) {
-        case 'Moved for a new job':
-          return total + extractExpense('Documented expenses');
+    switch (key) {
+      case 'Moved for a new job':
+        return total + extractExpense('Documented expenses');
 
-        case 'I work as a fisherman':
-          return (
-            total + Math.min(extractExpense('Fishing Income') * 0.3, 150000)
-          );
+      case 'I work as a fisherman':
+        return total + Math.min(extractExpense('Fishing Income') * 0.3, 150000);
 
-        case 'I work as a seafarer':
-          return (
-            total + Math.min(extractExpense('Seafarer Income') * 0.3, 80000)
-          );
+      case 'I work as a seafarer':
+        return total + Math.min(extractExpense('Seafarer Income') * 0.3, 80000);
 
-        case 'I went to school last year':
-          return (
-            total +
-            extractExpense('Documented Education Expenses (if job-related)')
-          );
-        case 'Disputation of a PhD':
-          return (
-            total +
-            extractExpense(
-              'Documented Costs for Thesis Printing Travel and Defense Ceremony'
-            )
-          );
-        case 'I Stay away from home overnight because of work':
-          return total + extractExpense('Meals and accommodation cost');
+      case 'I went to school last year':
+        return (
+          total +
+          extractExpense('Documented Education Expenses (if job-related)')
+        );
+      case 'Disputation of a PhD':
+        return (
+          total +
+          extractExpense(
+            'Documented Costs for Thesis Printing Travel and Defense Ceremony'
+          )
+        );
+      case 'I Stay away from home overnight because of work':
+        return total + extractExpense('Meals and accommodation cost');
 
-        case 'Have expenses for road toll or ferry when travelling between your home and workplace':
-          return total + extractExpense('Documented Expenses');
-        case 'I am a foreign employee':
-          return (
-            total + Math.min(extractExpense('Taxable Income') * 0.1, 40000)
-          );
-        case 'Have a separate room in your house used only as your home office':
-          const deductionOnSeperateRoom =
-            (extractExpense('Room Area') / extractExpense('Home Area')) *
-            extractExpense('Operating Cost');
-          return total + deductionOnSeperateRoom;
+      case 'Have expenses for road toll or ferry when travelling between your home and workplace':
+        return total + extractExpense('Documented Expenses');
+      case 'I am a foreign employee':
+        return total + Math.min(extractExpense('Taxable Income') * 0.1, 40000);
+      case 'Have a separate room in your house used only as your home office':
+        const deductionOnSeperateRoom =
+          (extractExpense('Room Area') / extractExpense('Home Area')) *
+          extractExpense('Operating Cost');
+        return total + deductionOnSeperateRoom;
 
-        case 'The return distance between home and work is more than 37 kilometres':
-          const totalDistance = extractExpense('Distance') * 2;
-          const deductibleDistance = totalDistance - 37;
-          const deductionOnDistance =
-            deductibleDistance * 1.56 * extractExpense('Number of Workdays') >
-            23100
-              ? deductibleDistance *
-                  1.56 *
-                  extractExpense('Number of Workdays') -
-                23100
-              : 0;
+      case 'The return distance between home and work is more than 37 kilometres':
+        const totalDistance = extractExpense('Distance') * 2;
+        const deductibleDistance = totalDistance - 37;
+        const deductionOnDistance =
+          deductibleDistance * 1.56 * extractExpense('Number of Workdays') >
+          23100
+            ? deductibleDistance * 1.56 * extractExpense('Number of Workdays') -
+              23100
+            : 0;
 
-          return total + deductionOnDistance;
+        return total + deductionOnDistance;
 
-        default:
-          return total;
-      }
-    },
-    questionnaires
-      ?.find((item) => item.question === 'Work and Education')
-      ?.answers.includes('Member of Trade Union')
-      ? 3850
-      : 0
-  );
+      default:
+        return total;
+    }
+  }, initialAmount);
 };
 
 const bankAndLoansExpenseCalculator = (
