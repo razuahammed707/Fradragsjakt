@@ -147,7 +147,7 @@ const QuestionnairesReviewSection = () => {
                 />
                 <p>{question.title}</p>
               </div>
-              {question.amount! >= 0 && <p>NOK {question.amount}</p>}
+              {question.amount !== 0 && <p>NOK {question.amount.toFixed(2)}</p>}
             </div>
           ))}
           <Separator className="bg-[#E4E4E7] my-6" />
