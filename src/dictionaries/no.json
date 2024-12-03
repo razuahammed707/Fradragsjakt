@@ -208,5 +208,28 @@
     "ruleCreatedSuccess": "Regel opprettet",
     "ruleUpdatedSuccess": "Regel oppdatert"
   },
+  "componentsApplyRuleModal": {
+    "table": {
+      "description": "Beskrivelse",
+      "category": "Kategori",
+      "type": "Type",
+      "amount": "Beløp",
+      "actions": {
+        "remove": "Fjern",
+        "tooltip": "Ikke bekymre deg! Du kan fortsatt finne denne varen på nytt"
+      }
+    }
+  },
+  "applyRuleModal": {
+    "title": "Regler som kan brukes på følgende utgifter",
+    "button": {
+      "apply": "Bruk regel"
+    },
+    "toast": {
+      "success": "Utgifter oppdatert!",
+      "error": "Kunne ikke oppdatere utgiftene.",
+      "noExpenses": "Ingen utgifter tilgjengelig for oppdatering"
+    }
+  },
   "default": "Oversettelse mangler"
 }

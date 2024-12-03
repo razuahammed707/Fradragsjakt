@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableColumns';
 import SharedPagination from '@/components/SharedPagination';
+import { useTranslation } from '@/lib/TranslationProvider'; // Translation hook
 
 type CategoryType = { title: string; value: string };
 
@@ -53,6 +54,7 @@ function ApplyRuleModalContent({
   expenses: { expensesWithRules },
   setModalOpen,
 }: ExpenseRuleContentProps) {
+  const { translate } = useTranslation(); // Translation hook
   const [loading, setLoading] = useState(false);
   const [selectedRule, setSelectedRule] = useState<string>(
     expensesWithRules[0]?.rule || ''
@@ -91,14 +93,12 @@ function ApplyRuleModalContent({
   const mutation = trpc.expenses.updateBulkExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
-      toast.success('Expenses updated successfully!', {
-        duration: 4000,
-      });
+      toast.success(translate('applyRuleModal.toast.success'));
       setLoading(false);
       setModalOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to create expenses');
+      toast.error(error.message || translate('applyRuleModal.toast.error'));
     },
   });
 
@@ -119,7 +119,7 @@ function ApplyRuleModalContent({
           })) || [];
 
       if (expenses.length === 0) {
-        toast.error('No expenses available to update');
+        toast.error(translate('applyRuleModal.toast.noExpenses'));
         setLoading(false);
         return;
       }
@@ -138,7 +138,7 @@ function ApplyRuleModalContent({
   return (
     <div className="space-y-8">
       <h1 className="font-medium text-xl text-[#000] mt-6 mb-8">
-        Rules that can be applied to the following expenses
+        {translate('applyRuleModal.title')}
       </h1>
       <div className="flex flex-wrap gap-2">
         {expensesWithRules.map((expenseRule) => (
@@ -179,7 +179,7 @@ function ApplyRuleModalContent({
         className="w-full text-white"
       >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Apply Rule
+        {translate('applyRuleModal.button.apply')}
       </Button>
     </div>
   );

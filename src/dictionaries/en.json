@@ -208,5 +208,28 @@
     "ruleCreatedSuccess": "Rule created successfully",
     "ruleUpdatedSuccess": "Rule updated successfully"
   },
+  "componentsApplyRuleModal": {
+    "table": {
+      "description": "Description",
+      "category": "Category",
+      "type": "Type",
+      "amount": "Amount",
+      "actions": {
+        "remove": "Remove",
+        "tooltip": "Don't worry! You can still find this item on reapply"
+      }
+    }
+  },
+  "applyRuleModal": {
+    "title": "Rules that can be applied to the following expenses",
+    "button": {
+      "apply": "Apply Rule"
+    },
+    "toast": {
+      "success": "Expenses updated successfully!",
+      "error": "Failed to update expenses.",
+      "noExpenses": "No expenses available to update"
+    }
+  },
   "default": "Translation missing"
 }
