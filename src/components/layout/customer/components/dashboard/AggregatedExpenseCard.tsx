@@ -17,12 +17,14 @@ interface AggregatedExpenseCardProps {
   title: string;
   total: string;
   items: SpendingItem[];
+  origin?: string;
 }
 
 const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   title,
   total,
   items,
+  origin = 'business',
 }) => {
   const largestItem = items.reduce((prev, current) =>
     parseFloat(current.amount.replace(/[^0-9.-]+/g, '')) >
@@ -77,69 +79,95 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
           </div>
         </div>
         <div className="col-span-8 space-y-2  h-[214px] overflow-y-auto pr-4">
-          {otherItems.map((item, index) => (
-            <SharedTooltip
-              align="end"
-              key={index}
-              visibleContent={
-                <div className="flex items-center space-x-2 hover:bg-[#F6F6F6] p-2 rounded-lg">
-                  {/* <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center `}
-                >
-                  <Image
-                    src={item.difference.startsWith('+') ? ArrowUp : ArrowDown}
-                    alt="arrow_icon"
-                    height={20}
-                    width={20}
-                    className=""
-                  />
-                </div> */}
-                  <div>
-                    <p className="text-xs font-semibold text-[#71717A]">
-                      {item.category}
-                    </p>
-                    <p className="text-sm font-bold text-[#00104B]">
-                      {item.amount}{' '}
-                      <span
-                        className={`text-[10px] font-medium ms-2 ${
-                          item.difference.startsWith('+')
-                            ? 'text-[#5B52F9]'
-                            : 'text-[#EC787A]'
-                        }`}
-                      >
-                        {' '}
-                        {item.difference}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              }
-            >
-              <div className="space-y-2 w-[150px] py-1">
-                <h6 className="text-xs font-semibold text-[#627A97]">
-                  Main Category Name
-                </h6>
-                <Separator />
-                {[...Array(5)].map((el, i) => (
-                  <div key={i} className="w-full">
-                    <p className="text-[10px] font-semibold text-[#71717A]">
-                      Category Name
-                    </p>
-                    <div className="flex justify-between ">
-                      <p className="text-[10px] font-bold text-[#00104B]">
-                        Amount{' '}
+          {otherItems.map((item, index) =>
+            origin === 'business' ? (
+              <SharedTooltip
+                align="end"
+                key={index}
+                visibleContent={
+                  <div className="flex items-center space-x-2 hover:bg-[#F6F6F6] p-2 rounded-lg">
+                    {/* <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center `}
+                  >
+                    <Image
+                      src={item.difference.startsWith('+') ? ArrowUp : ArrowDown}
+                      alt="arrow_icon"
+                      height={20}
+                      width={20}
+                      className=""
+                    />
+                  </div> */}
+                    <div>
+                      <p className="text-xs font-semibold text-[#71717A]">
+                        {item.category}
                       </p>
-
-                      <p className={`text-[10px] font-medium text-[#71717A]`}>
-                        {' '}
-                        threshold
+                      <p className="text-sm font-bold text-[#00104B]">
+                        {item.amount}{' '}
+                        <span
+                          className={`text-[10px] font-medium ms-2 ${
+                            item.difference.startsWith('+')
+                              ? 'text-[#5B52F9]'
+                              : 'text-[#EC787A]'
+                          }`}
+                        >
+                          {' '}
+                          {item.difference}
+                        </span>
                       </p>
                     </div>
                   </div>
-                ))}
+                }
+              >
+                <div className="space-y-2 w-[150px] py-1">
+                  <h6 className="text-xs font-semibold text-[#627A97]">
+                    Main Category Name
+                  </h6>
+                  <Separator />
+                  {[...Array(5)].map((el, i) => (
+                    <div key={i} className="w-full">
+                      <p className="text-[10px] font-semibold text-[#71717A]">
+                        Category Name
+                      </p>
+                      <div className="flex justify-between ">
+                        <p className="text-[10px] font-bold text-[#00104B]">
+                          Amount{' '}
+                        </p>
+
+                        <p className={`text-[10px] font-medium text-[#71717A]`}>
+                          {' '}
+                          threshold
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </SharedTooltip>
+            ) : (
+              <div
+                key={index}
+                className="flex items-center space-x-2 hover:bg-[#F6F6F6] p-2 rounded-lg"
+              >
+                <div>
+                  <p className="text-xs font-semibold text-[#71717A]">
+                    {item.category}
+                  </p>
+                  <p className="text-sm font-bold text-[#00104B]">
+                    {item.amount}{' '}
+                    <span
+                      className={`text-[10px] font-medium ms-2 ${
+                        item.difference.startsWith('+')
+                          ? 'text-[#5B52F9]'
+                          : 'text-[#EC787A]'
+                      }`}
+                    >
+                      {' '}
+                      {item.difference}
+                    </span>
+                  </p>
+                </div>
               </div>
-            </SharedTooltip>
-          ))}
+            )
+          )}
         </div>
       </div>
     </div>

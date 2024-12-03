@@ -97,7 +97,7 @@ const DashboardSummarySection = () => {
       </div> */}
       <div className="col-span-12 grid grid-cols-2 gap-2">
         <AggregatedExpenseCard {...businessSpending} />
-        <AggregatedExpenseCard {...personalSpending} />
+        <AggregatedExpenseCard {...personalSpending} origin="personal" />
       </div>
     </div>
   );
