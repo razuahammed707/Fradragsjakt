@@ -7,59 +7,12 @@ import YearlyExpenseGraph from './YearlyExpenseGraph';
 import { trpc } from '@/utils/trpc';
 //import { updateExpenses } from '@/utils/helpers/categoryMapperForExpense';
 import AggregatedExpenseCard from './AggregatedExpenseCard';
-const businessSpending = {
-  title: 'Business Spending (Total)',
-  total: 'NOK 6,150',
-  items: [
-    {
-      category: 'Office and Workspace',
-      amount: 'NOK 250',
-      difference: '+NOK 50',
-    },
-    {
-      category: 'Technology and Communication',
-      amount: 'NOK 250',
-      difference: '+NOK 50',
-    },
-    {
-      category: 'Professional Services',
-      amount: 'NOK 250',
-      difference: '-NOK 50',
-    },
-  ],
-};
+import { finalCalculation } from '@/utils/helpers/primaryCategoriesWithFormula';
+import { predefinedCategories } from '@/utils/dummy';
+import { useAppSelector } from '@/redux/hooks';
+import { questionnaireSelector } from '@/redux/slices/questionnaire';
+import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
 
-const personalSpending = {
-  title: 'Personal Spending (Total)',
-  total: 'NOK 6,150',
-  items: [
-    {
-      category: 'Health & Family',
-      amount: 'NOK 300',
-      difference: '-NOK 50',
-    },
-    {
-      category: 'Banks & Loans',
-      amount: 'NOK 250',
-      difference: '+NOK 50',
-    },
-    {
-      category: 'Housing & Property',
-      amount: 'NOK 250',
-      difference: '-NOK 50',
-    },
-    {
-      category: 'Furniture and Equipment',
-      amount: 'NOK 250',
-      difference: '-NOK 50',
-    },
-    {
-      category: 'Office Supplies',
-      amount: 'NOK 350',
-      difference: '-NOK 50',
-    },
-  ],
-};
 const DashboardSummarySection = () => {
   const { data: expensesAnalytics } =
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
@@ -67,6 +20,8 @@ const DashboardSummarySection = () => {
     });
 
   const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
+  const cardData = finalCalculation(categoryAnalytics, predefinedCategories);
+
   // const personalExpenses =
   //   expensesAnalytics?.data?.expenseTypeWiseExpenses?.find(
   //     (item: { expense_type: string }) => item.expense_type === 'personal'
@@ -76,6 +31,61 @@ const DashboardSummarySection = () => {
   //   expenses(personalExpenses?.amount),
   //   categoryAnalytics
   // );
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
+  const {
+    workAndEducationExpenseAmount,
+    healthAndFamilyExpenseAmount,
+    bankAndLoansExpenseAmount,
+    hobbyOddjobsAndExtraIncomesExpenseAmount,
+    housingAndPropertyExpenseAmount,
+    giftsOrDonationsExpenseAmount,
+    foreignIncomeExpenseAmount,
+  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
+  const personalData = [
+    {
+      title: 'Health and Family',
+      total_amount: healthAndFamilyExpenseAmount,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Bank and Loans',
+      total_amount: bankAndLoansExpenseAmount,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Work and Education',
+      total_amount: workAndEducationExpenseAmount,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Housing and Property',
+      total_amount: housingAndPropertyExpenseAmount,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Gifts/Donations',
+      total_amount: giftsOrDonationsExpenseAmount,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Hobby, Odd jobs, and Extra incomes',
+      total_amount: hobbyOddjobsAndExtraIncomesExpenseAmount,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Foreign Income',
+      total_amount: foreignIncomeExpenseAmount,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+  ];
 
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -96,8 +106,15 @@ const DashboardSummarySection = () => {
         ))}
       </div> */}
       <div className="col-span-12 grid grid-cols-2 gap-2">
-        <AggregatedExpenseCard {...businessSpending} />
-        <AggregatedExpenseCard {...personalSpending} origin="personal" />
+        <AggregatedExpenseCard
+          items={cardData}
+          title="Tax saved from Business Spending (Total)"
+        />
+        <AggregatedExpenseCard
+          title="Tax saved from Personal Spending (Total)"
+          items={personalData}
+          origin="personal"
+        />
       </div>
     </div>
   );
