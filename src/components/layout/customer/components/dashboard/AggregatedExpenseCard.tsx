@@ -8,6 +8,10 @@ import SharedTooltip from '@/components/SharedTooltip';
 import { Separator } from '@/components/ui/separator';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { cn } from '@/lib/utils';
+import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
+import { useAppSelector } from '@/redux/hooks';
+import { questionnaireSelector } from '@/redux/slices/questionnaire';
+import { trpc } from '@/utils/trpc';
 
 interface caregoryItem {
   title: string;
@@ -22,7 +26,7 @@ interface caregoryItem {
 
 interface AggregatedExpenseCardProps {
   title?: string;
-  items: caregoryItem[];
+  items?: caregoryItem[];
   origin?: string;
 }
 
@@ -31,12 +35,73 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   items,
   origin = 'business',
 }) => {
-  const largestItem = items?.reduce((prev, current) =>
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
+  const {
+    workAndEducationExpenseAmount,
+    healthAndFamilyExpenseAmount,
+    bankAndLoansExpenseAmount,
+    hobbyOddjobsAndExtraIncomesExpenseAmount,
+    housingAndPropertyExpenseAmount,
+    giftsOrDonationsExpenseAmount,
+    foreignIncomeExpenseAmount,
+  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
+
+  const personalData = [
+    {
+      title: 'Health and Family',
+      total_amount: healthAndFamilyExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Bank and Loans',
+      total_amount: bankAndLoansExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Work and Education',
+      total_amount: workAndEducationExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Housing and Property',
+      total_amount: housingAndPropertyExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Gifts/Donations',
+      total_amount: giftsOrDonationsExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Hobby, Odd jobs, and Extra incomes',
+      total_amount: hobbyOddjobsAndExtraIncomesExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Foreign Income',
+      total_amount: foreignIncomeExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+  ];
+  const largestItem = (items ? items : personalData)?.reduce((prev, current) =>
     current.total_amount > prev.total_amount ? current : prev
   );
-  const total = items?.reduce((sum, current) => sum + current.total_amount, 0);
+  const total = (items ? items : personalData)?.reduce(
+    (sum, current) => sum + current.total_amount,
+    0
+  );
 
-  const otherItems = items?.filter((item) => item !== largestItem);
+  const otherItems = (items ? items : personalData)?.filter(
+    (item) => item !== largestItem
+  );
 
   return (
     <div className="bg-white rounded-xl p-6 space-y-6 w-full">
@@ -71,17 +136,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                       {largestItem?.title}
                     </p>
                     <p className={cn('text-sm font-bold mt-2 text-[#00104B]')}>
-                      {largestItem.total_original_amount}{' '}
-                    </p>
-                    <p
-                      className={`text-[10px] mt-[6px] font-medium  ${
-                        largestItem.total_amount >= 0
-                          ? 'text-[#00B386]'
-                          : 'text-[#EC787A]'
-                      }`}
-                    >
-                      {' '}
-                      {largestItem.total_amount}
+                      NOK {largestItem?.total_amount?.toFixed(2)}{' '}
                     </p>
                   </div>
                 </div>
@@ -98,10 +153,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                     <p
                       className={cn(
                         'text-[10px] font-bold text-[#00104B]',
-                        amount >= 0 && 'text-[#00B386]'
+                        amount >= 0 && 'text-[#00104B]'
                       )}
                     >
-                      {amount?.toFixed(2)}
+                      NOK {amount?.toFixed(2)}
                     </p>
 
                     <p className={`text-[10px] font-medium text-[#71717A]`}>
@@ -131,20 +186,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                 <p
                   className={cn(
                     'text-sm font-bold mt-2 text-[#00104B]',
-                    largestItem?.total_amount >= 0 && 'text-[#00B386]'
+                    largestItem?.total_amount >= 0 && 'text-[#00104B]'
                   )}
                 >
-                  {largestItem?.total_amount}{' '}
-                </p>
-                <p
-                  className={`text-[10px] mt-[6px] font-medium  ${
-                    largestItem.total_original_amount >= 0
-                      ? 'text-[#5B52F9]'
-                      : 'text-[#EC787A]'
-                  }`}
-                >
-                  {' '}
-                  {largestItem.total_original_amount}
+                  NOK {largestItem?.total_amount?.toFixed(2)}{' '}
                 </p>
               </div>
             </div>
@@ -159,17 +204,6 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                   key={index}
                   visibleContent={
                     <div className="flex items-center space-x-2 hover:bg-[#F6F6F6] p-2 rounded-lg">
-                      {/* <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center `}
-                  >
-                    <Image
-                      src={item.difference.startsWith('+') ? ArrowUp : ArrowDown}
-                      alt="arrow_icon"
-                      height={20}
-                      width={20}
-                      className=""
-                    />
-                  </div> */}
                       <div>
                         <p className="text-xs font-semibold text-[#71717A]">
                           {title}
@@ -177,46 +211,36 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                         <p
                           className={cn(
                             'text-sm font-bold text-[#00104B]',
-                            total_amount >= 0 && 'text-[#00B386]'
+                            total_amount >= 0 && 'text-[#00104B]'
                           )}
                         >
-                          {total_amount}{' '}
-                          {/* <span
-                          className={`text-[10px] font-medium ms-2 ${
-                            item?.difference.startsWith('+')
-                              ? 'text-[#5B52F9]'
-                              : 'text-[#EC787A]'
-                          }`}
-                        >
-                          {' '}
-                          {item.difference}
-                        </span> */}
+                          NOK {total_amount.toFixed(2)}{' '}
                         </p>
                       </div>
                     </div>
                   }
                 >
-                  <div className="space-y-2 w-[175px] py-1">
+                  <div className="space-y-2 w-[200px] py-1">
                     <h6 className="text-xs font-semibold text-[#627A97]">
                       {title}
                     </h6>
                     <Separator />
                     {predefinedCategories?.map(
                       ({ name, amount, threshold }, i) => (
-                        <div key={i} className="w-full">
-                          <p className="text-[10px] font-semibold text-[#71717A]">
+                        <div key={i} className="w-full space-y-1 mt-2">
+                          <p className="text-xs font-semibold text-[#71717A]">
                             {name}
                           </p>
                           <div className="flex justify-between ">
-                            <p className="text-[10px] font-bold text-[#00104B]">
-                              {amount?.toFixed(2)}
+                            <p className="text-xs font-bold text-[#00104B]">
+                              NOK {amount?.toFixed(2)}
                             </p>
 
                             <p
                               className={`text-[10px] font-medium text-[#71717A]`}
                             >
                               {' '}
-                              {threshold}
+                              NOK {threshold}
                             </p>
                           </div>
                         </div>
@@ -236,20 +260,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                     <p
                       className={cn(
                         'text-sm font-bold text-[#00104B]',
-                        largestItem?.total_amount >= 0 && 'text-[#00B386]'
+                        largestItem?.total_amount >= 0 && 'text-[#00104B]'
                       )}
                     >
-                      {total_amount?.toFixed(2)}{' '}
-                      {/* <span
-                        className={`text-[10px] font-medium ms-2 ${
-                          item.difference.startsWith('+')
-                            ? 'text-[#5B52F9]'
-                            : 'text-[#EC787A]'
-                        }`}
-                      >
-                        {' '}
-                        {item.difference}
-                      </span> */}
+                      NOK {total_amount?.toFixed(2)}{' '}
                     </p>
                   </div>
                 </div>

@@ -98,10 +98,42 @@ const questionnaireSlice = createSlice({
         state.questionnaires.push({ question, answers });
       }
     },
+    filterAndUpdateQuestionnaires(
+      state,
+      action: PayloadAction<
+        { question: string; answers: string[]; _id?: string }[]
+      >
+    ) {
+      const payload = action.payload;
+
+      state.questionnaires = state.questionnaires
+        .map((questionnaire) => {
+          const matchingPayload = payload.find(
+            (p) => p.question === questionnaire.question
+          );
+
+          if (!matchingPayload) return null;
+
+          const updatedAnswers = questionnaire.answers.filter((answer) =>
+            matchingPayload.answers.some(
+              (payloadAnswer) => Object.keys(answer)[0] === payloadAnswer
+            )
+          );
+
+          if (updatedAnswers.length === 0) return null;
+
+          return { ...questionnaire, answers: updatedAnswers };
+        })
+        .filter(
+          (questionnaire): questionnaire is QuestionnaireItem =>
+            questionnaire !== null
+        );
+    },
   },
 });
 
-export const { showModal, addQuestionnaire } = questionnaireSlice.actions;
+export const { showModal, addQuestionnaire, filterAndUpdateQuestionnaires } =
+  questionnaireSlice.actions;
 
 export const questionnaireSelector = (state: RootState) => state.questionnaire;
 

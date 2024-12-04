@@ -26,18 +26,15 @@ export const finalCalculation = (
           (dbCategory: DBCategories) => dbCategory.category === item.name
         );
         if (matchedWithDbCategory) {
-          if (matchedWithDbCategory.category === 'Furniture and Equipment') {
+          if (
+            ['Furniture and Equipment', 'Computer Hardware'].includes(
+              matchedWithDbCategory.category
+            )
+          ) {
             return {
               ...item,
-              amount: item.amount - matchedWithDbCategory.amount || 0,
-              original_amount: matchedWithDbCategory.amount || 0,
-            };
-          }
-          if (matchedWithDbCategory.category === 'Computer Hardware') {
-            return {
-              ...item,
-              amount: item.amount - matchedWithDbCategory.amount || 0,
-              original_amount: matchedWithDbCategory.amount || 0,
+              amount: item.amount - matchedWithDbCategory.amount,
+              original_amount: matchedWithDbCategory.amount,
             };
           }
           return {
@@ -49,9 +46,10 @@ export const finalCalculation = (
         return item;
       }
     );
-    const total_amount = predefinedCategories.reduce(
-      (acc: number, curr: { amount: number }) => acc + curr.amount,
-      0
+    const total_amount = Number(
+      predefinedCategories
+        .reduce((acc: number, curr: { amount: number }) => acc + curr.amount, 0)
+        .toFixed(2)
     );
 
     const total_original_amount = predefinedCategories.reduce(
@@ -59,6 +57,7 @@ export const finalCalculation = (
         acc + curr.original_amount,
       0
     );
+    console.log({ predefinedCategories });
 
     return {
       title: predefined.name,
