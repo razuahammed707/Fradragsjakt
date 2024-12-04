@@ -305,7 +305,7 @@ export const categories = [
   { label: 'Social Media Marketing', amount: 0, image: MoreImg },
   { label: 'Business Cards', amount: 0, image: MoreImg },
   { label: 'Marketing Software', amount: 0, image: MoreImg },
-  { label: 'Business Meal Expenses', amount: 0, image: MoreImg },
+  { label: 'Business Travel Expenses', amount: 0, image: MoreImg },
   { label: 'Vehicle Expenses', amount: 0, image: MoreImg },
   { label: 'Fuel', amount: 0, image: MoreImg },
   { label: 'Parking and Tolls', amount: 0, image: MoreImg },
@@ -314,6 +314,7 @@ export const categories = [
   { label: 'Benefits', amount: 0, image: MoreImg },
   { label: 'Recruitment Costs', amount: 0, image: MoreImg },
   { label: 'Training Programs', amount: 0, image: MoreImg },
+  { label: 'Others', amount: 0, image: MoreImg },
 ];
 export const predefinedCategories = [
   {
