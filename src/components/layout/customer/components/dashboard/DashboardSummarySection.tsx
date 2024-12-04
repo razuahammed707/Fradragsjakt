@@ -35,7 +35,7 @@ const DashboardSummarySection = () => {
       <div className="col-span-5">
         <div className="grid grid-cols-12 gap-2">
           <DeductiveExpenses />
-          <SummaryChart expenses={categoryAnalytics} />
+          <SummaryChart expenses={cardData} />
         </div>
       </div>
 

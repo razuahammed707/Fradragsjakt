@@ -4,7 +4,6 @@ import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import ArrowUpDown from '../../../../../../public/sort.png';
-import { EnumValues } from 'zod';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import CategoryAddModal from './CategoryAddModal';
 import { useTranslation } from '@/lib/TranslationProvider';
@@ -12,7 +11,7 @@ import { useTranslation } from '@/lib/TranslationProvider';
 export type Category = {
   _id: string;
   tile: string;
-  created_by: EnumValues;
+  created_by: 'SYSTEM' | 'USER';
 };
 
 export const CategoryTableColumns = (): ColumnDef<Category>[] => {
@@ -58,7 +57,9 @@ export const CategoryTableColumns = (): ColumnDef<Category>[] => {
     {
       id: 'actions',
       cell: ({ row }) => (
-        <div className="flex space-x-0 items-center">
+        <div
+          className={`flex space-x-0 items-center ${row?.original?.created_by === 'SYSTEM' ? 'opacity-30 pointer-events-none' : ''}`}
+        >
           <CategoryAddModal origin="category table" category={row?.original} />
           <SharedDeleteActionCell
             itemId={row.original._id as string}

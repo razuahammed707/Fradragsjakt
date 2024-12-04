@@ -1,40 +1,59 @@
-import { Badge } from '@/components/ui/badge';
+'use client';
+
 import { Card, CardContent } from '@/components/ui/card';
+import { trpc } from '@/utils/trpc';
+import Link from 'next/link';
 import React from 'react';
 
 const MonthlyOverview = () => {
+  const { data: expenses } =
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
+      expense_type: 'business',
+    });
+
+  const writeOffs = expenses?.data?.categoryWiseExpenses;
   return (
     <Card className="col-span-3 p-6 border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0 flex flex-col justify-between h-full">
         <div className="flex justify-between">
-          <h4 className="text-sm  text-[#627A97] font-semibold">Overview </h4>
-          <Badge className="bg-[#F0EFFE] px-1   hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
+          <h4 className="text-sm  text-[#627A97] font-semibold mb-3">
+            Write offs Overview{' '}
+          </h4>
+          {/* <Badge className="bg-[#F0EFFE] px-1   hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
             This month
-          </Badge>
+          </Badge> */}
         </div>
-        <ul className="h-[252px] space-y-1 max-h-[252px] overflow-auto [&::-webkit-scrollbar]:hidden">
-          {[
-            { title: 'Travel spendings', subtitle: 'Tax payed' },
-            { title: 'Utilities', subtitle: 'Tax payed' },
-            { title: 'Utilities', subtitle: 'Top savings from' },
-            { title: 'Utilities', subtitle: 'Top savings from' },
-          ].map(({ title, subtitle }, i) => (
-            <li key={i} className="flex space-x-6 items-center">
-              <div className="px-4 py-2 bg-[#F0EFFE] rounded-lg">
-                <p className="text-[20px] text-[#71717A] font-semibold leading-[20px]">
-                  14{' '}
-                </p>{' '}
-                <span className="text-xs text-[#71717A] leading-[20px]">
-                  Aug
-                </span>
+        <ul className="h-[252px] max-h-[252px] overflow-y-scroll [&::-webkit-scrollbar]:hidden">
+          {writeOffs?.map(
+            ({
+              category,
+              amount,
+              totalItemByCategory,
+            }: {
+              category: string;
+              totalItemByCategory: number;
+              amount: number;
+            }) => (
+              <div className="mt-3" key={category}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h4 className="font-medium text-xs">{category}</h4>{' '}
+                    <p className=" text-gray-500 font-normal text-xs">
+                      {totalItemByCategory + ' ' + 'items'}
+                    </p>
+                  </div>
+                  <p className="text-xs font-medium mb-4">NOK {amount}</p>
+                </div>
               </div>
-              <div className="text-sm">
-                <h4 className=" text-[#101010] font-semibold">{title}</h4>{' '}
-                <p className=" text-[#627A97] font-medium">{subtitle}</p>
-              </div>
-            </li>
-          ))}
+            )
+          )}
         </ul>
+        <Link
+          href="/customer/write-offs"
+          className="text-center font-medium mt-2 text-sm text-[#5B52F9]"
+        >
+          View more
+        </Link>
       </CardContent>
     </Card>
   );

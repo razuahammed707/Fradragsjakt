@@ -144,7 +144,6 @@ export const categoryRouter = router({
         const category = new Category({
           title: transformedTitle,
           creator_id: sessionUser.id,
-          created_by: 'SYSTEM',
         });
 
         await category.save();
