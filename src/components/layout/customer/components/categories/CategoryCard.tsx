@@ -18,26 +18,20 @@ export default function CategoryCard() {
     ? manipulatedCategories(expenses?.data)
     : categories;
 
-  // Sort categories by amount in descending order
   const sortedCategories = [...manipulateCategories]
     .filter((category) => typeof category.amount === 'number')
     .sort((a, b) => b.amount - a.amount);
 
-  // Find the highest category (first in the sorted list)
   const highestCategory = sortedCategories[0];
 
-  // Exclude the highest category from further processing
   const remainingCategories = sortedCategories.slice(1);
 
-  // Take top 8 categories after excluding the highest
   const topCategories = remainingCategories.slice(0, 7);
 
-  // Calculate the sum of remaining categories
   const othersAmount = remainingCategories
     .slice(7)
     .reduce((sum, category) => sum + category.amount, 0);
 
-  // Combine top categories with Others if applicable
   const displayCategories = [
     ...topCategories,
     ...(othersAmount > 0
@@ -45,14 +39,14 @@ export default function CategoryCard() {
           {
             label: 'Others',
             amount: othersAmount,
-            image: '/path/to/default/others-icon.svg', // Add a default icon for Others
+            // Add a default icon for Others
           },
         ]
       : [
           {
             label: 'Others',
-            amount: 0, // Default to 0 initially
-            image: '/path/to/default/others-icon.svg', // Add a default icon for Others
+            amount: 0,
+            // Add a default icon for Others
           },
         ]),
   ];
