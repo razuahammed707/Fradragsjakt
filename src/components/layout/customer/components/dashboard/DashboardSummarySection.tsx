@@ -7,59 +7,9 @@ import YearlyExpenseGraph from './YearlyExpenseGraph';
 import { trpc } from '@/utils/trpc';
 //import { updateExpenses } from '@/utils/helpers/categoryMapperForExpense';
 import AggregatedExpenseCard from './AggregatedExpenseCard';
-const businessSpending = {
-  title: 'Business Spending (Total)',
-  total: 'NOK 6,150',
-  items: [
-    {
-      category: 'Office and Workspace',
-      amount: 'NOK 250',
-      difference: '+NOK 50',
-    },
-    {
-      category: 'Technology and Communication',
-      amount: 'NOK 250',
-      difference: '+NOK 50',
-    },
-    {
-      category: 'Professional Services',
-      amount: 'NOK 250',
-      difference: '-NOK 50',
-    },
-  ],
-};
+import { finalCalculation } from '@/utils/helpers/primaryCategoriesWithFormula';
+import { predefinedCategories } from '@/utils/dummy';
 
-const personalSpending = {
-  title: 'Personal Spending (Total)',
-  total: 'NOK 6,150',
-  items: [
-    {
-      category: 'Health & Family',
-      amount: 'NOK 300',
-      difference: '-NOK 50',
-    },
-    {
-      category: 'Banks & Loans',
-      amount: 'NOK 250',
-      difference: '+NOK 50',
-    },
-    {
-      category: 'Housing & Property',
-      amount: 'NOK 250',
-      difference: '-NOK 50',
-    },
-    {
-      category: 'Furniture and Equipment',
-      amount: 'NOK 250',
-      difference: '-NOK 50',
-    },
-    {
-      category: 'Office Supplies',
-      amount: 'NOK 350',
-      difference: '-NOK 50',
-    },
-  ],
-};
 const DashboardSummarySection = () => {
   const { data: expensesAnalytics } =
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
@@ -67,6 +17,9 @@ const DashboardSummarySection = () => {
     });
 
   const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
+  const cardData = finalCalculation(categoryAnalytics, predefinedCategories);
+  console.log({ cardData });
+
   // const personalExpenses =
   //   expensesAnalytics?.data?.expenseTypeWiseExpenses?.find(
   //     (item: { expense_type: string }) => item.expense_type === 'personal'
@@ -96,8 +49,14 @@ const DashboardSummarySection = () => {
         ))}
       </div> */}
       <div className="col-span-12 grid grid-cols-2 gap-2">
-        <AggregatedExpenseCard {...businessSpending} />
-        <AggregatedExpenseCard {...personalSpending} />
+        <AggregatedExpenseCard
+          items={cardData}
+          title="Tax saved from Business Spending (Total)"
+        />
+        <AggregatedExpenseCard
+          title="Tax saved from Personal Spending (Total)"
+          origin="personal"
+        />
       </div>
     </div>
   );

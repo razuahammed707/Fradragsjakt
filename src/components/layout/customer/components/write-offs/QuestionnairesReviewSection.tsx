@@ -46,7 +46,7 @@ const modalContentMap: Record<
   'Housing and Property': ({ questionnaire }) => (
     <ContentHousing questionnaire={questionnaire} />
   ),
-  'Gifts/Donations': () => <ContentDonation />,
+  'Gifts or Donations': () => <ContentDonation />,
   'Foreign Income': ({ questionnaire }) => (
     <ContentForeignIncome questionnaire={questionnaire} />
   ),
@@ -72,26 +72,11 @@ const QuestionnairesReviewSection = () => {
   } = savingExpenseCalculator(questionnaires, user?.questionnaires);
 
   const data = [
-    {
-      title: translate('healthFamily.title'),
-      amount: healthAndFamilyExpenseAmount,
-    },
-    {
-      title: translate('bankLoans.title'),
-      amount: bankAndLoansExpenseAmount,
-    },
-    {
-      title: translate('workEducation.title'),
-      amount: workAndEducationExpenseAmount,
-    },
-    {
-      title: translate('housingProperty.title'),
-      amount: housingAndPropertyExpenseAmount,
-    },
-    {
-      title: translate('giftsDonations.title'),
-      amount: giftsOrDonationsExpenseAmount,
-    },
+    { title: 'Health and Family', amount: healthAndFamilyExpenseAmount },
+    { title: 'Bank and Loans', amount: bankAndLoansExpenseAmount },
+    { title: 'Work and Education', amount: workAndEducationExpenseAmount },
+    { title: 'Housing and Property', amount: housingAndPropertyExpenseAmount },
+    { title: 'Gifts or Donations', amount: giftsOrDonationsExpenseAmount },
     {
       title: translate('hobbyOddJobs.title'),
       amount: hobbyOddjobsAndExtraIncomesExpenseAmount,

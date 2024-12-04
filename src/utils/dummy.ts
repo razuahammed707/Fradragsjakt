@@ -300,154 +300,76 @@ export const predefinedCategories = [
     id: 1,
     name: 'Office and Workspace',
     items: [
-      {
-        name: 'Rent',
-        amount: 0,
-      },
-      {
-        name: 'Utilities',
-        amount: 0,
-      },
-      {
-        name: 'Office Supplies',
-        amount: 0,
-      },
-      {
-        name: 'Furniture and Equipment',
-        amount: 15000,
-      },
-      {
-        name: 'Maintenance and Repairs',
-        amount: 0,
-      },
+      { name: 'Rent', amount: 0, original_amount: 0 },
+      { name: 'Utilities', amount: 0, original_amount: 0 },
+      { name: 'Office Supplies', amount: 0, original_amount: 0 },
+      { name: 'Furniture and Equipment', amount: 15000, original_amount: 0 },
+      { name: 'Maintenance and Repairs', amount: 0, original_amount: 0 },
     ],
     total_amount: 0,
+    total_original_amount: 0,
   },
   {
     id: 2,
     name: 'Technology and Communication',
     items: [
-      {
-        name: 'Computer Hardware',
-        amount: 15000,
-      },
-      {
-        name: 'Software Subscriptions',
-        amount: 0,
-      },
-      {
-        name: 'Internet and Phone Expenses',
-        amount: 0,
-      },
-      {
-        name: 'Cloud Storage and Services',
-        amount: 0,
-      },
-      {
-        name: 'Website Hosting',
-        amount: 0,
-      },
+      { name: 'Computer Hardware', amount: 15000, original_amount: 0 },
+      { name: 'Software Subscriptions', amount: 0, original_amount: 0 },
+      { name: 'Internet and Phone Expenses', amount: 0, original_amount: 0 },
+      { name: 'Cloud Storage and Services', amount: 0, original_amount: 0 },
+      { name: 'Website Hosting', amount: 0, original_amount: 0 },
     ],
     total_amount: 0,
+    total_original_amount: 0,
   },
   {
     id: 3,
     name: 'Professional Services',
     items: [
-      {
-        name: 'Accounting and Legal Fees',
-        amount: 0,
-      },
-      {
-        name: 'Consulting Services',
-        amount: 0,
-      },
-      {
-        name: 'Professional Memberships',
-        amount: 0,
-      },
-      {
-        name: 'Training and Certification',
-        amount: 0,
-      },
+      { name: 'Accounting and Legal Fees', amount: 0, original_amount: 0 },
+      { name: 'Consulting Services', amount: 0, original_amount: 0 },
+      { name: 'Professional Memberships', amount: 0, original_amount: 0 },
+      { name: 'Training and Certification', amount: 0, original_amount: 0 },
     ],
     total_amount: 0,
+    total_original_amount: 0,
   },
   {
     id: 4,
     name: 'Marketing and Advertising',
     items: [
-      {
-        name: 'Online Advertising',
-        amount: 0,
-      },
-      {
-        name: 'Print Materials',
-        amount: 0,
-      },
-      {
-        name: 'Social Media Marketing',
-        amount: 0,
-      },
-      {
-        name: 'Business Cards',
-        amount: 0,
-      },
-      {
-        name: 'Marketing Software',
-        amount: 0,
-      },
+      { name: 'Online Advertising', amount: 0, original_amount: 0 },
+      { name: 'Print Materials', amount: 0, original_amount: 0 },
+      { name: 'Social Media Marketing', amount: 0, original_amount: 0 },
+      { name: 'Business Cards', amount: 0, original_amount: 0 },
+      { name: 'Marketing Software', amount: 0, original_amount: 0 },
     ],
     total_amount: 0,
+    total_original_amount: 0,
   },
   {
     id: 5,
     name: 'Travel and Transportation',
     items: [
-      {
-        name: 'Business Meal Expenses',
-        amount: 0,
-      },
-      {
-        name: 'Vehicle Expenses',
-        amount: 0,
-      },
-      {
-        name: 'Fuel',
-        amount: 0,
-      },
-      {
-        name: 'Parking and Tolls',
-        amount: 0,
-      },
-      {
-        name: 'Public Transportation',
-        amount: 0,
-      },
+      { name: 'Business Meal Expenses', amount: 0, original_amount: 0 },
+      { name: 'Vehicle Expenses', amount: 0, original_amount: 0 },
+      { name: 'Fuel', amount: 0, original_amount: 0 },
+      { name: 'Parking and Tolls', amount: 0, original_amount: 0 },
+      { name: 'Public Transportation', amount: 0, original_amount: 0 },
     ],
     total_amount: 0,
+    total_original_amount: 0,
   },
   {
     id: 6,
     name: 'Employee-Related Expenses',
     items: [
-      {
-        name: 'Salaries and Wages',
-        amount: 0,
-      },
-      {
-        name: 'Benefits',
-        amount: 0,
-      },
-      {
-        name: 'Recruitment Costs',
-        amount: 0,
-      },
-      {
-        name: 'Training Programs',
-        amount: 0,
-      },
+      { name: 'Salaries and Wages', amount: 0, original_amount: 0 },
+      { name: 'Benefits', amount: 0, original_amount: 0 },
+      { name: 'Recruitment Costs', amount: 0, original_amount: 0 },
+      { name: 'Training Programs', amount: 0, original_amount: 0 },
     ],
     total_amount: 0,
+    total_original_amount: 0,
   },
 ];

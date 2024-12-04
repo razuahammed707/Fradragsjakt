@@ -294,7 +294,7 @@ export const savingExpenseCalculator = (
   payload: QuestionnaireItem[],
   questionnaires: IQuestionnaire[]
 ) => {
-  console.log({ payload });
+  //console.log({ payload });
 
   const {
     'Health and Family': healthAndFamilyPayload = null,
@@ -302,7 +302,7 @@ export const savingExpenseCalculator = (
     'Bank and Loans': bankAndLoansPayload = null,
     'Hobby, Odd Jobs, and Extra Incomes': hobbyOddjobsPayload = null,
     'Housing and Property': housingAndPropertyPayload = null,
-    'Gifts/Donations': giftsOrDonationsPayload = null,
+    'Gifts or Donations': giftsOrDonationsPayload = null,
     'Foreign Income': foreignIncomePayload = null,
   } = payload.reduce(
     (acc, item) => {

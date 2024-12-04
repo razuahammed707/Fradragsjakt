@@ -9,7 +9,10 @@ import toast from 'react-hot-toast';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useAppDispatch } from '@/redux/hooks';
-import { showModal } from '@/redux/slices/questionnaire';
+import {
+  filterAndUpdateQuestionnaires,
+  showModal,
+} from '@/redux/slices/questionnaire';
 
 type QuestionnairesStepperProps = {
   currentStepIndex: number;
@@ -48,6 +51,7 @@ export default function QuestionnairesStepper({
           );
           setLoading(false);
           utils.users.getUserByEmail.invalidate();
+          dispatch(filterAndUpdateQuestionnaires(selectedAnswers));
           dispatch(showModal(false));
           if (pathname.split('/').pop() !== 'write-offs')
             router.push(`/${user?.user.role}/dashboard`);
