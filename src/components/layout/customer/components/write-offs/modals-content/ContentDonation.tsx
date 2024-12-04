@@ -28,13 +28,13 @@ export function ContentDonation() {
     formState: { isDirty, isValid },
   } = useForm();
   const { questionnaires } = useAppSelector(questionnaireSelector);
-  const foreignIncomeQuestionnaire = questionnaires.find(
-    (q) => q.question === 'Gifts/Donations'
+  const GiftsOrDonationsQuestionnaire = questionnaires.find(
+    (q) => q.question === 'Gifts or Donations'
   );
 
   const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
     const answers =
-      foreignIncomeQuestionnaire?.answers.find((answer) =>
+      GiftsOrDonationsQuestionnaire?.answers.find((answer) =>
         Object.keys(answer).includes(accordionItemTitle)
       )?.[accordionItemTitle] || [];
 
@@ -45,7 +45,7 @@ export function ContentDonation() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
-    const question = 'Gifts/Donations';
+    const question = 'Gifts or Donations';
     const payload = transformFormDataToPayload(question, formData);
     appDispatch(addQuestionnaire(payload));
     appDispatch(showModal(false));

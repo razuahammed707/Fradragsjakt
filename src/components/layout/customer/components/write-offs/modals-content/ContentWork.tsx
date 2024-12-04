@@ -26,7 +26,6 @@ type ContentWorkProps = {
 };
 
 export function ContentWork({ questionnaire }: ContentWorkProps) {
-  console.log({ questionnaire });
   const {
     handleSubmit,
     control,

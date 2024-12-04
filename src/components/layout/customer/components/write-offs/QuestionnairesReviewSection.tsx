@@ -46,7 +46,7 @@ const modalContentMap: Record<
   'Housing and Property': ({ questionnaire }) => (
     <ContentHousing questionnaire={questionnaire} />
   ),
-  'Gifts/Donations': () => <ContentDonation />,
+  'Gifts or Donations': () => <ContentDonation />,
   'Foreign Income': ({ questionnaire }) => (
     <ContentForeignIncome questionnaire={questionnaire} />
   ),
@@ -73,7 +73,7 @@ const QuestionnairesReviewSection = () => {
     { title: 'Bank and Loans', amount: bankAndLoansExpenseAmount },
     { title: 'Work and Education', amount: workAndEducationExpenseAmount },
     { title: 'Housing and Property', amount: housingAndPropertyExpenseAmount },
-    { title: 'Gifts/Donations', amount: giftsOrDonationsExpenseAmount },
+    { title: 'Gifts or Donations', amount: giftsOrDonationsExpenseAmount },
     {
       title: 'Hobby, Odd jobs, and Extra incomes',
       amount: hobbyOddjobsAndExtraIncomesExpenseAmount,

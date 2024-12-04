@@ -49,22 +49,22 @@ export const questionnaires = [
   {
     question: 'Housing and Property',
     answers: [
-      'Housing in a housing association, housing company or jointly owned property',
+      'Housing in a housing association housing company or jointly owned property',
       'I have rented out a residential property or a holiday home',
       'Sold a residential property or holiday home profit or loss',
     ],
     icon: frame3,
   },
   {
-    question: 'Gift and Donations',
-    answers: ['I have made donations to voluntary organisations'],
+    question: 'Gifts or Donations',
+    answers: ['Gifts to voluntary organisations'],
     icon: frame4,
   },
   {
     question: 'Hobby, Odd Jobs, and Extra Incomes',
     answers: [
       'I have a sole proprietorship',
-      'Sell goods or services, blog/influencer, practise e-sports (gaming), breed animals on a small scale',
+      'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',
       'I have received salary from odd jobs and services',
     ],
     icon: frame5,

@@ -16,7 +16,6 @@ const DashboardOverviewSection = () => {
     }
   );
 
-  console.log('expensesResponse', expensesResponse);
   return (
     <div className="grid grid-cols-12 gap-2 mt-2">
       <YearlyExpenseTable data={expensesResponse?.data || []} />

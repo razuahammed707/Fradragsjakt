@@ -8,6 +8,10 @@ import SharedTooltip from '@/components/SharedTooltip';
 import { Separator } from '@/components/ui/separator';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { cn } from '@/lib/utils';
+import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
+import { useAppSelector } from '@/redux/hooks';
+import { questionnaireSelector } from '@/redux/slices/questionnaire';
+import { trpc } from '@/utils/trpc';
 
 interface caregoryItem {
   title: string;
@@ -22,7 +26,7 @@ interface caregoryItem {
 
 interface AggregatedExpenseCardProps {
   title?: string;
-  items: caregoryItem[];
+  items?: caregoryItem[];
   origin?: string;
 }
 
@@ -31,12 +35,73 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   items,
   origin = 'business',
 }) => {
-  const largestItem = items?.reduce((prev, current) =>
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
+  const {
+    workAndEducationExpenseAmount,
+    healthAndFamilyExpenseAmount,
+    bankAndLoansExpenseAmount,
+    hobbyOddjobsAndExtraIncomesExpenseAmount,
+    housingAndPropertyExpenseAmount,
+    giftsOrDonationsExpenseAmount,
+    foreignIncomeExpenseAmount,
+  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
+
+  const personalData = [
+    {
+      title: 'Health and Family',
+      total_amount: healthAndFamilyExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Bank and Loans',
+      total_amount: bankAndLoansExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Work and Education',
+      total_amount: workAndEducationExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Housing and Property',
+      total_amount: housingAndPropertyExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Gifts/Donations',
+      total_amount: giftsOrDonationsExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Hobby, Odd jobs, and Extra incomes',
+      total_amount: hobbyOddjobsAndExtraIncomesExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+    {
+      title: 'Foreign Income',
+      total_amount: foreignIncomeExpenseAmount || 0,
+      total_original_amount: 0,
+      predefinedCategories: [],
+    },
+  ];
+  const largestItem = (items ? items : personalData)?.reduce((prev, current) =>
     current.total_amount > prev.total_amount ? current : prev
   );
-  const total = items?.reduce((sum, current) => sum + current.total_amount, 0);
+  const total = (items ? items : personalData)?.reduce(
+    (sum, current) => sum + current.total_amount,
+    0
+  );
 
-  const otherItems = items?.filter((item) => item !== largestItem);
+  const otherItems = (items ? items : personalData)?.filter(
+    (item) => item !== largestItem
+  );
 
   return (
     <div className="bg-white rounded-xl p-6 space-y-6 w-full">
@@ -70,19 +135,19 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                     <p className="text-xs font-semibold text-[#71717A]">
                       {largestItem?.title}
                     </p>
-                    <p className={cn('text-sm font-bold mt-2 text-[#00104B]')}>
-                      {largestItem.total_original_amount}{' '}
+                    <p className={cn('text-sm font-bold mt-2 text-[#00B386]')}>
+                      {largestItem?.total_amount}{' '}
                     </p>
-                    <p
+                    {/* <p
                       className={`text-[10px] mt-[6px] font-medium  ${
-                        largestItem.total_amount >= 0
+                        largestItem?.total_amount >= 0
                           ? 'text-[#00B386]'
                           : 'text-[#EC787A]'
                       }`}
                     >
                       {' '}
-                      {largestItem.total_amount}
-                    </p>
+                      {largestItem?.total_amount}
+                    </p> */}
                   </div>
                 </div>
               </div>
@@ -135,16 +200,6 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                   )}
                 >
                   {largestItem?.total_amount}{' '}
-                </p>
-                <p
-                  className={`text-[10px] mt-[6px] font-medium  ${
-                    largestItem.total_original_amount >= 0
-                      ? 'text-[#5B52F9]'
-                      : 'text-[#EC787A]'
-                  }`}
-                >
-                  {' '}
-                  {largestItem.total_original_amount}
                 </p>
               </div>
             </div>
@@ -240,16 +295,6 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                       )}
                     >
                       {total_amount?.toFixed(2)}{' '}
-                      {/* <span
-                        className={`text-[10px] font-medium ms-2 ${
-                          item.difference.startsWith('+')
-                            ? 'text-[#5B52F9]'
-                            : 'text-[#EC787A]'
-                        }`}
-                      >
-                        {' '}
-                        {item.difference}
-                      </span> */}
                     </p>
                   </div>
                 </div>

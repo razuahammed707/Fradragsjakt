@@ -9,9 +9,6 @@ import { trpc } from '@/utils/trpc';
 import AggregatedExpenseCard from './AggregatedExpenseCard';
 import { finalCalculation } from '@/utils/helpers/primaryCategoriesWithFormula';
 import { predefinedCategories } from '@/utils/dummy';
-import { useAppSelector } from '@/redux/hooks';
-import { questionnaireSelector } from '@/redux/slices/questionnaire';
-import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
 
 const DashboardSummarySection = () => {
   const { data: expensesAnalytics } =
@@ -21,6 +18,7 @@ const DashboardSummarySection = () => {
 
   const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
   const cardData = finalCalculation(categoryAnalytics, predefinedCategories);
+  console.log({ cardData });
 
   // const personalExpenses =
   //   expensesAnalytics?.data?.expenseTypeWiseExpenses?.find(
@@ -31,61 +29,6 @@ const DashboardSummarySection = () => {
   //   expenses(personalExpenses?.amount),
   //   categoryAnalytics
   // );
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  const { data: user } = trpc.users.getUserByEmail.useQuery();
-  const {
-    workAndEducationExpenseAmount,
-    healthAndFamilyExpenseAmount,
-    bankAndLoansExpenseAmount,
-    hobbyOddjobsAndExtraIncomesExpenseAmount,
-    housingAndPropertyExpenseAmount,
-    giftsOrDonationsExpenseAmount,
-    foreignIncomeExpenseAmount,
-  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
-  const personalData = [
-    {
-      title: 'Health and Family',
-      total_amount: healthAndFamilyExpenseAmount,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Bank and Loans',
-      total_amount: bankAndLoansExpenseAmount,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Work and Education',
-      total_amount: workAndEducationExpenseAmount,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Housing and Property',
-      total_amount: housingAndPropertyExpenseAmount,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Gifts/Donations',
-      total_amount: giftsOrDonationsExpenseAmount,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Hobby, Odd jobs, and Extra incomes',
-      total_amount: hobbyOddjobsAndExtraIncomesExpenseAmount,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Foreign Income',
-      total_amount: foreignIncomeExpenseAmount,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-  ];
 
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -112,7 +55,6 @@ const DashboardSummarySection = () => {
         />
         <AggregatedExpenseCard
           title="Tax saved from Personal Spending (Total)"
-          items={personalData}
           origin="personal"
         />
       </div>

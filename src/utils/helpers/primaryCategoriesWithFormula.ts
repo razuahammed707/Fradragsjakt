@@ -26,18 +26,15 @@ export const finalCalculation = (
           (dbCategory: DBCategories) => dbCategory.category === item.name
         );
         if (matchedWithDbCategory) {
-          if (matchedWithDbCategory.category === 'Furniture and Equipment') {
+          if (
+            ['Furniture and Equipment', 'Computer Hardware'].includes(
+              matchedWithDbCategory.category
+            )
+          ) {
             return {
               ...item,
-              amount: item.amount - matchedWithDbCategory.amount || 0,
-              original_amount: matchedWithDbCategory.amount || 0,
-            };
-          }
-          if (matchedWithDbCategory.category === 'Computer Hardware') {
-            return {
-              ...item,
-              amount: item.amount - matchedWithDbCategory.amount || 0,
-              original_amount: matchedWithDbCategory.amount || 0,
+              amount: item.amount - matchedWithDbCategory.amount,
+              original_amount: matchedWithDbCategory.amount,
             };
           }
           return {
