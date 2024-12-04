@@ -231,5 +231,58 @@
       "noExpenses": "Ingen utgifter tilgjengelig for oppdatering"
     }
   },
+  "profileDropdown": {
+    "altText": "Vis brukermeny",
+    "label": {
+      "myAccount": "Min konto"
+    },
+    "menu": {
+      "settings": "Innstillinger",
+      "support": "Støtte",
+      "logout": "Logg ut"
+    }
+  },
+  "healthFamily": {
+    "title": "Helse og familie"
+  },
+  "bankLoans": {
+    "title": "Bank og lån"
+  },
+  "workEducation": {
+    "title": "Arbeid og utdanning"
+  },
+  "housingProperty": {
+    "title": "Bolig og eiendom"
+  },
+  "giftsDonations": {
+    "title": "Gaver/Donasjoner"
+  },
+  "hobbyOddJobs": {
+    "title": "Hobby, småjobber og ekstra inntekter"
+  },
+  "foreignIncome": {
+    "title": "Utenlandsinntekt"
+  },
+  "editResponse": {
+    "title": "Rediger svar",
+    "button": "Rediger svar"
+  },
+  "avatar": {
+    "alt": "Avatar med spørsmålstegn"
+  },
+  "review": {
+    "title": "Gjennomgå dine spørreskjemaer",
+    "subtitle": "Trykk på en seksjon for å gjennomgå og redigere svarene dine."
+  },
+  "question": {
+    "alt": "Indikatorikon for spørsmål fullført"
+  },
+  "savings": {
+    "questions": "Besparelser på spørsmål",
+    "potential": "Potensielle besparelser"
+  },
+  "total": {
+    "writeOffs": "Totale fradrag"
+  },
   "default": "Oversettelse mangler"
 }
