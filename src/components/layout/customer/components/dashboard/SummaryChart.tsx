@@ -7,8 +7,8 @@ const Chart = dynamic(() => import('react-apexcharts'), {
 });
 
 interface ExpenseCategory {
-  category: string;
-  amount: number;
+  title: string;
+  total_amount: number;
 }
 
 const SummaryChart = ({ expenses }: { expenses: ExpenseCategory[] }) => {
@@ -24,13 +24,13 @@ const SummaryChart = ({ expenses }: { expenses: ExpenseCategory[] }) => {
 
   // Calculate total amount
   const totalAmount = expenses?.reduce(
-    (sum, expense) => sum + expense.amount,
+    (sum, expense) => sum + expense.total_amount,
     0
   );
 
   // Prepare chart series and labels
-  const chartSeries = expenses?.map((expense) => expense.amount) || [];
-  const chartLabels = expenses?.map((expense) => expense.category) || [];
+  const chartSeries = expenses?.map((expense) => expense.total_amount) || [];
+  const chartLabels = expenses?.map((expense) => expense.title) || [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const chartOptions: any = {
     chart: {
