@@ -231,58 +231,23 @@
       "noExpenses": "Ingen utgifter tilgjengelig for oppdatering"
     }
   },
-  "profileDropdown": {
-    "altText": "Vis brukermeny",
-    "label": {
-      "myAccount": "Min konto"
-    },
-    "menu": {
-      "settings": "Innstillinger",
-      "support": "Støtte",
-      "logout": "Logg ut"
-    }
+  "common": {
+    "currency": "kr {{amount}}"
   },
-  "healthFamily": {
-    "title": "Helse og familie"
-  },
-  "bankLoans": {
-    "title": "Bank og lån"
-  },
-  "workEducation": {
-    "title": "Arbeid og utdanning"
-  },
-  "housingProperty": {
-    "title": "Bolig og eiendom"
-  },
-  "giftsDonations": {
-    "title": "Gaver/Donasjoner"
-  },
-  "hobbyOddJobs": {
-    "title": "Hobby, småjobber og ekstra inntekter"
-  },
-  "foreignIncome": {
-    "title": "Utenlandsinntekt"
-  },
-  "editResponse": {
-    "title": "Rediger svar",
-    "button": "Rediger svar"
-  },
-  "avatar": {
-    "alt": "Avatar med spørsmålstegn"
-  },
-  "review": {
-    "title": "Gjennomgå dine spørreskjemaer",
-    "subtitle": "Trykk på en seksjon for å gjennomgå og redigere svarene dine."
-  },
-  "question": {
-    "alt": "Indikatorikon for spørsmål fullført"
-  },
-  "savings": {
-    "questions": "Besparelser på spørsmål",
-    "potential": "Potensielle besparelser"
-  },
-  "total": {
-    "writeOffs": "Totale fradrag"
+  "questionnaire": {
+    "review_title": "Gjennomgang av spørreskjema",
+    "review_subtitle": "(skattefradragsberettigelse basert på svar)",
+    "health_family": "Helse og Familie",
+    "bank_loans": "Bank og Lån",
+    "work_education": "Arbeid og Utdanning",
+    "housing_property": "Bolig og Eiendom",
+    "gifts_donations": "Gaver eller Donasjoner",
+    "hobby_extra_income": "Hobby, Bijobber og Ekstrainntekter",
+    "foreign_income": "Utenlandsk Inntekt",
+    "edit_response": "Rediger Svar",
+    "savings_from_questions": "Besparelser fra spørsmål",
+    "potential_savings": "Potensielle Besparelser",
+    "total_writeoffs": "Totalt (skattefradrag)"
   },
   "default": "Oversettelse mangler"
 }

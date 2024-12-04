@@ -3,6 +3,7 @@
 import { Pencil } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/TranslationProvider';
 import QuestionedAvatar from '../../../../../../public/images/dashboard/avatar-with-question.svg';
 import MarkIcon from '../../../../../../public/images/dashboard/mark.svg';
 import CrossIcon from '../../../../../../public/images/dashboard/cross.svg';
@@ -54,6 +55,7 @@ const modalContentMap: Record<
 };
 
 const QuestionnairesReviewSection = () => {
+  const { translate } = useTranslation();
   const [selectedTitle, setSelectedTitle] = useState<string>('');
   const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
@@ -68,17 +70,36 @@ const QuestionnairesReviewSection = () => {
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(questionnaires, user?.questionnaires);
+
   const data = [
-    { title: 'Health and Family', amount: healthAndFamilyExpenseAmount },
-    { title: 'Bank and Loans', amount: bankAndLoansExpenseAmount },
-    { title: 'Work and Education', amount: workAndEducationExpenseAmount },
-    { title: 'Housing and Property', amount: housingAndPropertyExpenseAmount },
-    { title: 'Gifts or Donations', amount: giftsOrDonationsExpenseAmount },
     {
-      title: 'Hobby, Odd jobs, and Extra incomes',
+      title: translate('questionnaire.health_family'),
+      amount: healthAndFamilyExpenseAmount,
+    },
+    {
+      title: translate('questionnaire.bank_loans'),
+      amount: bankAndLoansExpenseAmount,
+    },
+    {
+      title: translate('questionnaire.work_education'),
+      amount: workAndEducationExpenseAmount,
+    },
+    {
+      title: translate('questionnaire.housing_property'),
+      amount: housingAndPropertyExpenseAmount,
+    },
+    {
+      title: translate('questionnaire.gifts_donations'),
+      amount: giftsOrDonationsExpenseAmount,
+    },
+    {
+      title: translate('questionnaire.hobby_extra_income'),
       amount: hobbyOddjobsAndExtraIncomesExpenseAmount,
     },
-    { title: 'Foreign Income', amount: foreignIncomeExpenseAmount },
+    {
+      title: translate('questionnaire.foreign_income'),
+      amount: foreignIncomeExpenseAmount,
+    },
   ];
 
   const handleButtonClick = (title: string) => {
@@ -106,6 +127,7 @@ const QuestionnairesReviewSection = () => {
   const handleOpenChange = (isOpen: boolean) => {
     dispatch(showModal(isOpen));
   };
+
   return (
     <>
       <div className="col-span-3 flex border flex-col justify-between bg-white sticky top-0 rounded-2xl h-[calc(100vh-116px)] p-6">
@@ -118,16 +140,18 @@ const QuestionnairesReviewSection = () => {
               width={54}
             />
             <Pencil
-              onClick={() => handleButtonClick('Edit Response')}
+              onClick={() =>
+                handleButtonClick(translate('questionnaire.edit_response'))
+              }
               className="h-4 w-4 text-[#5B52F9] cursor-pointer"
             />
           </div>
           <div>
             <h4 className="text-sm text-[#101010] font-semibold">
-              Review questionnaire
+              {translate('questionnaire.review_title')}
             </h4>
             <p className="text-xs text-[#71717A] font-medium">
-              (write-off eligibility based on answers)
+              {translate('questionnaire.review_subtitle')}
             </p>
           </div>
         </div>
@@ -168,10 +192,12 @@ const QuestionnairesReviewSection = () => {
           </div>
         </div>
         <Button
-          onClick={() => handleButtonClick('Edit Response')}
+          onClick={() =>
+            handleButtonClick(translate('questionnaire.edit_response'))
+          }
           className="text-white text-sm font-medium"
         >
-          Edit response
+          {translate('questionnaire.edit_response')}
         </Button>
       </div>
       <SharedModal
@@ -179,8 +205,8 @@ const QuestionnairesReviewSection = () => {
         onOpenChange={handleOpenChange}
         customClassName={cn(
           'max-w-[500px] ',
-
-          selectedTitle === 'Edit Response' && 'max-w-[608px]'
+          selectedTitle === translate('questionnaire.edit_response') &&
+            'max-w-[608px]'
         )}
       >
         <div className="bg-white">{renderModalContent()}</div>

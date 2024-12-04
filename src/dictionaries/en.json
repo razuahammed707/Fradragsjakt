@@ -242,47 +242,23 @@
       "logout": "Logout"
     }
   },
-  "healthFamily": {
-    "title": "Health and Family"
+  "common": {
+    "currency": "NOK {{amount}}"
   },
-  "bankLoans": {
-    "title": "Bank and Loans"
-  },
-  "workEducation": {
-    "title": "Work and Education"
-  },
-  "housingProperty": {
-    "title": "Housing and Property"
-  },
-  "giftsDonations": {
-    "title": "Gifts/Donations"
-  },
-  "hobbyOddJobs": {
-    "title": "Hobby, Odd jobs, and Extra incomes"
-  },
-  "foreignIncome": {
-    "title": "Foreign Income"
-  },
-  "editResponse": {
-    "title": "Edit Response",
-    "button": "Edit Response"
-  },
-  "avatar": {
-    "alt": "Avatar with a question mark"
-  },
-  "review": {
-    "title": "Review Your Questionnaires",
-    "subtitle": "Tap on a section to review and edit your responses."
-  },
-  "question": {
-    "alt": "Indicator icon for question completion"
-  },
-  "savings": {
-    "questions": "Savings on Questions",
-    "potential": "Potential Savings"
-  },
-  "total": {
-    "writeOffs": "Total Write-Offs"
+  "questionnaire": {
+    "review_title": "Review questionnaire",
+    "review_subtitle": "(write-off eligibility based on answers)",
+    "health_family": "Health and Family",
+    "bank_loans": "Bank and Loans",
+    "work_education": "Work and Education",
+    "housing_property": "Housing and Property",
+    "gifts_donations": "Gifts or Donations",
+    "hobby_extra_income": "Hobby, Odd jobs, and Extra incomes",
+    "foreign_income": "Foreign Income",
+    "edit_response": "Edit Response",
+    "savings_from_questions": "Savings from questions",
+    "potential_savings": "Potential Savings",
+    "total_writeoffs": "Total (write-offs)"
   },
   "default": "Translation missing"
 }
