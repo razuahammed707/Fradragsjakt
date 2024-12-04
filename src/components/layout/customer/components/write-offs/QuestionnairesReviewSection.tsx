@@ -12,6 +12,7 @@ import SharedModal from '@/components/SharedModal';
 import { trpc } from '@/utils/trpc';
 import { questionMatcherEngine } from '@/utils/helpers/questionMatcherEngine';
 
+// Modal content components
 import { ContentHealthFamily } from './modals-content/ContentHealthFamily';
 import { ContentBank } from './modals-content/ContentBank';
 import { ContentWork } from './modals-content/ContentWork';
@@ -25,7 +26,6 @@ import EditResponseModalContent from './modals-content/EditResponseModalContent'
 import { cn } from '@/lib/utils';
 import { ContentHousing } from './modals-content/ContentHousing';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
-import { useTranslation } from '@/lib/TranslationProvider'; // Importing useTranslation
 
 const modalContentMap: Record<
   string,
@@ -59,8 +59,6 @@ const QuestionnairesReviewSection = () => {
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-  const { translate } = useTranslation(); // Translation function
-
   const {
     workAndEducationExpenseAmount,
     healthAndFamilyExpenseAmount,
@@ -70,7 +68,6 @@ const QuestionnairesReviewSection = () => {
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(questionnaires, user?.questionnaires);
-
   const data = [
     { title: 'Health and Family', amount: healthAndFamilyExpenseAmount },
     { title: 'Bank and Loans', amount: bankAndLoansExpenseAmount },
@@ -78,13 +75,10 @@ const QuestionnairesReviewSection = () => {
     { title: 'Housing and Property', amount: housingAndPropertyExpenseAmount },
     { title: 'Gifts or Donations', amount: giftsOrDonationsExpenseAmount },
     {
-      title: translate('hobbyOddJobs.title'),
+      title: 'Hobby, Odd jobs, and Extra incomes',
       amount: hobbyOddjobsAndExtraIncomesExpenseAmount,
     },
-    {
-      title: translate('foreignIncome.title'),
-      amount: foreignIncomeExpenseAmount,
-    },
+    { title: 'Foreign Income', amount: foreignIncomeExpenseAmount },
   ];
 
   const handleButtonClick = (title: string) => {
@@ -112,7 +106,6 @@ const QuestionnairesReviewSection = () => {
   const handleOpenChange = (isOpen: boolean) => {
     dispatch(showModal(isOpen));
   };
-
   return (
     <>
       <div className="col-span-3 flex border flex-col justify-between bg-white sticky top-0 rounded-2xl h-[calc(100vh-116px)] p-6">
@@ -120,21 +113,21 @@ const QuestionnairesReviewSection = () => {
           <div className="flex justify-between items-center">
             <Image
               src={QuestionedAvatar}
-              alt={translate('avatar.alt')}
+              alt="Questioned Avatar"
               height={52}
               width={54}
             />
             <Pencil
-              onClick={() => handleButtonClick(translate('editResponse.title'))}
+              onClick={() => handleButtonClick('Edit Response')}
               className="h-4 w-4 text-[#5B52F9] cursor-pointer"
             />
           </div>
           <div>
             <h4 className="text-sm text-[#101010] font-semibold">
-              {translate('review.title')}
+              Review questionnaire
             </h4>
             <p className="text-xs text-[#71717A] font-medium">
-              {translate('review.subtitle')}
+              (write-off eligibility based on answers)
             </p>
           </div>
         </div>
@@ -148,7 +141,7 @@ const QuestionnairesReviewSection = () => {
               <div className="flex space-x-2">
                 <Image
                   src={question.amount === 0 ? CrossIcon : MarkIcon}
-                  alt={translate('question.alt')}
+                  alt="titleImg1"
                   height={18}
                   width={18}
                 />
@@ -160,33 +153,34 @@ const QuestionnairesReviewSection = () => {
           <Separator className="bg-[#E4E4E7] my-6" />
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <p>{translate('savings.questions')}</p>
+              <p>Savings from questions</p>
               <p className="font-medium">NOK 800</p>
             </div>
             <div className="flex justify-between items-center">
-              <p>{translate('savings.potential')}</p>
+              <p>Potential Savings</p>
               <p className="font-medium">NOK 2,086</p>
             </div>
           </div>
           <Separator className="bg-[#E4E4E7] my-6" />
           <div className="flex justify-between items-center font-medium">
-            <p>{translate('total.writeOffs')}</p>
+            <p>Total (write-offs)</p>
             <p>NOK 2,886</p>
           </div>
         </div>
         <Button
-          onClick={() => handleButtonClick(translate('editResponse.title'))}
+          onClick={() => handleButtonClick('Edit Response')}
           className="text-white text-sm font-medium"
         >
-          {translate('editResponse.button')}
+          Edit response
         </Button>
       </div>
       <SharedModal
         open={isModalOpen}
         onOpenChange={handleOpenChange}
         customClassName={cn(
-          'max-w-[500px]',
-          selectedTitle === translate('editResponse.title') && 'max-w-[608px]'
+          'max-w-[500px] ',
+
+          selectedTitle === 'Edit Response' && 'max-w-[608px]'
         )}
       >
         <div className="bg-white">{renderModalContent()}</div>
