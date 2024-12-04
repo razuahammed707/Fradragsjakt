@@ -3,25 +3,14 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import CircularProgressChart from './CircularProgressChart';
-import { trpc } from '@/utils/trpc';
-import { percentageCalculatorForDeductibleExpenses } from '@/utils/helpers/percentageCalculatorForDeductibleExpenses';
+import { useAppSelector } from '@/redux/hooks';
+import { savingsSelector } from '@/redux/slices/writeoffs';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 
 const DeductiveExpenses = () => {
-  const { data: expenses } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
-      expense_type: 'business',
-    });
+  const { businessSavings, personalSavings } = useAppSelector(savingsSelector);
+  const totalDeductibleAmount = businessSavings + personalSavings;
 
-  const totalAmount = expenses?.data?.categoryWiseExpenses
-    ?.reduce(
-      (sum: number, expense: { amount: number }) => sum + expense.amount,
-      0
-    )
-    .toFixed(2);
-
-  const { topCategory, utilities } = percentageCalculatorForDeductibleExpenses(
-    expenses?.data?.categoryWiseExpenses
-  );
   return (
     <Card className="col-span-6 py-6 px-[21px] border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0 relative">
@@ -32,8 +21,8 @@ const DeductiveExpenses = () => {
           <h4 className="text-sm  text-[#627A97] font-semibold">
             All Deductible Expenses
           </h4>
-          <p className="text-[32px] text-[#00104B] font-bold">
-            NOK {totalAmount}
+          <p className="text-[28px] text-[#00104B] font-bold">
+            NOK {numberFormatter(totalDeductibleAmount)}
           </p>
         </div>
 
@@ -41,27 +30,33 @@ const DeductiveExpenses = () => {
           <div className="flex justify-between items-center px-4 bg-[#F0EFFE] py-2 rounded-2xl">
             <div className="flex flex-col">
               <span className="text-sm text-[#101010] font-semibold">
-                {topCategory?.name}
+                Bussiness
               </span>
               <span className="text-sm text-[#627A97] font-medium">
-                Top savings from
+                Savings from
               </span>
             </div>
-            <CircularProgressChart series={[topCategory?.percentage]} />
+            <CircularProgressChart
+              series={[
+                Math.floor((businessSavings / totalDeductibleAmount) * 100),
+              ]}
+            />
           </div>
           <div className="flex justify-between items-center px-4 bg-[#F0EFFE] py-2 rounded-2xl">
             <div className="flex flex-col">
               <span className="text-sm text-[#101010] font-semibold">
-                Utilities
+                Personal
               </span>
               <span className="text-sm text-[#627A97] font-medium">
-                Top savings from
+                Savings from
               </span>
             </div>
             <CircularProgressChart
               color="#F99BAB"
               trackBg="#F99BAB5E"
-              series={[utilities.percentage]}
+              series={[
+                Math.floor((personalSavings / totalDeductibleAmount) * 100),
+              ]}
             />
           </div>
         </div>
