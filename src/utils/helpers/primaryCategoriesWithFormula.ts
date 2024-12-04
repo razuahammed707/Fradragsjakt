@@ -46,9 +46,10 @@ export const finalCalculation = (
         return item;
       }
     );
-    const total_amount = predefinedCategories.reduce(
-      (acc: number, curr: { amount: number }) => acc + curr.amount,
-      0
+    const total_amount = Number(
+      predefinedCategories
+        .reduce((acc: number, curr: { amount: number }) => acc + curr.amount, 0)
+        .toFixed(2)
     );
 
     const total_original_amount = predefinedCategories.reduce(
@@ -56,6 +57,7 @@ export const finalCalculation = (
         acc + curr.original_amount,
       0
     );
+    console.log({ predefinedCategories });
 
     return {
       title: predefined.name,

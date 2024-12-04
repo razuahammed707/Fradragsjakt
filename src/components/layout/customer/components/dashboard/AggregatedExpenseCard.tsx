@@ -135,19 +135,9 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                     <p className="text-xs font-semibold text-[#71717A]">
                       {largestItem?.title}
                     </p>
-                    <p className={cn('text-sm font-bold mt-2 text-[#00B386]')}>
-                      {largestItem?.total_amount}{' '}
+                    <p className={cn('text-sm font-bold mt-2 text-[#00104B]')}>
+                      NOK {largestItem?.total_amount?.toFixed(2)}{' '}
                     </p>
-                    {/* <p
-                      className={`text-[10px] mt-[6px] font-medium  ${
-                        largestItem?.total_amount >= 0
-                          ? 'text-[#00B386]'
-                          : 'text-[#EC787A]'
-                      }`}
-                    >
-                      {' '}
-                      {largestItem?.total_amount}
-                    </p> */}
                   </div>
                 </div>
               </div>
@@ -163,10 +153,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                     <p
                       className={cn(
                         'text-[10px] font-bold text-[#00104B]',
-                        amount >= 0 && 'text-[#00B386]'
+                        amount >= 0 && 'text-[#00104B]'
                       )}
                     >
-                      {amount?.toFixed(2)}
+                      NOK {amount?.toFixed(2)}
                     </p>
 
                     <p className={`text-[10px] font-medium text-[#71717A]`}>
@@ -196,10 +186,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                 <p
                   className={cn(
                     'text-sm font-bold mt-2 text-[#00104B]',
-                    largestItem?.total_amount >= 0 && 'text-[#00B386]'
+                    largestItem?.total_amount >= 0 && 'text-[#00104B]'
                   )}
                 >
-                  {largestItem?.total_amount}{' '}
+                  NOK {largestItem?.total_amount?.toFixed(2)}{' '}
                 </p>
               </div>
             </div>
@@ -214,17 +204,6 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                   key={index}
                   visibleContent={
                     <div className="flex items-center space-x-2 hover:bg-[#F6F6F6] p-2 rounded-lg">
-                      {/* <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center `}
-                  >
-                    <Image
-                      src={item.difference.startsWith('+') ? ArrowUp : ArrowDown}
-                      alt="arrow_icon"
-                      height={20}
-                      width={20}
-                      className=""
-                    />
-                  </div> */}
                       <div>
                         <p className="text-xs font-semibold text-[#71717A]">
                           {title}
@@ -232,46 +211,36 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                         <p
                           className={cn(
                             'text-sm font-bold text-[#00104B]',
-                            total_amount >= 0 && 'text-[#00B386]'
+                            total_amount >= 0 && 'text-[#00104B]'
                           )}
                         >
-                          {total_amount}{' '}
-                          {/* <span
-                          className={`text-[10px] font-medium ms-2 ${
-                            item?.difference.startsWith('+')
-                              ? 'text-[#5B52F9]'
-                              : 'text-[#EC787A]'
-                          }`}
-                        >
-                          {' '}
-                          {item.difference}
-                        </span> */}
+                          NOK {total_amount.toFixed(2)}{' '}
                         </p>
                       </div>
                     </div>
                   }
                 >
-                  <div className="space-y-2 w-[175px] py-1">
+                  <div className="space-y-2 w-[200px] py-1">
                     <h6 className="text-xs font-semibold text-[#627A97]">
                       {title}
                     </h6>
                     <Separator />
                     {predefinedCategories?.map(
                       ({ name, amount, threshold }, i) => (
-                        <div key={i} className="w-full">
-                          <p className="text-[10px] font-semibold text-[#71717A]">
+                        <div key={i} className="w-full space-y-1 mt-2">
+                          <p className="text-xs font-semibold text-[#71717A]">
                             {name}
                           </p>
                           <div className="flex justify-between ">
-                            <p className="text-[10px] font-bold text-[#00104B]">
-                              {amount?.toFixed(2)}
+                            <p className="text-xs font-bold text-[#00104B]">
+                              NOK {amount?.toFixed(2)}
                             </p>
 
                             <p
                               className={`text-[10px] font-medium text-[#71717A]`}
                             >
                               {' '}
-                              {threshold}
+                              NOK {threshold}
                             </p>
                           </div>
                         </div>
@@ -291,10 +260,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                     <p
                       className={cn(
                         'text-sm font-bold text-[#00104B]',
-                        largestItem?.total_amount >= 0 && 'text-[#00B386]'
+                        largestItem?.total_amount >= 0 && 'text-[#00104B]'
                       )}
                     >
-                      {total_amount?.toFixed(2)}{' '}
+                      NOK {total_amount?.toFixed(2)}{' '}
                     </p>
                   </div>
                 </div>
