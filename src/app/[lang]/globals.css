@@ -27,6 +27,20 @@ ol li::before {
   font-weight: 600;
   color: #333;
 }
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e4e4e7;
+  border-radius: 19px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 12px;
+  border: 2px solid #e4e4e7;
+}
 
 @layer utilities {
   .text-balance {

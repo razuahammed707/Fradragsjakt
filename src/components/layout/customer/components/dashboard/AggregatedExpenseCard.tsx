@@ -1,6 +1,6 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 //import ArrowDown from '../../../../../../public/images/dashboard/arrow_down.svg';
 import ArrowUp from '../../../../../../public/images/dashboard/arrow_up.svg';
 import Image from 'next/image';
@@ -9,9 +9,13 @@ import { Separator } from '@/components/ui/separator';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { cn } from '@/lib/utils';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { trpc } from '@/utils/trpc';
+import {
+  updateBusinesSavings,
+  updatePersonalSavings,
+} from '@/redux/slices/writeoffs';
 
 interface caregoryItem {
   title: string;
@@ -35,6 +39,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   items,
   origin = 'business',
 }) => {
+  const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
   const {
@@ -99,9 +104,12 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
     0
   );
 
-  const otherItems = (items ? items : personalData)?.filter(
-    (item) => item !== largestItem
-  );
+  useEffect(() => {
+    if (origin === 'business') {
+      dispatch(updateBusinesSavings(total));
+    }
+    dispatch(updatePersonalSavings(total));
+  }, [origin, total, dispatch]);
 
   return (
     <div className="bg-white rounded-xl p-6 space-y-6 w-full">
@@ -118,85 +126,34 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
       </div>
 
       <div className="grid grid-cols-12 gap-4 ">
-        {origin === 'business' ? (
-          <SharedTooltip
-            visibleContent={
-              <div className="col-span-4 bg-[#F6F6F6] rounded-2xl p-4">
-                <div className="flex h-full flex-col space-y-4 justify-end ">
-                  <Image
-                    src={ArrowUp}
-                    alt="arrow_icon"
-                    height={20}
-                    width={20}
-                    className=""
-                  />
+        <div className="col-span-4 bg-[#F6F6F6] rounded-2xl p-4">
+          <div className="flex h-full flex-col space-y-4 justify-end ">
+            <Image
+              src={ArrowUp}
+              alt="arrow_icon"
+              height={25}
+              width={25}
+              className=""
+            />
 
-                  <div className="">
-                    <p className="text-xs font-semibold text-[#71717A]">
-                      {largestItem?.title}
-                    </p>
-                    <p className={cn('text-sm font-bold mt-2 text-[#00104B]')}>
-                      NOK {largestItem?.total_amount?.toFixed(2)}{' '}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            }
-          >
-            {largestItem?.predefinedCategories?.map(
-              ({ name, amount, threshold }, i) => (
-                <div key={i} className="w-full">
-                  <p className="text-[10px] font-semibold text-[#71717A]">
-                    {name}
-                  </p>
-                  <div className="flex justify-between ">
-                    <p
-                      className={cn(
-                        'text-[10px] font-bold text-[#00104B]',
-                        amount >= 0 && 'text-[#00104B]'
-                      )}
-                    >
-                      NOK {amount?.toFixed(2)}
-                    </p>
-
-                    <p className={`text-[10px] font-medium text-[#71717A]`}>
-                      {' '}
-                      {threshold}
-                    </p>
-                  </div>
-                </div>
-              )
-            )}
-          </SharedTooltip>
-        ) : (
-          <div className="col-span-4 bg-[#F6F6F6] rounded-2xl p-4">
-            <div className="flex h-full flex-col space-y-4 justify-end ">
-              <Image
-                src={ArrowUp}
-                alt="arrow_icon"
-                height={20}
-                width={20}
-                className=""
-              />
-
-              <div className="">
-                <p className="text-xs font-semibold text-[#71717A]">
-                  {largestItem?.title}
-                </p>
-                <p
-                  className={cn(
-                    'text-sm font-bold mt-2 text-[#00104B]',
-                    largestItem?.total_amount >= 0 && 'text-[#00104B]'
-                  )}
-                >
-                  NOK {largestItem?.total_amount?.toFixed(2)}{' '}
-                </p>
-              </div>
+            <div className="">
+              <p className="text-sm font-semibold text-[#71717A]">
+                {largestItem?.title}
+              </p>
+              <p
+                className={cn(
+                  'text-lg font-bold mt-2 text-[#00104B]',
+                  largestItem?.total_amount >= 0 && 'text-[#00104B]'
+                )}
+              >
+                NOK {largestItem?.total_amount?.toFixed(2)}{' '}
+              </p>
             </div>
           </div>
-        )}
-        <div className="col-span-8 space-y-2  h-[214px] overflow-y-auto pr-4">
-          {otherItems?.map(
+        </div>
+
+        <div className="col-span-8 space-y-2  h-[175px] overflow-y-auto pr-4  ">
+          {(items ? items : personalData)?.map(
             ({ title, total_amount, predefinedCategories }, index) =>
               origin === 'business' ? (
                 <SharedTooltip
@@ -225,27 +182,29 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                       {title}
                     </h6>
                     <Separator />
-                    {predefinedCategories?.map(
-                      ({ name, amount, threshold }, i) => (
-                        <div key={i} className="w-full space-y-1 mt-2">
-                          <p className="text-xs font-semibold text-[#71717A]">
-                            {name}
+                    {predefinedCategories?.map(({ name, amount }, i) => (
+                      <div key={i} className="w-full space-y-1 mt-2">
+                        <p className="text-xs font-semibold text-[#71717A]">
+                          {name}
+                        </p>
+                        <div className="flex justify-between ">
+                          <p className="text-xs font-bold text-[#00104B]">
+                            NOK {amount?.toFixed(2)}
                           </p>
-                          <div className="flex justify-between ">
-                            <p className="text-xs font-bold text-[#00104B]">
-                              NOK {amount?.toFixed(2)}
-                            </p>
 
+                          {[
+                            'Furniture and Equipment',
+                            'Computer Hardware',
+                          ].includes(name) && (
                             <p
                               className={`text-[10px] font-medium text-[#71717A]`}
                             >
-                              {' '}
-                              NOK {threshold}
+                              NOK 15000
                             </p>
-                          </div>
+                          )}
                         </div>
-                      )
-                    )}
+                      </div>
+                    ))}
                   </div>
                 </SharedTooltip>
               ) : (
