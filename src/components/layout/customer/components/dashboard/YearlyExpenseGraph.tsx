@@ -17,12 +17,14 @@ type ExpenseAnalytics = {
 };
 
 type ExpensesAnalyticsData = {
-  personalExpenseAnalytics: ExpenseAnalytics[] | [];
-  businessExpenseAnalytics: ExpenseAnalytics[] | [];
+  personalExpenseAnalytics: ExpenseAnalytics[];
+  businessExpenseAnalytics: ExpenseAnalytics[];
 };
 
 const YearlyExpenseGraph = () => {
-  const [showPersonal, setShowPersonal] = useState(true);
+  const [showPersonal, setShowPersonal] = useState<'business' | 'personal'>(
+    'business'
+  );
   const { translate } = useTranslation();
 
   const { data: expensesAnalytics } =
@@ -31,7 +33,6 @@ const YearlyExpenseGraph = () => {
     });
 
   const processAnalyticsData = (analytics: ExpenseAnalytics[]) => {
-    // Create a mapping of months to total amounts
     const monthsOrder = [
       '2024-07',
       '2024-08',
@@ -47,25 +48,23 @@ const YearlyExpenseGraph = () => {
       '2024-06',
     ];
 
-    // Initialize totals with 0 for all months in the desired order
-    const totalAmounts = monthsOrder.map((month) => {
+    return monthsOrder.map((month) => {
       const found = analytics?.find(
-        (item: { month: string }) => item.month === month
+        (item: ExpenseAnalytics) => item.month === month
       );
       return found ? found.totalAmount : 0;
     });
-
-    return totalAmounts;
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const expensesAnalyticsData: ExpensesAnalyticsData | any =
-    expensesAnalytics?.data;
+
+  const expensesAnalyticsData = expensesAnalytics?.data as
+    | ExpensesAnalyticsData
+    | undefined;
 
   const personalExpenseData = processAnalyticsData(
-    expensesAnalyticsData?.personalExpenseAnalytics
+    expensesAnalyticsData?.personalExpenseAnalytics ?? []
   );
   const businessExpenseData = processAnalyticsData(
-    expensesAnalyticsData?.businessExpenseAnalytics
+    expensesAnalyticsData?.businessExpenseAnalytics ?? []
   );
 
   const getOptions = (isPersonal: boolean): ApexOptions => ({
@@ -77,27 +76,16 @@ const YearlyExpenseGraph = () => {
     },
     fill: {
       type: 'gradient',
-      gradient: isPersonal
-        ? {
-            type: 'vertical',
-            gradientToColors: ['rgba(241, 237, 255, 0)'],
-            shadeIntensity: 0,
-            stops: [0, 100],
-            colorStops: [
-              { offset: 0, color: '#F3F0FF', opacity: 1 },
-              { offset: 100, color: 'rgba(241, 237, 255, 0)', opacity: 0 },
-            ],
-          }
-        : {
-            type: 'vertical',
-            gradientToColors: ['rgba(241, 237, 255, 0)'],
-            shadeIntensity: 0,
-            stops: [0, 100],
-            colorStops: [
-              { offset: 0, color: '#F3F0FF', opacity: 1 },
-              { offset: 100, color: 'rgba(241, 237, 255, 0)', opacity: 0 },
-            ],
-          },
+      gradient: {
+        type: 'vertical',
+        gradientToColors: ['rgba(241, 237, 255, 0)'],
+        shadeIntensity: 0,
+        stops: [0, 100],
+        colorStops: [
+          { offset: 0, color: isPersonal ? '#FFE4E0' : '#F3F0FF', opacity: 1 },
+          { offset: 100, color: 'rgba(241, 237, 255, 0)', opacity: 0 },
+        ],
+      },
     },
     dataLabels: { enabled: false },
     grid: { show: false },
@@ -161,35 +149,41 @@ const YearlyExpenseGraph = () => {
         </div>
         <div className="flex">
           <button
-            onClick={() => setShowPersonal(true)}
-            className={`w-[63px] h-[36px] flex justify-center items-center rounded ${
-              showPersonal ? 'bg-indigo-500 text-white' : 'bg-gray-100'
-            }`}
-          >
-            <SquareUserRound
-              className={`${showPersonal ? 'text-white' : 'text-[#5B52F9]'}`}
-            />
-          </button>
-          <button
-            onClick={() => setShowPersonal(false)}
-            className={`w-[63px] h-[36px] flex justify-center items-center rounded ${
-              !showPersonal ? 'bg-indigo-500 text-white' : 'bg-gray-100'
+            onClick={() => setShowPersonal('business')}
+            className={`w-[40px] h-[30px] flex justify-center items-center rounded ${
+              showPersonal === 'business'
+                ? 'bg-indigo-500 text-white'
+                : 'bg-gray-100'
             }`}
           >
             <Handshake
-              className={`${!showPersonal ? 'text-white' : 'text-[#5B52F9]'}`}
+              className={`${showPersonal === 'business' ? 'text-white' : 'text-[#5B52F9]'}`}
+            />
+          </button>
+          <button
+            onClick={() => setShowPersonal('personal')}
+            className={`w-[40px] h-[30px] flex justify-center items-center rounded ${
+              showPersonal === 'personal'
+                ? 'bg-indigo-500 text-white'
+                : 'bg-gray-100'
+            }`}
+          >
+            <SquareUserRound
+              className={`${showPersonal === 'personal' ? 'text-white' : 'text-[#5B52F9]'}`}
             />
           </button>
         </div>
       </div>
 
-      <ApexChart
-        key={showPersonal ? 'personal' : 'business'}
-        options={getOptions(showPersonal)}
-        series={showPersonal ? personalSeries : businessSeries}
-        type="area"
-        height={231}
-      />
+      {expensesAnalyticsData && (
+        <ApexChart
+          key={showPersonal}
+          options={getOptions(showPersonal === 'personal')}
+          series={showPersonal === 'business' ? businessSeries : personalSeries}
+          type="area"
+          height={231}
+        />
+      )}
     </Card>
   );
 };

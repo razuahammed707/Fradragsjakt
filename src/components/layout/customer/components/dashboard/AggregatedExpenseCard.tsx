@@ -95,13 +95,14 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                   largestItem?.total_amount >= 0 && 'text-[#00104B]'
                 )}
               >
-                NOK {largestItem?.total_amount?.toFixed(2)}{' '}
+                NOK{' '}
+                {numberFormatter(Number(largestItem?.total_amount?.toFixed(2)))}{' '}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="col-span-8 space-y-2  h-[175px] overflow-y-auto pr-4  ">
+        <div className="col-span-8 space-y-2  h-[175px] overflow-y-auto pr-4 cursor-default ">
           {(items ? items : personalData)?.map(
             ({ title, total_amount, predefinedCategories }, index) =>
               origin === 'business' ? (
@@ -120,7 +121,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                             total_amount >= 0 && 'text-[#00104B]'
                           )}
                         >
-                          NOK {total_amount.toFixed(2)}{' '}
+                          NOK {numberFormatter(Number(total_amount.toFixed(2)))}{' '}
                         </p>
                       </div>
                     </div>
@@ -138,7 +139,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                         </p>
                         <div className="flex justify-between ">
                           <p className="text-xs font-bold text-[#00104B]">
-                            NOK {amount?.toFixed(2)}
+                            NOK {numberFormatter(Number(amount?.toFixed(2)))}
                           </p>
 
                           {[
@@ -171,7 +172,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                         largestItem?.total_amount >= 0 && 'text-[#00104B]'
                       )}
                     >
-                      NOK {total_amount?.toFixed(2)}{' '}
+                      NOK {numberFormatter(Number(total_amount?.toFixed(2)))}{' '}
                     </p>
                   </div>
                 </div>

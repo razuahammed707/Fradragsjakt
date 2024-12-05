@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { trpc } from '@/utils/trpc';
 import Link from 'next/link';
 import React from 'react';
@@ -42,7 +43,9 @@ const MonthlyOverview = () => {
                       {totalItemByCategory + ' ' + 'items'}
                     </p>
                   </div>
-                  <p className="text-xs font-medium mb-4">NOK {amount}</p>
+                  <p className="text-xs font-medium mb-4">
+                    NOK {numberFormatter(Number(amount.toFixed()))}
+                  </p>
                 </div>
               </div>
             )
