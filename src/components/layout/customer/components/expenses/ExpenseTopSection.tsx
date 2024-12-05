@@ -73,6 +73,9 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
           : card;
       });
 
+      // Sort the cards by amount in descending order
+      updatedCategoryCards.sort((a, b) => b.amount - a.amount);
+
       setCategoryCards(updatedCategoryCards);
     }
 
@@ -110,7 +113,7 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {categoryCards.map((expense, i) => (
+        {categoryCards.slice(0, 7).map((expense, i) => (
           <ExpenseType
             key={i}
             imageSrc={expense.imageSrc}

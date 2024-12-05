@@ -57,7 +57,7 @@ export default function CategoryCard() {
       {highestCategory && (
         <Card
           style={{ gridRow: 'span 2' }}
-          className="col-span-1 rounded-[16px] border border-[#EEF0F4] shadow-none min-h-[100px]"
+          className="col-span-1 rounded-[16px] border border-[#EEF0F4] shadow-none min-h-[100px] max-h-[208px]"
         >
           <CardContent className="flex h-full items-center space-x-4 p-4">
             <Image
@@ -68,10 +68,10 @@ export default function CategoryCard() {
               className="rounded-full"
             />
             <div>
-              <h3 className={cn('text-xl font-bold')}>
+              <h3 className={cn('text-l font-bold')}>
                 {highestCategory?.amount}
               </h3>
-              <p className="text-[#71717A] font-inter text-[16px] font-semibold leading-[20px]">
+              <p className="text-[#71717A] font-inter text-[12px] font-semibold leading-[20px]">
                 {highestCategory?.label}
               </p>
             </div>
@@ -107,13 +107,13 @@ export default function CategoryCard() {
               <div className={category.label === 'Others' ? 'text-center' : ''}>
                 <h3
                   className={cn(
-                    'text-xl font-bold',
+                    'text-l font-bold text-center',
                     category.label === 'Others' ? 'text-center' : ''
                   )}
                 >
                   {category.amount}
                 </h3>
-                <p className="text-[#71717A] font-inter text-[16px] font-semibold leading-[20px]">
+                <p className="text-[#71717A] font-inter text-[12px] font-semibold leading-[20px] text-center items-center">
                   {category.label}
                 </p>
               </div>

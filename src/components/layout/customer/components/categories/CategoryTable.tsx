@@ -40,7 +40,7 @@ export default function CategoryTable() {
     debouncedSetSearchTerm(e.target.value);
   };
   return (
-    <div className="rounded-2xl mt-2 p-6 bg-white">
+    <div className="rounded-2xl p-6 bg-white">
       <div className="flex justify-between items-center mb-4  ">
         <h2 className="text-xl text-[#101010] font-bold">
           {translate(
