@@ -20,6 +20,7 @@ const ExpenseType: React.FC<ExpenseProps> = ({
       <Image src={imageSrc} alt={`${type} image`} width={40} height={40} />
       <div className=" ">
         <h3 className="text-black text-s font-semibold">
+          {'NOK '}
           {numberFormatter(amount)}
         </h3>
         <p className="text-[#71717A] text-xs font-semibold">
