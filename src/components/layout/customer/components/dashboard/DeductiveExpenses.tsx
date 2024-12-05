@@ -4,13 +4,39 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import CircularProgressChart from './CircularProgressChart';
 import { useAppSelector } from '@/redux/hooks';
-import { savingsSelector } from '@/redux/slices/writeoffs';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
+import { questionnaireSelector } from '@/redux/slices/questionnaire';
+import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
+import { trpc } from '@/utils/trpc';
+import { finalCalculation } from '@/utils/helpers/primaryCategoriesWithFormula';
+import { predefinedCategories } from '@/utils/dummy';
 
 const DeductiveExpenses = () => {
-  const { businessSavings, personalSavings } = useAppSelector(savingsSelector);
-  const totalDeductibleAmount = businessSavings + personalSavings;
+  const { data: expensesAnalytics } =
+    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
+      expense_type: 'business',
+    });
 
+  const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
+  const businessData = finalCalculation(
+    categoryAnalytics,
+    predefinedCategories
+  );
+
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
+
+  const personalData = manipulatePersonalDeductions(questionnaires, user);
+
+  const personalTotal = personalData?.reduce(
+    (sum, current) => sum + current.total_amount,
+    0
+  );
+  const businessTotal = businessData?.reduce(
+    (sum, current) => sum + current.total_amount,
+    0
+  );
+  const totalDeductibleAmount = businessTotal + personalTotal;
   return (
     <Card className="col-span-6 py-6 px-[21px] border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0 relative">
@@ -38,7 +64,7 @@ const DeductiveExpenses = () => {
             </div>
             <CircularProgressChart
               series={[
-                Math.floor((businessSavings / totalDeductibleAmount) * 100),
+                Math.round((businessTotal / totalDeductibleAmount) * 100),
               ]}
             />
           </div>
@@ -55,7 +81,7 @@ const DeductiveExpenses = () => {
               color="#F99BAB"
               trackBg="#F99BAB5E"
               series={[
-                Math.floor((personalSavings / totalDeductibleAmount) * 100),
+                Math.round((personalTotal / totalDeductibleAmount) * 100),
               ]}
             />
           </div>
