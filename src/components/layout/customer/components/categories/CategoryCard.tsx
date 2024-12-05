@@ -107,13 +107,13 @@ export default function CategoryCard() {
               <div className={category.label === 'Others' ? 'text-center' : ''}>
                 <h3
                   className={cn(
-                    'text-l font-bold',
+                    'text-l font-bold text-center',
                     category.label === 'Others' ? 'text-center' : ''
                   )}
                 >
                   {category.amount}
                 </h3>
-                <p className="text-[#71717A] font-inter text-[12px] font-semibold leading-[20px]">
+                <p className="text-[#71717A] font-inter text-[12px] font-semibold leading-[20px] text-center items-center">
                   {category.label}
                 </p>
               </div>
