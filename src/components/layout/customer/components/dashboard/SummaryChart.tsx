@@ -1,4 +1,5 @@
 'use client';
+import { Handshake, SquareUserRound } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
@@ -11,7 +12,17 @@ interface ExpenseCategory {
   total_amount: number;
 }
 
-const SummaryChart = ({ expenses }: { expenses: ExpenseCategory[] }) => {
+const SummaryChart = ({
+  expenses,
+  showPersonal,
+  setShowPersonal,
+}: {
+  expenses: ExpenseCategory[];
+  showPersonal: 'personal' | 'business';
+  setShowPersonal: React.Dispatch<
+    React.SetStateAction<'personal' | 'business'>
+  >;
+}) => {
   // Predefined color palette (you can adjust as needed)
   const colorPalette = [
     '#9F97F7',
@@ -95,9 +106,37 @@ const SummaryChart = ({ expenses }: { expenses: ExpenseCategory[] }) => {
   return (
     <div className="col-span-6 space-y-6 p-6 bg-white rounded-2xl border border-[#EEF0F4] shadow-none">
       <div className="flex flex-col h-full justify-between">
-        <div>
-          <h3 className="text-sm font-semibold text-[#71717A]">Summary</h3>
-          <p className="text-[#71717A] text-xs">Expense Breakdown</p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-sm font-semibold text-[#71717A]">Summary</h3>
+            <p className="text-[#71717A] text-xs">Tax Saved Breakdown</p>
+          </div>
+          <div className="flex">
+            <button
+              onClick={() => setShowPersonal('business')}
+              className={`w-[40px] h-[30px] flex justify-center items-center rounded ${
+                showPersonal === 'business'
+                  ? 'bg-indigo-500 text-white'
+                  : 'bg-gray-100'
+              }`}
+            >
+              <Handshake
+                className={`${showPersonal === 'business' ? 'text-white' : 'text-[#5B52F9]'}`}
+              />
+            </button>
+            <button
+              onClick={() => setShowPersonal('personal')}
+              className={`w-[40px] h-[30px] flex justify-center items-center rounded ${
+                showPersonal === 'personal'
+                  ? 'bg-indigo-500 text-white'
+                  : 'bg-gray-100'
+              }`}
+            >
+              <SquareUserRound
+                className={`${showPersonal === 'personal' ? 'text-white' : 'text-[#5B52F9]'}`}
+              />
+            </button>
+          </div>
         </div>
         <div className="flex justify-center">
           <Chart

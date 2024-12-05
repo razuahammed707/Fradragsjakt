@@ -1,41 +1,47 @@
 'use client';
-import React from 'react';
-//import ExpenseCard, { expenses } from './ExpenseCard';
+
+import React, { useState } from 'react';
 import DeductiveExpenses from './DeductiveExpenses';
 import SummaryChart from './SummaryChart';
 import YearlyExpenseGraph from './YearlyExpenseGraph';
 import { trpc } from '@/utils/trpc';
-//import { updateExpenses } from '@/utils/helpers/categoryMapperForExpense';
 import AggregatedExpenseCard from './AggregatedExpenseCard';
 import { finalCalculation } from '@/utils/helpers/primaryCategoriesWithFormula';
 import { predefinedCategories } from '@/utils/dummy';
+import { useAppSelector } from '@/redux/hooks';
+import { questionnaireSelector } from '@/redux/slices/questionnaire';
+import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 
 const DashboardSummarySection = () => {
+  const [showPersonal, setShowPersonal] = useState<'personal' | 'business'>(
+    'business'
+  );
   const { data: expensesAnalytics } =
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
-      expense_type: '',
+      expense_type: 'business',
     });
 
   const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
   const cardData = finalCalculation(categoryAnalytics, predefinedCategories);
-  console.log({ cardData });
 
-  // const personalExpenses =
-  //   expensesAnalytics?.data?.expenseTypeWiseExpenses?.find(
-  //     (item: { expense_type: string }) => item.expense_type === 'personal'
-  //   );
+  const { questionnaires } = useAppSelector(questionnaireSelector);
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
 
-  // const mappedExpenses = updateExpenses(
-  //   expenses(personalExpenses?.amount),
-  //   categoryAnalytics
-  // );
+  const personalData = manipulatePersonalDeductions(questionnaires, user);
+
+  const summaryChartData =
+    showPersonal === 'business' ? cardData : personalData;
 
   return (
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-5">
         <div className="grid grid-cols-12 gap-2">
           <DeductiveExpenses />
-          <SummaryChart expenses={cardData} />
+          <SummaryChart
+            expenses={summaryChartData}
+            showPersonal={showPersonal}
+            setShowPersonal={setShowPersonal}
+          />
         </div>
       </div>
 
@@ -51,10 +57,10 @@ const DashboardSummarySection = () => {
       <div className="col-span-12 grid grid-cols-2 gap-2">
         <AggregatedExpenseCard
           items={cardData}
-          title="Tax saved from Business Spending (Total)"
+          title="Tax Saved From Business Spending (Total)"
         />
         <AggregatedExpenseCard
-          title="Tax saved from Personal Spending (Total)"
+          title="Tax Saved From Personal Spending (Total)"
           origin="personal"
         />
       </div>

@@ -33,7 +33,10 @@ export const finalCalculation = (
           ) {
             return {
               ...item,
-              amount: item.amount - matchedWithDbCategory.amount,
+              amount:
+                matchedWithDbCategory.amount > 15000
+                  ? 15000
+                  : matchedWithDbCategory.amount,
               original_amount: matchedWithDbCategory.amount,
             };
           }
