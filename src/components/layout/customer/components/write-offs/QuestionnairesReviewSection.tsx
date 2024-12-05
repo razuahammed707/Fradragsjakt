@@ -27,6 +27,8 @@ import EditResponseModalContent from './modals-content/EditResponseModalContent'
 import { cn } from '@/lib/utils';
 import { ContentHousing } from './modals-content/ContentHousing';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
+import { savingsSelector } from '@/redux/slices/writeoffs';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 
 const modalContentMap: Record<
   string,
@@ -59,6 +61,7 @@ const QuestionnairesReviewSection = () => {
   const [selectedTitle, setSelectedTitle] = useState<string>('');
   const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
+  const { personalSavings } = useAppSelector(savingsSelector);
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
   const {
@@ -178,18 +181,20 @@ const QuestionnairesReviewSection = () => {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <p>Savings from questions</p>
-              <p className="font-medium">NOK 800</p>
+              <p className="font-medium">
+                NOK {numberFormatter(personalSavings)}
+              </p>
             </div>
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
               <p>Potential Savings</p>
               <p className="font-medium">NOK 2,086</p>
-            </div>
+            </div> */}
           </div>
-          <Separator className="bg-[#E4E4E7] my-6" />
+          {/* <Separator className="bg-[#E4E4E7] my-6" />
           <div className="flex justify-between items-center font-medium">
             <p>Total (write-offs)</p>
             <p>NOK 2,886</p>
-          </div>
+          </div> */}
         </div>
         <Button
           onClick={() =>

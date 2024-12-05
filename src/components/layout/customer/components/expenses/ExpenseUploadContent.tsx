@@ -199,7 +199,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
     setMediaUploadLoading(true);
     setFileLink(file);
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) {
         toast.error('File size cannot exceed 2MB');
         setMediaUploadLoading(false);
         return;

@@ -65,6 +65,8 @@ function ExpenseAddContent({
   const { handleSubmit, control, reset } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
   const [fileLink, setFileLink] = useState<File | null>(null);
+  console.log({ fileLink });
+
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<UploadedImageType | null>(
     null
@@ -139,6 +141,12 @@ function ExpenseAddContent({
           fileType: file.type,
           folder: 'files',
         });
+        if (fileLink?.size) {
+          if (fileLink?.size > 2 * 1024 * 1024) {
+            toast.error('File size cannot exceed 10MB');
+            return;
+          }
+        }
         setUploadedImage(result?.data);
       } catch (error) {
         console.error('Upload error:', error);
@@ -158,6 +166,7 @@ function ExpenseAddContent({
     onDrop,
     accept: {
       'image/*': [],
+      'application/pdf': [],
     },
   });
 

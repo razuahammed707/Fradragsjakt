@@ -37,9 +37,13 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
             <p className="text-[#71717A]">
               {translate('componentsExpenseModal.expense.upload')}
             </p>
-            {type === 'csv' && (
+            {type === 'csv' ? (
               <p className={cn('text-[#71717A] text-sm')}>
-                Only CSV files are allowed{' '}
+                Only CSV files are allowed with maximum 2MB of file size{' '}
+              </p>
+            ) : (
+              <p className={cn('text-[#71717A] text-sm')}>
+                The maximum file size allowed is 10MB.{' '}
               </p>
             )}
           </div>
