@@ -131,35 +131,6 @@ export default function ExpenseDataTableFilter({
         <PopoverContent className="w-60 border-none shadow-lg">
           <div className="space-y-4 max-h-[230px] min-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
             <div>
-              <h4 className="mb-4 text-sm font-medium leading-none text-gray-500">
-                Category
-              </h4>
-              <div className="grid gap-2">
-                {categoryOptions.map((category) => (
-                  <div
-                    key={category.id}
-                    className="flex items-center space-x-2"
-                  >
-                    <Checkbox
-                      className="data-[state=checked]:text-white"
-                      id={category.id}
-                      checked={selectedCategories.includes(category.id)}
-                      onCheckedChange={() => toggleCategory(category.id)}
-                    />
-                    <Label
-                      htmlFor={category.id}
-                      className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      {category.label}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Separator className="my-4" />
-
-            <div>
               <h4 className="mb-4 text-gray-500 text-sm font-medium leading-none">
                 Expense Type
               </h4>
@@ -177,6 +148,33 @@ export default function ExpenseDataTableFilter({
                       className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       {type.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Separator className="my-4" />
+            <div>
+              <h4 className="mb-4 text-sm font-medium leading-none text-gray-500">
+                Category
+              </h4>
+              <div className="grid gap-2">
+                {categoryOptions.map((category) => (
+                  <div
+                    key={category.id}
+                    className="flex items-center space-x-2"
+                  >
+                    <Checkbox
+                      className="data-[state=checked]:text-white"
+                      id={category.id}
+                      checked={selectedCategories.includes(category.id)}
+                      onCheckedChange={() => toggleCategory(category.id)}
+                    />
+                    <Label
+                      htmlFor={category.id}
+                      className="text-sm font-normal text-nowrap truncate max-w-[185px] leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {category.label}
                     </Label>
                   </div>
                 ))}

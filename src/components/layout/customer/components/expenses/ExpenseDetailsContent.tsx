@@ -1,11 +1,40 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import Placeholder from '../../../../../../public/receipt_placeholder.jpg';
+import PdfPlaceholder from '../../../../../../public/pdf_placeholder.png';
 import { PayloadType } from './ExpenseUpdateModal';
 import Image from 'next/image';
 import formatDate from '@/utils/helpers/formatDate';
+import { Button } from '@/components/ui/button';
 
 function ExpenseDetailsContent({ payload }: { payload?: PayloadType }) {
+  console.log('reciept__', payload?.receipt);
+  const downloadFile = async (
+    url: string | undefined,
+    filename: string = 'download'
+  ) => {
+    if (!url) {
+      console.error('No URL provided for download');
+      return;
+    }
+
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
   return (
     <div className="space-y-6">
       <h1 className="font-medium text-lg  text-black ">Expense Details</h1>
@@ -28,17 +57,33 @@ function ExpenseDetailsContent({ payload }: { payload?: PayloadType }) {
           <p>{payload?.category}</p>
         </div>
       </div>
-      <div>
+      <div className="space-y-1">
         <Label className="text-xs font-medium text-black">
           Your attached file
         </Label>
-        <Image
-          alt="receipt"
-          src={payload?.receipt?.link || Placeholder}
-          width={560}
-          height={221}
-          className="mt-2 border rounded-lg shadow-md w-full h-[221px]"
-        />
+        <div className="w-full border overflow-hidden rounded-lg">
+          <Image
+            alt="receipt"
+            src={
+              payload?.receipt?.mimeType === 'pdf'
+                ? PdfPlaceholder
+                : payload?.receipt?.link || Placeholder
+            }
+            width={560}
+            height={221}
+            className="mt-2  w-full h-[221px]"
+          />
+          {payload?.receipt?.link && (
+            <Button
+              onClick={() =>
+                downloadFile(payload?.receipt?.link, 'receipt.pdf')
+              }
+              className="w-full text-white rounded-none"
+            >
+              Download
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

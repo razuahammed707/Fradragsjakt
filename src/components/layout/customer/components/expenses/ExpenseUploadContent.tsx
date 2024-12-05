@@ -171,7 +171,6 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
     formState: { isDirty, isValid },
   } = useForm<FormData>();
   const [fileLink, setFileLink] = useState<File | null>(null);
-  console.log({ fileLink });
 
   const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
   const [fileData, setFileData] = useState<FileRowData[]>([]);
@@ -197,9 +196,21 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    setFileLink(file);
     setMediaUploadLoading(true);
-    handleFileProcessing(file);
+    setFileLink(file);
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('File size cannot exceed 2MB');
+        setMediaUploadLoading(false);
+        return;
+      }
+      if (file.name.includes('csv')) {
+        handleFileProcessing(file);
+        return;
+      }
+    }
+    setMediaUploadLoading(false);
+    toast.error('Only CSV files are allowed!');
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -245,48 +256,42 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   return (
     <div className="mt-4">
       <h1 className="font-medium text-lg text-black mb-4">
-        {fileLink?.name
+        {isFileProcessed
           ? 'Return'
           : translate('componentsExpenseModal.expense.uploadTitle')}
       </h1>
-      {fileLink?.name ? (
+      {isFileProcessed ? (
         <div className="text-xs space-y-4">
           <p className="text-black font-medium mb-4">Your selected file</p>
           <span className="text-[#5B52F9] bg-[#F0EFFE] font-medium px-3 rounded-lg py-2">
             {fileLink?.name}
           </span>
-          <p className="text-[#71717A] font-medium ">
+          <p className="text-[#71717A] font-medium">
             The best match to each field on the selected file have been
             auto-selected.
           </p>
         </div>
       ) : (
-        <>
-          <div
-            className={cn(
-              'rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]',
-              fileLink === undefined && 'mb-2'
-            )}
-          >
-            <div
-              {...getRootProps()}
-              className="h-full w-full flex items-center justify-center"
-            >
-              <DragAndDropFile
-                setFileLink={setFileLink}
-                fileLink={fileLink}
-                loading={mediaUploadLoading}
-                getInputProps={getInputProps}
-                isDragActive={isDragActive}
-              />
-            </div>
-          </div>
-          {fileLink === undefined && (
-            <span className="text-destructive">
-              Only CSV files are allowed to upload!
-            </span>
+        <div
+          className={cn(
+            'rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]',
+            fileLink === undefined && 'mb-2'
           )}
-        </>
+        >
+          <div
+            {...getRootProps()}
+            className="h-full w-full flex items-center justify-center"
+          >
+            <DragAndDropFile
+              type="csv"
+              setFileLink={setFileLink}
+              fileLink={fileLink}
+              loading={mediaUploadLoading}
+              getInputProps={getInputProps}
+              isDragActive={isDragActive}
+            />
+          </div>
+        </div>
       )}
 
       {isFileProcessed && (
