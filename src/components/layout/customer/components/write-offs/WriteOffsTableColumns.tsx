@@ -17,7 +17,7 @@ export const WriteOffsTableColumns = (): ColumnDef<WriteOffs>[] => {
       accessorKey: 'category',
       header: translate('page.WriteOffDataTableColumns.category'),
       cell: ({ row }) => (
-        <div className="text-left pl-4">{row.getValue('category')}</div>
+        <div className="text-left">{row.getValue('category')}</div>
       ),
     },
     {
@@ -31,7 +31,7 @@ export const WriteOffsTableColumns = (): ColumnDef<WriteOffs>[] => {
       accessorKey: 'amount',
       header: translate('page.WriteOffDataTableColumns.deduction'),
       cell: ({ row }) => (
-        <div className="text-left">
+        <div className="text-left my-1">
           {`NOK ${(Number(row.getValue('amount')) || 0).toFixed(2)}`}
         </div>
       ),

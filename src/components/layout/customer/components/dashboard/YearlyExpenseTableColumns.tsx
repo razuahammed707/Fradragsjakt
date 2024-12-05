@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import ArrowUpDown from '../../../../../../public/sort.png';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
-import moment from 'moment';
 import ExpenseDetailsModal from '../expenses/ExpenseDetailsModal';
 import ExpenseUpdateModal from '../expenses/ExpenseUpdateModal';
+import formatDate from '@/utils/helpers/formatDate';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -52,11 +52,16 @@ export const YearlyExpenseTableColumns: ColumnDef<Expense>[] = [
   {
     accessorKey: 'transaction_date',
     header: 'Date',
-    cell: ({ row }) => (
-      <div className="text-left w-[100px]">
-        {moment(row.getValue('transaction_date')).format('MMM Do YY')}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const transactionDate = row.getValue('transaction_date') as string;
+      const createdAt = row.original.createdAt;
+      const dateToRender = transactionDate || createdAt || '';
+      return (
+        <div className="w-[100px]">
+          <span className="text-[#00104B]">{formatDate(dateToRender)}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'description',

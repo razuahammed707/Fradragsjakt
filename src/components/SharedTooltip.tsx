@@ -21,7 +21,7 @@ function SharedTooltip({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{visibleContent}</TooltipTrigger>
-        <TooltipContent align={align} className="bg-white shadow-lg border">
+        <TooltipContent align={align} className="bg-white shadow-lg">
           <div className="bg-white">{children}</div>
         </TooltipContent>
       </Tooltip>
