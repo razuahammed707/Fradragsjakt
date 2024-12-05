@@ -27,8 +27,8 @@ import EditResponseModalContent from './modals-content/EditResponseModalContent'
 import { cn } from '@/lib/utils';
 import { ContentHousing } from './modals-content/ContentHousing';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
-import { savingsSelector } from '@/redux/slices/writeoffs';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
+import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 
 const modalContentMap: Record<
   string,
@@ -61,7 +61,6 @@ const QuestionnairesReviewSection = () => {
   const [selectedTitle, setSelectedTitle] = useState<string>('');
   const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
-  const { personalSavings } = useAppSelector(savingsSelector);
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
   const {
@@ -74,6 +73,12 @@ const QuestionnairesReviewSection = () => {
     foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(questionnaires, user?.questionnaires);
 
+  const personalData = manipulatePersonalDeductions(questionnaires, user);
+
+  const personalTotal = personalData?.reduce(
+    (sum, current) => sum + current.total_amount,
+    0
+  );
   const data = [
     {
       title: translate('questionnaire.health_family'),
@@ -182,7 +187,7 @@ const QuestionnairesReviewSection = () => {
             <div className="flex justify-between items-center">
               <p>Savings from questions</p>
               <p className="font-medium">
-                NOK {numberFormatter(personalSavings)}
+                NOK {numberFormatter(personalTotal)}
               </p>
             </div>
             {/* <div className="flex justify-between items-center">
