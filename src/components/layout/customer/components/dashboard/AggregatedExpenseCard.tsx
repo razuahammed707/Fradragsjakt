@@ -8,7 +8,6 @@ import SharedTooltip from '@/components/SharedTooltip';
 import { Separator } from '@/components/ui/separator';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { cn } from '@/lib/utils';
-import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { trpc } from '@/utils/trpc';
@@ -16,6 +15,7 @@ import {
   updateBusinesSavings,
   updatePersonalSavings,
 } from '@/redux/slices/writeoffs';
+import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 
 interface caregoryItem {
   title: string;
@@ -42,60 +42,9 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-  const {
-    workAndEducationExpenseAmount,
-    healthAndFamilyExpenseAmount,
-    bankAndLoansExpenseAmount,
-    hobbyOddjobsAndExtraIncomesExpenseAmount,
-    housingAndPropertyExpenseAmount,
-    giftsOrDonationsExpenseAmount,
-    foreignIncomeExpenseAmount,
-  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
 
-  const personalData = [
-    {
-      title: 'Health and Family',
-      total_amount: healthAndFamilyExpenseAmount || 0,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Bank and Loans',
-      total_amount: bankAndLoansExpenseAmount || 0,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Work and Education',
-      total_amount: workAndEducationExpenseAmount || 0,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Housing and Property',
-      total_amount: housingAndPropertyExpenseAmount || 0,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Gifts/Donations',
-      total_amount: giftsOrDonationsExpenseAmount || 0,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Hobby, Odd jobs, and Extra incomes',
-      total_amount: hobbyOddjobsAndExtraIncomesExpenseAmount || 0,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-    {
-      title: 'Foreign Income',
-      total_amount: foreignIncomeExpenseAmount || 0,
-      total_original_amount: 0,
-      predefinedCategories: [],
-    },
-  ];
+  const personalData = manipulatePersonalDeductions(questionnaires, user);
+
   const largestItem = (items ? items : personalData)?.reduce((prev, current) =>
     current.total_amount > prev.total_amount ? current : prev
   );
@@ -199,7 +148,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                             <p
                               className={`text-[10px] font-medium text-[#71717A]`}
                             >
-                              NOK 15000
+                              Max NOK 15000
                             </p>
                           )}
                         </div>

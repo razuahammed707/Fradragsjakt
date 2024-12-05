@@ -324,7 +324,7 @@ export const predefinedCategories = [
       { name: 'Rent', amount: 0, original_amount: 0 },
       { name: 'Utilities', amount: 0, original_amount: 0 },
       { name: 'Office Supplies', amount: 0, original_amount: 0 },
-      { name: 'Furniture and Equipment', amount: 15000, original_amount: 0 },
+      { name: 'Furniture and Equipment', amount: 0, original_amount: 0 },
       { name: 'Maintenance and Repairs', amount: 0, original_amount: 0 },
     ],
     total_amount: 0,
@@ -334,7 +334,7 @@ export const predefinedCategories = [
     id: 2,
     name: 'Technology and Communication',
     items: [
-      { name: 'Computer Hardware', amount: 15000, original_amount: 0 },
+      { name: 'Computer Hardware', amount: 0, original_amount: 0 },
       { name: 'Software Subscriptions', amount: 0, original_amount: 0 },
       { name: 'Internet and Phone Expenses', amount: 0, original_amount: 0 },
       { name: 'Cloud Storage and Services', amount: 0, original_amount: 0 },
