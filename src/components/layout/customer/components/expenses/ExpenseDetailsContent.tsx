@@ -32,13 +32,15 @@ function ExpenseDetailsContent({ payload }: { payload?: PayloadType }) {
         <Label className="text-xs font-medium text-black">
           Your attached file
         </Label>
-        <Image
-          alt="receipt"
-          src={payload?.receipt?.link || Placeholder}
-          width={560}
-          height={221}
-          className="mt-2 border rounded-lg shadow-md w-full h-[221px]"
-        />
+        <div>
+          <Image
+            alt="receipt"
+            src={payload?.receipt?.link || Placeholder}
+            width={560}
+            height={221}
+            className="mt-2 border rounded-lg shadow-md w-full h-[221px]"
+          />
+        </div>
       </div>
     </div>
   );

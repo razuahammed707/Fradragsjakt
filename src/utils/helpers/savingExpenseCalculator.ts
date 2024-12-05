@@ -23,6 +23,7 @@ const healthAndFamilyExpenseCalculator = (
 
     switch (key) {
       case 'Have children aged 11 years or younger':
+        const documentedExpense = extractExpense('Documented Expense') || 0;
         const deductionOnNumber =
           extractExpense('How many children do you have under the age of 12') >
           0
@@ -33,7 +34,7 @@ const healthAndFamilyExpenseCalculator = (
                 1) *
                 15000
             : 0;
-        return total + deductionOnNumber;
+        return total + Math.min(documentedExpense, deductionOnNumber);
 
       case 'I have children aged 12 or older with special care needs':
         const haveSpecial =

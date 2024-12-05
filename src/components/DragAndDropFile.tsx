@@ -3,6 +3,7 @@ import React from 'react';
 import UploadIcon from '../../public/upload.png';
 import Image from 'next/image';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { cn } from '@/lib/utils';
 
 type DragAndDropFileProps = {
   loading: boolean;
@@ -10,15 +11,14 @@ type DragAndDropFileProps = {
   isDragActive: boolean;
   fileLink?: File | null;
   setFileLink?: React.Dispatch<React.SetStateAction<File | null>>;
+  type?: string;
 };
 
 const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
+  type,
   loading,
   getInputProps,
   isDragActive,
-  // dispute,
-  // fileLink,
-  // setFileLink,
 }) => {
   const { translate } = useTranslation();
   return (
@@ -33,9 +33,16 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
           ) : (
             <Image src={UploadIcon} alt="upload icon" />
           )}
-          <p className="text-[#71717A]">
-            {translate('componentsExpenseModal.expense.upload')}
-          </p>
+          <div className="text-center">
+            <p className="text-[#71717A]">
+              {translate('componentsExpenseModal.expense.upload')}
+            </p>
+            {type === 'csv' && (
+              <p className={cn('text-[#71717A] text-sm')}>
+                Only CSV files are allowed{' '}
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>

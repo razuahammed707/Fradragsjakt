@@ -78,6 +78,19 @@ export function ContentHealthFamily({
             )}
             required
           />
+          <p className="text-black pt-[12px] pb-[6px]">Documented Expense</p>
+          <FormInput
+            name="Have children aged 11 years or younger.Documented Expense"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 25000"
+            defaultValue={getDefaultValue(
+              'Have children aged 11 years or younger',
+              'Documented Expense'
+            )}
+            required
+          />
         </>
       ),
     },
