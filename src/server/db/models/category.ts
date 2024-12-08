@@ -9,6 +9,10 @@ const CategorySchema: Schema = new Schema<ICategory>(
       enum: ['USER', 'SYSTEM'],
       default: 'USER',
     },
+    reference_category: {
+      type: String,
+      default: null,
+    },
     creator_id: { type: Schema.Types.ObjectId, ref: 'user', required: true },
   },
   { timestamps: true }

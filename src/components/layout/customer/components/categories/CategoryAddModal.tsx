@@ -10,10 +10,12 @@ import { DialogTitle } from '@radix-ui/react-dialog';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 
 type UpdateCategoryPayload = {
   _id: string;
   title?: string;
+  reference_category?: string;
 };
 
 interface CategoryAddModalProps {
@@ -29,6 +31,7 @@ export default function CategoryAddModal({
   const { handleSubmit, control, reset } = useForm<FormData>();
   const utils = trpc.useUtils();
   const { translate } = useTranslation();
+  const { manipulatedCategories } = useManipulatedCategories();
 
   const mutation = trpc.categories.createCategory.useMutation({
     onSuccess: () => {
@@ -113,6 +116,22 @@ export default function CategoryAddModal({
                   defaultValue={category?.title}
                   required
                 />
+
+                <div>
+                  <Label className="block mb-2 text-[#101010] text-xs font-medium">
+                    Map with system defined categories
+                  </Label>
+                  <FormInput
+                    name="reference_category"
+                    defaultValue={category?.reference_category}
+                    customClassName="w-full mt-2"
+                    type="select"
+                    control={control}
+                    placeholder={`Select category`}
+                    options={manipulatedCategories}
+                    required
+                  />
+                </div>
                 <Button
                   disabled={loading}
                   type="submit"
