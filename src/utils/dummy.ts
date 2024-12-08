@@ -14,6 +14,8 @@ import {
   CircleDollarSign,
   Newspaper,
   ListTree,
+  Wallet,
+  ClipboardPen,
 } from 'lucide-react';
 import { FaUser } from 'react-icons/fa';
 import { FcLineChart, FcPackage } from 'react-icons/fc';
@@ -84,6 +86,11 @@ export const menuConfig = {
       icon: LayoutDashboard,
     },
     {
+      href: '/incomes',
+      label: 'Incomes',
+      icon: Wallet,
+    },
+    {
       href: '/expenses',
       label: 'Expenses',
       icon: HandCoins,
@@ -96,7 +103,7 @@ export const menuConfig = {
     {
       href: '/rules',
       label: 'Rules',
-      icon: HandCoins,
+      icon: ClipboardPen,
     },
     {
       href: '/deductions',

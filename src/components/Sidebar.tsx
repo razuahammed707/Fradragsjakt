@@ -72,9 +72,9 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
                 key={label}
               >
                 <AccordionItem value={label} className="border-none">
-                  <AccordionTrigger className="flex hover:hover:no-underline text-[#71717A] justify-between items-center p-2 rounded-lg hover:bg-violet-100">
+                  <AccordionTrigger className="flex hover:hover:no-underline text-[#71717A] justify-between items-center px-3 py-2 rounded-lg hover:bg-violet-100">
                     <span className="flex items-center">
-                      <Icon className="mr-2 h-[20px] w-[20px] text-[#71717A]" />
+                      <Icon className="mr-3 h-[20px] w-[20px] text-[#71717A]" />
                       {label}
                     </span>
                     {badge && (
