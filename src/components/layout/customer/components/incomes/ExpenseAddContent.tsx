@@ -83,7 +83,7 @@ function ExpenseAddContent({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
       toast.success(
-        translate('componentsExpenseModal.expense.toast.create_success'),
+        translate('componentsIncomeModal.income.toast.create_success'),
         { duration: 4000 }
       );
       reset();
@@ -93,7 +93,7 @@ function ExpenseAddContent({
     onError: (error) => {
       toast.error(
         error.message ||
-          translate('componentsExpenseModal.expense.toast.create_failure')
+          translate('componentsIncomeModal.income.toast.create_failure')
       );
       setLoading(false);
     },
@@ -102,7 +102,7 @@ function ExpenseAddContent({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
       toast.success(
-        translate('componentsExpenseModal.expense.toast.update_success'),
+        translate('componentsIncomeModal.income.toast.update_success'),
         { duration: 4000 }
       );
       reset();
@@ -112,7 +112,7 @@ function ExpenseAddContent({
     onError: (error) => {
       toast.error(
         error.message ||
-          translate('componentsExpenseModal.expense.toast.update_failure')
+          translate('componentsIncomeModal.income.toast.update_failure')
       );
       setLoading(false);
     },
@@ -201,16 +201,16 @@ function ExpenseAddContent({
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
         {origin === 'expense update'
-          ? translate('componentsExpenseModal.expense.heading.update_expense')
-          : translate('componentsExpenseModal.expense.heading.add_expense')}
+          ? translate('componentsIncomeModal.income.heading.update_income')
+          : translate('componentsIncomeModal.income.heading.add_income')}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {['description', 'amount'].map((field) => (
           <div key={field}>
             <Label htmlFor={field}>
               {field === 'description'
-                ? translate('componentsExpenseModal.expense.label.description')
-                : translate('componentsExpenseModal.expense.label.amount')}
+                ? translate('componentsIncomeModal.income.label.description')
+                : translate('componentsIncomeModal.income.label.amount')}
             </Label>
             <FormInput
               type={field === 'amount' ? 'number' : 'text'}
@@ -232,9 +232,7 @@ function ExpenseAddContent({
         {[
           {
             name: 'expense_type',
-            label: translate(
-              'componentsExpenseModal.expense.label.expense_type'
-            ),
+            label: translate('componentsIncomeModal.income.label.income_type'),
             defaultValue: payload?.expense_type,
             options: [
               { title: 'Business', value: 'business' },
@@ -244,7 +242,7 @@ function ExpenseAddContent({
           },
           {
             name: 'category',
-            label: translate('componentsExpenseModal.expense.label.category'),
+            label: translate('componentsIncomeModal.income.label.category'),
             defaultValue: payload?.category,
             options: manipulatedCategories,
           },
@@ -281,7 +279,7 @@ function ExpenseAddContent({
           <SharedTooltip
             visibleContent={
               <Link href="/" className="underline font-medium text-blue-500">
-                {translate('componentsExpenseModal.expense.uploaded_receipt')}
+                {translate('componentsIncomeModal.income.uploaded_receipt')}
               </Link>
             }
           >
@@ -301,9 +299,9 @@ function ExpenseAddContent({
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {origin === 'expense update'
-              ? translate('componentsExpenseModal.expense.button.update')
-              : translate('componentsExpenseModal.expense.button.add')}{' '}
-            {translate('componentsExpenseModal.expense.button.expense')}
+              ? translate('componentsIncomeModal.income.button.update')
+              : translate('componentsIncomeModal.income.button.add')}{' '}
+            {translate('componentsIncomeModal.income.button.income')}
           </Button>
         </div>
       </form>

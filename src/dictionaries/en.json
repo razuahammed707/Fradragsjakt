@@ -137,6 +137,10 @@
       "subheading": "in August",
       "search": "Search expenses"
     },
+    "incomeOverview": {
+      "heading": "Total Income Overview",
+      "search": "Search Income"
+    },
     "expenseoverview": {
       "filter_by": "Filter by"
     },
@@ -151,6 +155,12 @@
           "show_write_offs": "Show Write-offs",
           "add_expense": "Add Expense",
           "upload_statements": "Upload Statements"
+        }
+      },
+      "income_buttons": {
+        "text": {
+          "add_income": "Add Income",
+          "upload_statements": "Upload income Statements"
         }
       },
       "category_buttons": {
@@ -259,6 +269,34 @@
     "savings_from_questions": "Savings from questions",
     "potential_savings": "Potential Savings",
     "total_writeoffs": "Total (write-offs)"
+  },
+  "componentsIncomeModal": {
+    "income": {
+      "heading": {
+        "add_income": "Manually add income",
+        "update_income": "Update Income"
+      },
+      "label": {
+        "description": "Description",
+        "amount": "Amount (NOK)",
+        "income_type": "Income Type",
+        "category": "Category"
+      },
+      "button": {
+        "add": "Add",
+        "update": "Update",
+        "income": "Income"
+      },
+      "toast": {
+        "create_success": "Income created successfully!",
+        "create_failure": "Failed to create income",
+        "update_success": "Income updated successfully!",
+        "update_failure": "Failed to update income"
+      },
+      "uploaded_receipt": "Uploaded Receipt",
+      "upload": "Drag a file or click to browse",
+      "uploadTitle": "Upload Income Statement"
+    }
   },
   "default": "Translation missing"
 }

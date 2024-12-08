@@ -1,31 +1,47 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image, { StaticImageData } from 'next/image';
-import ExpenseStatsByType from './ExpenseStatsByType';
-import ExpenseType from './ExpenseType';
-import PlusIcon from '../../../../../../public/images/expenses/plus.png';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { trpc } from '@/utils/trpc';
-import { expense_categories } from '@/utils/dummy';
-import { useTranslation } from '@/lib/TranslationProvider';
 
-interface CategoryExpense {
-  category: string;
-  totalItemByCategory: number;
-  amount: number;
-}
+import IncomeStatsByType from './IncomeStatsByType';
+import IncomeType from './IncomeType';
 
-interface ExpenseType {
-  expense_type: string;
-  totalItemByExpenseType: number;
-  amount: number;
-}
+import ClothingImg from '../../../../../../public/images/expenses/clothing.png';
+import TravelImg from '../../../../../../public/images/expenses/travel.png';
+import TransportImg from '../../../../../../public/images/expenses/transport.png';
+import GasImg from '../../../../../../public/images/expenses/gas.png';
+import MealsImg from '../../../../../../public/images/expenses/meals.png';
+import InsuranceImg from '../../../../../../public/images/expenses/insurance.png';
+import PaymentImg from '../../../../../../public/payment.png';
+import MoreImg from '../../../../../../public/More.png';
+
+const incomeCategories = [
+  { label: 'Salary/Wages', image: ClothingImg },
+  { label: 'Bonuses', image: TravelImg },
+  { label: 'Overtime Pay', image: TransportImg },
+  { label: 'Holiday Pay', image: GasImg },
+  { label: 'Freelance Earnings', image: MealsImg },
+  { label: 'Business Profits', image: InsuranceImg },
+  { label: 'Interest', image: PaymentImg },
+  { label: 'Dividends', image: MoreImg },
+  { label: 'Rental Income', image: MoreImg },
+  { label: 'Capital Gains', image: MoreImg },
+  { label: 'Unemployment Benefits', image: MoreImg },
+  { label: 'Pension', image: MoreImg },
+  { label: 'Sick Pay', image: MoreImg },
+  { label: 'Parental Leave Pay', image: MoreImg },
+  { label: 'Child Benefits', image: MoreImg },
+  { label: 'Inheritance', image: MoreImg },
+  { label: 'Scholarships/Grants', image: MoreImg },
+  { label: 'Prizes/Awards', image: MoreImg },
+  { label: 'Alimony/Child Support', image: MoreImg },
+  { label: 'Gifts Over Tax-Free Limits', image: MoreImg },
+  { label: 'Honorariums', image: MoreImg },
+  { label: 'Side Hustle Income', image: MoreImg },
+];
 
 interface CategoryCard {
   id: number;
-  imageSrc: StaticImageData;
+  imageSrc: string;
   category: string;
   totalItemByCategory: number;
   amount: number;
@@ -36,99 +52,63 @@ type IFilterProps = {
 };
 
 const IncomeCardsSection = ({ filterString }: IFilterProps) => {
-  const [categoryCards, setCategoryCards] =
-    useState<CategoryCard[]>(expense_categories);
-  const [expenseStats, setExpenseStats] = useState({
+  const [categoryCards, setCategoryCards] = useState<CategoryCard[]>([]); // Dynamic state
+  const [incomeStats, setIncomeStats] = useState({
     personal: 0,
     business: 0,
   });
 
-  const { data: expenses } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
-      expense_type: '',
-      filterString,
-    });
-  const { data: user } = useSession();
-
-  const { translate } = useTranslation();
-
   useEffect(() => {
-    if (!expenses?.data) return;
+    const updatedCategoryCards = incomeCategories.map((category, index) => ({
+      id: index,
+      imageSrc: category.image, // Use the image from the updated incomeCategories array
+      category: category.label, // Category label
+      totalItemByCategory: Math.floor(Math.random() * 100),
+      amount: Math.floor(Math.random() * 10000),
+    }));
 
-    const { categoryWiseExpenses, expenseTypeWiseExpenses } = expenses.data;
+    const businessStats = updatedCategoryCards
+      .filter((card) => card.category.toLowerCase().includes('business'))
+      .reduce((sum, card) => sum + card.amount, 0);
 
-    if (categoryWiseExpenses) {
-      const updatedCategoryCards = expense_categories.map((card) => {
-        const matchingExpense = categoryWiseExpenses.find(
-          (expense: CategoryExpense) =>
-            expense.category.toLowerCase() === card.category.toLowerCase()
-        );
+    const personalStats = updatedCategoryCards
+      .filter((card) => card.category.toLowerCase().includes('personal'))
+      .reduce((sum, card) => sum + card.amount, 0);
 
-        return matchingExpense
-          ? {
-              ...card,
-              totalItemByCategory: matchingExpense.totalItemByCategory,
-              amount: matchingExpense.amount,
-            }
-          : card;
-      });
+    setIncomeStats({
+      business: businessStats,
+      personal: personalStats,
+    });
 
-      // Sort the cards by amount in descending order
-      updatedCategoryCards.sort((a, b) => b.amount - a.amount);
-
-      setCategoryCards(updatedCategoryCards);
-    }
-
-    if (expenseTypeWiseExpenses) {
-      const personal = expenseTypeWiseExpenses.find(
-        (exp: ExpenseType) => exp.expense_type === 'personal'
-      );
-      const business = expenseTypeWiseExpenses.find(
-        (exp: ExpenseType) => exp.expense_type === 'business'
-      );
-
-      setExpenseStats({
-        personal: personal?.amount ?? 0,
-        business: business?.amount ?? 0,
-      });
-    }
-  }, [expenses?.data]);
+    // Slice to show only the first 8 categories
+    setCategoryCards(updatedCategoryCards.slice(0, 8));
+  }, []);
 
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="grid grid-cols-2 gap-3">
-        <ExpenseStatsByType
-          type={translate('page.IncomeCardsSection.business')} // Translated
-          amount={expenseStats.business}
-          month={translate('page.IncomeCardsSection.august')} // Translated
-          percentage={2}
+        <IncomeStatsByType
+          type="Business"
+          amount={incomeStats.business}
           filterString={filterString}
         />
-        <ExpenseStatsByType
-          type={translate('page.IncomeCardsSection.personal')} // Translated
-          amount={expenseStats.personal}
-          month={translate('page.IncomeCardsSection.august')} // Translated
-          percentage={2}
+        <IncomeStatsByType
+          type="Personal"
+          amount={incomeStats.personal}
           filterString={filterString}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {categoryCards.slice(0, 7).map((expense, i) => (
-          <ExpenseType
+        {/* Display a maximum of 8 categories */}
+        {categoryCards.map((income, i) => (
+          <IncomeType
             key={i}
-            imageSrc={expense.imageSrc}
-            amount={expense.amount}
-            type={expense.category}
-            quantity={expense.totalItemByCategory}
+            imageSrc={income.imageSrc}
+            amount={income.amount}
+            type={income.category}
+            quantity={income.totalItemByCategory}
           />
         ))}
-        <Link
-          href={`/${user?.user.role}/categories`}
-          className="text-white flex items-center justify-center bg-[#5B52F9] p-4 rounded-xl font-bold cursor-pointer"
-        >
-          <Image src={PlusIcon} alt="Plus icon" className="mr-3" />
-          {translate('page.IncomeCardsSection.more')} {/* Translated */}
-        </Link>
       </div>
     </div>
   );

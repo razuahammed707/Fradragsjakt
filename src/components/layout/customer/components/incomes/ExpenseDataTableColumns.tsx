@@ -140,7 +140,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           <ExpenseDetailsModal payload={row.original} />
           <ExpenseUpdateModal payload={row.original} />
           <SharedDeleteActionCell
-            itemOrigin="expense"
+            itemOrigin="income"
             itemId={row.original._id as string}
           />
         </div>

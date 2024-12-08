@@ -99,19 +99,15 @@ function IncomeOverviewTools({
         <div>
           <h1 className="text-xl font-semibold">
             {translate(
-              'components.expenseOverview.heading',
-              'Total Expenses Overview'
+              'components.incomeOverview.heading',
+              'Total Income Overview'
             )}
           </h1>
-          <h2 className="text-sm text-gray-600 font-light mb-0">
-            <strong className="text-[#00B386] font-semibold">+2%</strong>{' '}
-            {translate('components.expenseOverview.subheading', 'in August')}
-          </h2>
         </div>
         <SearchInput
           className="hidden md:block"
           onChange={handleSearchChange}
-          placeholder={translate('components.expenseOverview.search', 'Search')}
+          placeholder={translate('components.incomeOverview.search', 'Search')}
         />
       </div>
       <div className="flex justify-between mt-5">
@@ -121,7 +117,7 @@ function IncomeOverviewTools({
             onClick={() => handleButtonClick('addExpense')}
           >
             <IoMdAdd className="font-bold mr-2" />{' '}
-            {translate('components.buttons.expense_buttons.text.add_expense')}
+            {translate('components.buttons.income_buttons.text.add_income')}
           </Button>
           <Button
             variant="purple"
@@ -129,7 +125,7 @@ function IncomeOverviewTools({
           >
             <IoMdAdd className="font-bold mr-2" />{' '}
             {translate(
-              'components.buttons.expense_buttons.text.upload_statements'
+              'components.buttons.income_buttons.text.upload_statements'
             )}
           </Button>
         </div>

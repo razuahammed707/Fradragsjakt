@@ -258,7 +258,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
       <h1 className="font-medium text-lg text-black mb-4">
         {isFileProcessed
           ? 'Return'
-          : translate('componentsExpenseModal.expense.uploadTitle')}
+          : translate('componentsIncomeModal.income.uploadTitle')}
       </h1>
       {isFileProcessed ? (
         <div className="text-xs space-y-4">

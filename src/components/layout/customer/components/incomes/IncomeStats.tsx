@@ -1,26 +1,25 @@
-'use client';
-
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import { trpc } from '@/utils/trpc';
 import { chartItemsManipulation } from '@/utils/helpers/expenseChartItemsManipulation';
+
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
-const ExpenseStats: React.FC<{ title: string; filterString?: string }> = ({
+const IncomeStats: React.FC<{ title: string; filterString?: string }> = ({
   title,
   filterString,
 }) => {
   const { data: analytics } =
-    trpc.expenses.getBusinessAndPersonalExpenseAnalytics.useQuery({
-      expense_type: '',
+    trpc.incomes.getBusinessAndPersonalIncomeAnalytics.useQuery({
+      income_type: '',
       filterString,
     });
 
-  const businessExpenseAnalytics = analytics?.data?.businessExpenseAnalytics;
-  const personalExpenseAnalytics = analytics?.data?.personalExpenseAnalytics;
+  const businessIncomeAnalytics = analytics?.data?.businessIncomeAnalytics;
+  const personalIncomeAnalytics = analytics?.data?.personalIncomeAnalytics;
   const weekDays = [
     'Monday',
     'Tuesday',
@@ -31,19 +30,18 @@ const ExpenseStats: React.FC<{ title: string; filterString?: string }> = ({
     'Sunday',
   ];
 
-  const { manipulateWeekDays, chartItemsByExpenseType } =
-    chartItemsManipulation(
-      title,
-      weekDays,
-      businessExpenseAnalytics,
-      personalExpenseAnalytics
-    );
+  const { manipulateWeekDays, chartItemsByIncomeType } = chartItemsManipulation(
+    title,
+    weekDays,
+    businessIncomeAnalytics,
+    personalIncomeAnalytics
+  );
 
   const chartOptions = {
     series: [
       {
         name: 'Transactions',
-        data: chartItemsByExpenseType || [0],
+        data: chartItemsByIncomeType || [0],
       },
     ] as ApexAxisChartSeries,
     options: {
@@ -111,7 +109,7 @@ const ExpenseStats: React.FC<{ title: string; filterString?: string }> = ({
         theme: 'dark',
         y: {
           formatter: function (value: number) {
-            return `$${value.toLocaleString()}`;
+            return `NOK ${value.toLocaleString()}`;
           },
         },
         custom: function ({
@@ -161,4 +159,4 @@ const ExpenseStats: React.FC<{ title: string; filterString?: string }> = ({
   );
 };
 
-export default ExpenseStats;
+export default IncomeStats;
