@@ -29,7 +29,7 @@ type FileRowData = {
   [key: string]: string;
 };
 
-type ExpenseData = {
+type IncomeData = {
   description: string;
   amount: number;
   transaction_date?: string | null;
@@ -110,11 +110,11 @@ const parseFileData = (data: string[][]): ParsedFileResult => {
   };
 };
 
-const mapToExpenseData = (
+const mapToIncomeData = (
   formData: FormData,
   fileData: FileRowData[],
   headers: Column[]
-): ExpenseData[] => {
+): IncomeData[] => {
   return fileData
     .map((row) => {
       const descriptionColumnIndex = headers.findIndex(
@@ -153,13 +153,13 @@ const mapToExpenseData = (
       }
       return null;
     })
-    .filter((item): item is ExpenseData => item !== null);
+    .filter((item): item is IncomeData => item !== null);
 };
 
-type ExpenseUploadContentProps = {
+type IncomeUploadStatementsProps = {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
 };
-const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
+const IncomeUploadStatements: React.FC<IncomeUploadStatementsProps> = ({
   setModalOpen,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -218,10 +218,10 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
     accept: { 'text/csv': ['.csv'] },
   });
 
-  const mutation = trpc.expenses.createBulkExpenses.useMutation({
+  const mutation = trpc.incomes.createBulkIncomes.useMutation({
     onSuccess: () => {
-      utils.expenses.getExpenses.invalidate();
-      toast.success('Expenses created successfully!', {
+      utils.incomes.getIncomes.invalidate();
+      toast.success('Incomes created successfully!', {
         duration: 4000,
       });
       reset();
@@ -229,18 +229,18 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
       setLoading(false);
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to create expenses');
+      toast.error(error.message || 'Failed to create incomes');
       setLoading(false);
     },
   });
 
   const onSubmit = (formData: FormData): void => {
     console.log({ formData });
-    const mappedExpenses = mapToExpenseData(formData, fileData, headers);
+    const mappedIncomes = mapToIncomeData(formData, fileData, headers);
 
-    console.log('mapped expenses', mappedExpenses);
+    console.log('mapped expenses', mappedIncomes);
     setLoading(true);
-    mutation.mutate(mappedExpenses);
+    mutation.mutate(mappedIncomes);
   };
 
   const headerOptions = React.useMemo(
@@ -340,4 +340,4 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   );
 };
 
-export default ExpenseUploadContent;
+export default IncomeUploadStatements;

@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button';
 import { IoMdAdd } from 'react-icons/io';
 import ExpenseAddContent from './ExpenseAddContent';
 import SharedModal from '../../../../SharedModal';
-import ExpenseUploadContent from './ExpenseUploadContent';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
 
 import { debounce } from '@/lib/utils';
 import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
+import IncomeUploadStatements from './IncomeUploadStatements';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
@@ -80,7 +80,7 @@ function IncomeOverviewTools({
       );
     }
     if (modalContent.key === 'uploadStatements') {
-      return <ExpenseUploadContent setModalOpen={setModalOpen} />;
+      return <IncomeUploadStatements setModalOpen={setModalOpen} />;
     }
     return <></>;
   };
