@@ -5,6 +5,7 @@ const categorySchema = z.object({
     .string()
     .min(2, 'Category title must be at least 2 characters')
     .max(50, 'Category title must not exceed 50 characters'),
+  reference_category: z.string().optional(),
 });
 const deleteCategorySchema = z.object({
   _id: z.string().min(1, 'Category ID is required'),
@@ -15,6 +16,7 @@ const updateCategorySchema = z.object({
     .string()
     .min(2, 'Category title must be at least 2 characters')
     .max(50, 'Category title must not exceed 50 characters'),
+  reference_category: z.string().optional(),
 });
 
 export const categoryValidation = {
