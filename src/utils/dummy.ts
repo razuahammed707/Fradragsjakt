@@ -553,4 +553,11 @@ export const predefinedCategories = [
     total_amount: 0,
     total_original_amount: 0,
   },
+  {
+    id: 7,
+    name: 'Custom Category Expenses',
+    items: [{ name: 'N/A', amount: 0, original_amount: 0 }],
+    total_amount: 0,
+    total_original_amount: 0,
+  },
 ];
