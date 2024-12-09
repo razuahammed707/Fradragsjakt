@@ -333,6 +333,30 @@ export const expense_categories = [
     amount: 0,
   },
 ];
+export const income_categories = [
+  { label: 'Salary/Wages', image: ClothingImg },
+  { label: 'Bonuses', image: TravelImg },
+  { label: 'Overtime Pay', image: TransportImg },
+  { label: 'Holiday Pay', image: GasImg },
+  { label: 'Freelance Earnings', image: MealsImg },
+  { label: 'Business Profits', image: InsuranceImg },
+  { label: 'Interest', image: PaymentImg },
+  { label: 'Dividends', image: MoreImg },
+  { label: 'Rental Income', image: MoreImg },
+  { label: 'Capital Gains', image: MoreImg },
+  { label: 'Unemployment Benefits', image: MoreImg },
+  { label: 'Pension', image: MoreImg },
+  { label: 'Sick Pay', image: MoreImg },
+  { label: 'Parental Leave Pay', image: MoreImg },
+  { label: 'Child Benefits', image: MoreImg },
+  { label: 'Inheritance', image: MoreImg },
+  { label: 'Scholarships/Grants', image: MoreImg },
+  { label: 'Prizes/Awards', image: MoreImg },
+  { label: 'Alimony/Child Support', image: MoreImg },
+  { label: 'Gifts Over Tax-Free Limits', image: MoreImg },
+  { label: 'Honorariums', image: MoreImg },
+  { label: 'Side Hustle Income', image: MoreImg },
+];
 
 export const expenseWriteOffs = [
   {

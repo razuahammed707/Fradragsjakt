@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import SharedPagination from '@/components/SharedPagination';
 import { SharedDataTable } from '@/components/SharedDataTable';
-import { expenseDataTableColumns } from './ExpenseDataTableColumns';
 import { trpc } from '@/utils/trpc';
 import IncomeOverviewTools from './IncomeOverviewTools';
+import { incomeDataTableColumns } from './incomeDataTableColumns';
 
 type IFilterProps = {
   filterString: string;
@@ -21,18 +21,17 @@ function IncomeOverviewSection({
   const [searchTerm, setSearchTerm] = useState<string>('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-  const { data: expensesResponse, isLoading } =
-    trpc.expenses.getExpenses.useQuery(
-      {
-        page: currentPage,
-        limit: pageLimit,
-        searchTerm,
-        filterString,
-      },
-      {
-        keepPreviousData: true,
-      }
-    );
+  const { data: incomesResponse, isLoading } = trpc.incomes.getIncomes.useQuery(
+    {
+      page: currentPage,
+      limit: pageLimit,
+      searchTerm,
+      filterString,
+    },
+    {
+      keepPreviousData: true,
+    }
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -50,13 +49,13 @@ function IncomeOverviewSection({
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
-          columns={expenseDataTableColumns()}
-          data={expensesResponse?.data || []}
+          columns={incomeDataTableColumns()}
+          data={incomesResponse?.data || []}
         />
         <SharedPagination
           currentPage={currentPage}
           pageLimit={pageLimit}
-          totalPages={expensesResponse?.pagination?.totalPages ?? 1}
+          totalPages={incomesResponse?.pagination?.totalPages ?? 1}
           onPageChange={handlePageChange}
           onPageLimitChange={handlePageLimitChange}
         />

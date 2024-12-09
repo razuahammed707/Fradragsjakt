@@ -1,19 +1,13 @@
 import { ApiError } from '@/lib/exceptions';
-import {
-  ExpenseType,
-  IExpense,
-  IExpenseUpdate,
-} from '../db/interfaces/expense';
+import { IncomeType, IIncome, IIncomeUpdate } from '../db/interfaces/income';
 import CategoryModel from '../db/models/category';
-import ExpenseModel from '../db/models/expense';
+import IncomeModel from '../db/models/income';
 import RuleModel from '../db/models/rules';
 import httpStatus from 'http-status';
 import { errorHandler } from '../middlewares/error-handler';
 import { IRule } from '../db/interfaces/rules';
 import { JwtPayload } from 'jsonwebtoken';
 import mongoose from 'mongoose';
-import { IncomeType } from '../db/interfaces/income';
-import IncomeModel from '../db/models/income';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
@@ -42,7 +36,7 @@ async function findMatchingRule(description: string, userId: string) {
   }
 }
 
-async function createIncomeRecord(input: IExpense, userId: string) {
+async function createIncomeRecord(input: IIncome, userId: string) {
   try {
     const category = await CategoryModel.findOneAndUpdate(
       {
@@ -66,7 +60,7 @@ async function createIncomeRecord(input: IExpense, userId: string) {
       },
       {
         $setOnInsert: {
-          expense_type: input.expense_type,
+          income_type: input.income_type,
           category_title: input.category,
           category: category?._id,
         },
@@ -74,11 +68,11 @@ async function createIncomeRecord(input: IExpense, userId: string) {
       { upsert: true, new: true }
     );
 
-    return await ExpenseModel.create({
+    return await IncomeModel.create({
       ...input,
       user: userId,
-      expense_type:
-        updatedRule?.expense_type || input.expense_type || ExpenseType.unknown,
+      income_type:
+        updatedRule?.income_type || input.income_type || IncomeType.unknown,
       category: category?.title || input.category || 'unknown',
       rule: updatedRule?._id,
     });
@@ -98,7 +92,7 @@ async function createIncomeFromBulkInput(
     const incomeData = {
       ...input,
       user: userId,
-      income_type: rule?.expense_type || IncomeType.unknown,
+      income_type: rule?.income_type || IncomeType.unknown,
       category: rule?.category_title || 'unknown',
       rule: rule?._id,
     };
@@ -116,58 +110,58 @@ async function createIncomeFromBulkInput(
 
 const getIncomesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
   try {
-    const expensesWithRules = (
+    const incomesWithRules = (
       await Promise.all(
         rules.map(async (rule) => {
           const escapedDescription = rule.description_contains.replace(
             /[-/\\^$*+?.()|[\]{}]/g,
             '\\$&'
           );
-          const expenses = await ExpenseModel.find({
+          const incomes = await IncomeModel.find({
             user: loggedUser?.id,
-            expense_type: ExpenseType.unknown,
-            category: ExpenseType.unknown,
+            income_type: IncomeType.unknown,
+            category: IncomeType.unknown,
             description: {
               $regex: escapedDescription,
               $options: 'i',
             },
           })
             .sort({ createdAt: -1 })
-            .select('amount description category expense_type')
+            .select('amount description category income_type')
             .lean();
 
-          return expenses.length > 0
+          return incomes.length > 0
             ? {
                 rule: rule.description_contains,
-                expensePayload: {
+                incomePayload: {
                   rule: rule._id,
                   category: rule.category_title,
-                  expense_type: rule.expense_type,
+                  income_type: rule.income_type,
                 },
-                expenses,
+                incomes,
               }
             : null;
         })
       )
     ).filter((result) => result !== null);
-    return expensesWithRules;
+    return incomesWithRules;
   } catch (error) {
     const { message } = errorHandler(error);
     throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 };
 
-const getCategoryAndExpenseTypeAnalytics = async (
+const getCategoryAndIncomeTypeAnalytics = async (
   query: Record<string, unknown>
 ) => {
   try {
-    return await ExpenseModel.aggregate([
+    return await IncomeModel.aggregate([
       {
         $match: query,
       },
       {
         $facet: {
-          categoryWiseExpenses: [
+          categoryWiseIncomes: [
             {
               $group: {
                 _id: '$category',
@@ -184,18 +178,18 @@ const getCategoryAndExpenseTypeAnalytics = async (
               },
             },
           ],
-          expenseTypeWiseExpenses: [
+          IncomeTypeWiseIncomes: [
             {
               $group: {
-                _id: '$expense_type',
+                _id: '$income_type',
                 totalAmount: { $sum: '$amount' },
                 totalItems: { $sum: 1 },
               },
             },
             {
               $project: {
-                expense_type: '$_id',
-                totalItemByExpenseType: '$totalItems',
+                income_type: '$_id',
+                totalItemByIncomeType: '$totalItems',
                 amount: '$totalAmount',
                 _id: 0,
               },
@@ -210,7 +204,7 @@ const getCategoryAndExpenseTypeAnalytics = async (
   }
 };
 
-interface ExpenseAnalytics {
+interface incomeAnalytics {
   date?: string;
   totalAmount: number;
   totalItems: number;
@@ -218,14 +212,14 @@ interface ExpenseAnalytics {
   month?: string;
 }
 
-interface ExpenseAnalyticsResult {
-  businessExpenseAnalytics: ExpenseAnalytics[];
-  personalExpenseAnalytics: ExpenseAnalytics[];
+interface incomeAnalyticsResult {
+  businessincomeAnalytics: incomeAnalytics[];
+  personalincomeAnalytics: incomeAnalytics[];
 }
 
-const getBusinessAndPersonalExpenseAnalytics = async (
+const getBusinessAndPersonalIncomeAnalytics = async (
   query: Record<string, unknown>
-): Promise<ExpenseAnalyticsResult[]> => {
+): Promise<incomeAnalyticsResult[]> => {
   try {
     const today = new Date();
     const sevenDaysAgo = new Date(today);
@@ -238,7 +232,7 @@ const getBusinessAndPersonalExpenseAnalytics = async (
       dateArray.push(date.toISOString().split('T')[0]);
     }
 
-    const result = await ExpenseModel.aggregate<ExpenseAnalyticsResult>([
+    const result = await IncomeModel.aggregate<incomeAnalyticsResult>([
       {
         $match: {
           ...query,
@@ -250,10 +244,10 @@ const getBusinessAndPersonalExpenseAnalytics = async (
       },
       {
         $facet: {
-          businessExpenseAnalytics: [
+          businessincomeAnalytics: [
             {
               $match: {
-                expense_type: 'business',
+                income_type: 'business',
               },
             },
             {
@@ -299,11 +293,11 @@ const getBusinessAndPersonalExpenseAnalytics = async (
               $limit: 7,
             },
           ],
-          // Personal Expense Analytics grouped by day
-          personalExpenseAnalytics: [
+          // Personal income Analytics grouped by day
+          personalincomeAnalytics: [
             {
               $match: {
-                expense_type: 'personal',
+                income_type: 'personal',
               },
             },
             {
@@ -354,12 +348,12 @@ const getBusinessAndPersonalExpenseAnalytics = async (
     ]);
 
     return result.map((analytics) => ({
-      businessExpenseAnalytics: ensureSevenDaysCoverage(
-        analytics.businessExpenseAnalytics,
+      businessincomeAnalytics: ensureSevenDaysCoverage(
+        analytics.businessincomeAnalytics,
         dateArray
       ),
-      personalExpenseAnalytics: ensureSevenDaysCoverage(
-        analytics.personalExpenseAnalytics,
+      personalincomeAnalytics: ensureSevenDaysCoverage(
+        analytics.personalincomeAnalytics,
         dateArray
       ),
     }));
@@ -369,9 +363,9 @@ const getBusinessAndPersonalExpenseAnalytics = async (
   }
 };
 
-const getBusinessAndPersonalExpenseAnalyticsYearly = async (
+const getBusinessAndPersonalIncomeAnalyticsYearly = async (
   query: Record<string, unknown>
-): Promise<ExpenseAnalyticsResult[]> => {
+): Promise<incomeAnalyticsResult[]> => {
   try {
     const today = new Date();
     const twelveMonthsAgo = new Date(today);
@@ -385,7 +379,7 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
       monthArray.push(yearMonth);
     }
 
-    const result = await ExpenseModel.aggregate<ExpenseAnalyticsResult>([
+    const result = await IncomeModel.aggregate<incomeAnalyticsResult>([
       {
         $match: {
           ...query,
@@ -397,10 +391,10 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
       },
       {
         $facet: {
-          businessExpenseAnalytics: [
+          businessincomeAnalytics: [
             {
               $match: {
-                expense_type: 'business',
+                income_type: 'business',
               },
             },
             {
@@ -443,10 +437,10 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
               },
             },
           ],
-          personalExpenseAnalytics: [
+          personalincomeAnalytics: [
             {
               $match: {
-                expense_type: 'personal',
+                income_type: 'personal',
               },
             },
             {
@@ -494,12 +488,12 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
     ]);
 
     return result.map((analytics) => ({
-      businessExpenseAnalytics: ensureTwelveMonthsCoverage(
-        analytics.businessExpenseAnalytics,
+      businessincomeAnalytics: ensureTwelveMonthsCoverage(
+        analytics.businessincomeAnalytics,
         monthArray
       ),
-      personalExpenseAnalytics: ensureTwelveMonthsCoverage(
-        analytics.personalExpenseAnalytics,
+      personalincomeAnalytics: ensureTwelveMonthsCoverage(
+        analytics.personalincomeAnalytics,
         monthArray
       ),
     }));
@@ -510,9 +504,9 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
 };
 
 const ensureTwelveMonthsCoverage = (
-  analytics: ExpenseAnalytics[],
+  analytics: incomeAnalytics[],
   monthArray: string[]
-): ExpenseAnalytics[] => {
+): incomeAnalytics[] => {
   const analyticsMap = new Map(analytics.map((item) => [item.month, item]));
   return monthArray.map(
     (month) =>
@@ -521,9 +515,9 @@ const ensureTwelveMonthsCoverage = (
 };
 
 const ensureSevenDaysCoverage = (
-  analytics: ExpenseAnalytics[],
+  analytics: incomeAnalytics[],
   dateArray: string[]
-): ExpenseAnalytics[] => {
+): incomeAnalytics[] => {
   const analyticsMap = new Map(analytics.map((item) => [item.date, item]));
 
   return dateArray.map((date) => {
@@ -545,51 +539,13 @@ const ensureSevenDaysCoverage = (
   });
 };
 
-const getWriteOffSummary = async (
-  skip: number,
-  limit: number,
-  searchQuery: Record<string, unknown>
-) => {
+const getTotalUniqueincomeCategories = async (loggedUser: JwtPayload) => {
   try {
-    return await ExpenseModel.aggregate([
-      {
-        $match: searchQuery,
-      },
-      {
-        $group: {
-          _id: '$category',
-          totalAmount: { $sum: '$amount' },
-          totalItems: { $sum: 1 },
-        },
-      },
-      {
-        $project: {
-          category: '$_id',
-          totalItemByCategory: '$totalItems',
-          amount: '$totalAmount',
-          _id: 0,
-        },
-      },
-      {
-        $skip: Number(skip),
-      },
-      {
-        $limit: Number(limit),
-      },
-    ]);
-  } catch (error) {
-    const { message } = errorHandler(error);
-    throw new ApiError(httpStatus.NOT_FOUND, message);
-  }
-};
-
-const getTotalUniqueExpenseCategories = async (loggedUser: JwtPayload) => {
-  try {
-    return await ExpenseModel.aggregate([
+    return await IncomeModel.aggregate([
       {
         $match: {
           user: new mongoose.Types.ObjectId(loggedUser?.id),
-          expense_type: ExpenseType.business,
+          income_type: IncomeType.business,
         },
       },
       {
@@ -606,42 +562,42 @@ const getTotalUniqueExpenseCategories = async (loggedUser: JwtPayload) => {
     throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 };
-const deleteExpenseRecord = async (expenseId: string, userId: string) => {
+const deleteIncomeRecord = async (incomeId: string, userId: string) => {
   try {
-    const expense = await ExpenseModel.findOne({
-      _id: expenseId,
+    const income = await IncomeModel.findOne({
+      _id: incomeId,
       user: userId,
     });
-    if (!expense) {
-      throw new Error('Expense not found or unauthorized');
+    if (!income) {
+      throw new Error('Income not found or unauthorized');
     }
 
-    const deletedExpense = await ExpenseModel.findByIdAndDelete(expenseId);
+    const deletedIncome = await IncomeModel.findByIdAndDelete(incomeId);
 
-    if (!deletedExpense) {
-      throw new Error('Failed to delete expense');
+    if (!deletedIncome) {
+      throw new Error('Failed to delete income');
     }
 
-    return deletedExpense;
+    return deletedIncome;
   } catch (error) {
     const { message } = errorHandler(error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
   }
 };
-const updateIncomeRecord = async (input: IExpenseUpdate, userId: string) => {
+const updateIncomeRecord = async (input: IIncomeUpdate, userId: string) => {
   try {
     const { id, ...updateData } = input;
-    const expense = await ExpenseModel.findOneAndUpdate(
+    const income = await IncomeModel.findOneAndUpdate(
       { _id: id, user: userId },
       { $set: updateData },
       { new: true, runValidators: true }
     );
-    if (!expense) {
+    if (!income) {
       throw new Error(
-        'Expense not found or you do not have permission to update'
+        'income not found or you do not have permission to update'
       );
     }
-    return expense;
+    return income;
   } catch (error) {
     const { message } = errorHandler(error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
@@ -654,10 +610,9 @@ export const IncomeHelpers = {
   createIncomeFromBulkInput,
   findMatchingRule,
   getIncomesWithRules,
-  getCategoryAndExpenseTypeAnalytics,
-  deleteExpenseRecord,
-  getWriteOffSummary,
-  getTotalUniqueExpenseCategories,
-  getBusinessAndPersonalExpenseAnalytics,
-  getBusinessAndPersonalExpenseAnalyticsYearly,
+  getCategoryAndIncomeTypeAnalytics,
+  deleteIncomeRecord,
+  getTotalUniqueincomeCategories,
+  getBusinessAndPersonalIncomeAnalytics,
+  getBusinessAndPersonalIncomeAnalyticsYearly,
 };

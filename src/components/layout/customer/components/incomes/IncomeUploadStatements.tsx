@@ -228,17 +228,15 @@ const IncomeUploadStatements: React.FC<IncomeUploadStatementsProps> = ({
       setModalOpen(false);
       setLoading(false);
     },
-    onError: (error) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       toast.error(error.message || 'Failed to create incomes');
       setLoading(false);
     },
   });
 
   const onSubmit = (formData: FormData): void => {
-    console.log({ formData });
     const mappedIncomes = mapToIncomeData(formData, fileData, headers);
-
-    console.log('mapped expenses', mappedIncomes);
     setLoading(true);
     mutation.mutate(mappedIncomes);
   };

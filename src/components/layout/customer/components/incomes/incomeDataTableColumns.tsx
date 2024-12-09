@@ -9,22 +9,22 @@ import Image from 'next/image';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import formatDate from '@/utils/helpers/formatDate';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
-import ExpenseUpdateModal from './ExpenseUpdateModal';
-import ExpenseDetailsModal from './ExpenseDetailsModal';
 import { useTranslation } from '@/lib/TranslationProvider';
+import IncomeDetailsModal from './IncomeDetailsModal';
+import IncomeUpdateModal from './IncomeUpdateModal';
 
-export type ExpenseColumnProps = {
+export type IncomeColumnProps = {
   _id: string;
   id: string;
   transaction_date?: string;
   createdAt?: string;
   description: string;
   category: string;
-  expense_type: string;
+  income_type: string;
   amount: number;
 };
 
-export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
+export const incomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { translate } = useTranslation();
 
@@ -55,7 +55,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
     },
     {
       accessorKey: 'transaction_date',
-      header: translate('page.expenseDataTableColumns.date', 'Date'),
+      header: translate('page.incomeDataTableColumns.date', 'Date'),
       cell: ({ row }) => {
         const transactionDate = row.getValue('transaction_date') as string;
         const createdAt = row.original.createdAt;
@@ -68,7 +68,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
     {
       accessorKey: 'description',
       header: translate(
-        'page.expenseDataTableColumns.description',
+        'page.incomeDataTableColumns.description',
         'Description'
       ),
       cell: ({ row }) => (
@@ -83,7 +83,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {translate('page.expenseDataTableColumns.category', 'Category')}{' '}
+          {translate('page.incomeDataTableColumns.category', 'Category')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
@@ -92,19 +92,19 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
       ),
     },
     {
-      accessorKey: 'expense_type',
+      accessorKey: 'income_type',
       header: ({ column }) => (
         <Button
           variant="ghost"
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {translate('page.expenseDataTableColumns.type', 'Type')}{' '}
+          {translate('page.incomeDataTableColumns.type', 'Type')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
       cell: ({ row }) => (
-        <span>{transformToUppercase(row.getValue('expense_type'))}</span>
+        <span>{transformToUppercase(row.getValue('income_type'))}</span>
       ),
     },
     {
@@ -115,7 +115,7 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {translate('page.expenseDataTableColumns.amount', 'Amount')}{' '}
+          {translate('page.incomeDataTableColumns.amount', 'Amount')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
@@ -137,8 +137,8 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
       id: 'actions',
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
-          <ExpenseDetailsModal payload={row.original} />
-          <ExpenseUpdateModal payload={row.original} />
+          <IncomeDetailsModal payload={row.original} />
+          <IncomeUpdateModal payload={row.original} />
           <SharedDeleteActionCell
             itemOrigin="income"
             itemId={row.original._id as string}

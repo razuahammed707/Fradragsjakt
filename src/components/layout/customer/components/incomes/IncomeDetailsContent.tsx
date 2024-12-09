@@ -2,12 +2,12 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import Placeholder from '../../../../../../public/receipt_placeholder.jpg';
 import PdfPlaceholder from '../../../../../../public/pdf_placeholder.png';
-import { PayloadType } from './ExpenseUpdateModal';
 import Image from 'next/image';
 import formatDate from '@/utils/helpers/formatDate';
 import { Button } from '@/components/ui/button';
+import { PayloadType } from './IncomeUpdateModal';
 
-function ExpenseDetailsContent({ payload }: { payload?: PayloadType }) {
+function IncomeDetailsContent({ payload }: { payload?: PayloadType }) {
   console.log('reciept__', payload?.receipt);
   const downloadFile = async (
     url: string | undefined,
@@ -53,7 +53,7 @@ function ExpenseDetailsContent({ payload }: { payload?: PayloadType }) {
           </p>
           <p className="text-nowrap truncate">{payload?.description}</p>
           <p>NOK {payload?.amount}</p>
-          <p>{payload?.expense_type}</p>
+          <p>{payload?.income_type}</p>
           <p>{payload?.category}</p>
         </div>
       </div>
@@ -89,4 +89,4 @@ function ExpenseDetailsContent({ payload }: { payload?: PayloadType }) {
   );
 }
 
-export default ExpenseDetailsContent;
+export default IncomeDetailsContent;

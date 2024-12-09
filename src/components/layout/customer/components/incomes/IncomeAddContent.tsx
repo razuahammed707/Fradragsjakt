@@ -17,8 +17,8 @@ import { useDropzone } from 'react-dropzone';
 import SharedTooltip from '@/components/SharedTooltip';
 import Link from 'next/link';
 import Image from 'next/image';
-import { PayloadType } from './ExpenseUpdateModal';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { PayloadType } from './IncomeUpdateModal';
 
 type UploadedImageType = {
   link: string;
@@ -29,7 +29,7 @@ type UploadedImageType = {
 
 export type FormData = {
   description: string;
-  expense_type: 'unknown' | 'personal' | 'business';
+  income_type: 'unknown' | 'personal' | 'business';
   category: string;
   deduction_status: string;
   amount: number;
@@ -48,19 +48,19 @@ const defaultCategories = [
 
 type CategoryType = { title: string; value: string };
 
-interface ExpenseAddContentProps {
+interface IncomeAddContentProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
   categories?: CategoryType[];
   payload?: PayloadType;
   origin?: string;
 }
 
-function ExpenseAddContent({
+function IncomeAddContent({
   categories = [],
   setModalOpen,
   origin,
   payload,
-}: ExpenseAddContentProps) {
+}: IncomeAddContentProps) {
   const { translate } = useTranslation();
   const { handleSubmit, control, reset } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
@@ -79,9 +79,9 @@ function ExpenseAddContent({
     ).values()
   );
 
-  const createMutation = trpc.expenses.createExpense.useMutation({
+  const createMutation = trpc.incomes.createIncome.useMutation({
     onSuccess: () => {
-      utils.expenses.getExpenses.invalidate();
+      utils.incomes.getIncomes.invalidate();
       toast.success(
         translate('componentsIncomeModal.income.toast.create_success'),
         { duration: 4000 }
@@ -98,9 +98,9 @@ function ExpenseAddContent({
       setLoading(false);
     },
   });
-  const updateMutation = trpc.expenses.updateExpense.useMutation({
+  const updateMutation = trpc.incomes.updateIncome.useMutation({
     onSuccess: () => {
-      utils.expenses.getExpenses.invalidate();
+      utils.incomes.getIncomes.invalidate();
       toast.success(
         translate('componentsIncomeModal.income.toast.update_success'),
         { duration: 4000 }
@@ -200,7 +200,7 @@ function ExpenseAddContent({
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
-        {origin === 'expense update'
+        {origin === 'income update'
           ? translate('componentsIncomeModal.income.heading.update_income')
           : translate('componentsIncomeModal.income.heading.add_income')}
       </h1>
@@ -231,9 +231,9 @@ function ExpenseAddContent({
         ))}
         {[
           {
-            name: 'expense_type',
+            name: 'income_type',
             label: translate('componentsIncomeModal.income.label.income_type'),
-            defaultValue: payload?.expense_type,
+            defaultValue: payload?.income_type,
             options: [
               { title: 'Business', value: 'business' },
               { title: 'Personal', value: 'personal' },
@@ -298,7 +298,7 @@ function ExpenseAddContent({
             className="w-full text-white"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {origin === 'expense update'
+            {origin === 'income update'
               ? translate('componentsIncomeModal.income.button.update')
               : translate('componentsIncomeModal.income.button.add')}{' '}
             {translate('componentsIncomeModal.income.button.income')}
@@ -309,4 +309,4 @@ function ExpenseAddContent({
   );
 }
 
-export default ExpenseAddContent;
+export default IncomeAddContent;

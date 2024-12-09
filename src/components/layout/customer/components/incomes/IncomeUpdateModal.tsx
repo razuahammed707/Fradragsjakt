@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 
 import SharedModal from '@/components/SharedModal';
 import { Edit2 } from 'lucide-react';
-import ExpenseAddContent from './ExpenseAddContent';
 import { trpc } from '@/utils/trpc';
+import IncomeAddContent from './IncomeAddContent';
 
 export type PayloadType = {
   amount: number;
   category: string;
   description: string;
-  expense_type: string;
+  income_type: string;
   transaction_date?: string;
   createdAt?: string;
   receipt?: {
@@ -21,7 +21,7 @@ export type PayloadType = {
   _id: string;
 };
 
-export default function ExpenseUpdateModal({
+export default function IncomeUpdateModal({
   payload,
 }: {
   payload: PayloadType;
@@ -63,7 +63,7 @@ export default function ExpenseUpdateModal({
           customClassName="max-w-[500px]"
         >
           <div className="bg-white">
-            <ExpenseAddContent
+            <IncomeAddContent
               origin="expense update"
               setModalOpen={setModalOpen}
               categories={manipulateCategories}

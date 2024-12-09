@@ -14,57 +14,57 @@ type CategoryType = { title: string; value: string };
 export type RuleType = {
   _id: string;
   description_contains: string;
-  expense_type: string;
+  income_type: string;
   category_title: string;
   category: string;
   user: string;
 };
 
-type ExpensePayloadType = {
-  expense_type: string;
+type IncomePayloadType = {
+  income_type: string;
   category: string;
   rule: string;
 };
 
-type ExpenseType = {
+type IncomeType = {
   _id: string;
   description: string;
   amount: number;
   category: string;
-  expense_type: string;
+  income_type: string;
 };
 
-type ExpenseWithRulesType = {
-  expenses: ExpenseType[];
-  expensePayload: ExpensePayloadType;
+type IncomeWithRulesType = {
+  incomes: IncomeType[];
+  incomePayload: IncomePayloadType;
   rule: string;
 };
 
-interface ExpenseRuleContentProps {
+interface IncomeRuleContentProps {
   modalClose?: (open: boolean) => void;
   categories?: CategoryType[];
-  expenses: {
-    expensesWithRules: ExpenseWithRulesType[];
+  incomes: {
+    incomesWithRules: IncomeWithRulesType[];
     rules: RuleType[];
   };
   setModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 function ApplyRuleModalContent({
-  expenses: { expensesWithRules },
+  incomes: { incomesWithRules },
   setModalOpen,
-}: ExpenseRuleContentProps) {
+}: IncomeRuleContentProps) {
   const { translate } = useTranslation(); // Translation hook
   const [loading, setLoading] = useState(false);
   const [selectedRule, setSelectedRule] = useState<string>(
-    expensesWithRules[0]?.rule || ''
+    incomesWithRules[0]?.rule || ''
   );
-  const [tableData, setTableData] = useState<ExpenseType[]>([]);
-  const [deletedExpenseIds, setDeletedExpenseIds] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<IncomeType[]>([]);
+  const [deletedIncomeIds, setDeletedIncomeIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
 
-  const selectedRuleData = expensesWithRules.find(
+  const selectedRuleData = incomesWithRules.find(
     (exp) => exp.rule === selectedRule
   );
 
@@ -90,9 +90,9 @@ function ApplyRuleModalContent({
     setCurrentPage(1);
   };
 
-  const mutation = trpc.expenses.updateBulkExpense.useMutation({
+  const mutation = trpc.incomes.updateBulkIncome.useMutation({
     onSuccess: () => {
-      utils.expenses.getExpenses.invalidate();
+      utils.incomes.getIncomes.invalidate();
       toast.success(translate('applyRuleModal.toast.success'));
       setLoading(false);
       setModalOpen(false);
@@ -102,35 +102,35 @@ function ApplyRuleModalContent({
     },
   });
 
-  const handleDelete = (expenseId: string) => {
-    setDeletedExpenseIds((prev) => [...prev, expenseId]);
-    setTableData((prev) => prev.filter((expense) => expense._id !== expenseId));
+  const handleDelete = (IncomeId: string) => {
+    setDeletedIncomeIds((prev) => [...prev, IncomeId]);
+    setTableData((prev) => prev.filter((Income) => Income._id !== IncomeId));
   };
 
   const handleApplyRule = () => {
     setLoading(true);
-    if (selectedRuleData?.expensePayload) {
-      const expenses =
+    if (selectedRuleData?.incomePayload) {
+      const incomes =
         tableData
-          ?.filter((expense) => !deletedExpenseIds.includes(expense._id))
-          .map((expense) => ({
-            _id: expense._id,
-            expenseUpdatePayload: selectedRuleData.expensePayload,
+          ?.filter((income) => !deletedIncomeIds.includes(income._id))
+          .map((income) => ({
+            _id: income._id,
+            incomeUpdatePayload: selectedRuleData.incomePayload,
           })) || [];
 
-      if (expenses.length === 0) {
-        toast.error(translate('applyRuleModal.toast.noExpenses'));
+      if (incomes.length === 0) {
+        toast.error(translate('applyRuleModal.toast.noincomes'));
         setLoading(false);
         return;
       }
 
-      mutation.mutate({ expenses });
+      mutation.mutate({ incomes });
     }
   };
 
   useEffect(() => {
-    if (selectedRuleData?.expenses) {
-      setTableData(selectedRuleData.expenses);
+    if (selectedRuleData?.incomes) {
+      setTableData(selectedRuleData.incomes);
       setCurrentPage(1);
     }
   }, [selectedRuleData]);
@@ -141,18 +141,18 @@ function ApplyRuleModalContent({
         {translate('applyRuleModal.title')}
       </h1>
       <div className="flex flex-wrap gap-2">
-        {expensesWithRules.map((expenseRule) => (
+        {incomesWithRules.map((incomeRule) => (
           <Badge
-            key={expenseRule.rule}
+            key={incomeRule.rule}
             className={`rounded-[28px] py-1 cursor-pointer ${
-              selectedRule === expenseRule.rule
+              selectedRule === incomeRule.rule
                 ? 'bg-[#5B52F9] text-white'
                 : 'bg-[#EEF0F4] text-[#5B52F9]'
             }`}
-            onClick={() => handleRuleClick(expenseRule.rule)}
+            onClick={() => handleRuleClick(incomeRule.rule)}
           >
-            {expenseRule.rule}{' '}
-            <span className="ms-1">({expenseRule.expenses.length})</span>
+            {incomeRule.rule}{' '}
+            <span className="ms-1">({incomeRule.incomes.length})</span>
           </Badge>
         ))}
       </div>

@@ -18,6 +18,7 @@ function DeleteConfirmationContent({
 }: IDeleteProps) {
   const deleteRuleMutation = trpc.rules.deleteRule.useMutation();
   const deleteExpenseMutation = trpc.expenses.deleteExpense.useMutation();
+  const deleteIncomeMutation = trpc.incomes.deleteIncome.useMutation();
   const deleteCategoryMutation = trpc.categories.deleteCategory.useMutation();
 
   const getMutation = () => {
@@ -26,6 +27,8 @@ function DeleteConfirmationContent({
         return deleteRuleMutation;
       case 'expense':
         return deleteExpenseMutation;
+      case 'income':
+        return deleteIncomeMutation;
       case 'category':
         return deleteCategoryMutation;
       default:
@@ -40,6 +43,9 @@ function DeleteConfirmationContent({
         break;
       case 'expense':
         utils.expenses.getExpenses.invalidate();
+        break;
+      case 'income':
+        utils.incomes.getIncomes.invalidate();
         break;
       case 'category':
         utils.categories.getCategories.invalidate();

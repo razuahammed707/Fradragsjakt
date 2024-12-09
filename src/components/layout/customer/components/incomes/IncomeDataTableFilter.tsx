@@ -32,13 +32,13 @@ interface CategoryOption {
   updatedAt: string;
 }
 
-const expenseTypes: FilterItem[] = [
+const incomeTypes: FilterItem[] = [
   { id: 'business', label: 'Business' },
   { id: 'personal', label: 'Personal' },
   { id: 'unknown', label: 'Unknown' },
 ];
 
-export default function ExpenseDataTableFilter({
+export default function IncomeDataTableFilter({
   setFilterString,
 }: {
   setFilterString: (value: string) => void;
@@ -63,7 +63,7 @@ export default function ExpenseDataTableFilter({
       parts.push(`category=${selectedCategories.join(',')}`);
     }
     if (selectedTypes.length > 0) {
-      parts.push(`expense_type=${selectedTypes.join(',')}`);
+      parts.push(`income_type=${selectedTypes.join(',')}`);
     }
     return parts.join('&');
   };
@@ -124,7 +124,7 @@ export default function ExpenseDataTableFilter({
               width={20}
               height={20}
             />
-            {translate('components.expenseoverview.filter_by', 'Filter By')}{' '}
+            {translate('components.incomeoverview.filter_by', 'Filter By')}{' '}
             {!!totalSelectedFilters && `(${totalSelectedFilters})`}
           </Button>
         </PopoverTrigger>
@@ -132,10 +132,10 @@ export default function ExpenseDataTableFilter({
           <div className="space-y-4 max-h-[230px] min-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
             <div>
               <h4 className="mb-4 text-gray-500 text-sm font-medium leading-none">
-                Expense Type
+                Income Type
               </h4>
               <div className="grid gap-2">
-                {expenseTypes.map((type) => (
+                {incomeTypes.map((type) => (
                   <div key={type.id} className="flex items-center space-x-2">
                     <Checkbox
                       className="data-[state=checked]:text-white"

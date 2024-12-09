@@ -4,17 +4,19 @@ import { router } from '@/server/trpc';
 import { JwtPayload } from 'jsonwebtoken';
 import { ApiResponse } from '@/server/db/types';
 import { z } from 'zod';
-import IncomeModel from '@/server/db/models/expense';
 import { ApiError } from '@/lib/exceptions';
-
-import { ExpenseType } from '@/server/db/interfaces/expense';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
 import mongoose from 'mongoose';
 import { parseFilterString } from '@/utils/helpers/parseFilterString';
 import { IncomeValidations } from './income.validations';
 import { IncomeHelpers } from '@/server/helpers/income';
-import { IIncome, IIncomeUpdate } from '@/server/db/interfaces/income';
+import {
+  IIncome,
+  IIncomeUpdate,
+  IncomeType,
+} from '@/server/db/interfaces/income';
+import IncomeModel from '@/server/db/models/income';
 
 export const IncomeRouter = router({
   getIncomes: protectedProcedure
@@ -41,7 +43,7 @@ export const IncomeRouter = router({
           query.$or = [
             { description: { $regex: searchTerm, $options: 'i' } },
             { category: { $regex: searchTerm, $options: 'i' } },
-            { expense_type: { $regex: searchTerm, $options: 'i' } },
+            { income_type: { $regex: searchTerm, $options: 'i' } },
           ];
         }
         const total = await IncomeModel.countDocuments(query);
@@ -66,36 +68,36 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  getCategoryAndExpenseTypeWiseincomes: protectedProcedure
+  getCategoryAndIncomeTypeWiseIncomes: protectedProcedure
     .input(
       z.object({
-        expense_type: z.string().optional(),
+        income_type: z.string().optional(),
         filterString: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
-        const { expense_type, filterString } = input;
+        const { income_type, filterString } = input;
         const loggedUser = ctx.user as JwtPayload;
 
         const query: Record<string, unknown> = {
           user: new mongoose.Types.ObjectId(loggedUser?.id),
         };
 
-        if (expense_type) {
-          query.expense_type = ExpenseType.business;
+        if (income_type) {
+          query.income_type = IncomeType.business;
         }
 
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
 
         const incomes =
-          await IncomeHelpers.getCategoryAndExpenseTypeAnalytics(query);
+          await IncomeHelpers.getCategoryAndIncomeTypeAnalytics(query);
 
         return {
           status: 200,
           message:
-            'Category-wise and expense_type-wise incomes fetched successfully',
+            'Category-wise and income_type-wise incomes fetched successfully',
           data: incomes[0],
         } as ApiResponse<(typeof incomes)[0]>;
       } catch (error: unknown) {
@@ -103,35 +105,35 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  getBusinessAndPersonalExpenseAnalytics: protectedProcedure
+  getBusinessAndPersonalincomeAnalytics: protectedProcedure
     .input(
       z.object({
-        expense_type: z.string().optional(),
+        income_type: z.string().optional(),
         filterString: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
-        const { expense_type, filterString } = input;
+        const { income_type, filterString } = input;
         const loggedUser = ctx.user as JwtPayload;
 
         const query: Record<string, unknown> = {
           user: new mongoose.Types.ObjectId(loggedUser?.id),
         };
 
-        if (expense_type) {
-          query.expense_type = ExpenseType.business;
+        if (income_type) {
+          query.income_type = IncomeType.business;
         }
 
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
 
         const incomes =
-          await IncomeHelpers.getBusinessAndPersonalExpenseAnalytics(query);
+          await IncomeHelpers.getBusinessAndPersonalIncomeAnalytics(query);
 
         return {
           status: 200,
-          message: 'Analytics for business an personal expense are fetched.',
+          message: 'Analytics for business an personal income are fetched.',
           data: incomes[0],
         } as ApiResponse<(typeof incomes)[0]>;
       } catch (error: unknown) {
@@ -139,37 +141,37 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  getBusinessAndPersonalExpenseYearly: protectedProcedure
+  getBusinessAndPersonalincomeYearly: protectedProcedure
     .input(
       z.object({
-        expense_type: z.string().optional(),
+        income_type: z.string().optional(),
         filterString: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
-        const { expense_type, filterString } = input;
+        const { income_type, filterString } = input;
         const loggedUser = ctx.user as JwtPayload;
 
         const query: Record<string, unknown> = {
           user: new mongoose.Types.ObjectId(loggedUser?.id),
         };
 
-        if (expense_type) {
-          query.expense_type = ExpenseType.business;
+        if (income_type) {
+          query.income_type = IncomeType.business;
         }
 
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
 
         const incomes =
-          await IncomeHelpers.getBusinessAndPersonalExpenseAnalyticsYearly(
+          await IncomeHelpers.getBusinessAndPersonalIncomeAnalyticsYearly(
             query
           );
 
         return {
           status: 200,
-          message: 'Analytics for business an personal expense are fetched.',
+          message: 'Analytics for business an personal income are fetched.',
           data: incomes[0],
         } as ApiResponse<(typeof incomes)[0]>;
       } catch (error: unknown) {
@@ -178,56 +180,7 @@ export const IncomeRouter = router({
       }
     }),
 
-  getWriteOffs: protectedProcedure
-    .input(
-      z.object({
-        page: z.number().default(1),
-        limit: z.number().default(50),
-        searchTerm: z.string().optional(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      try {
-        const loggedUser = ctx.user as JwtPayload;
-
-        const { page, limit, searchTerm } = input;
-        const skip = (page - 1) * limit;
-
-        const query: Record<string, unknown> = {
-          user: new mongoose.Types.ObjectId(loggedUser?.id),
-          expense_type: ExpenseType.business,
-        };
-
-        if (searchTerm) {
-          query.$or = [{ category: { $regex: searchTerm, $options: 'i' } }];
-        }
-        const total =
-          await IncomeHelpers.getTotalUniqueExpenseCategories(loggedUser);
-
-        const totalUniqueCategories = total[0]?.uniqueCategories;
-        const incomes = await IncomeHelpers.getWriteOffSummary(
-          skip,
-          limit,
-          query
-        );
-
-        return {
-          status: 200,
-          message: 'Write off summary fetched successfully',
-          data: incomes,
-          pagination: {
-            total: totalUniqueCategories,
-            page,
-            limit,
-            totalPages: Math.ceil(totalUniqueCategories / limit),
-          },
-        } as unknown as ApiResponse<typeof totalUniqueCategories>;
-      } catch (error: unknown) {
-        const { message } = errorHandler(error);
-        throw new ApiError(httpStatus.NOT_FOUND, message);
-      }
-    }),
-  getUnknownincomesWithMatchedRules: protectedProcedure
+  getUnknownIncomesWithMatchedRules: protectedProcedure
     .input(
       z.object({
         page: z.number().default(1),
@@ -241,8 +194,8 @@ export const IncomeRouter = router({
 
         const total = await IncomeModel.countDocuments({
           user: loggedUser?.id,
-          expense_type: ExpenseType.unknown,
-          category: ExpenseType.unknown,
+          income_type: IncomeType.unknown,
+          category: IncomeType.unknown,
         });
 
         const rules = await RuleModel.find({ user: loggedUser?.id });
@@ -260,7 +213,7 @@ export const IncomeRouter = router({
 
         return {
           status: 200,
-          message: 'incomes fetched with matched rules',
+          message: 'Incomes fetched with matched rules',
           data: incomesWithAllRules as object,
           pagination: {
             total,
@@ -275,22 +228,22 @@ export const IncomeRouter = router({
       }
     }),
 
-  createExpense: protectedProcedure
+  createIncome: protectedProcedure
     .input(IncomeValidations.createIncomeSchema)
     .mutation(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        const expense = await IncomeHelpers.createIncomeRecord(
+        const income = await IncomeHelpers.createIncomeRecord(
           input as IIncome,
           loggedUser.id
         );
 
         return {
           status: 201,
-          message: 'Expense created successfully',
-          data: expense,
-        } as ApiResponse<typeof expense>;
+          message: 'Income created successfully',
+          data: income,
+        } as ApiResponse<typeof income>;
       } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);
@@ -321,7 +274,7 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  updateBulkExpense: protectedProcedure
+  updateBulkIncome: protectedProcedure
     .input(IncomeValidations.updateBulkIncomeSchema)
 
     .mutation(async ({ ctx, input }) => {
@@ -357,7 +310,7 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
       }
     }),
-  deleteExpense: protectedProcedure
+  deleteIncome: protectedProcedure
     .input(
       z.object({
         _id: z.string(),
@@ -367,37 +320,37 @@ export const IncomeRouter = router({
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        const expense = await IncomeHelpers.deleteExpenseRecord(
+        const income = await IncomeHelpers.deleteIncomeRecord(
           _id,
           loggedUser.id
         );
 
         return {
           status: 200,
-          message: 'Expense deleted successfully',
-          data: expense,
-        } as ApiResponse<typeof expense>;
+          message: 'Income deleted successfully',
+          data: income,
+        } as ApiResponse<typeof income>;
       } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
       }
     }),
-  updateExpense: protectedProcedure
+  updateIncome: protectedProcedure
     .input(IncomeValidations.createIncomeSchema)
     .mutation(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        const expense = await IncomeHelpers.updateIncomeRecord(
+        const income = await IncomeHelpers.updateIncomeRecord(
           input as IIncomeUpdate,
           loggedUser.id
         );
 
         return {
           status: 200,
-          message: 'Expense updated successfully',
-          data: expense,
-        } as ApiResponse<typeof expense>;
+          message: 'income updated successfully',
+          data: income,
+        } as ApiResponse<typeof income>;
       } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);

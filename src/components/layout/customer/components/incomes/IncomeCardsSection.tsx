@@ -5,39 +5,9 @@ import React, { useEffect, useState } from 'react';
 import IncomeStatsByType from './IncomeStatsByType';
 import IncomeType from './IncomeType';
 
-import ClothingImg from '../../../../../../public/images/expenses/clothing.png';
-import TravelImg from '../../../../../../public/images/expenses/travel.png';
-import TransportImg from '../../../../../../public/images/expenses/transport.png';
-import GasImg from '../../../../../../public/images/expenses/gas.png';
-import MealsImg from '../../../../../../public/images/expenses/meals.png';
-import InsuranceImg from '../../../../../../public/images/expenses/insurance.png';
-import PaymentImg from '../../../../../../public/payment.png';
-import MoreImg from '../../../../../../public/More.png';
-
-const incomeCategories = [
-  { label: 'Salary/Wages', image: ClothingImg },
-  { label: 'Bonuses', image: TravelImg },
-  { label: 'Overtime Pay', image: TransportImg },
-  { label: 'Holiday Pay', image: GasImg },
-  { label: 'Freelance Earnings', image: MealsImg },
-  { label: 'Business Profits', image: InsuranceImg },
-  { label: 'Interest', image: PaymentImg },
-  { label: 'Dividends', image: MoreImg },
-  { label: 'Rental Income', image: MoreImg },
-  { label: 'Capital Gains', image: MoreImg },
-  { label: 'Unemployment Benefits', image: MoreImg },
-  { label: 'Pension', image: MoreImg },
-  { label: 'Sick Pay', image: MoreImg },
-  { label: 'Parental Leave Pay', image: MoreImg },
-  { label: 'Child Benefits', image: MoreImg },
-  { label: 'Inheritance', image: MoreImg },
-  { label: 'Scholarships/Grants', image: MoreImg },
-  { label: 'Prizes/Awards', image: MoreImg },
-  { label: 'Alimony/Child Support', image: MoreImg },
-  { label: 'Gifts Over Tax-Free Limits', image: MoreImg },
-  { label: 'Honorariums', image: MoreImg },
-  { label: 'Side Hustle Income', image: MoreImg },
-];
+import { income_categories } from '@/utils/dummy';
+// import { trpc } from '@/utils/trpc';
+// import { useSession } from 'next-auth/react';
 
 interface CategoryCard {
   id: number;
@@ -52,17 +22,23 @@ type IFilterProps = {
 };
 
 const IncomeCardsSection = ({ filterString }: IFilterProps) => {
-  const [categoryCards, setCategoryCards] = useState<CategoryCard[]>([]); // Dynamic state
+  const [categoryCards, setCategoryCards] = useState<CategoryCard[]>([]);
   const [incomeStats, setIncomeStats] = useState({
     personal: 0,
     business: 0,
   });
 
+  // const { data: incomes } =
+  //   trpc.incomes.getCategoryAndIncomeTypeWiseIncomes.useQuery({
+  //     income_type: '',
+  //     filterString,
+  //   });
+  //const { data: user } = useSession();
   useEffect(() => {
-    const updatedCategoryCards = incomeCategories.map((category, index) => ({
+    const updatedCategoryCards = income_categories.map((category, index) => ({
       id: index,
-      imageSrc: category.image, // Use the image from the updated incomeCategories array
-      category: category.label, // Category label
+      imageSrc: category.image,
+      category: category.label,
       totalItemByCategory: Math.floor(Math.random() * 100),
       amount: Math.floor(Math.random() * 10000),
     }));

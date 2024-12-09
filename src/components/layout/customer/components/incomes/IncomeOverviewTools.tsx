@@ -4,17 +4,18 @@ import React, { useCallback, useState } from 'react';
 import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
 import { IoMdAdd } from 'react-icons/io';
-import ExpenseAddContent from './ExpenseAddContent';
 import SharedModal from '../../../../SharedModal';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
-
+import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import { debounce } from '@/lib/utils';
-import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
 import IncomeUploadStatements from './IncomeUploadStatements';
+import Image from 'next/image';
+import IncomeAddContent from './IncomeAddContent';
+import IncomeDataTableFilter from './IncomeDataTableFilter';
 
-type ExpenseOverviewSectionProps = {
+type IncomeOverviewToolsProps = {
   setSearchTerm: (value: string) => void;
   setFilterString: (value: string) => void;
 };
@@ -22,14 +23,14 @@ type ExpenseOverviewSectionProps = {
 function IncomeOverviewTools({
   setSearchTerm,
   setFilterString,
-}: ExpenseOverviewSectionProps) {
+}: IncomeOverviewToolsProps) {
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<{ key: string }>({
     key: '',
   });
-  const { data: expensesWithMatchedRules } =
-    trpc.expenses.getUnknownExpensesWithMatchedRules.useQuery(
+  const { data: incomesWithMatchedRules } =
+    trpc.incomes.getUnknownIncomesWithMatchedRules.useQuery(
       {
         page: 1,
         limit: 10,
@@ -63,9 +64,9 @@ function IncomeOverviewTools({
   };
 
   const renderContent = () => {
-    if (modalContent.key === 'addExpense') {
+    if (modalContent.key === 'addIncome') {
       return (
-        <ExpenseAddContent
+        <IncomeAddContent
           setModalOpen={setModalOpen}
           categories={manipulatedCategories}
         />
@@ -74,7 +75,7 @@ function IncomeOverviewTools({
     if (modalContent.key === 'applyRule') {
       return (
         <ApplyRuleModalContent
-          expenses={expensesWithMatchedRules?.data || []}
+          incomes={incomesWithMatchedRules?.data || []}
           setModalOpen={setModalOpen}
         />
       );
@@ -114,7 +115,7 @@ function IncomeOverviewTools({
         <div className="flex gap-2">
           <Button
             variant="purple"
-            onClick={() => handleButtonClick('addExpense')}
+            onClick={() => handleButtonClick('addIncome')}
           >
             <IoMdAdd className="font-bold mr-2" />{' '}
             {translate('components.buttons.income_buttons.text.add_income')}
@@ -130,7 +131,17 @@ function IncomeOverviewTools({
           </Button>
         </div>
         <div className="flex space-x-2">
-          <ExpenseDataTableFilter setFilterString={setFilterString} />
+          <IncomeDataTableFilter setFilterString={setFilterString} />
+          <Button
+            disabled={
+              incomesWithMatchedRules?.data?.incomesWithRules?.length === 0
+            }
+            variant="purple"
+            onClick={() => handleButtonClick('applyRule')}
+          >
+            <Image src={RuleIcon} alt="button icon" className="mr-2" /> Apply
+            Rule
+          </Button>
         </div>
         <div className="bg-white absolute z-50">
           <SharedModal
