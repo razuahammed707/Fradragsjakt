@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 
 import SharedModal from '@/components/SharedModal';
 import { FaEye } from 'react-icons/fa';
-import ExpenseDetailsContent from './ExpenseDetailsContent';
+import IncomeDetailsContent from './IncomeDetailsContent';
 
 export type PayloadType = {
   amount: number;
   category: string;
   description: string;
-  expense_type: string;
+  income_type: string;
   transaction_date?: string;
   createdAt?: string;
   __v?: number;
   _id: string;
 };
 
-export default function ExpenseDetailsModal({
+export default function IncomeDetailsModal({
   payload,
 }: {
   payload: PayloadType;
@@ -39,7 +39,7 @@ export default function ExpenseDetailsModal({
           customClassName="max-w-[500px]"
         >
           <div className="bg-white">
-            <ExpenseDetailsContent payload={payload} />
+            <IncomeDetailsContent payload={payload} />
           </div>
         </SharedModal>
       </div>

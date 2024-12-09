@@ -64,6 +64,13 @@
       "type": "Type",
       "amount": "Beløp"
     },
+    "incomeDataTableColumns": {
+      "date": "Dato",
+      "description": "Beskrivelse",
+      "category": "Kategori",
+      "type": "Type",
+      "amount": "Beløp"
+    },
     "CategoryDataTableColumns": {
       "serial_no": "Serienummer",
       "category": "kategori",
