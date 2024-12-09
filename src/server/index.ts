@@ -5,7 +5,7 @@ import { authRouter } from './modules/auth';
 import { rulesRouter } from './modules/rules';
 import { categoryRouter } from './modules/categories';
 import { expenseRouter } from './modules/expenses';
-import { incomeRouter } from './modules/incomes';
+// import { incomeRouter } from './modules/incomes';
 import { uploadRouter } from './modules/upload';
 
 export const appRouter = router({
@@ -14,7 +14,7 @@ export const appRouter = router({
   rules: rulesRouter,
   categories: categoryRouter,
   expenses: expenseRouter,
-  incomes: incomeRouter,
+  // incomes: incomeRouter,
   upload: uploadRouter,
 });
 

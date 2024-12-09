@@ -6,11 +6,16 @@ import SummaryChart from './SummaryChart';
 import YearlyExpenseGraph from './YearlyExpenseGraph';
 import { trpc } from '@/utils/trpc';
 import AggregatedExpenseCard from './AggregatedExpenseCard';
-import { finalCalculation } from '@/utils/helpers/primaryCategoriesWithFormula';
+import {
+  CustomCategory,
+  finalCalculation,
+} from '@/utils/helpers/primaryCategoriesWithFormula';
 import { predefinedCategories } from '@/utils/dummy';
 import { useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
+import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
 
 const DashboardSummarySection = () => {
   const [showPersonal, setShowPersonal] = useState<'personal' | 'business'>(
@@ -20,9 +25,25 @@ const DashboardSummarySection = () => {
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
       expense_type: 'business',
     });
+  const { categories } = useManipulatedCategories();
 
-  const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
-  const cardData = finalCalculation(categoryAnalytics, predefinedCategories);
+  const referenceCategories = categories?.data?.filter(
+    (category: { title: string; reference_category: string }) =>
+      category.reference_category
+  );
+
+  const dbCategories = expensesAnalytics?.data?.categoryWiseExpenses;
+
+  const customCategories = manipulateCustomCategoryExpenses(
+    referenceCategories || [],
+    dbCategories
+  ) as CustomCategory[];
+
+  const businessData = finalCalculation(
+    dbCategories,
+    predefinedCategories,
+    customCategories
+  );
 
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
@@ -30,13 +51,13 @@ const DashboardSummarySection = () => {
   const personalData = manipulatePersonalDeductions(questionnaires, user);
 
   const summaryChartData =
-    showPersonal === 'business' ? cardData : personalData;
+    showPersonal === 'business' ? businessData : personalData;
 
   return (
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-5">
         <div className="grid grid-cols-12 gap-2">
-          <DeductiveExpenses />
+          <DeductiveExpenses businessData={businessData} />
           <SummaryChart
             expenses={summaryChartData}
             showPersonal={showPersonal}
@@ -44,19 +65,10 @@ const DashboardSummarySection = () => {
           />
         </div>
       </div>
-
-      {/* Yearly Graph */}
       <YearlyExpenseGraph />
-
-      {/* Expense Categories */}
-      {/* <div className="col-span-12 grid grid-cols-3 gap-2">
-        {mappedExpenses?.map((expense, index) => (
-          <ExpenseCard key={index} expense={expense} index={index} />
-        ))}
-      </div> */}
       <div className="col-span-12 grid grid-cols-2 gap-2">
         <AggregatedExpenseCard
-          items={cardData}
+          items={businessData}
           title="Tax Saved From Business Spending (Total)"
         />
         <AggregatedExpenseCard

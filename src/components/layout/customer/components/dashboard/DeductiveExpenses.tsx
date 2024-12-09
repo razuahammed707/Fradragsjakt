@@ -8,21 +8,12 @@ import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import { trpc } from '@/utils/trpc';
-import { finalCalculation } from '@/utils/helpers/primaryCategoriesWithFormula';
-import { predefinedCategories } from '@/utils/dummy';
 
-const DeductiveExpenses = () => {
-  const { data: expensesAnalytics } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
-      expense_type: 'business',
-    });
-
-  const categoryAnalytics = expensesAnalytics?.data?.categoryWiseExpenses;
-  const businessData = finalCalculation(
-    categoryAnalytics,
-    predefinedCategories
-  );
-
+const DeductiveExpenses = ({
+  businessData,
+}: {
+  businessData: { total_amount: number }[];
+}) => {
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 

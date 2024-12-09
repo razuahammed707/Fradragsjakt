@@ -1,20 +1,15 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
-import { FC, useEffect } from 'react';
-//import ArrowDown from '../../../../../../public/images/dashboard/arrow_down.svg';
+import { FC } from 'react';
 import ArrowUp from '../../../../../../public/images/dashboard/arrow_up.svg';
 import Image from 'next/image';
 import SharedTooltip from '@/components/SharedTooltip';
 import { Separator } from '@/components/ui/separator';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { cn } from '@/lib/utils';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { trpc } from '@/utils/trpc';
-import {
-  updateBusinesSavings,
-  updatePersonalSavings,
-} from '@/redux/slices/writeoffs';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 
 interface caregoryItem {
@@ -22,6 +17,7 @@ interface caregoryItem {
   predefinedCategories: {
     name: string;
     amount: number;
+    reference_category?: string;
     threshold?: number;
   }[];
   total_amount: number;
@@ -39,7 +35,6 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   items,
   origin = 'business',
 }) => {
-  const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 
@@ -53,12 +48,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
     0
   );
 
-  useEffect(() => {
-    if (origin === 'business') {
-      dispatch(updateBusinesSavings(total));
-    }
-    dispatch(updatePersonalSavings(total));
-  }, [origin, total, dispatch]);
+  console.log('items from aggregated expense card', items);
 
   return (
     <div className="bg-white rounded-xl p-6 space-y-6 w-full">
@@ -132,29 +122,38 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                       {title}
                     </h6>
                     <Separator />
-                    {predefinedCategories?.map(({ name, amount }, i) => (
-                      <div key={i} className="w-full space-y-1 mt-2">
-                        <p className="text-xs font-semibold text-[#71717A]">
-                          {name}
-                        </p>
-                        <div className="flex justify-between ">
-                          <p className="text-xs font-bold text-[#00104B]">
-                            NOK {numberFormatter(Number(amount?.toFixed(2)))}
+                    {predefinedCategories?.map(
+                      ({ name, amount, reference_category }, i) => (
+                        <div key={i} className="w-full space-y-1 mt-2">
+                          <p className="text-xs font-semibold text-[#71717A]">
+                            {name}
                           </p>
-
-                          {[
-                            'Furniture and Equipment',
-                            'Computer Hardware',
-                          ].includes(name) && (
-                            <p
-                              className={`text-[10px] font-medium text-[#71717A]`}
-                            >
-                              Max NOK 15000
-                            </p>
+                          {reference_category && (
+                            <small className="text-gray-600">
+                              Ref: {reference_category}
+                            </small>
                           )}
+                          <div className="flex justify-between ">
+                            <p className="text-xs font-bold text-[#00104B]">
+                              NOK {numberFormatter(Number(amount?.toFixed(2)))}
+                            </p>
+
+                            {[
+                              'Furniture and Equipment',
+                              'Computer Hardware',
+                            ].includes(
+                              reference_category ? reference_category : name
+                            ) && (
+                              <p
+                                className={`text-[10px] font-medium text-[#71717A]`}
+                              >
+                                Max NOK 15000
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 </SharedTooltip>
               ) : (
