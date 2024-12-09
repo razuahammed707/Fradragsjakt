@@ -1,12 +1,13 @@
 import { Document, Types } from 'mongoose';
 
-enum ExpenseType {
+export enum Type {
   personal = 'personal',
   business = 'business',
 }
 export interface IRule extends Document {
   description_contains: string;
-  expense_type: ExpenseType;
+  expense_type?: Type;
+  income_type?: Type;
   category_title: string;
   category: Types.ObjectId | string;
   user: Types.ObjectId;

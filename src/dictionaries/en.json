@@ -64,6 +64,13 @@
       "type": "Type",
       "amount": "Amount"
     },
+    "incomeDataTableColumns": {
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
+      "type": "Type",
+      "amount": "Amount"
+    },
     "CategoryDataTableColumns": {
       "serial_no": "Serial No.",
       "category": "Category",
