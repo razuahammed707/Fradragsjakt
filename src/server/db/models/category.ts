@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { ICategory } from '../interfaces/category';
+import { CategoryFor, ICategory } from '../interfaces/category';
 
 const CategorySchema: Schema = new Schema<ICategory>(
   {
@@ -12,6 +12,11 @@ const CategorySchema: Schema = new Schema<ICategory>(
     reference_category: {
       type: String,
       default: null,
+    },
+    category_for: {
+      type: String,
+      enum: Object.values(CategoryFor),
+      required: true,
     },
     creator_id: { type: Schema.Types.ObjectId, ref: 'user', required: true },
   },

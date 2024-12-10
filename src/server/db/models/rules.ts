@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IRule } from '../interfaces/rules';
+import { IRule, RuleFor } from '../interfaces/rules';
 
 const RuleSchema: Schema = new Schema<IRule>(
   {
@@ -7,6 +7,11 @@ const RuleSchema: Schema = new Schema<IRule>(
     expense_type: {
       type: String,
       enum: ['personal', 'business'],
+      required: true,
+    },
+    rule_for: {
+      type: String,
+      enum: Object.values(RuleFor),
       required: true,
     },
     category_title: {
