@@ -1,5 +1,4 @@
 'use client';
-import { Badge } from '@/components/ui/badge';
 import { FC } from 'react';
 import ArrowUp from '../../../../../../public/images/dashboard/arrow_up.svg';
 import Image from 'next/image';
@@ -11,8 +10,9 @@ import { useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { trpc } from '@/utils/trpc';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
+import SharedReportDownloader from '@/components/SharedReportDownloader';
 
-interface caregoryItem {
+export interface caregoryItem {
   title: string;
   predefinedCategories: {
     name: string;
@@ -59,9 +59,19 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
             NOK {numberFormatter(total)}
           </p>
         </div>
-        <Badge className="bg-[#F0EFFE] px-1 h-6  hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
-          View details
-        </Badge>
+        {origin === 'personal' ? (
+          <SharedReportDownloader
+            body={personalData}
+            origin="personal"
+            total={total}
+          />
+        ) : (
+          <SharedReportDownloader
+            body={items}
+            origin="business"
+            total={total}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-12 gap-4 ">

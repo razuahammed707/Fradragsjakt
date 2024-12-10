@@ -29,6 +29,7 @@ import { ContentHousing } from './modals-content/ContentHousing';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
+import SharedReportDownloader from '@/components/SharedReportDownloader';
 
 const modalContentMap: Record<
   string,
@@ -79,36 +80,38 @@ const QuestionnairesReviewSection = () => {
     (sum, current) => sum + current.total_amount,
     0
   );
-  const data = [
-    {
-      title: translate('questionnaire.health_family'),
-      amount: healthAndFamilyExpenseAmount,
-    },
-    {
-      title: translate('questionnaire.bank_loans'),
-      amount: bankAndLoansExpenseAmount,
-    },
-    {
-      title: translate('questionnaire.work_education'),
-      amount: workAndEducationExpenseAmount,
-    },
-    {
-      title: translate('questionnaire.housing_property'),
-      amount: housingAndPropertyExpenseAmount,
-    },
-    {
-      title: translate('questionnaire.gifts_donations'),
-      amount: giftsOrDonationsExpenseAmount,
-    },
-    {
-      title: translate('questionnaire.hobby_extra_income'),
-      amount: hobbyOddjobsAndExtraIncomesExpenseAmount,
-    },
-    {
-      title: translate('questionnaire.foreign_income'),
-      amount: foreignIncomeExpenseAmount,
-    },
-  ];
+  const getWriteOffs = () => {
+    return [
+      {
+        title: translate('questionnaire.health_family'),
+        amount: healthAndFamilyExpenseAmount,
+      },
+      {
+        title: translate('questionnaire.bank_loans'),
+        amount: bankAndLoansExpenseAmount,
+      },
+      {
+        title: translate('questionnaire.work_education'),
+        amount: workAndEducationExpenseAmount,
+      },
+      {
+        title: translate('questionnaire.housing_property'),
+        amount: housingAndPropertyExpenseAmount,
+      },
+      {
+        title: translate('questionnaire.gifts_donations'),
+        amount: giftsOrDonationsExpenseAmount,
+      },
+      {
+        title: translate('questionnaire.hobby_extra_income'),
+        amount: hobbyOddjobsAndExtraIncomesExpenseAmount,
+      },
+      {
+        title: translate('questionnaire.foreign_income'),
+        amount: foreignIncomeExpenseAmount,
+      },
+    ];
+  };
 
   const handleButtonClick = (title: string) => {
     setSelectedTitle(title);
@@ -164,7 +167,7 @@ const QuestionnairesReviewSection = () => {
           </div>
         </div>
         <div className="text-sm text-[#101010] space-y-4">
-          {data.map((question, i) => (
+          {getWriteOffs().map((question, i) => (
             <div
               key={i}
               onClick={() => handleButtonClick(question.title)}
@@ -201,14 +204,22 @@ const QuestionnairesReviewSection = () => {
             <p>NOK 2,886</p>
           </div> */}
         </div>
-        <Button
-          onClick={() =>
-            handleButtonClick(translate('questionnaire.edit_response'))
+        <div className="flex space-x-2">
+          <Button
+            onClick={() =>
+              handleButtonClick(translate('questionnaire.edit_response'))
+            }
+            className="text-white text-sm font-medium w-full"
+          >
+            {translate('questionnaire.edit_response')}
+          </Button>
+          {
+            <SharedReportDownloader
+              body={getWriteOffs()}
+              total={personalTotal}
+            />
           }
-          className="text-white text-sm font-medium"
-        >
-          {translate('questionnaire.edit_response')}
-        </Button>
+        </div>
       </div>
       <SharedModal
         open={isModalOpen}

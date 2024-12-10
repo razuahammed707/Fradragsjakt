@@ -68,6 +68,7 @@ const DashboardSummarySection = () => {
       <YearlyExpenseGraph />
       <div className="col-span-12 grid grid-cols-2 gap-2">
         <AggregatedExpenseCard
+          origin="business"
           items={businessData}
           title="Tax Saved From Business Spending (Total)"
         />
