@@ -15,7 +15,7 @@ export default function RulesOverviewSection() {
   const { data: rulesResponse } = trpc.rules.getRules.useQuery(
     {
       page: 1,
-      limit: 10,
+      limit: 50,
       searchTerm,
     },
     { keepPreviousData: true }

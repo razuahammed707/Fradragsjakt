@@ -17,12 +17,13 @@ export const categoryRouter = router({
         page: z.number().default(1),
         limit: z.number().default(10),
         searchTerm: z.string().optional(),
+        category_for: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        const { page, limit, searchTerm } = input;
+        const { page, limit, searchTerm, category_for } = input;
         const skip = (page - 1) * limit;
 
         const query: Record<string, unknown> = {
@@ -36,6 +37,10 @@ export const categoryRouter = router({
         // If a search term is provided, add a condition to match fields
         if (searchTerm) {
           query.title = { $regex: searchTerm, $options: 'i' };
+        }
+
+        if (category_for) {
+          query.category_for = category_for;
         }
 
         const total = await Category.countDocuments(query);
@@ -133,7 +138,7 @@ export const categoryRouter = router({
     .input(categoryValidation.categorySchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const { title, reference_category } = input;
+        const { title, reference_category, ...rest } = input;
 
         const sessionUser = ctx.user as JwtPayload;
 
@@ -151,6 +156,7 @@ export const categoryRouter = router({
         }
 
         const category = new Category({
+          ...rest,
           title: transformedTitle,
           creator_id: sessionUser.id,
           reference_category,
@@ -172,4 +178,22 @@ export const categoryRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  updateManyCategory: protectedProcedure.query(async () => {
+    try {
+      // Update all categories to set category_for to "expense"
+      await Category.updateMany({}, { $set: { category_for: 'expense' } });
+
+      // Fetch the updated categories
+      const categories = await Category.find({});
+
+      return {
+        status: 200,
+        message: 'Categories updated successfully',
+        data: categories,
+      } as ApiResponse<typeof categories>;
+    } catch (error: unknown) {
+      const { message } = errorHandler(error);
+      throw new ApiError(httpStatus.NOT_FOUND, message);
+    }
+  }),
 });

@@ -74,6 +74,7 @@ export const rulesRouter = router({
           description_contains: input.description_contains,
           category_title: input.category,
           expense_type: input.expense_type,
+          rule_for: input.rule_for,
         });
 
         if (rule) {
@@ -133,6 +134,8 @@ export const rulesRouter = router({
 
         const category = await CategoryModel.findOne(categoryQuery);
 
+        console.log('update rule payload from backend');
+
         const updateRule = await RuleModel.findByIdAndUpdate(
           { _id },
           {
@@ -177,4 +180,22 @@ export const rulesRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  updateManyRule: protectedProcedure.query(async () => {
+    try {
+      // Update all categories to set category_for to "expense"
+      await RuleModel.updateMany({}, { $set: { rule_for: 'expense' } });
+
+      // Fetch the updated categories
+      const categories = await RuleModel.find({});
+
+      return {
+        status: 200,
+        message: 'Categories updated successfully',
+        data: categories,
+      } as ApiResponse<typeof categories>;
+    } catch (error: unknown) {
+      const { message } = errorHandler(error);
+      throw new ApiError(httpStatus.NOT_FOUND, message);
+    }
+  }),
 });

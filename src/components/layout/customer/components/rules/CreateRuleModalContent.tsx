@@ -6,11 +6,13 @@ import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
+import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 
 type RuleFormData = {
   description_contains: string;
   expense_type: 'business' | 'personal';
   category: string;
+  rule_for: 'expense' | 'income';
 };
 
 type UpdateRuleProps = {
@@ -19,6 +21,7 @@ type UpdateRuleProps = {
   category: string;
   category_title: string;
   expense_type: string;
+  rule_for: 'expense' | 'income';
 };
 
 type CategoryType = { title: string; value: string };
@@ -28,20 +31,27 @@ type ExpenseRuleContentProps = {
   categories?: CategoryType[];
   updateRulePayload?: UpdateRuleProps;
   origin: string | undefined;
+  rule_for: 'expense' | 'income';
 };
 
 function CreateRuleModalContent({
   modalClose,
-  categories = [],
   updateRulePayload,
   origin,
 }: ExpenseRuleContentProps) {
   // Use the translation hook
-  const { handleSubmit, control } = useForm<RuleFormData>({
+  const { handleSubmit, control, watch } = useForm<RuleFormData>({
     defaultValues: { expense_type: 'business' }, // Optional default value
   });
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
+
+  const categoryForValue = watch('rule_for');
+
+  const query = {
+    category_for: categoryForValue || updateRulePayload?.rule_for,
+  };
+  const { manipulatedCategories } = useManipulatedCategories(query);
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
       toast.success(translate('toast.ruleCreatedSuccess')); // Use translation here
@@ -76,18 +86,6 @@ function CreateRuleModalContent({
     }
   };
 
-  const defaultCategories = [
-    { title: 'Transport', value: 'Transport' },
-    { title: 'Meals', value: 'Meals' },
-    { title: 'Gas', value: 'Gas' },
-  ];
-
-  const manipulatedCategories = Array.from(
-    new Map(
-      [...categories, ...defaultCategories].map((cat) => [cat.value, cat])
-    ).values()
-  );
-
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
@@ -115,6 +113,22 @@ function CreateRuleModalContent({
           {translate('componentsRuleModal.rule.then')}
         </h1>{' '}
         {/* Translate 'Then' */}
+        <div>
+          <Label>Rule For</Label>
+          <FormInput
+            name="rule_for"
+            defaultValue={updateRulePayload?.rule_for}
+            customClassName="w-full mt-2"
+            type="select"
+            control={control}
+            placeholder={`Select rule for`}
+            options={[
+              { title: 'Expense', value: 'expense' },
+              { title: 'Income', value: 'income' },
+            ]}
+            required
+          />
+        </div>
         <div>
           <Label htmlFor="expense_type">
             {translate('componentsRuleModal.rule.expenseType')}

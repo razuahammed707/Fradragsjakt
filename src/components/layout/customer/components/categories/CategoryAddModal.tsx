@@ -16,6 +16,7 @@ type UpdateCategoryPayload = {
   _id: string;
   title?: string;
   reference_category?: string;
+  category_for: string;
 };
 
 interface CategoryAddModalProps {
@@ -28,10 +29,14 @@ export default function CategoryAddModal({
 }: CategoryAddModalProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-  const { handleSubmit, control, reset } = useForm<FormData>();
   const utils = trpc.useUtils();
   const { translate } = useTranslation();
-  const { manipulatedCategories } = useManipulatedCategories();
+
+  const { handleSubmit, control, reset, watch } = useForm<FormData>();
+  const categoryForValue = watch('category_for');
+
+  const query = { category_for: categoryForValue || category?.category_for };
+  const { manipulatedCategories } = useManipulatedCategories(query);
 
   const mutation = trpc.categories.createCategory.useMutation({
     onSuccess: () => {
@@ -116,7 +121,24 @@ export default function CategoryAddModal({
                   defaultValue={category?.title}
                   required
                 />
-
+                <div>
+                  <Label className="block mb-2 text-[#101010] text-xs font-medium">
+                    Category For
+                  </Label>
+                  <FormInput
+                    name="category_for"
+                    defaultValue={category?.category_for}
+                    customClassName="w-full mt-2"
+                    type="select"
+                    control={control}
+                    placeholder={`Select category`}
+                    options={[
+                      { title: 'Expense', value: 'expense' },
+                      { title: 'Income', value: 'income' },
+                    ]}
+                    required
+                  />
+                </div>
                 <div>
                   <Label className="block mb-2 text-[#101010] text-xs font-medium">
                     Map with system defined categories
