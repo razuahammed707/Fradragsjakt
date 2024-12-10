@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { menuConfig } from '@/utils/dummy';
+
 import HelpAskingCard from './HelpAskingCard';
 import {
   Accordion,
@@ -12,6 +12,19 @@ import {
 } from './ui/accordion';
 import { usePathname } from 'next/navigation';
 import { Dot } from 'lucide-react';
+import {
+  LayoutDashboard,
+  HandCoins,
+  Landmark,
+  CircleDollarSign,
+  Newspaper,
+  ListTree,
+  Wallet,
+  ClipboardPen,
+} from 'lucide-react';
+import { FaUser } from 'react-icons/fa';
+import { FcLineChart, FcPackage } from 'react-icons/fc';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type MenuItem = {
   href: string;
@@ -30,6 +43,115 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ role }) => {
+  const { translate } = useTranslation();
+
+  const menuConfig = {
+    admin: [
+      {
+        href: '/dashboard',
+        label: 'Dashboard',
+        icon: LayoutDashboard,
+      },
+      {
+        href: '/orders',
+        label: 'Orders',
+        icon: HandCoins,
+        badge: 6,
+      },
+      {
+        href: '/products',
+        label: 'Products',
+        icon: FcPackage,
+        subItems: [
+          { href: '/products/categories', label: 'Categories' },
+          { href: '/products/new', label: 'New Product' },
+        ],
+      },
+      {
+        href: '/customers',
+        label: 'Customers',
+        icon: FaUser,
+      },
+      {
+        href: '/analytics',
+        label: 'Analytics',
+        icon: FcLineChart,
+        subItems: [
+          { href: '/analytics/sales', label: 'Sales' },
+          { href: '/analytics/traffic', label: 'Traffic' },
+        ],
+      },
+    ],
+    seller: [
+      {
+        href: '/',
+        label: 'Dashboard',
+        icon: LayoutDashboard,
+      },
+      {
+        href: '/orders',
+        label: 'Orders',
+        icon: HandCoins,
+        badge: 3,
+      },
+      {
+        href: '/products',
+        label: 'Products',
+        icon: FcPackage,
+        subItems: [
+          { href: '/products/inventory', label: 'Inventory' },
+          { href: '/products/new', label: 'New Product' },
+        ],
+      },
+    ],
+    customer: [
+      {
+        href: '/dashboard',
+        label: translate('sidebar.dashboard'),
+        icon: LayoutDashboard,
+      },
+      {
+        href: '/incomes',
+        label: translate('sidebar.incomes'),
+        icon: Wallet,
+      },
+      {
+        href: '/expenses',
+        label: translate('sidebar.expenses'),
+        icon: HandCoins,
+      },
+      {
+        href: '/categories',
+        label: translate('sidebar.categories'),
+        icon: ListTree,
+      },
+      {
+        href: '/rules',
+        label: translate('sidebar.rules'),
+        icon: ClipboardPen,
+      },
+      {
+        href: '/deductions',
+        label: translate('sidebar.deductions'),
+        icon: Landmark,
+        subItems: [
+          { href: '/deductions/2024', label: '2024' },
+          { href: '/deductions/2023', label: '2023' },
+          { href: '/deductions/2022', label: '2022' },
+        ],
+      },
+      {
+        href: '/tax-file',
+        label: translate('sidebar.tax_file'),
+        icon: Newspaper,
+      },
+      {
+        href: '/write-offs',
+        label: translate('sidebar.write_offs'),
+        icon: CircleDollarSign,
+      },
+    ],
+  };
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
 

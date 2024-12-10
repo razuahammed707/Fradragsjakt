@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import {
   Accordion,
@@ -19,6 +20,7 @@ import {
   showModal,
 } from '@/redux/slices/questionnaire';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
+import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
 
 type AccordionItemData = {
   id: string;
@@ -33,6 +35,7 @@ type ContentHealthFamilyProps = {
 export function ContentHealthFamily({
   questionnaire,
 }: ContentHealthFamilyProps) {
+  const { translate } = useTranslation(); // Use translate function
   const {
     handleSubmit,
     control,
@@ -44,195 +47,169 @@ export function ContentHealthFamily({
     (q) => q.question === questionnaire?.question
   );
 
-  const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
+  const getDefaultValue = (accordionItemId: string, fieldName: string) => {
     const answers =
       foreignIncomeQuestionnaire?.answers.find((answer) =>
-        Object.keys(answer).includes(accordionItemTitle)
-      )?.[accordionItemTitle] || [];
+        Object.keys(answer).includes(accordionItemId)
+      )?.[accordionItemId] || [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
+    return answers.find((field: any) => field[fieldName])?.[fieldName] || ''; // eslint-disable-line @typescript-eslint/no-explicit-any
   };
+
   const accordionData: AccordionItemData[] = [
     {
-      id: 'item-1',
+      id: 'item1',
       title: 'Have children aged 11 years or younger',
       content: (
         <>
-          Parents can deduct expenses related to childcare, such as daycare
-          (barnehage) or after-school programs (SFO/AKS), for children under 12
-          years of age. The deduction is up to NOK 25,000 for the first child
-          and an additional NOK 15,000 per additional child under 12.
+          <p>
+            {translate('writeOffPage.accordionItems.item1.content.description')}
+          </p>
           <p className="text-black pt-[12px] pb-[6px]">
-            How many children do you have under the age of 12?
+            {translate(
+              'writeOffPage.accordionItems.item1.content.questions.howManyChildren'
+            )}
           </p>
           <FormInput
-            name="Have children aged 11 years or younger.How many children do you have under the age of 12"
+            name="childrenUnder12"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="2"
-            defaultValue={getDefaultValue(
-              'Have children aged 11 years or younger',
-              'How many children do you have under the age of 12'
-            )}
+            defaultValue={getDefaultValue('item1', 'childrenUnder12')}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">Documented Expense</p>
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate(
+              'writeOffPage.accordionItems.item1.content.questions.documentedExpense'
+            )}
+          </p>
           <FormInput
-            name="Have children aged 11 years or younger.Documented Expense"
+            name="documentedExpense"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 25000"
-            defaultValue={getDefaultValue(
-              'Have children aged 11 years or younger',
-              'Documented Expense'
-            )}
+            defaultValue={getDefaultValue('item1', 'documentedExpense')}
             required
           />
         </>
       ),
     },
     {
-      id: 'item-2',
+      id: 'item2',
       title: 'I have children aged 12 or older with special care needs',
       content: (
         <>
-          Parents can deduct expenses related to childcare, such as daycare
-          (barnehage) or after-school programs (SFO/AKS), for children under 12
-          years of age.
+          <p>
+            {translate('writeOffPage.accordionItems.item2.content.description')}
+          </p>
           <p className="text-black pt-[12px] pb-[6px]">
-            Do you have children with needs for special care?
+            {translate(
+              'writeOffPage.accordionItems.item2.content.questions.specialCareNeeds'
+            )}
           </p>
           <FormInput
-            name="I have children aged 12 or older with special care needs.Do you have children with needs for special care"
+            name="specialCareNeeds"
             customClassName="w-full"
             type="select"
             control={control}
-            placeholder="Yes"
-            options={[
-              { title: 'Yes', value: 'yes' },
-              { title: 'No', value: 'no' },
-            ]}
-            defaultValue={getDefaultValue(
-              'I have children aged 12 or older with special care needs',
-              'Do you have children with needs for special care'
+            placeholder={translate(
+              'writeOffPage.accordionItems.item2.options.yes'
             )}
+            options={[
+              {
+                title: translate(
+                  'writeOffPage.accordionItems.item2.options.yes'
+                ),
+                value: 'yes',
+              },
+              {
+                title: translate(
+                  'writeOffPage.accordionItems.item2.options.no'
+                ),
+                value: 'no',
+              },
+            ]}
+            defaultValue={getDefaultValue('item2', 'specialCareNeeds')}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Documented care expenses
+            {translate(
+              'writeOffPage.accordionItems.item2.content.questions.documentedCareExpenses'
+            )}
           </p>
           <FormInput
-            name="I have children aged 12 or older with special care needs.Documented care expenses"
+            name="documentedCareExpenses"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 500"
-            defaultValue={getDefaultValue(
-              'I have children aged 12 or older with special care needs',
-              'Documented care expenses'
-            )}
+            defaultValue={getDefaultValue('item2', 'documentedCareExpenses')}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
+            {translate(
+              'writeOffPage.accordionItems.item2.content.questions.uploadVerification'
+            )}
           </p>
           <FormReceiptInput
-            name="I have children aged 12 or older with special care needs.Upload verification document"
+            name="uploadVerification"
             control={control}
             setValue={setValue}
-            defaultValue={getDefaultValue(
-              'I have children aged 12 or older with special care needs',
-              'Upload verification document'
-            )}
+            defaultValue={getDefaultValue('item2', 'uploadVerification')}
           />
         </>
       ),
     },
-    /* {
-      id: 'item-3',
-      title:
-        'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-      content: (
-        <>
-          Have additional travel distance or expenses related to dropping off
-          the child in a child day care centre or after-school supervision
-          scheme.
-          <p className="text-black pt-[12px] pb-[6px]">Documented expenses</p>
-          <FormInput
-            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Documented expenses"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="NOK 500"
-            defaultValue={getDefaultValue(
-              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-              'Documented expenses'
-            )}
-            required
-          />
-          <p className="text-black pt-[12px] pb-[6px]">Extra travel distance</p>
-          <FormInput
-            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Extra travel distance"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="50 km"
-            defaultValue={getDefaultValue(
-              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-              'Extra travel distance'
-            )}
-            required
-          />
-          <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
-          </p>
-          <FormReceiptInput
-            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Upload verification document"
-            control={control}
-            setValue={setValue}
-            defaultValue={getDefaultValue(
-              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-              'Upload verification document'
-            )}
-          />
-        </>
-      ),
-    }, */
     {
-      id: 'item-3',
+      id: 'item3',
       title: 'I am a single parent',
       content: (
-        <div>
-          <p className="">
-            Single parents now receive financial support through other
-            mechanisms, such as:
+        <>
+          <p>
+            {translate('writeOffPage.accordionItems.item3.content.description')}
           </p>
-
-          <ol>
+          <ul>
             <li>
-              <span className="font-semibold">
-                Extended Child Benefit (Utvidet barnetrygd)
-              </span>
-              : Single parents receive additional child benefits.
+              <strong>
+                {translate(
+                  'writeOffPage.accordionItems.item3.content.details.extendedChildBenefit'
+                )}
+              </strong>
+              :{' '}
+              {translate(
+                'writeOffPage.accordionItems.item3.content.details.extendedChildBenefitDesc'
+              )}
             </li>
             <li>
-              <span className="font-semibold">
-                Deductions for Childcare Expenses
-              </span>
-              : Deduct costs for day care and after-school programs.
+              <strong>
+                {translate(
+                  'writeOffPage.accordionItems.item3.content.details.childcareDeductions'
+                )}
+              </strong>
+              :{' '}
+              {translate(
+                'writeOffPage.accordionItems.item3.content.details.childcareDeductionsDesc'
+              )}
             </li>
             <li>
-              <span className="font-semibold">Commuting Deductions</span>: For
-              extra travel costs related to children, such as drop-offs.
+              <strong>
+                {translate(
+                  'writeOffPage.accordionItems.item3.content.details.commutingDeductions'
+                )}
+              </strong>
+              :{' '}
+              {translate(
+                'writeOffPage.accordionItems.item3.content.details.commutingDeductionsDesc'
+              )}
             </li>
-          </ol>
-        </div>
+          </ul>
+        </>
       ),
     },
   ];
+
   const answers = questionnaire?.answers || [];
   const matchedAccordionData = matchQuestionnaireModalQuestion({
     questionnaire: answers,
@@ -244,7 +221,6 @@ export function ContentHealthFamily({
 
   const appDispatch = useAppDispatch();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
@@ -258,7 +234,9 @@ export function ContentHealthFamily({
 
   return (
     <div>
-      <p className="text-xs text-gray-500">Review Questionnaire</p>
+      <p className="text-xs text-gray-500">
+        {translate('writeOffPage.reviewQuestionnaire')}
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
           <Accordion
@@ -288,7 +266,7 @@ export function ContentHealthFamily({
           type="submit"
           className="text-white w-full mt-4"
         >
-          Done
+          {translate('writeOffPage.doneButton')}
         </Button>
       </form>
     </div>

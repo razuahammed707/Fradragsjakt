@@ -305,5 +305,124 @@
       "uploadTitle": "Upload Income Statement"
     }
   },
+  "writeOffPage": {
+    "reviewQuestionnaire": "Review Questionnaire",
+    "accordionItems": {
+      "item1": {
+        "title": "Have children aged 11 years or younger",
+        "content": {
+          "description": "Parents can deduct expenses related to childcare, such as daycare (barnehage) or after-school programs (SFO/AKS), for children under 12 years of age. The deduction is up to NOK 25,000 for the first child and an additional NOK 15,000 per additional child under 12.",
+          "questions": {
+            "howManyChildren": "How many children do you have under the age of 12?",
+            "documentedExpense": "Documented Expense"
+          }
+        }
+      },
+      "item2": {
+        "title": "I have children aged 12 or older with special care needs",
+        "content": {
+          "description": "Parents can deduct expenses related to childcare, such as daycare (barnehage) or after-school programs (SFO/AKS), for children under 12 years of age.",
+          "questions": {
+            "specialCareNeeds": "Do you have children with needs for special care?",
+            "documentedCareExpenses": "Documented care expenses",
+            "uploadVerification": "Upload verification document"
+          }
+        },
+        "options": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "item3": {
+        "title": "I am a single parent",
+        "content": {
+          "description": "Single parents now receive financial support through other mechanisms, such as:",
+          "details": {
+            "extendedChildBenefit": "Extended Child Benefit (Utvidet barnetrygd)",
+            "extendedChildBenefitDesc": "Single parents receive additional child benefits.",
+            "childcareDeductions": "Deductions for Childcare Expenses",
+            "childcareDeductionsDesc": "Deduct costs for day care and after-school programs.",
+            "commutingDeductions": "Commuting Deductions",
+            "commutingDeductionsDesc": "For extra travel costs related to children, such as drop-offs."
+          }
+        }
+      }
+    },
+    "doneButton": "Done"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "incomes": "Incomes",
+    "expenses": "Expenses",
+    "categories": "Categories",
+    "rules": "Rules",
+    "deductions": "Deductions",
+    "tax_file": "Tax file",
+    "write_offs": "Write-offs"
+  },
+  "contentBank": {
+    "reviewQuestionnaire": "Review Questionnaire",
+    "accordionItems": {
+      "item1": {
+        "description": "The deduction rate for loan interest is 22% of the interest paid in the tax year.",
+        "fields": {
+          "totalInterestPaid": "Total interest paid"
+        }
+      },
+      "item2": {
+        "description": "Refinancing costs, such as fees and charges, are deductible alongside interest. The same 22% rate applies.",
+        "fields": {
+          "refinancingCost": "Refinancing cost"
+        }
+      },
+      "item3": {
+        "description": "Ensure the ownership percentage is documented, typically in the loan agreement.",
+        "fields": {
+          "interestAmount": "Interest amount",
+          "yourOwnershipShare": "Your ownership share"
+        }
+      },
+      "item4": {
+        "description": "Young people’s housing savings (BSU) is for people under 34 years of age. You can save up to NOK 27,500 per year. Then you get a tax deduction of NOK 2,750 (10 percent).",
+        "fields": {
+          "thisYearsSavings": "This year's savings"
+        }
+      },
+      "item5": {
+        "description": "Gains and losses on shares are taxable for the amount that exceeds the deductible risk-free return. Losses on sale of shares are deductible.",
+        "fields": {
+          "totalLoss": "Total loss"
+        }
+      }
+    },
+    "doneButton": "Done"
+  },
+  "contentDonation": {
+    "reviewQuestionnaire": "Review Questionnaire",
+    "cardTitle": "Gifts to voluntary organisations",
+    "cardDescription": "If you have given a monetary donation of at least NOK 500 to a voluntary organisation and/or religious or belief-based community, you can get a deduction for this.",
+    "fields": {
+      "donationAmount": "Donation Amount",
+      "uploadVerificationDocument": "Upload verification document"
+    },
+    "doneButton": "Done"
+  },
+  "contentForeignIncome": {
+    "reviewQuestionnaire": "Review Questionnaire",
+    "accordionItems": {
+      "item1": {
+        "title": "Have income or wealth in another country than Norway and pay tax in the other country",
+        "content": {
+          "description": "You must declare all your foreign income and wealth in the Norwegian tax return. This applies regardless of whether you’ve paid tax abroad or the income/wealth is tax free in the country in question.",
+          "fields": {
+            "foreignIncome": "Foreign income",
+            "foreignTaxAmount": "Foreign tax amount",
+            "norwayTaxRate": "Norway tax rate on this income"
+          }
+        }
+      }
+    },
+    "doneButton": "Done"
+  },
   "default": "Translation missing"
 }
