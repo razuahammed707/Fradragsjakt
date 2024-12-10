@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import {
   Accordion,
@@ -19,6 +20,7 @@ import {
   showModal,
 } from '@/redux/slices/questionnaire';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type AccordionItemData = {
   id: string;
@@ -33,6 +35,7 @@ type ContentHealthFamilyProps = {
 export function ContentHealthFamily({
   questionnaire,
 }: ContentHealthFamilyProps) {
+  const { translate } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -49,22 +52,17 @@ export function ContentHealthFamily({
       foreignIncomeQuestionnaire?.answers.find((answer) =>
         Object.keys(answer).includes(accordionItemTitle)
       )?.[accordionItemTitle] || [];
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
-      title: 'Have children aged 11 years or younger',
+      title: translate('childrenUnder12'),
       content: (
         <>
-          Parents can deduct expenses related to childcare, such as daycare
-          (barnehage) or after-school programs (SFO/AKS), for children under 12
-          years of age. The deduction is up to NOK 25,000 for the first child
-          and an additional NOK 15,000 per additional child under 12.
+          {translate('childrenUnder12Info')}
           <p className="text-black pt-[12px] pb-[6px]">
-            How many children do you have under the age of 12?
+            {translate('howManyChildren')}
           </p>
           <FormInput
             name="Have children aged 11 years or younger.How many children do you have under the age of 12"
@@ -78,7 +76,9 @@ export function ContentHealthFamily({
             )}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">Documented Expense</p>
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate('documentedExpense')}
+          </p>
           <FormInput
             name="Have children aged 11 years or younger.Documented Expense"
             customClassName="w-full"
@@ -96,24 +96,22 @@ export function ContentHealthFamily({
     },
     {
       id: 'item-2',
-      title: 'I have children aged 12 or older with special care needs',
+      title: translate('childrenOver12SpecialNeeds'),
       content: (
         <>
-          Parents can deduct expenses related to childcare, such as daycare
-          (barnehage) or after-school programs (SFO/AKS), for children under 12
-          years of age.
+          {translate('specialCareInfo')}
           <p className="text-black pt-[12px] pb-[6px]">
-            Do you have children with needs for special care?
+            {translate('specialCareQuestion')}
           </p>
           <FormInput
             name="I have children aged 12 or older with special care needs.Do you have children with needs for special care"
             customClassName="w-full"
             type="select"
             control={control}
-            placeholder="Yes"
+            placeholder={translate('yes')}
             options={[
-              { title: 'Yes', value: 'yes' },
-              { title: 'No', value: 'no' },
+              { title: translate('yes'), value: 'yes' },
+              { title: translate('no'), value: 'no' },
             ]}
             defaultValue={getDefaultValue(
               'I have children aged 12 or older with special care needs',
@@ -122,7 +120,7 @@ export function ContentHealthFamily({
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Documented care expenses
+            {translate('documentedCareExpenses')}
           </p>
           <FormInput
             name="I have children aged 12 or older with special care needs.Documented care expenses"
@@ -137,7 +135,7 @@ export function ContentHealthFamily({
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
+            {translate('uploadVerification')}
           </p>
           <FormReceiptInput
             name="I have children aged 12 or older with special care needs.Upload verification document"
@@ -151,82 +149,30 @@ export function ContentHealthFamily({
         </>
       ),
     },
-    /* {
-      id: 'item-3',
-      title:
-        'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-      content: (
-        <>
-          Have additional travel distance or expenses related to dropping off
-          the child in a child day care centre or after-school supervision
-          scheme.
-          <p className="text-black pt-[12px] pb-[6px]">Documented expenses</p>
-          <FormInput
-            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Documented expenses"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="NOK 500"
-            defaultValue={getDefaultValue(
-              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-              'Documented expenses'
-            )}
-            required
-          />
-          <p className="text-black pt-[12px] pb-[6px]">Extra travel distance</p>
-          <FormInput
-            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Extra travel distance"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="50 km"
-            defaultValue={getDefaultValue(
-              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-              'Extra travel distance'
-            )}
-            required
-          />
-          <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
-          </p>
-          <FormReceiptInput
-            name="Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme.Upload verification document"
-            control={control}
-            setValue={setValue}
-            defaultValue={getDefaultValue(
-              'Have additional travel distance or expenses related to dropping off the child in a child day care centre or after-school supervision scheme',
-              'Upload verification document'
-            )}
-          />
-        </>
-      ),
-    }, */
     {
       id: 'item-3',
-      title: 'I am a single parent',
+      title: translate('singleParent'),
       content: (
         <div>
-          <p className="">
-            Single parents now receive financial support through other
-            mechanisms, such as:
-          </p>
-
+          <p>{translate('singleParentInfo')}</p>
           <ol>
             <li>
               <span className="font-semibold">
-                Extended Child Benefit (Utvidet barnetrygd)
+                {translate('extendedChildBenefit')}
               </span>
-              : Single parents receive additional child benefits.
+              : {translate('extendedChildBenefitInfo')}
             </li>
             <li>
               <span className="font-semibold">
-                Deductions for Childcare Expenses
+                {translate('deductionsChildcare')}
               </span>
-              : Deduct costs for day care and after-school programs.
+              : {translate('deductionsChildcareInfo')}
             </li>
             <li>
-              <span className="font-semibold">Commuting Deductions</span>: For
-              extra travel costs related to children, such as drop-offs.
+              <span className="font-semibold">
+                {translate('commutingDeductions')}
+              </span>
+              : {translate('commutingDeductionsInfo')}
             </li>
           </ol>
         </div>
@@ -244,7 +190,6 @@ export function ContentHealthFamily({
 
   const appDispatch = useAppDispatch();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
@@ -258,7 +203,9 @@ export function ContentHealthFamily({
 
   return (
     <div>
-      <p className="text-xs text-gray-500">Review Questionnaire</p>
+      <p className="text-xs text-gray-500">
+        {translate('reviewQuestionnaire')}
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
           <Accordion
@@ -288,9 +235,10 @@ export function ContentHealthFamily({
           type="submit"
           className="text-white w-full mt-4"
         >
-          Done
+          {translate('done')}
         </Button>
       </form>
+         
     </div>
   );
 }

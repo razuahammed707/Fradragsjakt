@@ -64,7 +64,7 @@ export default function IncomeUpdateModal({
         >
           <div className="bg-white">
             <IncomeAddContent
-              origin="expense update"
+              origin="income update"
               setModalOpen={setModalOpen}
               categories={manipulateCategories}
               payload={payload}

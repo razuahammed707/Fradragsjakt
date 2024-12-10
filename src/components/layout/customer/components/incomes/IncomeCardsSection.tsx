@@ -4,14 +4,27 @@ import React, { useEffect, useState } from 'react';
 
 import IncomeStatsByType from './IncomeStatsByType';
 import IncomeType from './IncomeType';
-
+import PlusIcon from '../../../../../../public/images/expenses/plus.png';
 import { income_categories } from '@/utils/dummy';
-// import { trpc } from '@/utils/trpc';
-// import { useSession } from 'next-auth/react';
+import { trpc } from '@/utils/trpc';
+import { useSession } from 'next-auth/react';
+import Image, { StaticImageData } from 'next/image';
+import Link from 'next/link';
 
+interface CategoryIncome {
+  category: string;
+  totalItemByCategory: number;
+  amount: number;
+}
+
+interface IncomeType {
+  income_type: string;
+  totalItemByIncomeType: number;
+  amount: number;
+}
 interface CategoryCard {
   id: number;
-  imageSrc: string;
+  imageSrc: StaticImageData;
   category: string;
   totalItemByCategory: number;
   amount: number;
@@ -22,43 +35,60 @@ type IFilterProps = {
 };
 
 const IncomeCardsSection = ({ filterString }: IFilterProps) => {
-  const [categoryCards, setCategoryCards] = useState<CategoryCard[]>([]);
+  const [categoryCards, setCategoryCards] =
+    useState<CategoryCard[]>(income_categories);
   const [incomeStats, setIncomeStats] = useState({
     personal: 0,
     business: 0,
   });
 
-  // const { data: incomes } =
-  //   trpc.incomes.getCategoryAndIncomeTypeWiseIncomes.useQuery({
-  //     income_type: '',
-  //     filterString,
-  //   });
-  //const { data: user } = useSession();
-  useEffect(() => {
-    const updatedCategoryCards = income_categories.map((category, index) => ({
-      id: index,
-      imageSrc: category.image,
-      category: category.label,
-      totalItemByCategory: Math.floor(Math.random() * 100),
-      amount: Math.floor(Math.random() * 10000),
-    }));
-
-    const businessStats = updatedCategoryCards
-      .filter((card) => card.category.toLowerCase().includes('business'))
-      .reduce((sum, card) => sum + card.amount, 0);
-
-    const personalStats = updatedCategoryCards
-      .filter((card) => card.category.toLowerCase().includes('personal'))
-      .reduce((sum, card) => sum + card.amount, 0);
-
-    setIncomeStats({
-      business: businessStats,
-      personal: personalStats,
+  const { data: incomes } =
+    trpc.incomes.getCategoryAndIncomeTypeWiseIncomes.useQuery({
+      income_type: '',
+      filterString,
     });
 
-    // Slice to show only the first 8 categories
-    setCategoryCards(updatedCategoryCards.slice(0, 8));
-  }, []);
+  const { data: user } = useSession();
+  useEffect(() => {
+    if (!incomes?.data) return;
+
+    const { categoryWiseIncomes, incomeTypeWiseIncomes } = incomes.data;
+
+    if (categoryWiseIncomes) {
+      const updatedCategoryCards = income_categories.map((card) => {
+        const matchingIncome = categoryWiseIncomes.find(
+          (income: CategoryIncome) =>
+            income.category.toLowerCase() === card.category.toLowerCase()
+        );
+
+        return matchingIncome
+          ? {
+              ...card,
+              totalItemByCategory: matchingIncome.totalItemByCategory,
+              amount: matchingIncome.amount,
+            }
+          : card;
+      });
+
+      updatedCategoryCards.sort((a, b) => b.amount - a.amount);
+
+      setCategoryCards(updatedCategoryCards);
+    }
+
+    if (incomeTypeWiseIncomes) {
+      const personal = incomeTypeWiseIncomes.find(
+        (exp: IncomeType) => exp.income_type === 'personal'
+      );
+      const business = incomeTypeWiseIncomes.find(
+        (exp: IncomeType) => exp.income_type === 'business'
+      );
+
+      setIncomeStats({
+        personal: personal?.amount ?? 0,
+        business: business?.amount ?? 0,
+      });
+    }
+  }, [incomes?.data]);
 
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -75,8 +105,7 @@ const IncomeCardsSection = ({ filterString }: IFilterProps) => {
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {/* Display a maximum of 8 categories */}
-        {categoryCards.map((income, i) => (
+        {categoryCards.slice(0, 7).map((income, i) => (
           <IncomeType
             key={i}
             imageSrc={income.imageSrc}
@@ -85,6 +114,13 @@ const IncomeCardsSection = ({ filterString }: IFilterProps) => {
             quantity={income.totalItemByCategory}
           />
         ))}
+        <Link
+          href={`/${user?.user.role}/categories`}
+          className="text-white flex items-center justify-center bg-[#5B52F9] p-4 rounded-xl font-bold cursor-pointer"
+        >
+          <Image src={PlusIcon} alt="Plus icon" className="mr-3" />
+          More
+        </Link>
       </div>
     </div>
   );

@@ -127,7 +127,7 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
           className="text-white flex items-center justify-center bg-[#5B52F9] p-4 rounded-xl font-bold cursor-pointer"
         >
           <Image src={PlusIcon} alt="Plus icon" className="mr-3" />
-          {translate('page.expensetopsection.more')} {/* Translated */}
+          {translate('page.expensetopsection.more')}
         </Link>
       </div>
     </div>

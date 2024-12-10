@@ -301,7 +301,6 @@ function IncomeAddContent({
             {origin === 'income update'
               ? translate('componentsIncomeModal.income.button.update')
               : translate('componentsIncomeModal.income.button.add')}{' '}
-            {translate('componentsIncomeModal.income.button.income')}
           </Button>
         </div>
       </form>
