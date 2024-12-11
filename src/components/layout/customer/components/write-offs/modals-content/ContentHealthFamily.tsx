@@ -35,7 +35,7 @@ type ContentHealthFamilyProps = {
 export function ContentHealthFamily({
   questionnaire,
 }: ContentHealthFamilyProps) {
-  const { translate } = useTranslation(); // Use translate function
+  const { translate } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -53,7 +53,7 @@ export function ContentHealthFamily({
         Object.keys(answer).includes(accordionItemId)
       )?.[accordionItemId] || [];
 
-    return answers.find((field: any) => field[fieldName])?.[fieldName] || ''; // eslint-disable-line @typescript-eslint/no-explicit-any
+    return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
 
   const accordionData: AccordionItemData[] = [
