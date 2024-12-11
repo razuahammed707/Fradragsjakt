@@ -34,6 +34,8 @@ export default function CategoryAddModal({
 
   const { handleSubmit, control, reset, watch } = useForm<FormData>();
   const categoryForValue = watch('category_for');
+  const categoryTitleValue = watch('title');
+  const categoryMapValue = watch('reference_category');
 
   const query = { category_for: categoryForValue || category?.category_for };
   const { manipulatedCategories } = useManipulatedCategories(query);
@@ -69,6 +71,7 @@ export default function CategoryAddModal({
   });
 
   const onSubmit = (data: FormData) => {
+    console.log('update form data of category', data);
     setLoading(true);
     if (origin && category) {
       updateMutation.mutate({ id: category._id, ...data });
@@ -155,7 +158,12 @@ export default function CategoryAddModal({
                   />
                 </div>
                 <Button
-                  disabled={loading}
+                  disabled={
+                    loading ||
+                    !categoryForValue ||
+                    !categoryTitleValue ||
+                    !categoryMapValue
+                  }
                   type="submit"
                   className="w-full flex h-9 py-2 px-4 justify-center items-center gap-[10px] text-white text-sm font-medium"
                 >

@@ -100,23 +100,21 @@ export const categoryRouter = router({
     .input(categoryValidation.updateCategorySchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const { id, title, reference_category } = input;
+        const { id, ...restData } = input;
         const sessionUser = ctx.user as JwtPayload;
 
         if (!sessionUser?.email) {
           throw new Error('Authentication required');
         }
 
-        const updatePayload: { title: string; reference_category?: string } = {
-          title,
-        };
-
-        if (reference_category) {
-          updatePayload.reference_category = reference_category;
-        }
+        const updatePayload: {
+          title?: string;
+          reference_category?: string;
+          category_for?: string;
+        } = restData;
 
         const updatedCategory = await Category.findByIdAndUpdate(
-          id,
+          { _id: id },
           {
             ...updatePayload,
           },

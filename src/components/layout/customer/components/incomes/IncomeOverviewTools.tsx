@@ -14,6 +14,7 @@ import IncomeUploadStatements from './IncomeUploadStatements';
 import Image from 'next/image';
 import IncomeAddContent from './IncomeAddContent';
 import IncomeDataTableFilter from './IncomeDataTableFilter';
+import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 
 type IncomeOverviewToolsProps = {
   setSearchTerm: (value: string) => void;
@@ -39,24 +40,9 @@ function IncomeOverviewTools({
         keepPreviousData: true,
       }
     );
-  const { data: categories } = trpc.categories.getCategories.useQuery(
-    {
-      page: 1,
-      limit: 50,
-    },
-    {
-      keepPreviousData: true,
-    }
-  );
-
-  const manipulatedCategories = categories?.data
-    ? categories?.data?.map((category) => {
-        return {
-          title: category.title,
-          value: category.title,
-        };
-      })
-    : [];
+  const { manipulatedCategories } = useManipulatedCategories({
+    category_for: 'income',
+  });
 
   const handleButtonClick = (key: string) => {
     setModalContent({ key });

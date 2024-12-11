@@ -24,6 +24,7 @@ async function findMatchingRule(description: string, userId: string) {
     // Step 2: Query the database to find rules, then filter in memory for exact substring match
     const rules = await RuleModel.find({
       user: userId,
+      rule_for: 'expense',
     });
 
     // Step 3: Find the first matching rule by checking if normalized rule text is contained in description

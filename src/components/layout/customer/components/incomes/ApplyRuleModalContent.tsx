@@ -109,6 +109,10 @@ function ApplyRuleModalContent({
 
   const handleApplyRule = () => {
     setLoading(true);
+    console.log(
+      'incomes before applying rule',
+      selectedRuleData?.incomePayload
+    );
     if (selectedRuleData?.incomePayload) {
       const incomes =
         tableData
@@ -134,6 +138,8 @@ function ApplyRuleModalContent({
       setCurrentPage(1);
     }
   }, [selectedRuleData]);
+
+  console.log('income table data', tableData);
 
   return (
     <div className="space-y-8">

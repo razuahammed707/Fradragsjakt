@@ -134,7 +134,7 @@ export const rulesRouter = router({
 
         const category = await CategoryModel.findOne(categoryQuery);
 
-        console.log('update rule payload from backend');
+        console.log('update rule payload from backend', restPayload);
 
         const updateRule = await RuleModel.findByIdAndUpdate(
           { _id },

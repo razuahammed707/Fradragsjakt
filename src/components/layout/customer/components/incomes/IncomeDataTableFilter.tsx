@@ -43,7 +43,9 @@ export default function IncomeDataTableFilter({
 }: {
   setFilterString: (value: string) => void;
 }): JSX.Element {
-  const { data: categoryData } = trpc.categories.getCategories.useQuery({});
+  const { data: categoryData } = trpc.categories.getCategories.useQuery({
+    category_for: 'income',
+  });
   const { translate } = useTranslation();
 
   const categoryOptions: FilterItem[] = React.useMemo(() => {

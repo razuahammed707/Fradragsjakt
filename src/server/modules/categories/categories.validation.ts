@@ -19,6 +19,9 @@ const updateCategorySchema = z.object({
     .string()
     .min(2, 'Category title must be at least 2 characters')
     .max(50, 'Category title must not exceed 50 characters'),
+  category_for: z.enum(['expense', 'income'], {
+    required_error: 'Category for is required',
+  }),
   reference_category: z.string().optional(),
 });
 

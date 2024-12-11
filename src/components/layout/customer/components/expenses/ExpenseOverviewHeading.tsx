@@ -17,6 +17,7 @@ import { useSession } from 'next-auth/react';
 import { debounce } from '@/lib/utils';
 import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
@@ -44,24 +45,9 @@ function ExpenseOverviewHeading({
         keepPreviousData: true,
       }
     );
-  const { data: categories } = trpc.categories.getCategories.useQuery(
-    {
-      page: 1,
-      limit: 50,
-    },
-    {
-      keepPreviousData: true,
-    }
-  );
-
-  const manipulatedCategories = categories?.data
-    ? categories?.data?.map((category) => {
-        return {
-          title: category.title,
-          value: category.title,
-        };
-      })
-    : [];
+  const { manipulatedCategories } = useManipulatedCategories({
+    category_for: 'expense',
+  });
 
   const buttons = [
     {
