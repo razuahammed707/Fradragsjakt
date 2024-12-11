@@ -20,10 +20,12 @@ import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionna
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from '@/lib/TranslationProvider'; // Import the translation hook
 
 type ContentHobbyProps = {
   questionnaire?: Questionnaire;
 };
+
 export type UploadedImageType = {
   link: string;
   mimeType: string;
@@ -32,6 +34,7 @@ export type UploadedImageType = {
 };
 
 export function ContentHobby({ questionnaire }: ContentHobbyProps) {
+  const { translate } = useTranslation(); // Get the translate function from the hook
   const {
     handleSubmit,
     control,
@@ -52,21 +55,23 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
+
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title: 'I have a sole proprietorship',
       content: (
         <>
-          Proprietorship expense = Operating Expenses + Depreciation + Other
-          Deductions Report income and expenses in the RF-1030 or RF-1175 forms.
-          <p className="text-black pt-[12px] pb-[6px]">Revenue</p>
+          {translate('proprietorship.description')}
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate('revenue')}
+          </p>
           <FormInput
             name="I have a sole proprietorship.Revenue"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 100"
+            placeholder={translate('revenue_placeholder')}
             defaultValue={getDefaultValue(
               'I have a sole proprietorship',
               'Revenue'
@@ -74,14 +79,14 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            proprietorship expense
+            {translate('proprietorship_expense')}
           </p>
           <FormInput
             name="I have a sole proprietorship.proprietorship expense"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 100"
+            placeholder={translate('expense_placeholder')}
             defaultValue={getDefaultValue(
               'I have a sole proprietorship',
               'proprietorship expense'
@@ -97,28 +102,31 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
         'Sell goods or services, blog/influencer, practise e-sports (gaming), breed animals on a small scale',
       content: (
         <>
-          Only the portion exceeding the standard commuting deduction threshold
-          (37 km/day) is deductible. Keep records of all expenses.
-          <p className="text-black pt-[12px] pb-[6px]">Revenue</p>
+          {translate('sell_goods_or_services.description')}
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate('revenue')}
+          </p>
           <FormInput
             name="Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale.Revenue"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 100"
+            placeholder={translate('revenue_placeholder')}
             defaultValue={getDefaultValue(
               'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',
               'Revenue'
             )}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">Documented expense</p>
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate('documented_expense')}
+          </p>
           <FormInput
             name="Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale.Documented expense"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 100"
+            placeholder={translate('expense_placeholder')}
             defaultValue={getDefaultValue(
               'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',
               'Documented expense'
@@ -126,7 +134,7 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
+            {translate('upload_verification')}
           </p>
           <FormReceiptInput
             name="Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale.Upload verification document"
@@ -145,21 +153,19 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
       title: 'I have received salary from odd jobs and services',
       content: (
         <>
-          Odd job income qualifies for the minimum deduction (45% of your total
-          income, capped at NOK 104,450 for 2023). This deduction automatically
-          applies to personal income and can lower your tax base.
+          {translate('received_salary.description')}
           <p className="text-black pt-[12px] pb-[6px]">
-            Received salary from odd jobs and services exceeding NOK 6000 ?
+            {translate('received_salary_threshold')}
           </p>
           <FormInput
             name="I have received salary from odd jobs and services.Received salary from odd jobs and services exceeding NOK 6000"
             customClassName="w-full"
             type="select"
             control={control}
-            placeholder="Yes"
+            placeholder={translate('yes_no')}
             options={[
-              { title: 'Yes', value: 'yes' },
-              { title: 'No', value: 'no' },
+              { title: translate('yes'), value: 'yes' },
+              { title: translate('no'), value: 'no' },
             ]}
             defaultValue={getDefaultValue(
               'I have received salary from odd jobs and services',
@@ -167,13 +173,15 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
             )}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">Odd job income</p>
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate('odd_job_income')}
+          </p>
           <FormInput
             name="I have received salary from odd jobs and services.Odd job income"
             customClassName="w-full"
             type="number"
             control={control}
-            placeholder="NOK 5000"
+            placeholder={translate('odd_job_income_placeholder')}
             defaultValue={getDefaultValue(
               'I have received salary from odd jobs and services',
               'Odd job income'
@@ -208,9 +216,12 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
     appDispatch(addQuestionnaire(payload));
     appDispatch(showModal(false));
   };
+
   return (
     <div className="">
-      <p className="text-xs text-gray-500">Review Questionnaire</p>
+      <p className="text-xs text-gray-500">
+        {translate('review_questionnaire')}
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
           <Accordion
@@ -242,7 +253,7 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
           type="submit"
           className="text-white w-full mt-4"
         >
-          Done
+          {translate('done')}
         </Button>
       </form>
     </div>
