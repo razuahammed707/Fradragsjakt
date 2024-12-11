@@ -2,6 +2,7 @@
 import { Handshake, SquareUserRound } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import React from 'react';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -23,6 +24,7 @@ const SummaryChart = ({
     React.SetStateAction<'personal' | 'business'>
   >;
 }) => {
+  const { translate } = useTranslation();
   // Predefined color palette (you can adjust as needed)
   const colorPalette = [
     '#9F97F7',
@@ -108,8 +110,13 @@ const SummaryChart = ({
       <div className="flex flex-col h-full justify-between">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-sm font-semibold text-[#71717A]">Summary</h3>
-            <p className="text-[#71717A] text-xs">Tax Saved Breakdown</p>
+            <h3 className="text-sm font-semibold text-[#71717A]">
+              {' '}
+              {translate('summaryChart.title')}
+            </h3>
+            <p className="text-[#71717A] text-xs">
+              {translate('summaryChart.taxSavedBreakdown')}
+            </p>
           </div>
           <div className="flex">
             <button

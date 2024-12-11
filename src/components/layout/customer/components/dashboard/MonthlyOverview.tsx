@@ -5,6 +5,7 @@ import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { trpc } from '@/utils/trpc';
 import Link from 'next/link';
 import React from 'react';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 const MonthlyOverview = () => {
   const { data: expenses } =
@@ -13,12 +14,13 @@ const MonthlyOverview = () => {
     });
 
   const writeOffs = expenses?.data?.categoryWiseExpenses;
+  const { translate } = useTranslation();
   return (
     <Card className="col-span-3 p-6 border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0 flex flex-col justify-between h-full">
         <div className="flex justify-between">
           <h4 className="text-sm  text-[#627A97] font-semibold mb-3">
-            Write offs Overview{' '}
+            {translate('writeOffsOverview')}
           </h4>
           {/* <Badge className="bg-[#F0EFFE] px-1   hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
             This month
