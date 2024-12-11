@@ -1,6 +1,6 @@
 'use client';
 
-import { Pencil } from 'lucide-react';
+import { View } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { useTranslation } from '@/lib/TranslationProvider';
@@ -30,6 +30,7 @@ import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import SharedReportDownloader from '@/components/SharedReportDownloader';
+import ViewResponseModalContent from './modals-content/ViewResponseModalContent';
 
 const modalContentMap: Record<
   string,
@@ -55,11 +56,13 @@ const modalContentMap: Record<
     <ContentForeignIncome questionnaire={questionnaire} />
   ),
   'Edit Response': () => <EditResponseModalContent />,
+  'View Response': () => <ViewResponseModalContent />,
 };
 
 const QuestionnairesReviewSection = () => {
   const { translate } = useTranslation();
   const [selectedTitle, setSelectedTitle] = useState<string>('');
+
   const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { isModalOpen } = useAppSelector(questionnaireSelector);
@@ -123,6 +126,7 @@ const QuestionnairesReviewSection = () => {
       'Hobby, Odd jobs, and Extra incomes',
     [translate('questionnaire.foreign_income')]: 'Foreign Income',
     [translate('questionnaire.edit_response')]: 'Edit Response',
+    [translate('questionnaire.view_response')]: 'View Response',
   };
   const handleButtonClick = (title: string) => {
     // Map the translated title to the modal content key
@@ -167,11 +171,11 @@ const QuestionnairesReviewSection = () => {
               height={52}
               width={54}
             />
-            <Pencil
+            <View
               onClick={() =>
-                handleButtonClick(translate('questionnaire.edit_response'))
+                handleButtonClick(translate('questionnaire.view_response'))
               }
-              className="h-4 w-4 text-[#5B52F9] cursor-pointer"
+              className="h-5 w-5 text-[#5B52F9] cursor-pointer"
             />
           </div>
           <div>
@@ -242,9 +246,11 @@ const QuestionnairesReviewSection = () => {
         open={isModalOpen}
         onOpenChange={handleOpenChange}
         customClassName={cn(
-          'max-w-[500px] ',
+          'max-w-[500px]',
           selectedTitle === translate('questionnaire.edit_response') &&
-            'max-w-[608px]'
+            'max-w-[608px]',
+          selectedTitle === translate('questionnaire.view_response') &&
+            'max-w-[600px]'
         )}
       >
         <div className="bg-white">{renderModalContent()}</div>
