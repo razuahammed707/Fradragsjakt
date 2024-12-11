@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,8 +18,10 @@ import {
 } from '@/redux/slices/questionnaire';
 import { FormInput } from '@/components/FormInput';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 export function ContentDonation() {
+  const { translate } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -41,6 +42,7 @@ export function ContentDonation() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
+
   const appDispatch = useAppDispatch();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,30 +52,33 @@ export function ContentDonation() {
     appDispatch(addQuestionnaire(payload));
     appDispatch(showModal(false));
   };
+
   return (
     <Card className="border-none shadow-none p-0">
-      <p className="text-xs  text-gray-500">Review Questionnaire</p>
-      <CardHeader className="px-0 ">
+      <p className="text-xs text-gray-500">
+        {translate('contentDonation.reviewQuestionnaire')}
+      </p>
+      <CardHeader className="px-0">
         <CardTitle className="start text-xl font-semibold">
-          Gifts to voluntary organisations
+          {translate('contentDonation.cardTitle')}
         </CardTitle>
         <CardDescription className="text-xs">
-          If you have given a monetary donation of at least NOK 500 to a
-          voluntary organisation and/or religious or belief-based community, you
-          can get a deduction for this.
+          {translate('contentDonation.cardDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Donation Amount</Label>
+              <Label htmlFor="name">
+                {translate('contentDonation.fields.donationAmount')}
+              </Label>
               <FormInput
                 name="Gifts to voluntary organisations.Donation Amount"
                 customClassName="w-full"
                 type="number"
                 control={control}
-                placeholder="Donation amount"
+                placeholder={translate('contentDonation.fields.donationAmount')}
                 defaultValue={getDefaultValue(
                   'Gifts to voluntary organisations',
                   'Donation Amount'
@@ -81,7 +86,7 @@ export function ContentDonation() {
                 required
               />
               <Label className="text-black pt-[12px] pb-[6px]">
-                Upload verification document
+                {translate('contentDonation.fields.uploadVerificationDocument')}
               </Label>
               <FormReceiptInput
                 name="Gifts to voluntary organisations.Upload verification document"
@@ -99,7 +104,7 @@ export function ContentDonation() {
             type="submit"
             className="text-white w-full"
           >
-            Done
+            {translate('contentDonation.doneButton')}
           </Button>
         </form>
       </CardContent>

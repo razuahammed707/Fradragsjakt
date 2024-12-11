@@ -294,5 +294,124 @@
       "uploadTitle": "Last opp inntektsoppgave"
     }
   },
+  "writeOffPage": {
+    "reviewQuestionnaire": "Gjennomgå spørreskjema",
+    "accordionItems": {
+      "item1": {
+        "title": "Har barn under 11 år",
+        "content": {
+          "description": "Foreldre kan trekke fra utgifter knyttet til barnepass, som barnehage eller SFO, for barn under 12 år. Fradraget er opptil NOK 25 000 for det første barnet og ytterligere NOK 15 000 per barn under 12 år.",
+          "questions": {
+            "howManyChildren": "Hvor mange barn har du under 12 år?",
+            "documentedExpense": "Dokumenterte utgifter"
+          }
+        }
+      },
+      "item2": {
+        "title": "Jeg har barn 12 år eller eldre med spesielle omsorgsbehov",
+        "content": {
+          "description": "Foreldre kan trekke fra utgifter knyttet til barnepass, som barnehage eller SFO, for barn under 12 år.",
+          "questions": {
+            "specialCareNeeds": "Har du barn med behov for spesielle omsorgstjenester?",
+            "documentedCareExpenses": "Dokumenterte omsorgsutgifter",
+            "uploadVerification": "Last opp verifikasjonsdokument"
+          }
+        },
+        "options": {
+          "yes": "Ja",
+          "no": "Nei"
+        }
+      },
+      "item3": {
+        "title": "Jeg er aleneforelder",
+        "content": {
+          "description": "Aleneforeldre mottar nå økonomisk støtte gjennom andre ordninger, som:",
+          "details": {
+            "extendedChildBenefit": "Utvidet barnetrygd",
+            "extendedChildBenefitDesc": "Aleneforeldre mottar ekstra barnetrygd.",
+            "childcareDeductions": "Fradrag for barnepassutgifter",
+            "childcareDeductionsDesc": "Fradrag for kostnader til barnehage og SFO.",
+            "commutingDeductions": "Fradrag for pendling",
+            "commutingDeductionsDesc": "For ekstra reisekostnader knyttet til barn, som kjøring til barnehage eller SFO."
+          }
+        }
+      }
+    },
+    "doneButton": "Ferdig"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "incomes": "Inntekter",
+    "expenses": "Utgifter",
+    "categories": "Kategorier",
+    "rules": "Regler",
+    "deductions": "Fradrag",
+    "tax_file": "Skattefil",
+    "write_offs": "Avskrivninger"
+  },
+  "contentBank": {
+    "reviewQuestionnaire": "Gjennomgå spørreskjema",
+    "accordionItems": {
+      "item1": {
+        "description": "Fradragssatsen for lånerenter er 22 % av rentene som er betalt i skatteåret.",
+        "fields": {
+          "totalInterestPaid": "Totalt betalte renter"
+        }
+      },
+      "item2": {
+        "description": "Refinansieringskostnader, som gebyrer og avgifter, er fradragsberettiget sammen med renter. Den samme satsen på 22 % gjelder.",
+        "fields": {
+          "refinancingCost": "Refinansieringskostnad"
+        }
+      },
+      "item3": {
+        "description": "Sørg for at eierandelen er dokumentert, vanligvis i låneavtalen.",
+        "fields": {
+          "interestAmount": "Rente beløp",
+          "yourOwnershipShare": "Din eierandel"
+        }
+      },
+      "item4": {
+        "description": "Boligsparing for ungdom (BSU) er for personer under 34 år. Du kan spare opptil 27 500 NOK per år. Da får du et skattefradrag på 2 750 NOK (10 prosent).",
+        "fields": {
+          "thisYearsSavings": "Dette årets sparing"
+        }
+      },
+      "item5": {
+        "description": "Gevinster og tap på aksjer er skattepliktige for beløpet som overstiger det fradragsberettigede risikofrie avkastningen. Tap på salg av aksjer er fradragsberettiget.",
+        "fields": {
+          "totalLoss": "Totalt tap"
+        }
+      }
+    },
+    "doneButton": "Ferdig"
+  },
+  "contentDonation": {
+    "reviewQuestionnaire": "Gjennomgå spørreskjema",
+    "cardTitle": "Gaver til frivillige organisasjoner",
+    "cardDescription": "Hvis du har gitt en pengebidrag på minst 500 NOK til en frivillig organisasjon og/eller religiøst eller trosbasert samfunn, kan du få fradrag for dette.",
+    "fields": {
+      "donationAmount": "Donasjonsbeløp",
+      "uploadVerificationDocument": "Last opp bekreftelsesdokument"
+    },
+    "doneButton": "Ferdig"
+  },
+  "contentForeignIncome": {
+    "reviewQuestionnaire": "Gjennomgå spørreskjema",
+    "accordionItems": {
+      "item1": {
+        "title": "Har inntekt eller formue i et annet land enn Norge og betaler skatt i det andre landet",
+        "content": {
+          "description": "Du må oppgi all utenlandsk inntekt og formue i den norske skattemeldingen. Dette gjelder uansett om du har betalt skatt i utlandet eller om inntekten/formuen er skattefri i det aktuelle landet.",
+          "fields": {
+            "foreignIncome": "Utenlandsk inntekt",
+            "foreignTaxAmount": "Utenlandsk skattebeløp",
+            "norwayTaxRate": "Norsk skattesats på denne inntekten"
+          }
+        }
+      }
+    },
+    "doneButton": "Ferdig"
+  },
   "default": "Oversettelse mangler"
 }

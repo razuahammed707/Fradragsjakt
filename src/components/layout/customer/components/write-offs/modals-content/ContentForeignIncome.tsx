@@ -1,4 +1,5 @@
 'use client';
+
 import { FormInput } from '@/components/FormInput';
 import {
   Accordion,
@@ -18,6 +19,7 @@ import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionna
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type ContentForeignIncomeProps = {
   questionnaire?: Questionnaire;
@@ -26,6 +28,7 @@ type ContentForeignIncomeProps = {
 export function ContentForeignIncome({
   questionnaire,
 }: ContentForeignIncomeProps) {
+  const { translate } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -45,6 +48,7 @@ export function ContentForeignIncome({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
+
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -52,10 +56,14 @@ export function ContentForeignIncome({
         'Have income or wealth in another country than Norway and pay tax in the other country',
       content: (
         <>
-          You must declare all your foreign income and wealth in the Norwegian
-          tax return. This applies regardless of whether you’ve paid tax abroad
-          or the income/wealth is tax free in the country in question.
-          <p className="text-black pt-3 pb-1">Foreign income</p>
+          {translate(
+            'contentForeignIncome.accordionItems.item1.content.description'
+          )}
+          <p className="text-black pt-3 pb-1">
+            {translate(
+              'contentForeignIncome.accordionItems.item1.content.fields.foreignIncome'
+            )}
+          </p>
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign income"
             customClassName="w-full"
@@ -68,7 +76,11 @@ export function ContentForeignIncome({
             )}
             required
           />
-          <p className="text-black pt-3 pb-1">Foreign tax amount</p>
+          <p className="text-black pt-3 pb-1">
+            {translate(
+              'contentForeignIncome.accordionItems.item1.content.fields.foreignTaxAmount'
+            )}
+          </p>
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign tax amount"
             customClassName="w-full"
@@ -81,7 +93,11 @@ export function ContentForeignIncome({
             placeholder="NOK 200"
             required
           />
-          <p className="text-black pt-3 pb-1">Norway tax rate on this income</p>
+          <p className="text-black pt-3 pb-1">
+            {translate(
+              'contentForeignIncome.accordionItems.item1.content.fields.norwayTaxRate'
+            )}
+          </p>
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Norway tax rate on this income"
             customClassName="w-full"
@@ -120,9 +136,12 @@ export function ContentForeignIncome({
     appDispatch(addQuestionnaire(payload));
     appDispatch(showModal(false));
   };
+
   return (
     <div className=" ">
-      <p className="text-xs text-gray-500">Review Questionnaire</p>
+      <p className="text-xs text-gray-500">
+        {translate('contentForeignIncome.reviewQuestionnaire')}
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Accordion
           type="single"
@@ -150,7 +169,7 @@ export function ContentForeignIncome({
           disabled={!isDirty || !isValid}
           className="text-white w-full mt-4"
         >
-          Done
+          {translate('contentForeignIncome.doneButton')}
         </Button>
       </form>
     </div>

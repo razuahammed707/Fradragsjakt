@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { FormInput } from '@/components/FormInput';
@@ -17,6 +18,7 @@ import {
 import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
 import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
+import { useTranslation } from '@/lib/TranslationProvider';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -25,6 +27,7 @@ type ContentBankProps = {
 };
 
 export function ContentBank({ questionnaire }: ContentBankProps) {
+  const { translate } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -41,18 +44,21 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
         Object.keys(answer).includes(accordionItemTitle)
       )?.[accordionItemTitle] || [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
+
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
       title: 'Have a loan?',
       content: (
         <>
-          The deduction rate for loan interest is 22% of the interest paid in
-          the tax year.
-          <p className="text-black pt-[12px] pb-[6px]">Total interest paid</p>
+          {translate('contentBank.accordionItems.item1.description')}
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate(
+              'contentBank.accordionItems.item1.fields.totalInterestPaid'
+            )}
+          </p>
           <FormInput
             name="Have a loan.Total interest paid"
             customClassName="w-full"
@@ -70,9 +76,12 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have refinanced a loan in the last year?',
       content: (
         <>
-          Refinancing costs, such as fees and charges, are deductible alongside
-          interest. The same 22% rate applies.
-          <p className="text-black pt-[12px] pb-[6px]">Refinancing cost</p>
+          {translate('contentBank.accordionItems.item2.description')}
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate(
+              'contentBank.accordionItems.item2.fields.refinancingCost'
+            )}
+          </p>
           <FormInput
             name="Have refinanced a loan in the last year.Refinancing cost"
             customClassName="w-full"
@@ -93,9 +102,12 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have taken out a joint loan with someone?',
       content: (
         <>
-          Ensure the ownership percentage is documented, typically in the loan
-          agreement.
-          <p className="text-black pt-[12px] pb-[6px]">Interest amount</p>
+          {translate('contentBank.accordionItems.item3.description')}
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate(
+              'contentBank.accordionItems.item3.fields.interestAmount'
+            )}
+          </p>
           <FormInput
             name="Have taken out a joint loan with someone.Interest amount"
             customClassName="w-full"
@@ -108,7 +120,11 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             )}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">Your ownership share</p>
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate(
+              'contentBank.accordionItems.item3.fields.yourOwnershipShare'
+            )}
+          </p>
           <FormInput
             name="Have taken out a joint loan with someone.Your ownership share"
             customClassName="w-full"
@@ -129,10 +145,12 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have young people’s housing savings (BSU)',
       content: (
         <>
-          Young people’s housing savings (BSU) is for people under 34 years of
-          age. You can save up to NOK 27,500 per year. Then you get a tax
-          deduction of NOK 2,750 (10 percent).
-          <p className="text-black pt-[12px] pb-[6px]">This years savings</p>
+          {translate('contentBank.accordionItems.item4.description')}
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate(
+              'contentBank.accordionItems.item4.fields.thisYearsSavings'
+            )}
+          </p>
           <FormInput
             name="Have young people’s housing savings (BSU).This years savings"
             customClassName="w-full"
@@ -153,9 +171,10 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'I have sold shares or securities at a loss',
       content: (
         <>
-          Gains and losses on shares are taxable for the amount that exceeds the
-          deductible risk-free return. Losses on sale of shares are deductible.
-          <p className="text-black pt-[12px] pb-[6px]">Total loss</p>
+          {translate('contentBank.accordionItems.item5.description')}
+          <p className="text-black pt-[12px] pb-[6px]">
+            {translate('contentBank.accordionItems.item5.fields.totalLoss')}
+          </p>
           <FormInput
             name="I have sold shares or securities at a loss.Total loss"
             customClassName="w-full"
@@ -172,6 +191,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       ),
     },
   ];
+
   const answers = questionnaire?.answers || [];
   const matchedAccordionData = matchQuestionnaireModalQuestion({
     questionnaire: answers,
@@ -194,9 +214,12 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
     appDispatch(addQuestionnaire(payload));
     appDispatch(showModal(false));
   };
+
   return (
     <div>
-      <p className="text-xs text-gray-500">Review Questionnaire</p>
+      <p className="text-xs text-gray-500">
+        {translate('contentBank.reviewQuestionnaire')}
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
           <Accordion
@@ -228,7 +251,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
           type="submit"
           className="text-white w-full mt-4"
         >
-          Done
+          {translate('contentBank.doneButton')}
         </Button>
       </form>
     </div>

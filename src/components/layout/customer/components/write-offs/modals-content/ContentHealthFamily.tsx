@@ -20,7 +20,7 @@ import {
   showModal,
 } from '@/redux/slices/questionnaire';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
-import { useTranslation } from '@/lib/TranslationProvider';
+import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
 
 type AccordionItemData = {
   id: string;
@@ -47,138 +47,169 @@ export function ContentHealthFamily({
     (q) => q.question === questionnaire?.question
   );
 
-  const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
+  const getDefaultValue = (accordionItemId: string, fieldName: string) => {
     const answers =
       foreignIncomeQuestionnaire?.answers.find((answer) =>
-        Object.keys(answer).includes(accordionItemTitle)
-      )?.[accordionItemTitle] || [];
+        Object.keys(answer).includes(accordionItemId)
+      )?.[accordionItemId] || [];
+
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
+
   const accordionData: AccordionItemData[] = [
     {
-      id: 'item-1',
-      title: translate('childrenUnder12'),
+      id: 'item1',
+      title: 'Have children aged 11 years or younger',
       content: (
         <>
-          {translate('childrenUnder12Info')}
+          <p>
+            {translate('writeOffPage.accordionItems.item1.content.description')}
+          </p>
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('howManyChildren')}
+            {translate(
+              'writeOffPage.accordionItems.item1.content.questions.howManyChildren'
+            )}
           </p>
           <FormInput
-            name="Have children aged 11 years or younger.How many children do you have under the age of 12"
+            name="childrenUnder12"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="2"
-            defaultValue={getDefaultValue(
-              'Have children aged 11 years or younger',
-              'How many children do you have under the age of 12'
-            )}
+            defaultValue={getDefaultValue('item1', 'childrenUnder12')}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('documentedExpense')}
+            {translate(
+              'writeOffPage.accordionItems.item1.content.questions.documentedExpense'
+            )}
           </p>
           <FormInput
-            name="Have children aged 11 years or younger.Documented Expense"
+            name="documentedExpense"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 25000"
-            defaultValue={getDefaultValue(
-              'Have children aged 11 years or younger',
-              'Documented Expense'
-            )}
+            defaultValue={getDefaultValue('item1', 'documentedExpense')}
             required
           />
         </>
       ),
     },
     {
-      id: 'item-2',
-      title: translate('childrenOver12SpecialNeeds'),
+      id: 'item2',
+      title: 'I have children aged 12 or older with special care needs',
       content: (
         <>
-          {translate('specialCareInfo')}
+          <p>
+            {translate('writeOffPage.accordionItems.item2.content.description')}
+          </p>
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('specialCareQuestion')}
+            {translate(
+              'writeOffPage.accordionItems.item2.content.questions.specialCareNeeds'
+            )}
           </p>
           <FormInput
-            name="I have children aged 12 or older with special care needs.Do you have children with needs for special care"
+            name="specialCareNeeds"
             customClassName="w-full"
             type="select"
             control={control}
-            placeholder={translate('yes')}
-            options={[
-              { title: translate('yes'), value: 'yes' },
-              { title: translate('no'), value: 'no' },
-            ]}
-            defaultValue={getDefaultValue(
-              'I have children aged 12 or older with special care needs',
-              'Do you have children with needs for special care'
+            placeholder={translate(
+              'writeOffPage.accordionItems.item2.options.yes'
             )}
+            options={[
+              {
+                title: translate(
+                  'writeOffPage.accordionItems.item2.options.yes'
+                ),
+                value: 'yes',
+              },
+              {
+                title: translate(
+                  'writeOffPage.accordionItems.item2.options.no'
+                ),
+                value: 'no',
+              },
+            ]}
+            defaultValue={getDefaultValue('item2', 'specialCareNeeds')}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('documentedCareExpenses')}
+            {translate(
+              'writeOffPage.accordionItems.item2.content.questions.documentedCareExpenses'
+            )}
           </p>
           <FormInput
-            name="I have children aged 12 or older with special care needs.Documented care expenses"
+            name="documentedCareExpenses"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 500"
-            defaultValue={getDefaultValue(
-              'I have children aged 12 or older with special care needs',
-              'Documented care expenses'
-            )}
+            defaultValue={getDefaultValue('item2', 'documentedCareExpenses')}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('uploadVerification')}
+            {translate(
+              'writeOffPage.accordionItems.item2.content.questions.uploadVerification'
+            )}
           </p>
           <FormReceiptInput
-            name="I have children aged 12 or older with special care needs.Upload verification document"
+            name="uploadVerification"
             control={control}
             setValue={setValue}
-            defaultValue={getDefaultValue(
-              'I have children aged 12 or older with special care needs',
-              'Upload verification document'
-            )}
+            defaultValue={getDefaultValue('item2', 'uploadVerification')}
           />
         </>
       ),
     },
     {
-      id: 'item-3',
-      title: translate('singleParent'),
+      id: 'item3',
+      title: 'I am a single parent',
       content: (
-        <div>
-          <p>{translate('singleParentInfo')}</p>
-          <ol>
+        <>
+          <p>
+            {translate('writeOffPage.accordionItems.item3.content.description')}
+          </p>
+          <ul>
             <li>
-              <span className="font-semibold">
-                {translate('extendedChildBenefit')}
-              </span>
-              : {translate('extendedChildBenefitInfo')}
+              <strong>
+                {translate(
+                  'writeOffPage.accordionItems.item3.content.details.extendedChildBenefit'
+                )}
+              </strong>
+              :{' '}
+              {translate(
+                'writeOffPage.accordionItems.item3.content.details.extendedChildBenefitDesc'
+              )}
             </li>
             <li>
-              <span className="font-semibold">
-                {translate('deductionsChildcare')}
-              </span>
-              : {translate('deductionsChildcareInfo')}
+              <strong>
+                {translate(
+                  'writeOffPage.accordionItems.item3.content.details.childcareDeductions'
+                )}
+              </strong>
+              :{' '}
+              {translate(
+                'writeOffPage.accordionItems.item3.content.details.childcareDeductionsDesc'
+              )}
             </li>
             <li>
-              <span className="font-semibold">
-                {translate('commutingDeductions')}
-              </span>
-              : {translate('commutingDeductionsInfo')}
+              <strong>
+                {translate(
+                  'writeOffPage.accordionItems.item3.content.details.commutingDeductions'
+                )}
+              </strong>
+              :{' '}
+              {translate(
+                'writeOffPage.accordionItems.item3.content.details.commutingDeductionsDesc'
+              )}
             </li>
-          </ol>
-        </div>
+          </ul>
+        </>
       ),
     },
   ];
+
   const answers = questionnaire?.answers || [];
   const matchedAccordionData = matchQuestionnaireModalQuestion({
     questionnaire: answers,
@@ -204,7 +235,7 @@ export function ContentHealthFamily({
   return (
     <div>
       <p className="text-xs text-gray-500">
-        {translate('reviewQuestionnaire')}
+        {translate('writeOffPage.reviewQuestionnaire')}
       </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
@@ -235,10 +266,9 @@ export function ContentHealthFamily({
           type="submit"
           className="text-white w-full mt-4"
         >
-          {translate('done')}
+          {translate('writeOffPage.doneButton')}
         </Button>
       </form>
-         
     </div>
   );
 }

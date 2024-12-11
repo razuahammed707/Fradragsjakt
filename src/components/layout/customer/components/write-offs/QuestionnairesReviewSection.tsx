@@ -113,9 +113,26 @@ const QuestionnairesReviewSection = () => {
     ];
   };
 
+  const titleKeyMap: Record<string, string> = {
+    [translate('questionnaire.health_family')]: 'Health and Family',
+    [translate('questionnaire.bank_loans')]: 'Bank and Loans',
+    [translate('questionnaire.work_education')]: 'Work and Education',
+    [translate('questionnaire.housing_property')]: 'Housing and Property',
+    [translate('questionnaire.gifts_donations')]: 'Gifts or Donations',
+    [translate('questionnaire.hobby_extra_income')]:
+      'Hobby, Odd jobs, and Extra incomes',
+    [translate('questionnaire.foreign_income')]: 'Foreign Income',
+    [translate('questionnaire.edit_response')]: 'Edit Response',
+  };
   const handleButtonClick = (title: string) => {
-    setSelectedTitle(title);
-    dispatch(showModal(true));
+    // Map the translated title to the modal content key
+    const mappedTitle = titleKeyMap[title];
+    if (mappedTitle) {
+      setSelectedTitle(mappedTitle);
+      dispatch(showModal(true));
+    } else {
+      console.error('No matching key found for title:', title);
+    }
   };
 
   const renderModalContent = () => {
