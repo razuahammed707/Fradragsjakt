@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { Badge } from './ui/badge';
+import { useTranslation } from '@/lib/TranslationProvider';
 interface SharedReportDownloaderProps {
   body: { title: string; amount?: number; total_amount?: number }[] | undefined;
   total: number;
@@ -96,20 +97,20 @@ export default function SharedReportDownloader({
 
     doc.save('savings_report.pdf');
   };
-
+  const { translate } = useTranslation();
   return origin !== 'writeOffs' ? (
     <Badge
       onClick={generatePDFWithImage}
       className="bg-[#F0EFFE] px-1 h-6  hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium"
     >
-      <Download size={16} className="mr-2 " /> Report
+      <Download size={16} className="mr-2 " /> {translate('report')}
     </Badge>
   ) : (
     <Button
       onClick={generatePDFWithImage}
       className="btn btn-primary text-white"
     >
-      <Download size={16} className="mr-2 " /> Report
+      <Download size={16} className="mr-2 " /> {translate('report')}
     </Button>
   );
 }
