@@ -8,7 +8,6 @@ import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import { trpc } from '@/utils/trpc';
-import { useTranslation } from '@/lib/TranslationProvider';
 
 const DeductiveExpenses = ({
   businessData,
@@ -29,23 +28,18 @@ const DeductiveExpenses = ({
     0
   );
   const totalDeductibleAmount = businessTotal + personalTotal;
-
-  // Initialize translation
-  const { translate } = useTranslation();
-
   return (
     <Card className="col-span-6 py-6 px-[21px] border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0 relative">
         <Badge className="bg-[#F0EFFE] px-1 absolute top-0 right-0  hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
-          {translate('deductiveExpenses.thisYear')}
+          This year
         </Badge>
         <div className=" ">
           <h4 className="text-sm  text-[#627A97] font-semibold">
-            {translate('deductiveExpenses.allDeductibleExpenses')}
+            All Deductible Expenses
           </h4>
           <p className="text-[28px] text-[#00104B] font-bold">
-            {translate('deductiveExpenses.currency')}{' '}
-            {numberFormatter(totalDeductibleAmount)}
+            NOK {numberFormatter(totalDeductibleAmount)}
           </p>
         </div>
 
@@ -53,10 +47,10 @@ const DeductiveExpenses = ({
           <div className="flex justify-between items-center px-4 bg-[#F0EFFE] py-2 rounded-2xl">
             <div className="flex flex-col">
               <span className="text-sm text-[#101010] font-semibold">
-                {translate('deductiveExpenses.business.title')}
+                Bussiness
               </span>
               <span className="text-sm text-[#627A97] font-medium">
-                {translate('deductiveExpenses.business.savingsFrom')}
+                Savings from
               </span>
             </div>
             <CircularProgressChart
@@ -68,10 +62,10 @@ const DeductiveExpenses = ({
           <div className="flex justify-between items-center px-4 bg-[#F0EFFE] py-2 rounded-2xl">
             <div className="flex flex-col">
               <span className="text-sm text-[#101010] font-semibold">
-                {translate('deductiveExpenses.personal.title')}
+                Personal
               </span>
               <span className="text-sm text-[#627A97] font-medium">
-                {translate('deductiveExpenses.personal.savingsFrom')}
+                Savings from
               </span>
             </div>
             <CircularProgressChart

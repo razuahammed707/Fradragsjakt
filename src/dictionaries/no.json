@@ -248,17 +248,6 @@
       "noExpenses": "Ingen utgifter tilgjengelig for oppdatering"
     }
   },
-  "profileDropdown": {
-    "altText": "Bytt bruker meny",
-    "label": {
-      "myAccount": "Min konto"
-    },
-    "menu": {
-      "settings": "Innstillinger",
-      "support": "Støtte",
-      "logout": "Logg ut"
-    }
-  },
   "common": {
     "currency": "kr {{amount}}"
   },
@@ -506,46 +495,5 @@
     "home_area": "Hjemmeområde",
     "submit": "Send inn"
   },
-  "summaryChart": {
-    "title": "Sammendrag",
-    "taxSavedBreakdown": "Skattebesparelse Oversikt"
-  },
-  "deductiveExpenses": {
-    "thisYear": "Dette året",
-    "allDeductibleExpenses": "Alle fradragsberettigede utgifter",
-    "currency": "NOK",
-    "business": {
-      "title": "Bedrift",
-      "savingsFrom": "Besparelser fra"
-    },
-    "personal": {
-      "title": "Personlig",
-      "savingsFrom": "Besparelser fra"
-    }
-  },
-  "aggregatedExpenseCard": {
-    "business": {
-      "title": "Skatt spart fra forretningsutgifter (Totalt)"
-    },
-    "personal": {
-      "title": "Skatt spart fra personlige utgifter (Totalt)"
-    }
-  },
-  "yearlyExpenseTable": {
-    "title": "Oversikt over nylige utgifter"
-  },
-  "yearlyExpenseTableColumn": {
-    "tableHeaders": {
-      "select": "Velg",
-      "transaction_date": "Dato",
-      "description": "Utgiftbeskrivelse",
-      "expense_type": "Utgiftstype",
-      "category": "Kategori",
-      "amount": "Beløp",
-      "actions": "Handlinger"
-    }
-  },
-  "writeOffsOverview": "Avskrivninger Oversikt",
-  "report": "Rapport",
   "default": "Oversettelse mangler"
 }
