@@ -16,7 +16,6 @@ import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
-import { useTranslation } from '@/lib/TranslationProvider';
 
 const DashboardSummarySection = () => {
   const [showPersonal, setShowPersonal] = useState<'personal' | 'business'>(
@@ -53,7 +52,6 @@ const DashboardSummarySection = () => {
 
   const summaryChartData =
     showPersonal === 'business' ? businessData : personalData;
-  const { translate } = useTranslation();
 
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -72,10 +70,10 @@ const DashboardSummarySection = () => {
         <AggregatedExpenseCard
           origin="business"
           items={businessData}
-          title={translate('aggregatedExpenseCard.business.title')}
+          title="Tax Saved From Business Spending (Total)"
         />
         <AggregatedExpenseCard
-          title={translate('aggregatedExpenseCard.personal.title')}
+          title="Tax Saved From Personal Spending (Total)"
           origin="personal"
         />
       </div>
