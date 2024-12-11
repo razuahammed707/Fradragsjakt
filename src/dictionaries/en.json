@@ -476,7 +476,6 @@
   "no": "No",
   "review_questionnaire": "Review Questionnaire",
   "done": "Done",
-
   "contentwork": {
     "home_to_work_comprehension": "The return distance between home and work is more than 37 kilometers.",
     "number_of_workdays": "Number of Workdays",
@@ -507,5 +506,45 @@
     "home_area": "Home Area",
     "submit": "Submit"
   },
+  "summaryChart": {
+    "title": "Summary",
+    "taxSavedBreakdown": "Tax Saved Breakdown"
+  },
+  "deductiveExpenses": {
+    "thisYear": "This year",
+    "allDeductibleExpenses": "All Deductible Expenses",
+    "currency": "NOK",
+    "business": {
+      "title": "Business",
+      "savingsFrom": "Savings from"
+    },
+    "personal": {
+      "title": "Personal",
+      "savingsFrom": "Savings from"
+    }
+  },
+  "aggregatedExpenseCard": {
+    "business": {
+      "title": "Tax Saved From Business Spending (Total)"
+    },
+    "personal": {
+      "title": "Tax Saved From Personal Spending (Total)"
+    }
+  },
+  "yearlyExpenseTable": {
+    "title": "Recent Expenses Overview"
+  },
+  "yearlyExpenseTableColumn": {
+    "tableHeaders": {
+      "select": "Select",
+      "transaction_date": "Date",
+      "description": "Expense Description",
+      "expense_type": "Expense Type",
+      "category": "Category",
+      "amount": "Amount",
+      "actions": "Actions"
+    }
+  },
+  "writeOffsOverview": "Write offs Overview",
   "default": "Translation missing"
 }
