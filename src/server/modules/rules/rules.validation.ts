@@ -5,6 +5,9 @@ const ruleSchema = z.object({
   expense_type: z.enum(['personal', 'business'], {
     required_error: 'Expense type is required',
   }),
+  rule_for: z.enum(['expense', 'income'], {
+    required_error: 'Rule for is required',
+  }),
   category: z.string({
     required_error: 'Category is required',
   }),
@@ -14,6 +17,7 @@ const updateRuleSchema = z.object({
   description_contains: z.string().optional(),
   expense_type: z.enum(['personal', 'business']).optional(),
   category: z.string().optional(),
+  rule_for: z.enum(['expense', 'income']).optional(),
 });
 
 const deleteRuleSchema = z.object({

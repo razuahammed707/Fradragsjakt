@@ -11,6 +11,7 @@ import { useTranslation } from '@/lib/TranslationProvider';
 
 export type FormData = {
   title: string;
+  category_for: 'expense' | 'income';
 };
 export default function CategoryTable() {
   const [currentPage, setCurrentPage] = useState(1);
