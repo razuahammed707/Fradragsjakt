@@ -12,10 +12,12 @@ import { useTranslation } from '@/lib/TranslationProvider';
 export default function RulesOverviewSection() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { translate } = useTranslation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageLimit, setPageLimit] = useState(50);
   const { data: rulesResponse } = trpc.rules.getRules.useQuery(
     {
-      page: 1,
-      limit: 50,
+      page: currentPage,
+      limit: pageLimit,
       searchTerm,
     },
     { keepPreviousData: true }
@@ -25,10 +27,12 @@ export default function RulesOverviewSection() {
   const pagination = rulesResponse?.pagination;
   const totalPages = pagination?.totalPages || 1;
 
-  const [currentPage, setCurrentPage] = useState(1);
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handlePageLimitChange = (page: number) => {
+    setPageLimit(page);
   };
 
   const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm), [
@@ -64,6 +68,8 @@ export default function RulesOverviewSection() {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
+            pageLimit={pageLimit}
+            onPageLimitChange={handlePageLimitChange}
           />
         </div>
       </div>

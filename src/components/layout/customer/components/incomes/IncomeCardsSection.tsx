@@ -90,6 +90,8 @@ const IncomeCardsSection = ({ filterString }: IFilterProps) => {
     }
   }, [incomes?.data]);
 
+  console.log('aggreated incomes', incomes);
+
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="grid grid-cols-2 gap-3">

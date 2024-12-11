@@ -19,6 +19,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PayloadType } from './ExpenseUpdateModal';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 
 type UploadedImageType = {
   link: string;
@@ -39,13 +40,6 @@ export type FormData = {
   };
 };
 
-const defaultCategories = [
-  { title: 'Transport', value: 'Transport' },
-  { title: 'Meals', value: 'Meals' },
-  { title: 'Gas', value: 'Gas' },
-  { title: 'Unknown', value: 'Unknown' },
-];
-
 type CategoryType = { title: string; value: string };
 
 interface ExpenseAddContentProps {
@@ -56,7 +50,6 @@ interface ExpenseAddContentProps {
 }
 
 function ExpenseAddContent({
-  categories = [],
   setModalOpen,
   origin,
   payload,
@@ -65,19 +58,13 @@ function ExpenseAddContent({
   const { handleSubmit, control, reset } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
   const [fileLink, setFileLink] = useState<File | null>(null);
-  console.log({ fileLink });
-
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<UploadedImageType | null>(
     null
   );
   const utils = trpc.useUtils();
-
-  const manipulatedCategories = Array.from(
-    new Map(
-      [...categories, ...defaultCategories].map((cat) => [cat.value, cat])
-    ).values()
-  );
+  const query = { category_for: 'expense' };
+  const { manipulatedCategories } = useManipulatedCategories(query);
 
   const createMutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
@@ -244,7 +231,10 @@ function ExpenseAddContent({
           },
           {
             name: 'category',
-            label: translate('componentsExpenseModal.expense.label.category'),
+            label: translate(
+              'componentsExpenseModal.expense.label.category',
+              'category'
+            ),
             defaultValue: payload?.category,
             options: manipulatedCategories,
           },

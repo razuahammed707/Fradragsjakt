@@ -105,7 +105,7 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  getBusinessAndPersonalincomeAnalytics: protectedProcedure
+  getBusinessAndPersonalIncomeAnalytics: protectedProcedure
     .input(
       z.object({
         income_type: z.string().optional(),
@@ -281,6 +281,8 @@ export const IncomeRouter = router({
       try {
         const loggedUser = ctx.user as JwtPayload;
         const { incomes } = input;
+
+        console.log('incomes from bulk', incomes);
 
         // Update all specified incomes for the logged-in user
         const updatedincomes = await Promise.all(

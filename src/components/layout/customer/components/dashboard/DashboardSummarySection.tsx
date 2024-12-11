@@ -25,7 +25,7 @@ const DashboardSummarySection = () => {
     trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
       expense_type: 'business',
     });
-  const { categories } = useManipulatedCategories();
+  const { categories } = useManipulatedCategories({ category_for: 'expense' });
 
   const referenceCategories = categories?.data?.filter(
     (category: { title: string; reference_category: string }) =>

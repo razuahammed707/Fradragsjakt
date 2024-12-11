@@ -18,6 +18,7 @@ async function findMatchingRule(description: string, userId: string) {
 
     const rules = await RuleModel.find({
       user: userId,
+      rule_for: 'income',
     });
 
     const matchingRule = rules.find((rule) => {
@@ -136,7 +137,7 @@ const getIncomesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
                 incomePayload: {
                   rule: rule._id,
                   category: rule.category_title,
-                  income_type: rule.income_type,
+                  income_type: rule.expense_type,
                 },
                 incomes,
               }
@@ -178,7 +179,7 @@ const getCategoryAndIncomeTypeAnalytics = async (
               },
             },
           ],
-          IncomeTypeWiseIncomes: [
+          incomeTypeWiseIncomes: [
             {
               $group: {
                 _id: '$income_type',

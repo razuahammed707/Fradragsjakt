@@ -109,6 +109,10 @@ function ApplyRuleModalContent({
 
   const handleApplyRule = () => {
     setLoading(true);
+    console.log(
+      'incomes before applying rule',
+      selectedRuleData?.expensePayload
+    );
     if (selectedRuleData?.expensePayload) {
       const expenses =
         tableData

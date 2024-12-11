@@ -17,15 +17,20 @@ export default function CategoryTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { translate } = useTranslation();
+  const [pageLimit, setPageLimit] = useState(50);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  const handlePageLimitChange = (page: number) => {
+    setPageLimit(page);
+  };
+
   const { data } = trpc.categories.getCategories.useQuery(
     {
       page: currentPage,
-      limit: 50,
+      limit: pageLimit,
       searchTerm,
     },
     {
@@ -73,6 +78,8 @@ export default function CategoryTable() {
             currentPage={currentPage}
             totalPages={data?.pagination?.totalPages ?? 1}
             onPageChange={handlePageChange}
+            pageLimit={pageLimit}
+            onPageLimitChange={handlePageLimitChange}
           />
         </div>
       </div>

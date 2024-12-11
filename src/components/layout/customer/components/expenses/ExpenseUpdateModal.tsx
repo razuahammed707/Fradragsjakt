@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import SharedModal from '@/components/SharedModal';
 import { Edit2 } from 'lucide-react';
 import ExpenseAddContent from './ExpenseAddContent';
-import { trpc } from '@/utils/trpc';
+import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 
 export type PayloadType = {
   amount: number;
@@ -26,29 +26,13 @@ export default function ExpenseUpdateModal({
 }: {
   payload: PayloadType;
 }) {
-  const { data: categories } = trpc.categories.getCategories.useQuery(
-    {
-      page: 1,
-      limit: 50,
-    },
-    {
-      keepPreviousData: true,
-    }
-  );
   const [isModalOpen, setModalOpen] = useState(false);
-
   const handleButtonClick = () => {
     setModalOpen(true);
   };
 
-  const manipulateCategories = categories?.data
-    ? categories?.data?.map((category) => {
-        return {
-          title: category.title,
-          value: category.title,
-        };
-      })
-    : [];
+  const query = { category_for: 'expense' };
+  const { manipulatedCategories } = useManipulatedCategories(query);
 
   return (
     <>
@@ -66,7 +50,7 @@ export default function ExpenseUpdateModal({
             <ExpenseAddContent
               origin="expense update"
               setModalOpen={setModalOpen}
-              categories={manipulateCategories}
+              categories={manipulatedCategories}
               payload={payload}
             />
           </div>

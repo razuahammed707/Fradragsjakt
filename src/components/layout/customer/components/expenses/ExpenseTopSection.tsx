@@ -94,6 +94,8 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
     }
   }, [expenses?.data]);
 
+  console.log('expense stats', expenseStats);
+
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="grid grid-cols-2 gap-3">
