@@ -413,5 +413,87 @@
     },
     "doneButton": "Ferdig"
   },
+  "housing": {
+    "section1": {
+      "description": "Du kan trekke fra relaterte utgifter som en del av boliglånsrenter, strøm, forsikring og vedlikeholdskostnader basert på andelen av eiendommen som leies ut.",
+      "documentedCost": "Dokumenterte kostnader",
+      "uploadVerification": "Last opp verifiseringsdokument"
+    },
+    "section2": {
+      "description": "Utgifter: Inkluderer vedlikehold av eiendom, reparasjoner, forsikring og en del av boliglånsrenter. Hvis eiendommen kun brukes til utleie, kan du kanskje trekke fra 100 % av de relevante utgiftene.",
+      "expense": "Utgift"
+    },
+    "section3": {
+      "description": "Hvis eiendommen har vært din primærbolig i minst 12 av de siste 24 månedene før salget, er gevinsten fra salget skattefri.",
+      "primaryResidence": "Var eiendommen din primærbolig i minst 12 av de siste 24 månedene?",
+      "capitalGain": "Gevinst eller tap"
+    },
+    "placeholder": {
+      "amount": "NOK 200",
+      "yes": "Ja"
+    },
+    "review": "Gjennomgå spørreskjema",
+    "submit": "Ferdig"
+  },
+  "commonButton": {
+    "yes": "Ja",
+    "no": "Nei"
+  },
+  "proprietorship": {
+    "title": "Jeg har en enkeltpersonsforetak",
+    "description": "Forretningskostnader = Driftskostnader + Avskrivninger + Andre fradrag. Rapportere inntekter og kostnader i RF-1030 eller RF-1175 skjemaene."
+  },
+  "revenue": "Inntekt",
+  "revenue_placeholder": "NOK 100",
+  "proprietorship_expense": "Enkeltpersonsforetak Kostnad",
+  "expense_placeholder": "NOK 100",
+  "sell_goods_or_services": {
+    "title": "Selg varer eller tjenester, blogg/influencer, spill (gaming), oppdrett av dyr i liten skala",
+    "description": "Bare den delen som overstiger standard pendlerfradragsterskelen (37 km/dag) kan fradragsføres. Oppbevar kvitteringer for alle kostnader."
+  },
+  "documented_expense": "Dokumenterte kostnader",
+  "upload_verification": "Last opp bekreftelsesdokument",
+  "received_salary": {
+    "title": "Jeg har mottatt lønn fra tilfeldige jobber og tjenester",
+    "description": "Inntekt fra tilfeldige jobber kvalifiserer for minimumsfradraget (45% av totalinntekten, maks NOK 104,450 for 2023)."
+  },
+  "received_salary_threshold": "Har du mottatt lønn fra tilfeldige jobber og tjenester som overstiger NOK 6000?",
+  "odd_job_income": "Inntekt fra tilfeldige jobber",
+  "odd_job_income_placeholder": "NOK 5000",
+  "yes_no": "Ja eller Nei",
+  "yes": "Ja",
+  "no": "Nei",
+  "review_questionnaire": "Gjennomgå spørreskjema",
+  "done": "Ferdig",
+  "contentwork": {
+    "home_to_work_comprehension": "Returdistansen mellom hjem og arbeid er mer enn 37 kilometer.",
+    "number_of_workdays": "Antall arbeidsdager",
+    "distance": "Avstand",
+    "road_toll_expenses": "Har du utgifter til bompenger eller ferge når du reiser mellom hjem og arbeidsplass",
+    "documented_expenses": "Dokumenterte utgifter",
+    "upload_verification_document": "Last opp verifikasjonsdokument",
+    "stay_away_over_night": "Jeg overnatter borte fra hjemmet på grunn av jobb",
+    "meals_accommodation_cost": "Måltider og overnattingskostnader",
+    "moved_for_new_job": "Flyttet for et nytt jobb",
+    "work_as_fisherman": "Jeg jobber som fisker",
+    "fishing_income": "Fiskeinntekt",
+    "work_as_seafarer": "Jeg jobber som sjømann",
+    "seafarer_income": "Sjømannsinntekt",
+    "went_to_school_last_year": "Jeg gikk på skole i fjor",
+    "documented_education_expenses": "Dokumenterte utdanningsutgifter (hvis jobbrelaterte)",
+    "foreign_employee": "Jeg er en utenlandsk ansatt",
+    "taxable_income": "Skattepliktig inntekt",
+    "trade_union_deduction": "Medlem av fagforening",
+    "maximum_deduction": "Maksimal fradrag er NOK 3 850",
+    "living_in_norway": "Bodde i Norge bare en del av året",
+    "spent_183_days_in_norway": "Har du tilbrakt mer enn 183 dager i Norge de siste 12 månedene?",
+    "yes": "Ja",
+    "no": "Nei",
+    "disputation_phd": "Disputas for en PhD",
+    "documented_costs_for_thesis": "Dokumenterte kostnader for trykking av avhandling, reise og forsvarseremoni",
+    "separate_room_home_office": "Har et eget rom i huset ditt som kun brukes som hjemmekontor",
+    "home_area": "Hjemmeområde",
+    "submit": "Send inn"
+  },
   "default": "Oversettelse mangler"
 }

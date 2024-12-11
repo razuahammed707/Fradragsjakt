@@ -20,12 +20,14 @@ import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionna
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type ContentWorkProps = {
   questionnaire?: Questionnaire;
 };
 
 export function ContentWork({ questionnaire }: ContentWorkProps) {
+  const { translate } = useTranslation();
   const {
     handleSubmit,
     control,
@@ -53,10 +55,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
         'The return distance between home and work is more than 37 kilometres',
       content: (
         <>
-          If your home is more than 37 km away from your workplace, you may
-          qualify for a commuting deduction. This is to compensate for the extra
-          time and cost of commuting.
-          <p className="text-black pt-3 pb-1">Number of Workdays</p>
+          {translate('contentwork.home_to_work_comprehension')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.number_of_workdays')}
+          </p>
           <FormInput
             name="The return distance between home and work is more than 37 kilometres.Number of Workdays"
             customClassName="w-full"
@@ -69,7 +71,9 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             )}
             required
           />
-          <p className="text-black pt-3 pb-1">Distance</p>
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.distance')}
+          </p>
           <FormInput
             name="The return distance between home and work is more than 37 kilometres.Distance"
             customClassName="w-full"
@@ -91,9 +95,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
         'Have expenses for road toll or ferry when travelling between your home and workplace',
       content: (
         <>
-          If you incur expenses for road tolls or ferries while commuting to
-          work, these expenses may be deductible.
-          <p className="text-black pt-3 pb-1">Documented Expenses</p>
+          {translate('contentwork.road_toll_expenses')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.documented_expenses')}
+          </p>
           <FormInput
             name="Have expenses for road toll or ferry when travelling between your home and workplace.Documented Expenses"
             customClassName="w-full"
@@ -107,7 +112,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
+            {translate('contentwork.upload_verification_document')}
           </p>
           <FormReceiptInput
             name="Have expenses for road toll or ferry when travelling between your home and workplace.Upload verification document"
@@ -126,9 +131,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I Stay away from home overnight because of work',
       content: (
         <>
-          If your work requires you to be away from home overnight, you can
-          deduct certain expenses related to your accommodation and meals.
-          <p className="text-black pt-3 pb-1">Meals and accommodation cost</p>
+          {translate('contentwork.stay_away_over_night')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.meals_accommodation_cost')}
+          </p>
           <FormInput
             name="I Stay away from home overnight because of work.Meals and accommodation cost"
             customClassName="w-full"
@@ -149,10 +155,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'Moved for a new job',
       content: (
         <>
-          Only moving expenses related to starting a new job or business are
-          deductible. Keep receipts for transportation, packing, and temporary
-          accommodation costs.
-          <p className="text-black pt-3 pb-1">Documented expenses</p>
+          {translate('contentwork.moved_for_new_job')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.documented_expenses')}
+          </p>
           <FormInput
             name="Moved for a new job.Documented expenses"
             customClassName="w-full"
@@ -166,7 +172,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
+            {translate('contentwork.upload_verification_document')}
           </p>
           <FormReceiptInput
             name="Moved for a new job.Upload verification document"
@@ -185,9 +191,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I work as a fisherman',
       content: (
         <>
-          This special deduction is meant to support fishermen and applies to
-          taxable income derived from fishing activities.
-          <p className="text-black pt-3 pb-1">Fishing Income</p>
+          {translate('contentwork.work_as_fisherman')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.fishing_income')}
+          </p>
           <FormInput
             name="I work as a fisherman.Fishing Income"
             customClassName="w-full"
@@ -208,9 +215,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I work as a seafarer',
       content: (
         <>
-          Applies only if you work onboard a qualifying ship and meet minimum
-          days at sea.
-          <p className="text-black pt-3 pb-1">Seafarer Income</p>
+          {translate('contentwork.work_as_seafarer')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.seafarer_income')}
+          </p>
           <FormInput
             name="I work as a seafarer.Seafarer Income"
             customClassName="w-full"
@@ -231,11 +239,9 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I went to school last year',
       content: (
         <>
-          Education costs are deductible only if directly related to your
-          current job and aimed at improving qualifications. Tuition for basic
-          education is not deductible.
+          {translate('contentwork.went_to_school_last_year')}
           <p className="text-black pt-3 pb-1">
-            Documented Education Expenses (if job-related)
+            {translate('contentwork.documented_education_expenses')}
           </p>
           <FormInput
             name="I went to school last year.Documented Education Expenses (if job-related)"
@@ -250,7 +256,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
+            {translate('contentwork.upload_verification_document')}
           </p>
           <FormReceiptInput
             name="I went to school last year.Upload verification document"
@@ -269,9 +275,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I am a foreign employee',
       content: (
         <>
-          This deduction is available for the first two years of work in Norway.
-          It is aimed at foreign employees who are temporarily resident.
-          <p className="text-black pt-3 pb-1">Taxable Income</p>
+          {translate('contentwork.foreign_employee')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.taxable_income')}
+          </p>
           <FormInput
             name="I am a foreign employee.Taxable Income"
             customClassName="w-full"
@@ -293,37 +300,30 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       content: (
         <>
           <div className="space-y-3">
-            <p>
-              Trade union fees are deductible from your taxable income in
-              Norway.
-            </p>
-            <p>
-              Maximum deduction for trade union fees: Typically around 3,850 NOK
-              for 2024.
-            </p>
+            <p>{translate('contentwork.trade_union_deduction')}</p>
+            <p>{translate('contentwork.maximum_deduction')}</p>
           </div>
         </>
       ),
     },
     {
       id: 'item-10',
-      title: 'living in Norway only in a part of a year',
+      title: 'Living in Norway only in part of a year',
       content: (
         <>
-          If you live in Norway part-time, your tax obligations may depend on
-          the length of your stay and your residency status.
+          {translate('contentwork.living_in_norway')}
           <p className="text-black pt-[12px] pb-[6px]">
-            Have you spent more than 183 days in Norway?
+            {translate('contentwork.spent_183_days_in_norway')}
           </p>
           <FormInput
             name="living in Norway only in a part of a year.Have you spent more than 183 days in Norway"
             customClassName="w-full"
             type="select"
             control={control}
-            placeholder="Yes"
+            placeholder={translate('contentwork.yes')}
             options={[
-              { title: 'Yes', value: 'yes' },
-              { title: 'No', value: 'no' },
+              { title: translate('contentwork.yes'), value: 'yes' },
+              { title: translate('contentwork.no'), value: 'no' },
             ]}
             defaultValue={getDefaultValue(
               'living in Norway only in a part of a year',
@@ -339,10 +339,9 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'Disputation of a PhD',
       content: (
         <>
-          Expenses related to defending a PhD may be deductible if they are
-          job-related and not reimbursed by an employer or institution.
+          {translate('contentwork.disputation_phd')}
           <p className="text-black pt-3 pb-1">
-            Documented Costs for Thesis Printing, Travel, and Defense Ceremony
+            {translate('contentwork.documented_costs_for_thesis')}
           </p>
           <FormInput
             name="Disputation of a PhD.Documented Costs for Thesis Printing Travel and Defense Ceremony"
@@ -357,7 +356,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            Upload verification document
+            {translate('contentwork.upload_verification_document')}
           </p>
           <FormReceiptInput
             name="Disputation of a PhD.Upload verification document"
@@ -376,9 +375,10 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'Have a separate room in your house used only as your home office',
       content: (
         <>
-          The room must be exclusively used for work purposes. Costs include
-          rent, mortgage interest, electricity, and maintenance.
-          <p className="text-black pt-3 pb-1">Home Area</p>
+          {translate('contentwork.separate_room_home_office')}
+          <p className="text-black pt-3 pb-1">
+            {translate('contentwork.home_area')}
+          </p>
           <FormInput
             name="Have a separate room in your house used only as your home office.Home Area"
             customClassName="w-full"
@@ -388,32 +388,6 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             defaultValue={getDefaultValue(
               'Have a separate room in your house used only as your home office',
               'Home Area'
-            )}
-            required
-          />
-          <p className="text-black pt-3 pb-1">Room Area</p>
-          <FormInput
-            name="Have a separate room in your house used only as your home office.Room Area"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="200 sq ft"
-            defaultValue={getDefaultValue(
-              'Have a separate room in your house used only as your home office',
-              'Room Area'
-            )}
-            required
-          />
-          <p className="text-black pt-3 pb-1">Operating Cost</p>
-          <FormInput
-            name="Have a separate room in your house used only as your home office.Operating Cost"
-            customClassName="w-full"
-            type="number"
-            control={control}
-            placeholder="NOK 200"
-            defaultValue={getDefaultValue(
-              'Have a separate room in your house used only as your home office',
-              'Operating Cost'
             )}
             required
           />
