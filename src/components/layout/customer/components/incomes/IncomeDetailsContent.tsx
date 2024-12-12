@@ -37,14 +37,14 @@ function IncomeDetailsContent({ payload }: { payload?: PayloadType }) {
   };
   return (
     <div className="space-y-6">
-      <h1 className="font-medium text-lg  text-black ">Expense Details</h1>
+      <h1 className="font-medium text-lg  text-black ">Income Details</h1>
 
       <div className="grid grid-cols-2">
         <div className="space-y-4 text-black text-xs font-medium">
           <p>Date</p>
           <p>Description</p>
           <p>Amount (NOK)</p>
-          <p>Expense Type</p>
+          <p>Income Type</p>
           <p>Category</p>
         </div>
         <div className="space-y-4 text-[#71717A] text-xs">

@@ -93,7 +93,8 @@ async function createIncomeFromBulkInput(
     const incomeData = {
       ...input,
       user: userId,
-      income_type: rule?.income_type || IncomeType.unknown,
+      income_type:
+        rule?.income_type || rule?.expense_type || IncomeType.unknown,
       category: rule?.category_title || 'unknown',
       rule: rule?._id,
     };
