@@ -58,7 +58,7 @@ export function ContentHealthFamily({
 
   const accordionData: AccordionItemData[] = [
     {
-      id: 'item1',
+      id: 'item-1',
       title: 'Have children aged 11 years or younger',
       content: (
         <>
@@ -71,12 +71,15 @@ export function ContentHealthFamily({
             )}
           </p>
           <FormInput
-            name="childrenUnder12"
+            name="Have children aged 11 years or younger.How many children do you have under the age of 12?"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="2"
-            defaultValue={getDefaultValue('item1', 'childrenUnder12')}
+            defaultValue={getDefaultValue(
+              'Have children aged 11 years or younger',
+              'How many children do you have under the age of 12?'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
@@ -85,19 +88,22 @@ export function ContentHealthFamily({
             )}
           </p>
           <FormInput
-            name="documentedExpense"
+            name="Have children aged 11 years or younger.Documented Expense"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 25000"
-            defaultValue={getDefaultValue('item1', 'documentedExpense')}
+            defaultValue={getDefaultValue(
+              'Have children aged 11 years or younger',
+              'Documented Expense'
+            )}
             required
           />
         </>
       ),
     },
     {
-      id: 'item2',
+      id: 'item-2',
       title: 'I have children aged 12 or older with special care needs',
       content: (
         <>
@@ -110,7 +116,7 @@ export function ContentHealthFamily({
             )}
           </p>
           <FormInput
-            name="specialCareNeeds"
+            name="I have children aged 12 or older with special care needs.Do you have children with needs for special care?"
             customClassName="w-full"
             type="select"
             control={control}
@@ -131,7 +137,10 @@ export function ContentHealthFamily({
                 value: 'no',
               },
             ]}
-            defaultValue={getDefaultValue('item2', 'specialCareNeeds')}
+            defaultValue={getDefaultValue(
+              'I have children aged 12 or older with special care needs',
+              'Do you have children with needs for special care?'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
@@ -140,12 +149,15 @@ export function ContentHealthFamily({
             )}
           </p>
           <FormInput
-            name="documentedCareExpenses"
+            name="I have children aged 12 or older with special care needs.Documented care expenses"
             customClassName="w-full"
             type="number"
             control={control}
             placeholder="NOK 500"
-            defaultValue={getDefaultValue('item2', 'documentedCareExpenses')}
+            defaultValue={getDefaultValue(
+              'I have children aged 12 or older with special care needs',
+              'Documented care expenses'
+            )}
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
@@ -154,16 +166,19 @@ export function ContentHealthFamily({
             )}
           </p>
           <FormReceiptInput
-            name="uploadVerification"
+            name="I have children aged 12 or older with special care needs.Upload verification document"
             control={control}
             setValue={setValue}
-            defaultValue={getDefaultValue('item2', 'uploadVerification')}
+            defaultValue={getDefaultValue(
+              'I have children aged 12 or older with special care needs',
+              'Upload verification document'
+            )}
           />
         </>
       ),
     },
     {
-      id: 'item3',
+      id: 'item-3',
       title: 'I am a single parent',
       content: (
         <>

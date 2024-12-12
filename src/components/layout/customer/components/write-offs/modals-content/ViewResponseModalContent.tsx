@@ -5,7 +5,9 @@ import { useAppSelector } from '@/redux/hooks';
 import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
+import SadImg from '../../../../../../../public/sad.svg';
 import { trpc } from '@/utils/trpc';
+import Image from 'next/image';
 
 type ExpenseAmounts = {
   workAndEducationExpenseAmount: number;
@@ -19,21 +21,28 @@ type ExpenseAmounts = {
 
 // Mapping between questionnaire section names and expense amount keys
 const SECTION_TO_EXPENSE_MAP: { [key: string]: keyof ExpenseAmounts } = {
-  'Work and Education': 'workAndEducationExpenseAmount',
   'Health and Family': 'healthAndFamilyExpenseAmount',
   'Bank and Loans': 'bankAndLoansExpenseAmount',
-  'Hobby, Odd Jobs, and Extra Incomes':
-    'hobbyOddjobsAndExtraIncomesExpenseAmount',
+  'Work and Education': 'workAndEducationExpenseAmount',
   'Housing and Property': 'housingAndPropertyExpenseAmount',
   'Gifts or Donations': 'giftsOrDonationsExpenseAmount',
+  'Hobby, Odd Jobs, and Extra Incomes':
+    'hobbyOddjobsAndExtraIncomesExpenseAmount',
   'Foreign Income': 'foreignIncomeExpenseAmount',
 };
+
 const ViewResponseModalContent = () => {
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 
+  const sortedQuestionnaires = [...questionnaires].sort((a, b) => {
+    const aIndex = Object.keys(SECTION_TO_EXPENSE_MAP).indexOf(a.question);
+    const bIndex = Object.keys(SECTION_TO_EXPENSE_MAP).indexOf(b.question);
+    return aIndex - bIndex;
+  });
+
   const expenseAmounts: ExpenseAmounts = savingExpenseCalculator(
-    questionnaires,
+    sortedQuestionnaires,
     user?.questionnaires
   );
 
@@ -43,56 +52,70 @@ const ViewResponseModalContent = () => {
         Review Questionaries Details
       </h2>
       <div className="view-response h-[500px] overflow-y-auto overflow-x-hidden space-y-6 pr-[10px]">
-        {questionnaires.map((section, index) => (
-          <div key={index} className="bg-[#F8F8F8] p-[10px] space-y-[18px]">
-            <h3 className="text-sm text-[#5B52F9] font-bold">{`${index + 1}. ${section.question} `}</h3>
-            {section.answers.map((answer, answerIndex) => (
-              <div key={answerIndex}>
-                {Object.entries(answer).map(([key, value]) => (
-                  <div key={key}>
-                    <span className="text-xs font-bold leading-[150%]">
-                      {key}{' '}
-                    </span>
-                    {Array.isArray(value) ? (
-                      value.map((item, itemIndex) => (
-                        <div key={itemIndex} className="space-y-[5px] mt-2">
-                          {Object.entries(item).map(
-                            ([k, v]) =>
-                              !k.includes('Upload') && (
-                                <div
-                                  key={k}
-                                  className="text-xs flex justify-between"
-                                >
-                                  <p>{k} </p>
-                                  <p className="font-medium">
-                                    {v !== 'yes' ? `NOK ${v || 0}` : v || 0}{' '}
-                                  </p>
-                                </div>
-                              )
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <span>{value}</span>
-                    )}
-                  </div>
-                ))}
+        {!!sortedQuestionnaires ? (
+          sortedQuestionnaires.map((section, index) => (
+            <div key={index} className="bg-[#F8F8F8] p-[10px] space-y-[18px]">
+              <h3 className="text-sm text-[#5B52F9] font-bold">{`${index + 1}. ${section.question} `}</h3>
+              {section.answers.map((answer, answerIndex) => (
+                <div key={answerIndex}>
+                  {Object.entries(answer).map(([key, value]) => (
+                    <div key={key}>
+                      <span className="text-xs font-bold leading-[150%]">
+                        {key}{' '}
+                      </span>
+                      {Array.isArray(value) ? (
+                        value.map((item, itemIndex) => (
+                          <div key={itemIndex} className="space-y-[5px] mt-2">
+                            {Object.entries(item).map(
+                              ([k, v]) =>
+                                !k.includes('Upload') && (
+                                  <div
+                                    key={k}
+                                    className="text-xs flex justify-between"
+                                  >
+                                    <p>{k} </p>
+                                    <p className="font-medium">
+                                      {v !== 'yes' ? `NOK ${v || 0}` : v || 0}{' '}
+                                    </p>
+                                  </div>
+                                )
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <span>{value}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <Separator />
+              <div className="flex justify-between text-xs font-bold">
+                <p>Deduction Amount</p>
+                <p>
+                  NOK{' '}
+                  {SECTION_TO_EXPENSE_MAP[section.question]
+                    ? numberFormatter(
+                        expenseAmounts[SECTION_TO_EXPENSE_MAP[section.question]]
+                      )
+                    : 0}
+                </p>
               </div>
-            ))}
-            <Separator />
-            <div className="flex justify-between text-xs font-bold">
-              <p>Deduction Amount</p>
-              <p>
-                NOK{' '}
-                {SECTION_TO_EXPENSE_MAP[section.question]
-                  ? numberFormatter(
-                      expenseAmounts[SECTION_TO_EXPENSE_MAP[section.question]]
-                    )
-                  : 0}
-              </p>
             </div>
+          ))
+        ) : (
+          <div className=" h-full flex flex-col items-center justify-center">
+            <Image
+              src={SadImg}
+              height={91}
+              width={136}
+              alt="sad expressed img"
+            />
+            <p className="text-xs text-[#101010] font-semibold mt-[10px]">
+              No data found.
+            </p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
