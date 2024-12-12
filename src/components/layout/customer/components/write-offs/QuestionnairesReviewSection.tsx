@@ -115,7 +115,6 @@ const QuestionnairesReviewSection = () => {
       },
     ];
   };
-
   const titleKeyMap: Record<string, string> = {
     [translate('questionnaire.health_family')]: 'Health and Family',
     [translate('questionnaire.bank_loans')]: 'Bank and Loans',
@@ -234,12 +233,11 @@ const QuestionnairesReviewSection = () => {
           >
             {translate('questionnaire.edit_response')}
           </Button>
-          {
-            <SharedReportDownloader
-              body={getWriteOffs()}
-              total={personalTotal}
-            />
-          }
+          <SharedReportDownloader
+            body={getWriteOffs()}
+            total={personalTotal}
+            origin="write off questionnaires"
+          />
         </div>
       </div>
       <SharedModal

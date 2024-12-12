@@ -62,13 +62,13 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
         {origin === 'personal' ? (
           <SharedReportDownloader
             body={personalData}
-            origin="personal"
+            origin="personal spending"
             total={total}
           />
         ) : (
           <SharedReportDownloader
             body={items}
-            origin="business"
+            origin="business spending"
             total={total}
           />
         )}

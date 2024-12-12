@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useCallback, useState } from 'react';
 import { SharedDataTable } from '@/components/SharedDataTable';
@@ -7,6 +8,7 @@ import { WriteOffsTableColumns } from './WriteOffsTableColumns';
 import { trpc } from '@/utils/trpc';
 import { debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
+import SharedReportDownloader from '@/components/SharedReportDownloader';
 
 export default function WriteOffsTableSection() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +20,7 @@ export default function WriteOffsTableSection() {
     limit: pageLimit,
     searchTerm,
   });
+
   const { translate } = useTranslation();
 
   const handlePageChange = (page: number) => {
@@ -49,6 +52,13 @@ export default function WriteOffsTableSection() {
               'Search Write-offs'
             )}
             onChange={handleSearchChange}
+          />
+          <SharedReportDownloader
+            body={writeOffs?.data}
+            total={writeOffs?.data?.reduce(
+              (sum: any, item: { amount: any }) => sum + item.amount,
+              0
+            )}
           />
         </div>
       </div>
