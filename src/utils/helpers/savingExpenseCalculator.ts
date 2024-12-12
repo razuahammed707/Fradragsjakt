@@ -25,11 +25,11 @@ const healthAndFamilyExpenseCalculator = (
       case 'Have children aged 11 years or younger':
         const documentedExpense = extractExpense('Documented Expense') || 0;
         const deductionOnNumber =
-          extractExpense('How many children do you have under the age of 12') >
+          extractExpense('How many children do you have under the age of 12?') >
           0
             ? 25000 +
               (extractExpense(
-                'How many children do you have under the age of 12'
+                'How many children do you have under the age of 12?'
               ) -
                 1) *
                 15000
