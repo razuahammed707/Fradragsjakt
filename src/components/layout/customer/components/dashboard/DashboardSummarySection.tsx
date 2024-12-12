@@ -53,6 +53,8 @@ const DashboardSummarySection = () => {
   const summaryChartData =
     showPersonal === 'business' ? businessData : personalData;
 
+  console.log('dbCategories', dbCategories);
+
   return (
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-5">

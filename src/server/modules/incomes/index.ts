@@ -46,6 +46,8 @@ export const IncomeRouter = router({
             { income_type: { $regex: searchTerm, $options: 'i' } },
           ];
         }
+
+        console.log('filter income query', query);
         const total = await IncomeModel.countDocuments(query);
         const incomes = await IncomeModel.find(query)
           .skip(skip)

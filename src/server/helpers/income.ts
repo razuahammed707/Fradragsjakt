@@ -214,8 +214,8 @@ interface incomeAnalytics {
 }
 
 interface incomeAnalyticsResult {
-  businessincomeAnalytics: incomeAnalytics[];
-  personalincomeAnalytics: incomeAnalytics[];
+  businessIncomeAnalytics: incomeAnalytics[];
+  personalIncomeAnalytics: incomeAnalytics[];
 }
 
 const getBusinessAndPersonalIncomeAnalytics = async (
@@ -349,12 +349,12 @@ const getBusinessAndPersonalIncomeAnalytics = async (
     ]);
 
     return result.map((analytics) => ({
-      businessincomeAnalytics: ensureSevenDaysCoverage(
-        analytics.businessincomeAnalytics,
+      businessIncomeAnalytics: ensureSevenDaysCoverage(
+        analytics.businessIncomeAnalytics,
         dateArray
       ),
-      personalincomeAnalytics: ensureSevenDaysCoverage(
-        analytics.personalincomeAnalytics,
+      personalIncomeAnalytics: ensureSevenDaysCoverage(
+        analytics.personalIncomeAnalytics,
         dateArray
       ),
     }));
@@ -392,7 +392,7 @@ const getBusinessAndPersonalIncomeAnalyticsYearly = async (
       },
       {
         $facet: {
-          businessincomeAnalytics: [
+          businessIncomeAnalytics: [
             {
               $match: {
                 income_type: 'business',
@@ -438,7 +438,7 @@ const getBusinessAndPersonalIncomeAnalyticsYearly = async (
               },
             },
           ],
-          personalincomeAnalytics: [
+          personalIncomeAnalytics: [
             {
               $match: {
                 income_type: 'personal',
@@ -489,12 +489,12 @@ const getBusinessAndPersonalIncomeAnalyticsYearly = async (
     ]);
 
     return result.map((analytics) => ({
-      businessincomeAnalytics: ensureTwelveMonthsCoverage(
-        analytics.businessincomeAnalytics,
+      businessIncomeAnalytics: ensureTwelveMonthsCoverage(
+        analytics.businessIncomeAnalytics,
         monthArray
       ),
-      personalincomeAnalytics: ensureTwelveMonthsCoverage(
-        analytics.personalincomeAnalytics,
+      personalIncomeAnalytics: ensureTwelveMonthsCoverage(
+        analytics.personalIncomeAnalytics,
         monthArray
       ),
     }));
