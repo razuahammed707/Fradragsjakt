@@ -36,7 +36,7 @@ const DeductiveExpenses = ({
         </Badge>
         <div className=" ">
           <h4 className="text-sm  text-[#627A97] font-semibold">
-            All Deductible Expenses
+            Total write-offs
           </h4>
           <p className="text-[28px] text-[#00104B] font-bold">
             NOK {numberFormatter(totalDeductibleAmount)}

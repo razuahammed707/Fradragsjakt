@@ -109,7 +109,7 @@ const SummaryChart = ({
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-sm font-semibold text-[#71717A]">Summary</h3>
-            <p className="text-[#71717A] text-xs">Tax Saved Breakdown</p>
+            <p className="text-[#71717A] text-xs">Write-offs Breakdown</p>
           </div>
           <div className="flex">
             <button
