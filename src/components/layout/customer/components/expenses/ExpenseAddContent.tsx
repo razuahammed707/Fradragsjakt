@@ -69,6 +69,7 @@ function ExpenseAddContent({
   const createMutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
+      utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
       toast.success(
         translate('componentsExpenseModal.expense.toast.create_success'),
         { duration: 4000 }
@@ -88,6 +89,7 @@ function ExpenseAddContent({
   const updateMutation = trpc.expenses.updateExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
+      utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
       toast.success(
         translate('componentsExpenseModal.expense.toast.update_success'),
         { duration: 4000 }

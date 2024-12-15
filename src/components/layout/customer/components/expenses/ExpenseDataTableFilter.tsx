@@ -99,6 +99,8 @@ export default function ExpenseDataTableFilter({
 
   const totalSelectedFilters = selectedCategories.length + selectedTypes.length;
 
+  console.log('total categories', categoryData);
+
   return (
     <div className="flex items-center space-x-2">
       <div className="flex flex-nowrap gap-1">
