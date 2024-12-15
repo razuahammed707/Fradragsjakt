@@ -93,6 +93,7 @@ function ApplyRuleModalContent({
   const mutation = trpc.expenses.updateBulkExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
+      utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
       toast.success(translate('applyRuleModal.toast.success'));
       setLoading(false);
       setModalOpen(false);

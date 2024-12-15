@@ -93,6 +93,8 @@ function ApplyRuleModalContent({
   const mutation = trpc.incomes.updateBulkIncome.useMutation({
     onSuccess: () => {
       utils.incomes.getIncomes.invalidate();
+      utils.incomes.getCategoryAndIncomeTypeWiseIncomes.invalidate();
+
       toast.success('Incomes updated successfully');
       setLoading(false);
       setModalOpen(false);

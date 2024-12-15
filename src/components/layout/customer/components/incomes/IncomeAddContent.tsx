@@ -82,6 +82,7 @@ function IncomeAddContent({
   const createMutation = trpc.incomes.createIncome.useMutation({
     onSuccess: () => {
       utils.incomes.getIncomes.invalidate();
+      utils.incomes.getCategoryAndIncomeTypeWiseIncomes.invalidate();
       toast.success(
         translate('componentsIncomeModal.income.toast.create_success'),
         { duration: 4000 }
@@ -101,6 +102,7 @@ function IncomeAddContent({
   const updateMutation = trpc.incomes.updateIncome.useMutation({
     onSuccess: () => {
       utils.incomes.getIncomes.invalidate();
+      utils.incomes.getCategoryAndIncomeTypeWiseIncomes.invalidate();
       toast.success(
         translate('componentsIncomeModal.income.toast.update_success'),
         { duration: 4000 }
