@@ -110,10 +110,6 @@ function ExpenseOverviewHeading({
               'Total Expenses Overview'
             )}
           </h1>
-          <h2 className="text-sm text-gray-600 font-light mb-0">
-            <strong className="text-[#00B386] font-semibold">+2%</strong>{' '}
-            {translate('components.expenseOverview.subheading', 'in August')}
-          </h2>
         </div>
         <SearchInput
           className="hidden md:block"

@@ -100,15 +100,11 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
         <ExpenseStatsByType
           type={translate('page.expensetopsection.business')} // Translated
           amount={expenseStats.business}
-          month={translate('page.expensetopsection.august')} // Translated
-          percentage={2}
           filterString={filterString}
         />
         <ExpenseStatsByType
           type={translate('page.expensetopsection.personal')} // Translated
           amount={expenseStats.personal}
-          month={translate('page.expensetopsection.august')} // Translated
-          percentage={2}
           filterString={filterString}
         />
       </div>

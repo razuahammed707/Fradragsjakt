@@ -73,10 +73,10 @@ const DashboardSummarySection = () => {
         <AggregatedExpenseCard
           origin="business"
           items={businessData}
-          title="Tax Saved From Business Spending (Total)"
+          title="Write-offs From Business Spending (Total)"
         />
         <AggregatedExpenseCard
-          title="Tax Saved From Personal Spending (Total)"
+          title="Write-offs From Personal Spending (Total)"
           origin="personal"
         />
       </div>

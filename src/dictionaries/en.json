@@ -11,8 +11,8 @@
       "description": "Internationalization in NextJs 13 App Router"
     },
     "dashboard": {
-      "title": "Annual Chart",
-      "subTitle": "Please check your documents",
+      "title": "Annual expense Chart",
+      "subTitle": "Annual business / personal  Chart",
       "help": "Need help?",
       "check": "Please check your docs",
       "documentation": "documentation"
@@ -109,7 +109,7 @@
       "uploadButton": "Upload"
     },
     "rulesTopSection": {
-      "title": "Add, Customize rules to calculate your deductions with ease",
+      "title": "Add, Customize rules to calculate your write-offs with ease",
       "subtitle": "Customize rule for better management",
       "search": "Search Rule",
       "create_rule": "Create Rule",
