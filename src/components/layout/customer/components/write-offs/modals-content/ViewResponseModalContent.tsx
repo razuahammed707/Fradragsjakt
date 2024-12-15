@@ -75,7 +75,15 @@ const ViewResponseModalContent = () => {
                                   >
                                     <p>{k} </p>
                                     <p className="font-medium">
-                                      {v !== 'yes' ? `NOK ${v || 0}` : v || 0}{' '}
+                                      {v == 'yes'
+                                        ? v || 0
+                                        : k?.includes('rate')
+                                          ? `${v || 0} %`
+                                          : k?.includes('How many')
+                                            ? v || 0
+                                            : k?.includes('share')
+                                              ? `${v || 0} %`
+                                              : `NOK ${v || 0}`}{' '}
                                     </p>
                                   </div>
                                 )
@@ -91,7 +99,12 @@ const ViewResponseModalContent = () => {
               ))}
               <Separator />
               <div className="flex justify-between text-xs font-bold">
-                <p>Deduction Amount</p>
+                <p>
+                  Write offs{' '}
+                  <span className="font-normal">
+                    after threshold and condition applied
+                  </span>
+                </p>
                 <p>
                   NOK{' '}
                   {SECTION_TO_EXPENSE_MAP[section.question]

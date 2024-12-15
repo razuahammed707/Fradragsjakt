@@ -17,13 +17,14 @@ export const rulesRouter = router({
         page: z.number().default(1),
         limit: z.number().default(50),
         searchTerm: z.string().optional(),
+        rule_for: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        const { page, limit, searchTerm } = input;
+        const { page, limit, searchTerm, rule_for } = input;
         const skip = (page - 1) * limit;
 
         const query: Record<string, unknown> = { user: loggedUser?.id };
@@ -34,6 +35,9 @@ export const rulesRouter = router({
             { description_contains: { $regex: searchTerm, $options: 'i' } },
             { category_title: { $regex: searchTerm, $options: 'i' } },
           ];
+        }
+        if (rule_for) {
+          query.rule_for = rule_for;
         }
 
         const total = await RuleModel.countDocuments(query);

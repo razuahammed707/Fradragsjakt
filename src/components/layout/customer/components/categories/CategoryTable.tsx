@@ -8,6 +8,7 @@ import CategoryAddModal from './CategoryAddModal';
 import { trpc } from '@/utils/trpc';
 import { debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 export type FormData = {
   title: string;
@@ -18,6 +19,9 @@ export default function CategoryTable() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { translate } = useTranslation();
   const [pageLimit, setPageLimit] = useState(50);
+  const [activeTab, setActiveTab] = useState<'all' | 'income' | 'expense'>(
+    'all'
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -32,6 +36,7 @@ export default function CategoryTable() {
       page: currentPage,
       limit: pageLimit,
       searchTerm,
+      category_for: activeTab === 'all' ? undefined : activeTab,
     },
     {
       keepPreviousData: true,
@@ -45,16 +50,48 @@ export default function CategoryTable() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSetSearchTerm(e.target.value);
   };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab as 'all' | 'income' | 'expense');
+    setCurrentPage(1);
+  };
+
   return (
     <div className="rounded-2xl p-6 bg-white">
-      <div className="flex justify-between items-center mb-4  ">
-        <h2 className="text-xl text-[#101010] font-bold">
-          {translate(
-            'page.CategoryDataTableColumns.overview',
-            'Category Overview'
-          )}
-        </h2>
-        <div className="flex gap-2">
+      <h2 className="text-xl text-[#101010] font-bold">
+        {translate(
+          'page.CategoryDataTableColumns.overview',
+          'Category Overview'
+        )}
+      </h2>
+      <Tabs
+        value={activeTab.toString()}
+        onValueChange={handleTabChange}
+        className="mt-4"
+      >
+        <div className="border-b">
+          <TabsList className="bg-transparent p-0 h-auto space-x-6">
+            <TabsTrigger
+              className="bg-transparent shadow-none data-[state=active]:shadow-none border-b-2 border-transparent  data-[state=active]:border-b-2  data-[state=active]:border-[#5B52F9] rounded-none px-0"
+              value="all"
+            >
+              All
+            </TabsTrigger>
+            <TabsTrigger
+              className="bg-transparent shadow-none data-[state=active]:shadow-none border-b-2 border-transparent  data-[state=active]:border-b-2  data-[state=active]:border-[#5B52F9] rounded-none px-0"
+              value="income"
+            >
+              Income
+            </TabsTrigger>
+            <TabsTrigger
+              className="bg-transparent shadow-none data-[state=active]:shadow-none border-b-2 border-transparent  data-[state=active]:border-b-2  data-[state=active]:border-[#5B52F9] rounded-none px-0"
+              value="expense"
+            >
+              Expense
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        <div className="flex justify-between items-center py-4 mt-2">
           <SearchInput
             className=""
             onChange={handleSearchChange}
@@ -63,26 +100,65 @@ export default function CategoryTable() {
               'Search category'
             )}
           />
-          {/*  */}
-          <CategoryAddModal />
+          <div>
+            <CategoryAddModal />
+          </div>
         </div>
-      </div>
-      <div className="mt-10">
-        <SharedDataTable
-          className="min-h-[500px]"
-          columns={CategoryTableColumns()}
-          data={data?.data ?? []}
-        />
-        <div className="mt-10">
-          <SharedPagination
-            currentPage={currentPage}
-            totalPages={data?.pagination?.totalPages ?? 1}
-            onPageChange={handlePageChange}
-            pageLimit={pageLimit}
-            onPageLimitChange={handlePageLimitChange}
-          />
-        </div>
-      </div>
+        <TabsContent value="all">
+          <div className=" ">
+            <SharedDataTable
+              className="min-h-[500px]"
+              columns={CategoryTableColumns()}
+              data={data?.data ?? []}
+            />
+            <div className="mt-10">
+              <SharedPagination
+                currentPage={currentPage}
+                totalPages={data?.pagination?.totalPages ?? 1}
+                onPageChange={handlePageChange}
+                pageLimit={pageLimit}
+                onPageLimitChange={handlePageLimitChange}
+              />
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="income">
+          <div className="mt-10">
+            <SharedDataTable
+              className="min-h-[500px]"
+              columns={CategoryTableColumns()}
+              data={data?.data ?? []}
+            />
+            <div className="mt-10">
+              <SharedPagination
+                currentPage={currentPage}
+                totalPages={data?.pagination?.totalPages ?? 1}
+                onPageChange={handlePageChange}
+                pageLimit={pageLimit}
+                onPageLimitChange={handlePageLimitChange}
+              />
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="expense">
+          <div className="mt-10">
+            <SharedDataTable
+              className="min-h-[500px]"
+              columns={CategoryTableColumns()}
+              data={data?.data ?? []}
+            />
+            <div className="mt-10">
+              <SharedPagination
+                currentPage={currentPage}
+                totalPages={data?.pagination?.totalPages ?? 1}
+                onPageChange={handlePageChange}
+                pageLimit={pageLimit}
+                onPageLimitChange={handlePageLimitChange}
+              />
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

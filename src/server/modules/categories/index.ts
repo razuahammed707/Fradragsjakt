@@ -15,7 +15,7 @@ export const categoryRouter = router({
     .input(
       z.object({
         page: z.number().default(1),
-        limit: z.number().default(10),
+        limit: z.number().default(100),
         searchTerm: z.string().optional(),
         category_for: z.string().optional(),
       })
@@ -44,7 +44,10 @@ export const categoryRouter = router({
         }
 
         const total = await Category.countDocuments(query);
-        const categories = await Category.find(query).skip(skip).limit(limit);
+        const categories = await Category.find(query)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit);
 
         return {
           status: 200,

@@ -12,8 +12,6 @@ import { Separator } from '@/components/ui/separator';
 import SharedModal from '@/components/SharedModal';
 import { trpc } from '@/utils/trpc';
 import { questionMatcherEngine } from '@/utils/helpers/questionMatcherEngine';
-
-// Modal content components
 import { ContentHealthFamily } from './modals-content/ContentHealthFamily';
 import { ContentBank } from './modals-content/ContentBank';
 import { ContentWork } from './modals-content/ContentWork';
@@ -45,7 +43,7 @@ const modalContentMap: Record<
   'Work and Education': ({ questionnaire }) => (
     <ContentWork questionnaire={questionnaire} />
   ),
-  'Hobby, Odd jobs, and Extra incomes': ({ questionnaire }) => (
+  'Hobby, Odd Jobs, and Extra Incomes': ({ questionnaire }) => (
     <ContentHobby questionnaire={questionnaire} />
   ),
   'Housing and Property': ({ questionnaire }) => (
@@ -65,8 +63,12 @@ const QuestionnairesReviewSection = () => {
 
   const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
+  console.log({ questionnaires });
+
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
+  console.log('hola', user?.questionnaires);
+
   const {
     workAndEducationExpenseAmount,
     healthAndFamilyExpenseAmount,
@@ -122,13 +124,12 @@ const QuestionnairesReviewSection = () => {
     [translate('questionnaire.housing_property')]: 'Housing and Property',
     [translate('questionnaire.gifts_donations')]: 'Gifts or Donations',
     [translate('questionnaire.hobby_extra_income')]:
-      'Hobby, Odd jobs, and Extra incomes',
+      'Hobby, Odd Jobs, and Extra Incomes',
     [translate('questionnaire.foreign_income')]: 'Foreign Income',
     [translate('questionnaire.edit_response')]: 'Edit Response',
     [translate('questionnaire.view_response')]: 'View Response',
   };
   const handleButtonClick = (title: string) => {
-    // Map the translated title to the modal content key
     const mappedTitle = titleKeyMap[title];
     if (mappedTitle) {
       setSelectedTitle(mappedTitle);
@@ -170,12 +171,18 @@ const QuestionnairesReviewSection = () => {
               height={52}
               width={54}
             />
-            <View
+            <Button
               onClick={() =>
                 handleButtonClick(translate('questionnaire.view_response'))
               }
-              className="h-5 w-5 text-[#5B52F9] cursor-pointer"
-            />
+              className="group p-0 bg-transparent shadow-none hover:bg-tranparent"
+            >
+              <span className="sr-only group-hover:not-sr-only transform transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-5">
+                {' '}
+                View Details
+              </span>{' '}
+              <View className="h-5 w-5 ms-2 text-[#5B52F9] cursor-pointer" />
+            </Button>
           </div>
           <div>
             <h4 className="text-sm text-[#101010] font-semibold">
@@ -191,7 +198,12 @@ const QuestionnairesReviewSection = () => {
             <div
               key={i}
               onClick={() => handleButtonClick(question.title)}
-              className="flex justify-between items-center p-2 bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100"
+              className={cn(
+                'flex justify-between items-center p-2 bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100',
+                user?.questionnaires?.find(
+                  (item: Questionnaire) => item.question === question.title
+                )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none'
+              )}
             >
               <div className="flex space-x-2">
                 <Image
@@ -200,7 +212,15 @@ const QuestionnairesReviewSection = () => {
                   height={18}
                   width={18}
                 />
-                <p>{question.title}</p>
+                <p
+                  className={cn(
+                    user?.questionnaires?.find(
+                      (item: Questionnaire) => item.question === question.title
+                    )?.answers?.length === 0 && 'text-gray-400'
+                  )}
+                >
+                  {question.title}
+                </p>
               </div>
               {question.amount !== 0 && <p>NOK {question.amount.toFixed(2)}</p>}
             </div>

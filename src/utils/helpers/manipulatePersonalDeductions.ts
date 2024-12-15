@@ -47,7 +47,7 @@ export const manipulatePersonalDeductions = (
       predefinedCategories: [],
     },
     {
-      title: 'Hobby, Odd jobs, and Extra incomes',
+      title: 'Hobby, Odd Jobs, and Extra Incomes',
       total_amount: hobbyOddjobsAndExtraIncomesExpenseAmount || 0,
       total_original_amount: 0,
       predefinedCategories: [],
