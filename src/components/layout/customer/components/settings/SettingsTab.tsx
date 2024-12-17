@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import SearchInput from '@/components/SearchInput';
-import { Button } from '@/components/ui/button';
+
 import AuditorsTable from './AuditorsTable';
+import { AddAuditorModal } from './AddAuditorModalContent';
+import { UpdateAuditorModal } from './UpdateAuditor';
 
 export default function SettingsTab() {
   const [activeTab, setActiveTab] = useState<'profile' | 'auditors'>('profile');
@@ -50,12 +52,13 @@ export default function SettingsTab() {
           <div className="mt-6">
             <div className="flex justify-between items-center mb-4">
               <SearchInput placeholder="Search auditors..." />
-              <Button>Add Auditor</Button>
+              <AddAuditorModal></AddAuditorModal>
             </div>
 
             <AuditorsTable />
           </div>
         </TabsContent>
+        <UpdateAuditorModal />
       </Tabs>
     </div>
   );
