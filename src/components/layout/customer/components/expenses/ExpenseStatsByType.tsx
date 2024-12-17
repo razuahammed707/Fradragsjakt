@@ -4,7 +4,8 @@ import { NumericFormat } from 'react-number-format';
 
 type ExpenseStatsProps = {
   type: string;
-
+  percentage?: number;
+  month?: string;
   amount: number;
   filterString?: string;
 };
