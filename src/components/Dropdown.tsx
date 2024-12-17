@@ -11,10 +11,11 @@ import { Button } from './ui/button';
 import Avatar from '../../public/images/user_avatar.png';
 import Image from 'next/image';
 import { signOut } from 'next-auth/react';
-import { useTranslation } from '@/lib/TranslationProvider'; // Translation hook
+import { useTranslation } from '@/lib/TranslationProvider';
+import Link from 'next/link';
 
-function ProfileDropdown() {
-  const { translate } = useTranslation(); // Translation hook
+function ProfileDropdown({ role }: { role: string }) {
+  const { translate } = useTranslation();
 
   return (
     <DropdownMenu>
@@ -38,7 +39,9 @@ function ProfileDropdown() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          {translate('profileDropdown.menu.settings')}
+          <Link href={`/${role}/settings`}>
+            {translate('profileDropdown.menu.settings')}
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           {translate('profileDropdown.menu.support')}

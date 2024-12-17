@@ -26,8 +26,7 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
       </div>
       <div className="flex items-center space-x-8">
         <LanguageSwitcher />
-
-        <ProfileDropdown />
+        <ProfileDropdown role={role || ''} />
       </div>
     </header>
   );
