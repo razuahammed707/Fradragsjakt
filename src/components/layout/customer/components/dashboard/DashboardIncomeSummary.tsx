@@ -11,8 +11,6 @@ function DashboardIncomeSummary() {
     trpc.incomes.getCategoryAndIncomeTypeWiseIncomes.useQuery({
       income_type: '',
     });
-
-  console.log('income analytics', incomeAnalytics);
   return (
     <div>
       <h1 className="text-gray-600 font-semibold text-base mt-5">
@@ -21,7 +19,9 @@ function DashboardIncomeSummary() {
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-6">
           <div className="grid grid-cols-12 gap-2">
-            <DashboardTotalIncomeChart incomeAnalytics={incomeAnalytics} />
+            <DashboardTotalIncomeChart
+              incomeAnalytics={incomeAnalytics ? incomeAnalytics : {}}
+            />
             <IncomeSummaryChart
               incomes={incomeAnalytics?.data?.categoryWiseIncomes}
             />
