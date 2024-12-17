@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColumnDef } from '@tanstack/react-table';
-import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 
-export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
+export const CustomersDataTableColumns = (): ColumnDef<any>[] => {
   return [
     {
       accessorKey: 'serialNo',
@@ -10,10 +9,10 @@ export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
       cell: ({ row }) => <div className="text-left pl-4">{row.index + 1}.</div>,
     },
     {
-      accessorKey: 'auditor_email',
-      header: 'Auditor Email',
+      accessorKey: 'customer_email',
+      header: 'Customer Email',
       cell: ({ row }) => (
-        <div className="text-left">{row.getValue('auditor_email')}</div>
+        <div className="text-left">{row.getValue('customer_email')}</div>
       ),
     },
     {
@@ -28,18 +27,6 @@ export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
       header: 'Last Name',
       cell: ({ row }) => (
         <div className="text-left">{row.getValue('last_name')}</div>
-      ),
-    },
-    {
-      id: 'actions',
-      header: 'Action',
-      cell: ({ row }) => (
-        <div className="flex gap-2 items-center">
-          <SharedDeleteActionCell
-            itemId={row.original._id as string}
-            itemOrigin="auditor"
-          />
-        </div>
       ),
     },
   ];

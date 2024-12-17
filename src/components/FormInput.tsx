@@ -16,7 +16,7 @@ type Option = {
 
 export interface FormInputProps {
   name: string;
-  type: 'text' | 'email' | 'password' | 'select' | 'number';
+  type: 'text' | 'email' | 'password' | 'select' | 'number' | 'textarea';
   placeholder?: string;
   options?: Option[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

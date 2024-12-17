@@ -5,10 +5,15 @@ import SearchInput from '@/components/SearchInput';
 
 import AuditorsTable from './AuditorsTable';
 import { AddAuditorModal } from './AddAuditorModalContent';
-import { UpdateAuditorModal } from './UpdateAuditor';
+import ProfileTabContent from './ProfileTabContent';
+import { usePathname } from 'next/navigation';
+import CustomersTable from './CustomersTable';
 
 export default function SettingsTab() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'auditors'>('profile');
+  const [activeTab, setActiveTab] = useState<
+    'profile' | 'auditors' | 'customers'
+  >('profile');
+  const pathname = usePathname();
 
   return (
     <div className="rounded-2xl p-6 bg-white h-full">
@@ -16,7 +21,9 @@ export default function SettingsTab() {
 
       <Tabs
         value={activeTab}
-        onValueChange={(value) => setActiveTab(value as 'profile' | 'auditors')}
+        onValueChange={(value) =>
+          setActiveTab(value as 'profile' | 'auditors' | 'customers')
+        }
         className="mt-4"
       >
         <div className="border-b">
@@ -29,36 +36,38 @@ export default function SettingsTab() {
             </TabsTrigger>
             <TabsTrigger
               className="bg-transparent shadow-none data-[state=active]:shadow-none border-b-2 border-transparent  data-[state=active]:border-b-2  data-[state=active]:border-[#5B52F9] rounded-none px-0"
-              value="auditors"
+              value={pathname?.includes('auditor') ? 'customers' : 'auditors'}
             >
-              Auditors
+              {pathname?.includes('auditor') ? 'Customers' : 'Auditors'}
             </TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="profile">
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4">Update Profile</h3>
-            <div className="p-4 border rounded-lg bg-gray-50">
-              <p className="text-gray-600">
-                Profile update form goes here. Add inputs like name, email, and
-                password change fields.
-              </p>
-            </div>
-          </div>
+          <ProfileTabContent />
         </TabsContent>
 
-        <TabsContent value="auditors">
+        <TabsContent
+          value={pathname?.includes('auditor') ? 'customers' : 'auditors'}
+        >
           <div className="mt-6">
             <div className="flex justify-between items-center mb-4">
-              <SearchInput placeholder="Search auditors..." />
-              <AddAuditorModal></AddAuditorModal>
+              <SearchInput
+                placeholder={
+                  pathname?.includes('customer')
+                    ? 'Search auditors...'
+                    : 'Search customers...'
+                }
+              />
+              {pathname?.includes('customer') && <AddAuditorModal />}
             </div>
-
-            <AuditorsTable />
+            {pathname?.includes('customer') ? (
+              <AuditorsTable />
+            ) : (
+              <CustomersTable />
+            )}
           </div>
         </TabsContent>
-        <UpdateAuditorModal />
       </Tabs>
     </div>
   );
