@@ -55,28 +55,33 @@ const DashboardSummarySection = () => {
     showPersonal === 'business' ? businessData : personalData;
 
   return (
-    <div className="grid grid-cols-12 gap-2">
-      <div className="col-span-5">
-        <div className="grid grid-cols-12 gap-2">
-          <DeductiveExpenses businessData={businessData} />
-          <SummaryChart
-            expenses={summaryChartData}
-            showPersonal={showPersonal}
-            setShowPersonal={setShowPersonal}
+    <div>
+      <h1 className="text-gray-500 font-semibold text-base mb-2">
+        Write Offs Overview
+      </h1>
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-5">
+          <div className="grid grid-cols-12 gap-2">
+            <DeductiveExpenses businessData={businessData} />
+            <SummaryChart
+              expenses={summaryChartData}
+              showPersonal={showPersonal}
+              setShowPersonal={setShowPersonal}
+            />
+          </div>
+        </div>
+        <YearlyExpenseGraph />
+        <div className="col-span-12 grid grid-cols-2 gap-2">
+          <AggregatedExpenseCard
+            origin="business"
+            items={businessData}
+            title="Write-offs From Business Spending (Total)"
+          />
+          <AggregatedExpenseCard
+            title="Write-offs From Personal Spending (Total)"
+            origin="personal"
           />
         </div>
-      </div>
-      <YearlyExpenseGraph />
-      <div className="col-span-12 grid grid-cols-2 gap-2">
-        <AggregatedExpenseCard
-          origin="business"
-          items={businessData}
-          title="Write-offs From Business Spending (Total)"
-        />
-        <AggregatedExpenseCard
-          title="Write-offs From Personal Spending (Total)"
-          origin="personal"
-        />
       </div>
     </div>
   );

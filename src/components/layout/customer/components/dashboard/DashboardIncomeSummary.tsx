@@ -14,17 +14,22 @@ function DashboardIncomeSummary() {
 
   console.log('income analytics', incomeAnalytics);
   return (
-    <div className="grid grid-cols-12 gap-2">
-      <div className="col-span-6">
-        <div className="grid grid-cols-12 gap-2">
-          <DashboardTotalIncomeChart incomeAnalytics={incomeAnalytics} />
-          <IncomeSummaryChart
-            incomes={incomeAnalytics?.data?.categoryWiseIncomes}
-          />
+    <div>
+      <h1 className="text-gray-600 font-semibold text-base mt-5">
+        Income Overview
+      </h1>
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-6">
+          <div className="grid grid-cols-12 gap-2">
+            <DashboardTotalIncomeChart incomeAnalytics={incomeAnalytics} />
+            <IncomeSummaryChart
+              incomes={incomeAnalytics?.data?.categoryWiseIncomes}
+            />
+          </div>
         </div>
-      </div>
-      <div className="col-span-6 mt-2 h-full">
-        <YearlyIncomeGraph />
+        <div className="col-span-6 mt-2 h-full">
+          <YearlyIncomeGraph />
+        </div>
       </div>
     </div>
   );
