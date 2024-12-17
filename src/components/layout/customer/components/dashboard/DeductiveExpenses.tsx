@@ -55,7 +55,7 @@ const DeductiveExpenses = ({
             </div>
             <CircularProgressChart
               series={[
-                Math.round((businessTotal / totalDeductibleAmount) * 100),
+                Math.round((businessTotal / totalDeductibleAmount) * 100) || 0,
               ]}
             />
           </div>
@@ -72,7 +72,7 @@ const DeductiveExpenses = ({
               color="#F99BAB"
               trackBg="#F99BAB5E"
               series={[
-                Math.round((personalTotal / totalDeductibleAmount) * 100),
+                Math.round((personalTotal / totalDeductibleAmount) * 100) || 0,
               ]}
             />
           </div>

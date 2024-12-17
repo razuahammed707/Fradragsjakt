@@ -99,12 +99,12 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
       <div className="grid grid-cols-2 gap-3">
         <ExpenseStatsByType
           type={translate('page.expensetopsection.business')} // Translated
-          amount={expenseStats.business}
+          amount={Number(expenseStats?.business?.toFixed(2))}
           filterString={filterString}
         />
         <ExpenseStatsByType
           type={translate('page.expensetopsection.personal')} // Translated
-          amount={expenseStats.personal}
+          amount={Number(expenseStats?.personal?.toFixed(2))}
           filterString={filterString}
         />
       </div>

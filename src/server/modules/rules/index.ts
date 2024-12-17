@@ -133,12 +133,13 @@ export const rulesRouter = router({
 
         const categoryQuery = {
           title: input.category,
-          creator_id: sessionUser.id,
+          // creator_id: sessionUser.id,
         };
 
         const category = await CategoryModel.findOne(categoryQuery);
 
-        console.log('update rule payload from backend', restPayload);
+        console.log('update rule payload from backend', input);
+        console.log('category find during rule update', category);
 
         const updateRule = await RuleModel.findByIdAndUpdate(
           { _id },

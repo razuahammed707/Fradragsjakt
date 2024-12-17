@@ -100,7 +100,7 @@ export default function CategoryTable() {
               'Search category'
             )}
           />
-          <div>
+          <div className="z-50">
             <CategoryAddModal />
           </div>
         </div>
