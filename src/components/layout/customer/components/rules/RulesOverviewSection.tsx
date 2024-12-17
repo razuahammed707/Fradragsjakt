@@ -90,7 +90,7 @@ export default function RulesOverviewSection() {
             onChange={handleSearchChange}
             placeholder={translate('page.rulesTopSection.search')}
           />
-          <div>
+          <div className="z-50">
             <CreateRuleModal />
           </div>
         </div>

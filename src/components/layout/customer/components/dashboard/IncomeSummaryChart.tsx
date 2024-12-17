@@ -30,9 +30,13 @@ const IncomeSummaryChart = ({
 
   // Prepare chart series and labels
   const chartSeries =
-    incomes?.map((income: { amount: number }) => income.amount) || [];
+    incomes && incomes.length > 0
+      ? incomes.map((income) => income.amount)
+      : [0];
   const chartLabels =
-    incomes?.map((income: { category: string }) => income.category) || [];
+    incomes && incomes.length > 0
+      ? incomes.map((income) => income.category)
+      : ['No Data'];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const chartOptions: any = {
     chart: {

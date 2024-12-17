@@ -3,7 +3,7 @@
 import { createContext, useContext } from 'react';
 
 // More specific type for nested translations
-type NestedTranslation = {
+export type NestedTranslation = {
   [key: string]: string | NestedTranslation;
 };
 

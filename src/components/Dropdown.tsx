@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   DropdownMenu,
@@ -11,10 +13,16 @@ import { Button } from './ui/button';
 import Avatar from '../../public/images/user_avatar.png';
 import Image from 'next/image';
 import { signOut } from 'next-auth/react';
-import { useTranslation } from '@/lib/TranslationProvider'; // Translation hook
+import { useTranslation } from '@/lib/TranslationProvider';
 
-function ProfileDropdown() {
-  const { translate } = useTranslation(); // Translation hook
+export default function ProfileDropdown() {
+  const { translate } = useTranslation();
+
+  const logOut = () => {
+    localStorage.clear();
+    localStorage.removeItem('persist:root');
+    signOut({ callbackUrl: '/login' });
+  };
 
   return (
     <DropdownMenu>
@@ -44,12 +52,10 @@ function ProfileDropdown() {
           {translate('profileDropdown.menu.support')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
+        <DropdownMenuItem onClick={logOut}>
           {translate('profileDropdown.menu.logout')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-
-export default ProfileDropdown;

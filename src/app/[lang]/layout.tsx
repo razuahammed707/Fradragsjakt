@@ -7,8 +7,11 @@ import { Toaster } from 'react-hot-toast';
 import Providers from '@/lib/StoreProviders';
 import { getDictionary } from '@/lib/dictionary';
 import { Locale, i18n } from '../../../i18n.config';
-import { ClientProviders } from '../components/ClientProviders';
-import { TranslationProvider } from '@/lib/TranslationProvider';
+import {
+  NestedTranslation,
+  TranslationProvider,
+} from '@/lib/TranslationProvider';
+import { ClientProviders } from '@/config/trpc/ClientProviders';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,7 +32,9 @@ export default async function RootLayout({
   params: { lang: Locale };
 }>) {
   const session = await getServerSession();
-  const dictionary = await getDictionary(lang).catch((e) => console.log(e));
+  const dictionary = (await getDictionary(lang).catch((e) =>
+    console.log(e)
+  )) as NestedTranslation;
 
   return (
     <html lang={lang} suppressHydrationWarning>

@@ -113,7 +113,7 @@
       "subtitle": "Customize rule for better management",
       "search": "Search Rule",
       "create_rule": "Create Rule",
-      "heading": "Edit Rules"
+      "heading": "Rules Overview"
     },
     "rulesTableColumn": {
       "serial_no": "Serial No.",
@@ -167,7 +167,7 @@
       "income_buttons": {
         "text": {
           "add_income": "Add Income",
-          "upload_statements": "Upload income Statements"
+          "upload_statements": "Upload Statements"
         }
       },
       "category_buttons": {
@@ -303,7 +303,7 @@
       },
       "uploaded_receipt": "Uploaded Receipt",
       "upload": "Drag a file or click to browse",
-      "uploadTitle": "Upload Income Statement"
+      "uploadTitle": "Upload Statement"
     }
   },
   "writeOffPage": {
