@@ -103,7 +103,7 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
           filterString={filterString}
         />
         <ExpenseStatsByType
-          type={translate('page.expensetopsection.personal')} // Translated
+          type={translate('page.expensetopsection.personal') as string} // Translated
           amount={Number(expenseStats?.personal?.toFixed(2))}
           filterString={filterString}
         />
