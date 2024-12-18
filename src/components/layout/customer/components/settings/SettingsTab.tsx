@@ -49,9 +49,13 @@ export default function SettingsTab() {
         <TabsContent
           value={pathname?.includes('auditor') ? 'customers' : 'auditors'}
         >
-          <div className="mt-6">
-            <div className="flex justify-end items-center mb-4">
-              {pathname?.includes('customer') && <AddAuditorModal />}
+          <div className="mt-6 z-50">
+            <div className="flex  justify-end items-center mb-4">
+              {pathname?.includes('customer') && (
+                <div className="z-50">
+                  <AddAuditorModal />
+                </div>
+              )}
             </div>
             {pathname?.includes('customer') ? (
               <AuditorsTable />

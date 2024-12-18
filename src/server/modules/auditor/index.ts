@@ -60,13 +60,10 @@ export const auditorRouter = router({
           const user = await User.create({
             email: auditor_email,
             role: 'auditor',
-            firstName: '',
-            lastName: '',
-            password: '',
+            password: 'not set',
           });
-
           const auditor = await AuditorModel.create({
-            customer: sessionUser._id,
+            customer: sessionUser.id,
             auditor: user._id,
           });
 

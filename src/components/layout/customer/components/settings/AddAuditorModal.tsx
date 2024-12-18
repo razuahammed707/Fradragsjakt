@@ -8,6 +8,9 @@ import { useForm } from 'react-hook-form';
 import { FormInput } from '@/components/FormInput';
 import { Loader2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { trpc } from '@/utils/trpc';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { questionnaireSelector, showModal } from '@/redux/slices/questionnaire';
 
 type AddAuditorFormData = {
   email: string;
@@ -15,7 +18,8 @@ type AddAuditorFormData = {
 };
 
 export default function AddAuditorModal() {
-  const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const { isModalOpen } = useAppSelector(questionnaireSelector);
   const [loading, setLoading] = useState(false);
 
   const { handleSubmit, control, reset } = useForm<AddAuditorFormData>({
@@ -24,25 +28,33 @@ export default function AddAuditorModal() {
       message: '',
     },
   });
-
-  const onSubmit = (data: AddAuditorFormData) => {
-    setLoading(true);
-    setTimeout(() => {
-      console.log('Invite Sent:', data);
-      toast.success('Invite sent successfully!');
-      setLoading(false);
-      setOpen(false);
+  const inviteMutation = trpc.auditor.inviteAuditor.useMutation({
+    onSuccess: () => {
+      toast.success('invitation sent successfully', { duration: 4000 });
       reset();
-    }, 1000);
+      dispatch(showModal(false));
+      setLoading(false);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Invitaion failed!');
+      setLoading(false);
+    },
+  });
+  const onSubmit = (data: AddAuditorFormData) => {
+    const { email, message } = data;
+    inviteMutation.mutate({ auditor_email: email, message });
+    setLoading(true);
   };
-
+  const handleTrigger = () => {
+    dispatch(showModal(!isModalOpen));
+  };
   return (
     <>
-      <Button variant="purple" onClick={() => setOpen(true)}>
+      <Button variant="purple" onClick={handleTrigger}>
         <Plus className="h-4 w-4 mr-2" /> Add Auditor
       </Button>
 
-      <SharedModal open={open} onOpenChange={setOpen}>
+      <SharedModal open={isModalOpen} onOpenChange={handleTrigger}>
         <h2 className="text-lg font-medium  mb-4">Add Auditor</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

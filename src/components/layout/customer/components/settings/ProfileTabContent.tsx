@@ -71,6 +71,7 @@ export default function ProfileTabContent() {
                 placeholder="Enter your first name"
                 control={control}
                 required
+                customClassName="mt-1"
               />
             </div>
             <div>
@@ -81,6 +82,7 @@ export default function ProfileTabContent() {
                 placeholder="Enter your last name"
                 control={control}
                 required
+                customClassName="mt-1"
               />
             </div>
             {pathname?.includes('customer') && (
@@ -92,6 +94,7 @@ export default function ProfileTabContent() {
                   placeholder="Enter your email"
                   control={control}
                   required
+                  customClassName="mt-1"
                 />
               </div>
             )}
@@ -103,6 +106,7 @@ export default function ProfileTabContent() {
                 placeholder="Enter a new password"
                 control={control}
                 required
+                customClassName="mt-1"
               />
             </div>
             <div>
@@ -112,6 +116,7 @@ export default function ProfileTabContent() {
                 type="textarea"
                 placeholder="Tell us about yourself"
                 control={control}
+                customClassName="mt-1"
               />
             </div>
             <div className="flex justify-end">
