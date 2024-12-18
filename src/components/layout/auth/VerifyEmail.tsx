@@ -14,6 +14,7 @@ export default function VerifyEmail() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');
+  //const role = searchParams.get('role');
   const [isVerifying, setIsVerifying] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [alreadyVerified, setAlreadyVerified] = useState(false);
@@ -47,6 +48,37 @@ export default function VerifyEmail() {
       }
     },
   });
+  // const { mutate: verifyAuditor } = trpc.auditor.verifyAuditor.useMutation({
+  //   onSuccess: (data) => {
+  //     setIsVerifying(false);
+  //     if (!toastShown.current) {
+  //       if (data.alreadyVerified) {
+  //         setAlreadyVerified(true);
+  //         toast.success('Your account was already verified.', {
+  //           duration: 4000,
+  //         });
+  //       } else {
+  //         setIsVerified(true);
+  //         toast.success('You have been verified as Auditor successfully!', {
+  //           duration: 4000,
+  //         });
+  //       }
+  //       toastShown.current = true;
+  //       setTimeout(() => {
+  //         router.push('/login');
+  //       }, 3000);
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     setIsVerifying(false);
+  //     setIsVerified(false);
+
+  //     if (!toastShown.current) {
+  //       toast.error(error.message || 'Verification failed. Please try again.');
+  //       toastShown.current = true;
+  //     }
+  //   },
+  // });
 
   useEffect(() => {
     if (token) {
