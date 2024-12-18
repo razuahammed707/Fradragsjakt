@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import CircularProgressChart from './CircularProgressChart';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 
 // Define interfaces for type safety
 interface IncomeEntry {
@@ -55,7 +56,7 @@ const DashboardTotalIncomeChart = ({
             Total Income
           </h4>
           <p className="text-[28px] text-[#00104B] font-bold">
-            NOK {totalIncome}
+            NOK {numberFormatter(totalIncome)}
           </p>
         </div>
 

@@ -48,8 +48,6 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
     0
   );
 
-  console.log('items from aggregated expense card', items);
-
   return (
     <div className="bg-white rounded-xl p-6 space-y-6 w-full">
       <div className="flex justify-between ">

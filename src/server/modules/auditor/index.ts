@@ -13,6 +13,7 @@ import jwt from 'jsonwebtoken';
 import { AUDITOR_VERIFY_EMAIL_TEMPLATE } from '@/server/services/mail/constants';
 import sendEmail from '@/server/services/mail/sendMail';
 import { AuditorStatus } from '@/server/db/interfaces/auditor';
+import { z } from 'zod';
 
 export const auditorRouter = router({
   inviteAuditor: protectedProcedure
@@ -67,6 +68,7 @@ export const auditorRouter = router({
           const auditor = await AuditorModel.create({
             customer: sessionUser.id,
             auditor: user._id,
+            auditor_email,
           });
 
           return {
@@ -146,6 +148,37 @@ export const auditorRouter = router({
           );
         }
 
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
+  getAuditorsOrCustomers: protectedProcedure
+    .input(
+      z.object({
+        page: z.number().default(1),
+        limit: z.number().default(100),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+        const { page, limit } = input;
+        const skip = (page - 1) * limit;
+
+        const auditorOrCustomers = await AuditorModel.find({
+          $or: [{ customer: loggedUser.id }, { auditor: loggedUser.id }],
+        })
+          .populate('customer auditor', 'firstName lastName')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit);
+
+        return {
+          status: 200,
+          message: 'Auditors fetched successfully',
+          data: auditorOrCustomers,
+        } as ApiResponse<typeof auditorOrCustomers>;
+      } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
