@@ -11,7 +11,7 @@ import {
   AccordionContent,
 } from './ui/accordion';
 import { usePathname } from 'next/navigation';
-import { Dot } from 'lucide-react';
+import { Dot, Settings } from 'lucide-react';
 import {
   LayoutDashboard,
   HandCoins,
@@ -149,6 +149,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         href: '/write-offs',
         label: translate('sidebar.write_offs'),
         icon: CircleDollarSign,
+      },
+      {
+        href: '/settings',
+        label: 'Settings',
+        icon: Settings,
       },
     ],
   };
