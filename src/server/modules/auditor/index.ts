@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+import bcrypt from 'bcrypt';
 import { protectedProcedure } from '@/server/middlewares/with-auth';
 import { router } from '@/server/trpc';
 import { JwtPayload } from 'jsonwebtoken';
@@ -11,6 +12,7 @@ import User from '@/server/db/models/user';
 import jwt from 'jsonwebtoken';
 import { AUDITOR_VERIFY_EMAIL_TEMPLATE } from '@/server/services/mail/constants';
 import sendEmail from '@/server/services/mail/sendMail';
+import { AuditorStatus } from '@/server/db/interfaces/auditor';
 
 export const auditorRouter = router({
   inviteAuditor: protectedProcedure
@@ -45,13 +47,13 @@ export const auditorRouter = router({
         const emailSent = await sendEmail(
           [auditor_email],
           {
-            subject: 'Email Verification',
+            subject: 'Auditor Invitation Mail',
             data: {
-              invited_by: 'Customer name',
+              invited_by: sessionUser?.name,
               message: message,
-              token: `${process.env.CLIENT_URL}?token=${token}`,
+              token: `${process.env.CLIENT_URL}?token=${token}&role=auditor`,
             },
-          }, // Pass token to template context
+          },
           AUDITOR_VERIFY_EMAIL_TEMPLATE
         );
 
@@ -79,6 +81,71 @@ export const auditorRouter = router({
           );
         }
       } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
+  verifyAuditor: protectedProcedure
+    .input(auditorValidation.verifyAuditorSchema)
+    .mutation(async ({ input }) => {
+      const { token, password, ...rest } = input;
+
+      try {
+        // Decode the token and extract user info
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+          email: string;
+        };
+
+        // Find the user by email
+        const user = await User.findOne({ email: decoded.email });
+        if (!user) {
+          throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+        }
+
+        // Check if user is already verified
+        if (user.isVerified) {
+          return {
+            message: 'Account is already verified.',
+            status: 200,
+            alreadyVerified: true,
+            data: user,
+          };
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Update user with new password and verification status
+        const updatedUser = await User.findOneAndUpdate(
+          { email: decoded.email },
+          { ...rest, password: hashedPassword, isVerified: true },
+          { new: true }
+        );
+
+        // Update auditor status if user update was successful
+        if (updatedUser) {
+          await AuditorModel.findOneAndUpdate(
+            { auditor: updatedUser._id },
+            { status: AuditorStatus.VERIFIED },
+            { new: true }
+          );
+        }
+
+        return {
+          message: 'Account is verified successfully.',
+          status: 200,
+          alreadyVerified: false,
+          data: updatedUser,
+        };
+      } catch (error) {
+        // Handle potential JWT verification errors
+        if (error instanceof jwt.JsonWebTokenError) {
+          throw new ApiError(
+            httpStatus.UNAUTHORIZED,
+            'Invalid or expired token'
+          );
+        }
+
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
