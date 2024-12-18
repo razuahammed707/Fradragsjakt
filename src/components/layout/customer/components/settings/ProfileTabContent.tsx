@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import Image from 'next/image';
 import Placeholder from '../../../../../../public/profile-placeholder.png';
+
 import { usePathname } from 'next/navigation';
 
 type ProfileFormData = {
@@ -28,7 +29,6 @@ export default function ProfileTabContent() {
     console.log('Profile Data:', data);
   };
 
-  // Watch file input and update the image preview
   const userImage = watch('userImage');
   const handleImageChange = () => {
     if (userImage && userImage.length > 0) {
@@ -43,10 +43,10 @@ export default function ProfileTabContent() {
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Update Profile</h2>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col md:flex-row gap-6"
+        className="grid grid-cols-1 xl:grid-cols-2 gap-6"
       >
-        <div className="flex flex-col justify-center items-center w-full md:w-1/3">
-          <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300 mb-4">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300">
             <Image
               src={imagePreview || Placeholder}
               alt="Profile"
@@ -61,10 +61,8 @@ export default function ProfileTabContent() {
             onChange={handleImageChange}
             className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#5B52F9] file:text-white hover:file:bg-[#4a47d5]"
           />
-        </div>
 
-        <div className="w-full md:w-2/3 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col space-y-4 w-full">
             <div>
               <Label htmlFor="firstName">First Name</Label>
               <FormInput
@@ -85,48 +83,49 @@ export default function ProfileTabContent() {
                 required
               />
             </div>
-          </div>
-
-          {pathname?.includes('customer') && (
+            {pathname?.includes('customer') && (
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <FormInput
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  control={control}
+                  required
+                />
+              </div>
+            )}
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="password">Password</Label>
               <FormInput
-                name="email"
-                type="email"
-                placeholder="Enter your email"
+                name="password"
+                type="password"
+                placeholder="Enter a new password"
                 control={control}
                 required
               />
             </div>
-          )}
-
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <FormInput
-              name="password"
-              type="password"
-              placeholder="Enter a new password"
-              control={control}
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="bio">Bio</Label>
-            <FormInput
-              name="bio"
-              type="textarea"
-              placeholder="Tell us about yourself"
-              control={control}
-            />
-          </div>
-
-          <div className="flex justify-end">
-            <Button type="submit" className="bg-[#5B52F9] hover:bg-[#4a47d5]">
-              Save Changes
-            </Button>
+            <div>
+              <Label htmlFor="bio">Bio</Label>
+              <FormInput
+                name="bio"
+                type="textarea"
+                placeholder="Tell us about yourself"
+                control={control}
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                className="bg-[#5B52F9] hover:bg-[#4a47d5] text-white"
+              >
+                Save Changes
+              </Button>
+            </div>
           </div>
         </div>
+
+        <div className="sr-only">Right Grid (Blank)</div>
       </form>
     </div>
   );

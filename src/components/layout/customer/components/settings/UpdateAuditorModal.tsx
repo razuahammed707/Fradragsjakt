@@ -16,7 +16,7 @@ type AuditorFormData = {
   password: string;
 };
 
-export default function AuditorUpdateModal() {
+export default function UpdateAuditorModal() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -30,8 +30,6 @@ export default function AuditorUpdateModal() {
 
   const onSubmit = (data: AuditorFormData) => {
     setLoading(true);
-
-    // Simulated API call or mutation logic
     setTimeout(() => {
       console.log('Updated Auditor:', data);
       toast.success('Auditor updated successfully!');
@@ -47,22 +45,19 @@ export default function AuditorUpdateModal() {
         className="h-4 w-4 text-[#5B52F9] cursor-pointer mr-2"
         onClick={() => setOpen(true)}
       />
-      <SharedModal
-        open={open}
-        onOpenChange={setOpen}
-        customClassName="max-w-[500px]"
-      >
+      <SharedModal open={open} onOpenChange={setOpen}>
         <div className="flex flex-col items-center justify-center">
           <CompanyLogo color="#5B52F9" height="32" width="152" />
-          <h2 className="font-medium text-lg text-black mb-2">
+          <h2 className="font-medium text-lg text-black ">
             You have been invited as an Auditor
           </h2>
+          <h2 className="font-medium text-lg text-black mb-2">by Adnan</h2>
           <p className="text-xs mb-2 text-gray-500">
             Please fill out the following fields to complete registration{' '}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
           {/* First Name */}
           <div>
             <Label htmlFor="firstName">First Name</Label>
@@ -72,6 +67,7 @@ export default function AuditorUpdateModal() {
               placeholder="Enter first name"
               type="text"
               required
+              customClassName="mt-1"
             />
           </div>
 
@@ -84,6 +80,7 @@ export default function AuditorUpdateModal() {
               placeholder="Enter last name"
               type="text"
               required
+              customClassName="mt-1"
             />
           </div>
 
@@ -96,6 +93,7 @@ export default function AuditorUpdateModal() {
               placeholder="Enter password"
               type="password"
               required
+              customClassName="mt-1"
             />
           </div>
 

@@ -1,13 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import SearchInput from '@/components/SearchInput';
 
 import AuditorsTable from './AuditorsTable';
-import { AddAuditorModal } from './AddAuditorModalContent';
 import ProfileTabContent from './ProfileTabContent';
 import { usePathname } from 'next/navigation';
 import CustomersTable from './CustomersTable';
+import AddAuditorModal from './AddAuditorModal';
 
 export default function SettingsTab() {
   const [activeTab, setActiveTab] = useState<
@@ -51,14 +50,7 @@ export default function SettingsTab() {
           value={pathname?.includes('auditor') ? 'customers' : 'auditors'}
         >
           <div className="mt-6">
-            <div className="flex justify-between items-center mb-4">
-              <SearchInput
-                placeholder={
-                  pathname?.includes('customer')
-                    ? 'Search auditors...'
-                    : 'Search customers...'
-                }
-              />
+            <div className="flex justify-end items-center mb-4">
               {pathname?.includes('customer') && <AddAuditorModal />}
             </div>
             {pathname?.includes('customer') ? (

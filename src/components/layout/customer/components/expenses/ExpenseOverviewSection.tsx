@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import ExpenseOverviewHeading from './ExpenseOverviewHeading';
 import SharedPagination from '@/components/SharedPagination';
 import { SharedDataTable } from '@/components/SharedDataTable';
-import { expenseDataTableColumns } from './ExpenseDataTableColumns';
+import { ExpenseDataTableColumns } from './ExpenseDataTableColumns';
 import { trpc } from '@/utils/trpc';
 
 type IFilterProps = {
@@ -50,7 +50,7 @@ function ExpenseOverviewSection({
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
-          columns={expenseDataTableColumns()}
+          columns={ExpenseDataTableColumns()}
           data={expensesResponse?.data || []}
         />
         <SharedPagination
