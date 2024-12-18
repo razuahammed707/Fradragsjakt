@@ -15,7 +15,6 @@ type ProfileFormData = {
   lastName: string;
   email: string;
   password: string;
-  bio: string;
   userImage: FileList | null;
 };
 
@@ -39,8 +38,7 @@ export default function ProfileTabContent() {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Update Profile</h2>
+    <div className="p-6">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 xl:grid-cols-2 gap-6"
@@ -62,71 +60,67 @@ export default function ProfileTabContent() {
             className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#5B52F9] file:text-white hover:file:bg-[#4a47d5]"
           />
 
-          <div className="flex flex-col space-y-4 w-full">
-            <div>
-              <Label htmlFor="firstName">First Name</Label>
-              <FormInput
-                name="firstName"
-                type="text"
-                placeholder="Enter your first name"
-                control={control}
-                required
-                customClassName="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="lastName">Last Name</Label>
-              <FormInput
-                name="lastName"
-                type="text"
-                placeholder="Enter your last name"
-                control={control}
-                required
-                customClassName="mt-1"
-              />
-            </div>
-            {pathname?.includes('customer') && (
+          <div className="flex  justify-between space-x-8  w-full">
+            <div className="w-full space-y-2">
+              {' '}
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <FormInput
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
+                  name="firstName"
+                  type="text"
+                  placeholder="Enter your first name"
                   control={control}
                   required
                   customClassName="mt-1"
                 />
               </div>
-            )}
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <FormInput
-                name="password"
-                type="password"
-                placeholder="Enter a new password"
-                control={control}
-                required
-                customClassName="mt-1"
-              />
+              <div>
+                <Label htmlFor="lastName">Last Name</Label>
+                <FormInput
+                  name="lastName"
+                  type="text"
+                  placeholder="Enter your last name"
+                  control={control}
+                  required
+                  customClassName="mt-1"
+                />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="bio">Bio</Label>
-              <FormInput
-                name="bio"
-                type="textarea"
-                placeholder="Tell us about yourself"
-                control={control}
-                customClassName="mt-1"
-              />
+            <div className="w-full space-y-2">
+              {' '}
+              {pathname?.includes('customer') && (
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <FormInput
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    control={control}
+                    required
+                    customClassName="mt-1"
+                  />
+                </div>
+              )}
+              <div>
+                <Label htmlFor="password">Change Password</Label>
+                <FormInput
+                  name="password"
+                  type="password"
+                  placeholder="Enter a new password"
+                  control={control}
+                  required
+                  customClassName="mt-1"
+                />
+              </div>
             </div>
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                className="bg-[#5B52F9] hover:bg-[#4a47d5] text-white"
-              >
-                Save Changes
-              </Button>
-            </div>
+          </div>
+          <div className="flex w-full justify-end ">
+            <Button
+              type="submit"
+              className="bg-[#5B52F9] hover:bg-[#4a47d5] text-white"
+            >
+              Save Changes
+            </Button>
           </div>
         </div>
 
