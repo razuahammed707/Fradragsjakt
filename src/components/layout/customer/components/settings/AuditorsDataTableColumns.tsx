@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColumnDef } from '@tanstack/react-table';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
+import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 
 export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
   return [
@@ -31,15 +32,22 @@ export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
       ),
     },
     {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => (
+        <div className="text-left">
+          {transformToUppercase(row.getValue('status'))}
+        </div>
+      ),
+    },
+    {
       id: 'actions',
       header: 'Action',
       cell: ({ row }) => (
-        <div className="flex gap-2 items-center">
-          <SharedDeleteActionCell
-            itemId={row.original._id as string}
-            itemOrigin="auditor"
-          />
-        </div>
+        <SharedDeleteActionCell
+          itemId={row.original._id as string}
+          itemOrigin="auditor"
+        />
       ),
     },
   ];

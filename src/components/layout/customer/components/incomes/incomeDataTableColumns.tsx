@@ -12,6 +12,7 @@ import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import { useTranslation } from '@/lib/TranslationProvider';
 import IncomeDetailsModal from './IncomeDetailsModal';
 import IncomeUpdateModal from './IncomeUpdateModal';
+import useIsAuditorLoggedIn from '@/hooks/use-is-auditor-logged-in';
 
 export type IncomeColumnProps = {
   _id: string;
@@ -24,9 +25,9 @@ export type IncomeColumnProps = {
   amount: number;
 };
 
-export const incomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export const IncomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
   const { translate } = useTranslation();
+  const isAuditor = useIsAuditorLoggedIn();
 
   return [
     {
@@ -138,11 +139,15 @@ export const incomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
           <IncomeDetailsModal payload={row.original} />
-          <IncomeUpdateModal payload={row.original} />
-          <SharedDeleteActionCell
-            itemOrigin="income"
-            itemId={row.original._id as string}
-          />
+          {!isAuditor && (
+            <>
+              <IncomeUpdateModal payload={row.original} />
+              <SharedDeleteActionCell
+                itemOrigin="income"
+                itemId={row.original._id as string}
+              />
+            </>
+          )}
         </div>
       ),
     },

@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/select';
 import { Control, Controller } from 'react-hook-form';
 import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 
 type Option = {
   title: string;
@@ -24,6 +25,7 @@ export interface FormInputProps {
   required?: boolean;
   customClassName?: string;
   defaultValue?: string | number;
+  rows?: number;
 }
 
 export function FormInput({
@@ -35,6 +37,7 @@ export function FormInput({
   required = false,
   customClassName,
   defaultValue = '',
+  rows,
 }: FormInputProps) {
   if (type === 'select') {
     return (
@@ -58,6 +61,26 @@ export function FormInput({
               </SelectGroup>
             </SelectContent>
           </Select>
+        )}
+      />
+    );
+  }
+
+  if (type === 'textarea') {
+    return (
+      <Controller
+        name={name}
+        control={control}
+        rules={{ required }}
+        defaultValue={defaultValue}
+        render={({ field }) => (
+          <Textarea
+            {...field}
+            placeholder={placeholder}
+            rows={rows}
+            className={`w-full resize-y ${customClassName}`}
+            required={required}
+          />
         )}
       />
     );

@@ -48,6 +48,7 @@ const DashboardSummarySection = () => {
 
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
+  console.log({ user });
 
   const personalData = manipulatePersonalDeductions(questionnaires, user);
 

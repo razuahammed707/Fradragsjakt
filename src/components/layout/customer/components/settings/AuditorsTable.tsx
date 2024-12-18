@@ -9,12 +9,13 @@ const AuditorsTable = () => {
     first_name: `FirstName${i + 1}`,
     last_name: `LastName${i + 1}`,
     _id: `id_${i + 1}`,
+    status: i % 2 === 0 ? 'verified' : 'invited', // Alternating status
   }));
 
   return (
     <div className=" ">
       <SharedDataTable
-        className="min-h-[500px]"
+        className=" "
         columns={AuditorsDataTableColumns()}
         data={auditors}
       />

@@ -12,6 +12,7 @@ import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import ExpenseUpdateModal from './ExpenseUpdateModal';
 import ExpenseDetailsModal from './ExpenseDetailsModal';
 import { useTranslation } from '@/lib/TranslationProvider';
+import useIsAuditorLoggedIn from '@/hooks/use-is-auditor-logged-in';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -24,9 +25,9 @@ export type ExpenseColumnProps = {
   amount: number;
 };
 
-export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
   const { translate } = useTranslation();
+  const isAuditor = useIsAuditorLoggedIn();
 
   return [
     {
@@ -138,11 +139,15 @@ export const expenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
           <ExpenseDetailsModal payload={row.original} />
-          <ExpenseUpdateModal payload={row.original} />
-          <SharedDeleteActionCell
-            itemOrigin="expense"
-            itemId={row.original._id as string}
-          />
+          {!isAuditor && (
+            <>
+              <ExpenseUpdateModal payload={row.original} />
+              <SharedDeleteActionCell
+                itemOrigin="expense"
+                itemId={row.original._id as string}
+              />
+            </>
+          )}
         </div>
       ),
     },

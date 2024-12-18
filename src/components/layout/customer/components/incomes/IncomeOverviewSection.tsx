@@ -5,7 +5,7 @@ import SharedPagination from '@/components/SharedPagination';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import { trpc } from '@/utils/trpc';
 import IncomeOverviewTools from './IncomeOverviewTools';
-import { incomeDataTableColumns } from './incomeDataTableColumns';
+import { IncomeDataTableColumns } from './IncomeDataTableColumns';
 
 type IFilterProps = {
   filterString: string;
@@ -49,7 +49,7 @@ function IncomeOverviewSection({
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
-          columns={incomeDataTableColumns()}
+          columns={IncomeDataTableColumns()}
           data={incomesResponse?.data || []}
         />
         <SharedPagination

@@ -18,6 +18,7 @@ import { debounce } from '@/lib/utils';
 import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import useIsAuditorLoggedIn from '@/hooks/use-is-auditor-logged-in';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
@@ -28,6 +29,7 @@ function ExpenseOverviewHeading({
   setSearchTerm,
   setFilterString,
 }: ExpenseOverviewSectionProps) {
+  const isAuditor = useIsAuditorLoggedIn();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
@@ -120,6 +122,7 @@ function ExpenseOverviewHeading({
       <div className="flex justify-between mt-5">
         <div className="flex gap-2">
           <Button
+            disabled={isAuditor}
             variant="purple"
             onClick={() => handleButtonClick('addExpense')}
           >
@@ -127,6 +130,7 @@ function ExpenseOverviewHeading({
             {translate('components.buttons.expense_buttons.text.add_expense')}
           </Button>
           <Button
+            disabled={isAuditor}
             variant="purple"
             onClick={() => handleButtonClick('uploadStatements')}
           >
