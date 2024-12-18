@@ -16,7 +16,11 @@ import Link from 'next/link';
 
 function ProfileDropdown({ role }: { role: string }) {
   const { translate } = useTranslation();
-
+  const logOut = () => {
+    localStorage.clear();
+    localStorage.removeItem('persist:root');
+    signOut({ callbackUrl: '/login' });
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,7 +51,7 @@ function ProfileDropdown({ role }: { role: string }) {
           {translate('profileDropdown.menu.support')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
+        <DropdownMenuItem onClick={logOut}>
           {translate('profileDropdown.menu.logout')}
         </DropdownMenuItem>
       </DropdownMenuContent>
