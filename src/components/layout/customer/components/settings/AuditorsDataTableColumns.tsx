@@ -18,17 +18,20 @@ export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
       ),
     },
     {
-      accessorKey: 'first_name',
       header: 'First Name',
       cell: ({ row }) => (
-        <div className="text-left">{row.getValue('first_name')}</div>
+        <div className="text-left">
+          {row.original?.auditor?.lastName || 'N/A'}
+        </div>
       ),
     },
     {
       accessorKey: 'last_name',
       header: 'Last Name',
       cell: ({ row }) => (
-        <div className="text-left">{row.getValue('last_name')}</div>
+        <div className="text-left">
+          {row.original?.auditor?.lastName || 'N/A'}
+        </div>
       ),
     },
     {

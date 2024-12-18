@@ -13,7 +13,7 @@ function DashboardIncomeSummary() {
     });
   return (
     <div>
-      <h1 className="text-gray-600 font-semibold text-base mt-5">
+      <h1 className="text-gray-600 font-bold text-xs uppercase mt-5">
         Income Overview
       </h1>
       <div className="grid grid-cols-12 gap-2">

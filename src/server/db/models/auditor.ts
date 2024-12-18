@@ -13,6 +13,9 @@ const AuditorSchema = new mongoose.Schema<IAuditor>(
       ref: 'user',
       required: true,
     },
+    auditor_email: {
+      type: String,
+    },
     status: {
       type: String,
       enum: Object.values(AuditorStatus),

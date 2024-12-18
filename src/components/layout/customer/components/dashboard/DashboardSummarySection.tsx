@@ -44,11 +44,9 @@ const DashboardSummarySection = () => {
     predefinedCategories,
     customCategories
   );
-  console.log({ businessData });
 
   const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-  console.log({ user });
 
   const personalData = manipulatePersonalDeductions(questionnaires, user);
 
@@ -57,8 +55,8 @@ const DashboardSummarySection = () => {
 
   return (
     <div>
-      <h1 className="text-gray-500 font-semibold text-base mb-2">
-        Write Offs Overview
+      <h1 className="text-gray-500 font-bold text-xs uppercase mb-2">
+        Write-offs Overview
       </h1>
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-5">

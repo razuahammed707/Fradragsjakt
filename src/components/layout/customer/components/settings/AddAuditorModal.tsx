@@ -28,10 +28,13 @@ export default function AddAuditorModal() {
       message: '',
     },
   });
+
+  const utils = trpc.useUtils();
   const inviteMutation = trpc.auditor.inviteAuditor.useMutation({
     onSuccess: () => {
       toast.success('invitation sent successfully', { duration: 4000 });
       reset();
+      utils.auditor.getAuditorsOrCustomers.invalidate();
       dispatch(showModal(false));
       setLoading(false);
     },

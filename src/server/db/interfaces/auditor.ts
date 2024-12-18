@@ -8,5 +8,6 @@ export enum AuditorStatus {
 export interface IAuditor extends Document {
   customer: Types.ObjectId;
   auditor: Types.ObjectId;
+  auditor_email: string;
   status: AuditorStatus;
 }
