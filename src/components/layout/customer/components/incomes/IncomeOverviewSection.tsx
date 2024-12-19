@@ -5,7 +5,7 @@ import SharedPagination from '@/components/SharedPagination';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import { trpc } from '@/utils/trpc';
 import IncomeOverviewTools from './IncomeOverviewTools';
-import { IncomeDataTableColumns } from './IncomeDataTableColumns';
+import { IncomeDataTableColumns } from './incomeDataTableColumns';
 
 type IFilterProps = {
   filterString: string;

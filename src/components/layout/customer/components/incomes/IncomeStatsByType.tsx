@@ -1,10 +1,9 @@
 import React from 'react';
 import IncomeStats from './IncomeStats';
-import { NumericFormat } from 'react-number-format';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 
 type IncomeStatsProps = {
   type: string;
-
   amount: number;
   filterString?: string;
 };
@@ -12,7 +11,6 @@ type IncomeStatsProps = {
 const IncomeStatsByType: React.FC<IncomeStatsProps> = ({
   amount,
   type,
-
   filterString,
 }) => {
   return (
@@ -21,12 +19,7 @@ const IncomeStatsByType: React.FC<IncomeStatsProps> = ({
 
       <div className="flex justify-between items-center mt-7">
         <h1 className="text-xl font-bold mt-6 absolute left-4 bottom-5">
-          <NumericFormat
-            value={amount}
-            displayType="text"
-            thousandSeparator={true}
-            prefix="NOK "
-          />
+          {numberFormatter(amount)}
         </h1>
         <IncomeStats title={type} filterString={filterString} />
       </div>

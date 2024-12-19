@@ -2,6 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 
 export type WriteOffs = {
   id: string;
@@ -32,7 +33,7 @@ export const WriteOffsTableColumns = (): ColumnDef<WriteOffs>[] => {
       header: translate('page.WriteOffDataTableColumns.deduction'),
       cell: ({ row }) => (
         <div className="text-left my-1">
-          {`NOK ${(Number(row.getValue('amount')) || 0).toFixed(2)}`}
+          {`NOK ${numberFormatter(row.original?.amount)}`}
         </div>
       ),
     },
