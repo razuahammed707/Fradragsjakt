@@ -15,6 +15,8 @@ declare module 'next-auth' {
     firstName: string;
     lastName: string;
     hasAnswers: boolean;
+    audit_for?: string | undefined;
+    customer_email?: string | undefined;
   }
 
   interface Session {
@@ -121,10 +123,12 @@ export const authOptions: AuthOptions = {
           if (retrievedUser.role === 'auditor') {
             const auditor = await AuditorModel.find({
               auditor: retrievedUser._id,
-            });
+            }).populate('customer', 'firstName email');
 
             if (auditor && auditor.length > 0) {
-              token.id = auditor[0].customer;
+              token.id = auditor[0].customer._id;
+              token.audit_for = auditor[0].customer.firstName;
+              token.customer_email = auditor[0].customer.email;
             }
           }
 
@@ -151,6 +155,8 @@ export const authOptions: AuthOptions = {
         firstName: (token.firstName as string) || token.name || '',
         lastName: (token.lastName as string) || '',
         hasAnswers: token.hasAnswers as boolean,
+        audit_for: (token.audit_for as string) || '',
+        customer_email: (token.customer_email as string) || '',
       };
 
       return session;
