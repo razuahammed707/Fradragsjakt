@@ -29,6 +29,7 @@ import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import SharedReportDownloader from '@/components/SharedReportDownloader';
 import ViewResponseModalContent from './modals-content/ViewResponseModalContent';
+import useUserInfo from '@/hooks/use-user-info';
 
 const modalContentMap: Record<
   string,
@@ -58,6 +59,8 @@ const modalContentMap: Record<
 };
 
 const QuestionnairesReviewSection = () => {
+  const { isAuditor } = useUserInfo();
+
   const { translate } = useTranslation();
   const [selectedTitle, setSelectedTitle] = useState<string>('');
 
@@ -202,7 +205,8 @@ const QuestionnairesReviewSection = () => {
                 'flex justify-between items-center p-2 bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100',
                 user?.questionnaires?.find(
                   (item: Questionnaire) => item.question === question.title
-                )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none'
+                )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none',
+                isAuditor && 'pointer-events-none'
               )}
             >
               <div className="flex space-x-2">
@@ -245,18 +249,21 @@ const QuestionnairesReviewSection = () => {
           </div> */}
         </div>
         <div className="flex space-x-2">
-          <Button
-            onClick={() =>
-              handleButtonClick(translate('questionnaire.edit_response'))
-            }
-            className="text-white text-sm font-medium w-full"
-          >
-            {translate('questionnaire.edit_response')}
-          </Button>
+          {!isAuditor && (
+            <Button
+              onClick={() =>
+                handleButtonClick(translate('questionnaire.edit_response'))
+              }
+              className="text-white text-sm font-medium w-full"
+            >
+              {translate('questionnaire.edit_response')}
+            </Button>
+          )}
           <SharedReportDownloader
             body={getWriteOffs()}
             total={personalTotal}
             origin="write off questionnaires"
+            fullWidth
           />
         </div>
       </div>

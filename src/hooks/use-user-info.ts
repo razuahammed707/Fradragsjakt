@@ -5,11 +5,12 @@ const useUserInfo = () => {
     trpc.users.getUserByEmail.useQuery();
 
   return {
-    role: data?.user.role ?? null,
-    email: data?.user.email ?? null,
-    firstName: data?.user.firstName ?? null,
-    lastName: data?.user.lastName ?? null,
-    isVerified: data?.user.isVerified ?? null,
+    role: data?.role ?? null,
+    email: data?.email ?? null,
+    firstName: data?.firstName ?? null,
+    lastName: data?.lastName ?? null,
+    isVerified: data?.isVerified ?? null,
+    isAuditor: data?.role === 'auditor' ? true : false,
     isLoading,
     isError,
     error,

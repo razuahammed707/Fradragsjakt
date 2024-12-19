@@ -8,6 +8,7 @@ import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import CategoryAddModal from './CategoryAddModal';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
+import useUserInfo from '@/hooks/use-user-info';
 
 export type Category = {
   _id: string;
@@ -18,7 +19,9 @@ export type Category = {
 
 export const CategoryTableColumns = (): ColumnDef<Category>[] => {
   const { translate } = useTranslation();
-  return [
+  const { isAuditor } = useUserInfo();
+
+  const columns: ColumnDef<Category>[] = [
     {
       header: translate(
         'page.CategoryDataTableColumns.serial_no',
@@ -89,4 +92,5 @@ export const CategoryTableColumns = (): ColumnDef<Category>[] => {
       ),
     },
   ];
+  return isAuditor ? columns.filter((col) => col.id !== 'actions') : columns;
 };
