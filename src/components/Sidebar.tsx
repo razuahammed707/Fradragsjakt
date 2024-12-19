@@ -113,11 +113,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         label: translate('sidebar.write_offs'),
         icon: CircleDollarSign,
       },
-      {
-        href: '/settings',
-        label: 'Settings',
-        icon: Settings,
-      },
     ],
     customer: [
       {

@@ -156,9 +156,26 @@ function ExpenseOverviewHeading({
         )}
         <div className="flex space-x-2">
           <ExpenseDataTableFilter setFilterString={setFilterString} />
-          {buttons.map((button, index) => (
-            <>
-              {button.key !== 'applyRule' && isAuditor && (
+          {isAuditor
+            ? buttons
+                .filter((btn) => btn.key !== 'applyRule')
+                .map((button, index) => (
+                  <Button
+                    key={index}
+                    variant="purple"
+                    onClick={() =>
+                      router.push(`/${user?.user?.role}/write-offs`)
+                    }
+                  >
+                    <Image
+                      src={button.icon}
+                      alt="button icon"
+                      className="mr-2"
+                    />{' '}
+                    {button.text}
+                  </Button>
+                ))
+            : buttons.map((button, index) => (
                 <Button
                   disabled={
                     button.key === 'applyRule' &&
@@ -176,9 +193,7 @@ function ExpenseOverviewHeading({
                   <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
                   {button.text}
                 </Button>
-              )}
-            </>
-          ))}
+              ))}
         </div>
         <div className="bg-white absolute z-50">
           <SharedModal
