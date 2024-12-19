@@ -17,8 +17,8 @@ import Link from 'next/link';
 function ProfileDropdown({ role }: { role: string }) {
   const { translate } = useTranslation();
   const logOut = () => {
-    localStorage.clear();
-    localStorage.removeItem('persist:root');
+    // localStorage.clear();
+    // localStorage.removeItem('persist:root');
     signOut({ callbackUrl: '/login' });
   };
   return (
