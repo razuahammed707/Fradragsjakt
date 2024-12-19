@@ -6,6 +6,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import connectToDatabase from '@/server/config/mongoose';
 import User from '@/server/db/models/user';
 import { JWT } from 'next-auth/jwt';
+import AuditorModel from '@/server/db/models/auditor';
 
 declare module 'next-auth' {
   interface User {
@@ -113,8 +114,20 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         const retrievedUser = await User.findOne({ email: user.email });
+
         if (retrievedUser) {
           token.id = retrievedUser.id;
+
+          if (retrievedUser.role === 'auditor') {
+            const auditor = await AuditorModel.find({
+              auditor: retrievedUser._id,
+            });
+
+            if (auditor && auditor.length > 0) {
+              token.id = auditor[0].customer;
+            }
+          }
+
           token.email = retrievedUser.email;
           token.firstName = retrievedUser.firstName || user.name;
           token.lastName = retrievedUser.lastName;
