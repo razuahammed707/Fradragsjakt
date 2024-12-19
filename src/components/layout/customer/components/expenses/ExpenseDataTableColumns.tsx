@@ -124,7 +124,7 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
         const amountToRender = row.getValue('amount') as number;
         return (
           <span className="text-[#00104B]">
-            {numberFormatter(amountToRender)}
+            {`NOK ${numberFormatter(amountToRender)}`}
           </span>
         );
       },
@@ -133,7 +133,9 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
       id: 'actions',
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
-          <ExpenseDetailsModal payload={row.original} />
+          <div className={`my-2`}>
+            <ExpenseDetailsModal payload={row.original} />
+          </div>
           {!isAuditor && (
             <>
               <ExpenseUpdateModal payload={row.original} />
