@@ -48,7 +48,7 @@ export default function UpdateAuditorModal({
         <h2 className="font-medium text-lg text-black ">
           You have been invited as an Auditor
         </h2>
-        <h2 className="font-medium text-lg text-black mb-2">by Adnan</h2>
+        <h2 className="font-medium text-lg text-black mb-2">by Customer</h2>
         <p className="text-xs mb-2 text-gray-500">
           Please fill out the following fields to complete registration{' '}
         </p>
