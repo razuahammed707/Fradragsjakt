@@ -39,7 +39,9 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (
+    if (status === 'authenticated' && user?.user.role === 'auditor') {
+      router.push(`/${user?.user.role}/dashboard`);
+    } else if (
       status === 'authenticated' &&
       user?.user.role &&
       !user?.user.hasAnswers
