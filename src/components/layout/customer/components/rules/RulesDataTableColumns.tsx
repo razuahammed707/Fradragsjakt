@@ -9,16 +9,18 @@ import { IRule } from '@/server/db/interfaces/rules';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import CreateRuleModal from './CreateRuleModal';
 import { useTranslation } from '@/lib/TranslationProvider';
+import useUserInfo from '@/hooks/use-user-info';
 
 export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
   const { translate } = useTranslation();
+  const { isAuditor } = useUserInfo();
 
-  return [
+  const columns: ColumnDef<IRule>[] = [
     {
       accessorKey: 'serialNo',
       header: translate('page.rulesTableColumn.serial_no'),
       cell: ({ row }) => (
-        <div className="text-left pl-4">{`${row.index + 1}.`}</div> // Use row.index for serial number
+        <div className="text-left pl-4">{`${row.index + 1}.`}</div>
       ),
     },
     {
@@ -30,62 +32,52 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
     },
     {
       accessorKey: 'expense_type',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            className="pl-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            {translate('page.rulesTableColumn.expense_type')}
-            <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return (
-          <div className="text-left">
-            {transformToUppercase(row.getValue('expense_type'))}
-          </div>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="pl-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          {translate('page.rulesTableColumn.expense_type')}
+          <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="text-left">
+          {transformToUppercase(row.getValue('expense_type'))}
+        </div>
+      ),
     },
     {
       accessorKey: 'rule_for',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            className="pl-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            <>Rule For</>
-            <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return (
-          <div className="text-left">
-            {transformToUppercase(row.getValue('rule_for'))}
-          </div>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="pl-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <>Rule For</>
+          <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="text-left">
+          {transformToUppercase(row.getValue('rule_for'))}
+        </div>
+      ),
     },
     {
       accessorKey: 'category_title',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            className="pl-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            {translate('page.rulesTableColumn.category')}
-            <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          className="pl-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          {translate('page.rulesTableColumn.category')}
+          <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
+        </Button>
+      ),
       cell: ({ row }) => (
         <div className="text-left">
           {transformToUppercase(row.getValue('category_title'))}
@@ -108,4 +100,6 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
       ),
     },
   ];
+
+  return isAuditor ? columns.filter((col) => col.id !== 'actions') : columns;
 };

@@ -52,7 +52,7 @@ const ViewResponseModalContent = () => {
         Review Questionaries Details
       </h2>
       <div className="view-response h-[500px] overflow-y-auto overflow-x-hidden space-y-6 pr-[10px]">
-        {!!sortedQuestionnaires ? (
+        {sortedQuestionnaires.length > 0 ? (
           sortedQuestionnaires.map((section, index) => (
             <div key={index} className="bg-[#F8F8F8] p-[10px] space-y-[18px]">
               <h3 className="text-sm text-[#5B52F9] font-bold">{`${index + 1}. ${section.question} `}</h3>

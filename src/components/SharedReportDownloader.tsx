@@ -9,6 +9,7 @@ import { Download } from 'lucide-react';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { Badge } from './ui/badge';
 import { trpc } from '@/utils/trpc';
+import { cn } from '@/lib/utils';
 
 type BodyItem = {
   category?: string;
@@ -23,12 +24,14 @@ interface SharedReportDownloaderProps {
   body: BodyItem[] | undefined;
   total: number;
   origin?: string;
+  fullWidth?: boolean;
 }
 
 export default function SharedReportDownloader({
   body,
   total,
   origin = 'write off section',
+  fullWidth,
 }: SharedReportDownloaderProps) {
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 
@@ -162,7 +165,7 @@ export default function SharedReportDownloader({
   ) : (
     <Button
       onClick={generatePDFWithImage}
-      className="btn btn-primary text-white"
+      className={cn('btn  btn-primary text-white', fullWidth && 'w-full')}
     >
       <Download size={16} className="mr-2" /> Report
     </Button>

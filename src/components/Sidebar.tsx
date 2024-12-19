@@ -82,26 +82,41 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         ],
       },
     ],
-    seller: [
+    auditor: [
       {
-        href: '/',
-        label: 'Dashboard',
+        href: '/dashboard',
+        label: translate('sidebar.dashboard'),
         icon: LayoutDashboard,
       },
       {
-        href: '/orders',
-        label: 'Orders',
-        icon: HandCoins,
-        badge: 3,
+        href: '/incomes',
+        label: translate('sidebar.incomes'),
+        icon: Wallet,
       },
       {
-        href: '/products',
-        label: 'Products',
-        icon: FcPackage,
-        subItems: [
-          { href: '/products/inventory', label: 'Inventory' },
-          { href: '/products/new', label: 'New Product' },
-        ],
+        href: '/expenses',
+        label: translate('sidebar.expenses'),
+        icon: HandCoins,
+      },
+      {
+        href: '/categories',
+        label: translate('sidebar.categories'),
+        icon: ListTree,
+      },
+      {
+        href: '/rules',
+        label: translate('sidebar.rules'),
+        icon: ClipboardPen,
+      },
+      {
+        href: '/write-offs',
+        label: translate('sidebar.write_offs'),
+        icon: CircleDollarSign,
+      },
+      {
+        href: '/settings',
+        label: 'Settings',
+        icon: Settings,
       },
     ],
     customer: [

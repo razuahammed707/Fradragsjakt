@@ -9,12 +9,14 @@ import { trpc } from '@/utils/trpc';
 import { debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import useUserInfo from '@/hooks/use-user-info';
 
 export type FormData = {
   title: string;
   category_for: 'expense' | 'income';
 };
 export default function CategoryTable() {
+  const { isAuditor } = useUserInfo();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { translate } = useTranslation();
@@ -100,9 +102,11 @@ export default function CategoryTable() {
               'Search category'
             )}
           />
-          <div className="z-50">
-            <CategoryAddModal />
-          </div>
+          {!isAuditor && (
+            <div className="z-50">
+              <CategoryAddModal />
+            </div>
+          )}
         </div>
         <TabsContent value="all">
           <div className=" ">
