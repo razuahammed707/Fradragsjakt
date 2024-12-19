@@ -18,7 +18,7 @@ import { debounce } from '@/lib/utils';
 import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
-import useIsAuditorLoggedIn from '@/hooks/use-is-auditor-logged-in';
+import useUserInfo from '@/hooks/use-user-info';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
@@ -29,7 +29,7 @@ function ExpenseOverviewHeading({
   setSearchTerm,
   setFilterString,
 }: ExpenseOverviewSectionProps) {
-  const isAuditor = useIsAuditorLoggedIn();
+  const { isAuditor } = useUserInfo();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
@@ -113,52 +113,71 @@ function ExpenseOverviewHeading({
             )}
           </h1>
         </div>
-        <SearchInput
-          className="hidden md:block"
-          onChange={handleSearchChange}
-          placeholder={translate('components.expenseOverview.search', 'Search')}
-        />
+        {!isAuditor && (
+          <SearchInput
+            className="hidden md:block"
+            onChange={handleSearchChange}
+            placeholder={translate(
+              'components.expenseOverview.search',
+              'Search'
+            )}
+          />
+        )}
       </div>
       <div className="flex justify-between mt-5">
-        <div className="flex gap-2">
-          <Button
-            disabled={isAuditor}
-            variant="purple"
-            onClick={() => handleButtonClick('addExpense')}
-          >
-            <IoMdAdd className="font-bold mr-2" />{' '}
-            {translate('components.buttons.expense_buttons.text.add_expense')}
-          </Button>
-          <Button
-            disabled={isAuditor}
-            variant="purple"
-            onClick={() => handleButtonClick('uploadStatements')}
-          >
-            <IoMdAdd className="font-bold mr-2" />{' '}
-            {translate(
-              'components.buttons.expense_buttons.text.upload_statements'
+        {isAuditor ? (
+          <SearchInput
+            className="hidden md:block"
+            onChange={handleSearchChange}
+            placeholder={translate(
+              'components.expenseOverview.search',
+              'Search'
             )}
-          </Button>
-        </div>
+          />
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              variant="purple"
+              onClick={() => handleButtonClick('addExpense')}
+            >
+              <IoMdAdd className="font-bold mr-2" />{' '}
+              {translate('components.buttons.expense_buttons.text.add_expense')}
+            </Button>
+            <Button
+              variant="purple"
+              onClick={() => handleButtonClick('uploadStatements')}
+            >
+              <IoMdAdd className="font-bold mr-2" />{' '}
+              {translate(
+                'components.buttons.expense_buttons.text.upload_statements'
+              )}
+            </Button>
+          </div>
+        )}
         <div className="flex space-x-2">
           <ExpenseDataTableFilter setFilterString={setFilterString} />
           {buttons.map((button, index) => (
-            <Button
-              disabled={
-                button.key === 'applyRule' &&
-                expensesWithMatchedRules?.data?.expensesWithRules?.length === 0
-              }
-              key={index}
-              variant="purple"
-              onClick={() =>
-                button.key === 'showWriteOffs'
-                  ? router.push(`/${user?.user?.role}/write-offs`)
-                  : handleButtonClick(button.key)
-              }
-            >
-              <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
-              {button.text}
-            </Button>
+            <>
+              {button.key !== 'applyRule' && isAuditor && (
+                <Button
+                  disabled={
+                    button.key === 'applyRule' &&
+                    expensesWithMatchedRules?.data?.expensesWithRules
+                      ?.length === 0
+                  }
+                  key={index}
+                  variant="purple"
+                  onClick={() =>
+                    button.key === 'showWriteOffs'
+                      ? router.push(`/${user?.user?.role}/write-offs`)
+                      : handleButtonClick(button.key)
+                  }
+                >
+                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
+                  {button.text}
+                </Button>
+              )}
+            </>
           ))}
         </div>
         <div className="bg-white absolute z-50">

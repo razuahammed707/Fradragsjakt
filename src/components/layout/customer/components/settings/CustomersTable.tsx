@@ -1,7 +1,6 @@
 import { SharedDataTable } from '@/components/SharedDataTable';
 import React from 'react';
 import { CustomersDataTableColumns } from './CustomersDataTableColumns';
-import UpdateAuditorModal from './UpdateAuditorModal';
 
 const CustomersTable = () => {
   const customers = Array.from({ length: 10 }, (_, i) => ({
@@ -19,7 +18,6 @@ const CustomersTable = () => {
         columns={CustomersDataTableColumns()}
         data={customers}
       />
-      <UpdateAuditorModal />
     </div>
   );
 };

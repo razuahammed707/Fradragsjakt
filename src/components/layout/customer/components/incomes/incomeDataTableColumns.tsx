@@ -12,7 +12,7 @@ import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import { useTranslation } from '@/lib/TranslationProvider';
 import IncomeDetailsModal from './IncomeDetailsModal';
 import IncomeUpdateModal from './IncomeUpdateModal';
-import useIsAuditorLoggedIn from '@/hooks/use-is-auditor-logged-in';
+import useUserInfo from '@/hooks/use-user-info';
 
 export type IncomeColumnProps = {
   _id: string;
@@ -27,7 +27,7 @@ export type IncomeColumnProps = {
 
 export const IncomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
   const { translate } = useTranslation();
-  const isAuditor = useIsAuditorLoggedIn();
+  const { isAuditor } = useUserInfo();
 
   return [
     {

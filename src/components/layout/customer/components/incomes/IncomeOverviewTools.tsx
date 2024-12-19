@@ -15,6 +15,7 @@ import Image from 'next/image';
 import IncomeAddContent from './IncomeAddContent';
 import IncomeDataTableFilter from './IncomeDataTableFilter';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import useUserInfo from '@/hooks/use-user-info';
 
 type IncomeOverviewToolsProps = {
   setSearchTerm: (value: string) => void;
@@ -25,6 +26,7 @@ function IncomeOverviewTools({
   setSearchTerm,
   setFilterString,
 }: IncomeOverviewToolsProps) {
+  const { isAuditor } = useUserInfo();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<{ key: string }>({
@@ -91,43 +93,61 @@ function IncomeOverviewTools({
             )}
           </h1>
         </div>
-        <SearchInput
-          className="hidden md:block"
-          onChange={handleSearchChange}
-          placeholder={translate('components.incomeOverview.search', 'Search')}
-        />
+        {!isAuditor && (
+          <SearchInput
+            className="hidden md:block"
+            onChange={handleSearchChange}
+            placeholder={translate(
+              'components.incomeOverview.search',
+              'Search'
+            )}
+          />
+        )}
       </div>
       <div className="flex justify-between mt-5">
-        <div className="flex gap-2">
-          <Button
-            variant="purple"
-            onClick={() => handleButtonClick('addIncome')}
-          >
-            <IoMdAdd className="font-bold mr-2" />{' '}
-            {translate('components.buttons.income_buttons.text.add_income')}
-          </Button>
-          <Button
-            variant="purple"
-            onClick={() => handleButtonClick('uploadStatements')}
-          >
-            <IoMdAdd className="font-bold mr-2" />{' '}
-            {translate(
-              'components.buttons.income_buttons.text.upload_statements'
+        {isAuditor ? (
+          <SearchInput
+            className="hidden md:block"
+            onChange={handleSearchChange}
+            placeholder={translate(
+              'components.incomeOverview.search',
+              'Search'
             )}
-          </Button>
-        </div>
+          />
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              variant="purple"
+              onClick={() => handleButtonClick('addIncome')}
+            >
+              <IoMdAdd className="font-bold mr-2" />{' '}
+              {translate('components.buttons.income_buttons.text.add_income')}
+            </Button>
+            <Button
+              variant="purple"
+              onClick={() => handleButtonClick('uploadStatements')}
+            >
+              <IoMdAdd className="font-bold mr-2" />{' '}
+              {translate(
+                'components.buttons.income_buttons.text.upload_statements'
+              )}
+            </Button>
+          </div>
+        )}
         <div className="flex space-x-2">
           <IncomeDataTableFilter setFilterString={setFilterString} />
-          <Button
-            disabled={
-              incomesWithMatchedRules?.data?.incomesWithRules?.length === 0
-            }
-            variant="purple"
-            onClick={() => handleButtonClick('applyRule')}
-          >
-            <Image src={RuleIcon} alt="button icon" className="mr-2" /> Apply
-            Rule
-          </Button>
+          {!isAuditor && (
+            <Button
+              disabled={
+                incomesWithMatchedRules?.data?.incomesWithRules?.length === 0
+              }
+              variant="purple"
+              onClick={() => handleButtonClick('applyRule')}
+            >
+              <Image src={RuleIcon} alt="button icon" className="mr-2" /> Apply
+              Rule
+            </Button>
+          )}
         </div>
         <div className="bg-white absolute z-50">
           <SharedModal

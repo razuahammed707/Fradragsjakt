@@ -12,7 +12,7 @@ import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import ExpenseUpdateModal from './ExpenseUpdateModal';
 import ExpenseDetailsModal from './ExpenseDetailsModal';
 import { useTranslation } from '@/lib/TranslationProvider';
-import useIsAuditorLoggedIn from '@/hooks/use-is-auditor-logged-in';
+import useUserInfo from '@/hooks/use-user-info';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -27,7 +27,7 @@ export type ExpenseColumnProps = {
 
 export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
   const { translate } = useTranslation();
-  const isAuditor = useIsAuditorLoggedIn();
+  const { isAuditor } = useUserInfo();
 
   return [
     {
