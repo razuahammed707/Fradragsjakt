@@ -124,7 +124,7 @@ export const IncomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
         const amountToRender = row.getValue('amount') as number;
         return (
           <span className="text-[#00104B]">
-            {numberFormatter(amountToRender)}
+            {`NOK ${numberFormatter(amountToRender)}`}
           </span>
         );
       },
@@ -133,7 +133,9 @@ export const IncomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
       id: 'actions',
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
-          <IncomeDetailsModal payload={row.original} />
+          <div className="my-2">
+            <IncomeDetailsModal payload={row.original} />
+          </div>
           {!isAuditor && (
             <>
               <IncomeUpdateModal payload={row.original} />

@@ -30,12 +30,14 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
       </div>
       <div className="flex items-center space-x-8">
         <LanguageSwitcher />
-        <div className="border-l-2 border-r-2 px-2 py-1">
-          <p className="text-xs text-white font-semibold">View Mode</p>
-          <small className=" text-xs text-white font-extralight">
-            {session?.user?.customer_email}
-          </small>
-        </div>
+        {session?.user?.role === 'auditor' && (
+          <div className="border-l-2 border-r-2 px-2 py-1">
+            <p className="text-xs text-white font-semibold">View Mode</p>
+            <small className=" text-xs text-white font-extralight">
+              {session?.user?.customer_email}
+            </small>
+          </div>
+        )}
         <ProfileDropdown role={role || ''} />
       </div>
     </header>

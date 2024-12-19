@@ -21,7 +21,7 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
 
       <div className="flex justify-between items-center mt-7">
         <h1 className="text-xl font-bold mt-6 absolute left-4 bottom-5">
-          {numberFormatter(amount)}
+          {`NOK ${numberFormatter(amount)}`}
         </h1>
         <ExpenseStats title={type} filterString={filterString} />
       </div>
