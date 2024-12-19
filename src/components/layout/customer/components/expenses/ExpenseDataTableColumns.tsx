@@ -1,7 +1,6 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { NumericFormat } from 'react-number-format';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import ArrowUpDown from '../../../../../../public/sort.png';
@@ -13,6 +12,7 @@ import ExpenseUpdateModal from './ExpenseUpdateModal';
 import ExpenseDetailsModal from './ExpenseDetailsModal';
 import { useTranslation } from '@/lib/TranslationProvider';
 import useIsAuditorLoggedIn from '@/hooks/use-is-auditor-logged-in';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -124,12 +124,7 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
         const amountToRender = row.getValue('amount') as number;
         return (
           <span className="text-[#00104B]">
-            <NumericFormat
-              value={amountToRender}
-              displayType="text"
-              thousandSeparator={true}
-              prefix="NOK "
-            />
+            {numberFormatter(amountToRender)}
           </span>
         );
       },
