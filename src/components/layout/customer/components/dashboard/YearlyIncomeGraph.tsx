@@ -139,7 +139,7 @@ const YearlyIncomeGraph = () => {
   ];
 
   return (
-    <Card className="col-span-6 border border-[#EEF0F4] flex flex-col justify-between shadow-none pt-4 px-4 rounded-2xl">
+    <Card className="col-span-6 mt-2 border border-[#EEF0F4] flex flex-col justify-between shadow-none pt-4 px-4 rounded-2xl">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-lg text-[#101010] font-semibold">

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMediaQuery } from '@/hooks/use-media-query';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
@@ -12,7 +13,7 @@ const IncomeSummaryChart = ({
 }: {
   incomes: { amount: number; category: string }[];
 }) => {
-  // Predefined color palette (you can adjust as needed)
+  const isMax1500: boolean = useMediaQuery('(max-width: 1500px)');
   const colorPalette = [
     '#9F97F7',
     '#FFB44F',
@@ -52,7 +53,7 @@ const IncomeSummaryChart = ({
       },
     },
     legend: {
-      show: false, // Hide legend
+      show: false,
     },
     plotOptions: {
       pie: {
@@ -62,14 +63,14 @@ const IncomeSummaryChart = ({
             show: true,
             name: {
               show: true,
-              fontSize: '22px',
+              fontSize: 22,
               fontWeight: 600,
               color: '#1F2937',
               offsetY: 5,
             },
             value: {
               show: true,
-              fontSize: '24px',
+              fontSize: 24,
               fontWeight: 600,
               color: '#000',
               formatter: (val: number) => `NOK ${val?.toLocaleString()}`,
@@ -77,7 +78,7 @@ const IncomeSummaryChart = ({
             total: {
               show: true,
               label: false,
-              fontSize: '24px',
+              fontSize: 10,
               fontWeight: 600,
               color: '#1F2937',
               formatter: () => `NOK ${totalAmount?.toLocaleString()}`,
@@ -110,8 +111,8 @@ const IncomeSummaryChart = ({
         <div className="flex justify-center">
           <Chart
             options={chartOptions}
-            height={300}
-            width={300}
+            height={isMax1500 ? 208 : 255}
+            width={isMax1500 ? 208 : 255}
             series={chartSeries}
             type="donut"
           />

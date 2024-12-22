@@ -7,6 +7,8 @@ import ProfileDropdown from './Dropdown';
 import { useTranslation } from '@/lib/TranslationProvider';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useSession } from 'next-auth/react';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/lib/utils';
 
 interface TopbarProps {
   role: string;
@@ -15,10 +17,16 @@ interface TopbarProps {
 const Topbar: React.FC<TopbarProps> = ({ role }) => {
   const { translate } = useTranslation();
   const { data: session } = useSession();
+  const isGreaterThan1600: boolean = useMediaQuery('(min-width: 1601px)');
 
   console.log('session from topbar', session);
   return (
-    <header className="flex bg-[#00104B] justify-between h-14 items-center px-7  lg:h-[60px] lg:px-[128px]">
+    <header
+      className={cn(
+        'flex bg-[#00104B] justify-between h-14 items-center  lg:h-[60px] px-8',
+        isGreaterThan1600 && 'px-[128px]'
+      )}
+    >
       <MobileNav role={role || ''} />
       <div className="hidden md:flex items-center ">
         <Link href="/" className="">

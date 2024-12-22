@@ -30,6 +30,7 @@ import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonal
 import SharedReportDownloader from '@/components/SharedReportDownloader';
 import ViewResponseModalContent from './modals-content/ViewResponseModalContent';
 import useUserInfo from '@/hooks/use-user-info';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 const modalContentMap: Record<
   string,
@@ -60,17 +61,16 @@ const modalContentMap: Record<
 
 const QuestionnairesReviewSection = () => {
   const { isAuditor } = useUserInfo();
-
   const { translate } = useTranslation();
+  const isGreaterThan1600: boolean = useMediaQuery('(min-width: 1601px)');
+
   const [selectedTitle, setSelectedTitle] = useState<string>('');
 
   const dispatch = useAppDispatch();
   const { questionnaires } = useAppSelector(questionnaireSelector);
-  console.log({ questionnaires });
 
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-  console.log('hola', user?.questionnaires);
 
   const {
     workAndEducationExpenseAmount,
@@ -196,7 +196,12 @@ const QuestionnairesReviewSection = () => {
             </p>
           </div>
         </div>
-        <div className="text-sm text-[#101010] space-y-4">
+        <div
+          className={cn(
+            'text-sm text-[#101010] space-y-4',
+            !isGreaterThan1600 && 'space-y-2'
+          )}
+        >
           {getWriteOffs().map((question, i) => (
             <div
               key={i}
@@ -254,7 +259,10 @@ const QuestionnairesReviewSection = () => {
               onClick={() =>
                 handleButtonClick(translate('questionnaire.edit_response'))
               }
-              className="text-white text-sm font-medium w-full"
+              className={cn(
+                'text-white text-sm font-medium w-full',
+                !isGreaterThan1600 && 'text-xs px-3'
+              )}
             >
               {translate('questionnaire.edit_response')}
             </Button>

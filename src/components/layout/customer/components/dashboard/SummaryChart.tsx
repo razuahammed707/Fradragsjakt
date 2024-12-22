@@ -1,4 +1,5 @@
 'use client';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { Handshake, SquareUserRound } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import React from 'react';
@@ -23,7 +24,7 @@ const SummaryChart = ({
     React.SetStateAction<'personal' | 'business'>
   >;
 }) => {
-  // Predefined color palette (you can adjust as needed)
+  const isMax1500: boolean = useMediaQuery('(max-width: 1500px)');
   const colorPalette = [
     '#9F97F7',
     '#FFB44F',
@@ -141,8 +142,8 @@ const SummaryChart = ({
         <div className="flex justify-center">
           <Chart
             options={chartOptions}
-            height={208}
-            width={208}
+            height={isMax1500 ? 190 : 208}
+            width={isMax1500 ? 190 : 208}
             series={chartSeries}
             type="donut"
           />

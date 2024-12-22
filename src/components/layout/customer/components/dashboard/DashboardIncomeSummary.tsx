@@ -27,9 +27,7 @@ function DashboardIncomeSummary() {
             />
           </div>
         </div>
-        <div className="col-span-6 mt-2 h-full">
-          <YearlyIncomeGraph />
-        </div>
+        <YearlyIncomeGraph />
       </div>
     </div>
   );
