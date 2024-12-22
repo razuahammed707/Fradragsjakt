@@ -71,6 +71,7 @@ const QuestionnairesReviewSection = () => {
 
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
+  console.log('user_questionnaires', user?.questionnaires);
 
   const {
     workAndEducationExpenseAmount,

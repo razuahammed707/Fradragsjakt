@@ -14,13 +14,11 @@ import { useForm } from 'react-hook-form';
 import { FormInput } from '@/components/FormInput';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
-import {
-  addQuestionnaire,
-  questionnaireSelector,
-  showModal,
-} from '@/redux/slices/questionnaire';
+import { questionnaireSelector, showModal } from '@/redux/slices/questionnaire';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
+import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
 
 type AccordionItemData = {
   id: string;
@@ -235,11 +233,20 @@ export function ContentHealthFamily({
   );
 
   const appDispatch = useAppDispatch();
-
+  const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
+    onSuccess: () => {
+      toast.success('User questionnaires updated succesfully', {
+        duration: 4000,
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'User questionnaires updation failed!');
+    },
+  });
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
-    appDispatch(addQuestionnaire(payload));
+    updateQuestionnaires.mutate(payload);
     appDispatch(showModal(false));
   };
 
