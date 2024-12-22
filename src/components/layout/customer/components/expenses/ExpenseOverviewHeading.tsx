@@ -37,6 +37,8 @@ function ExpenseOverviewHeading({
   const [modalContent, setModalContent] = useState<{ key: string }>({
     key: '',
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: expensesWithMatchedRules } =
     trpc.expenses.getUnknownExpensesWithMatchedRules.useQuery(
       {
@@ -46,7 +48,7 @@ function ExpenseOverviewHeading({
       {
         keepPreviousData: true,
       }
-    );
+    ) as unknown as any;
   const { manipulatedCategories } = useManipulatedCategories({
     category_for: 'expense',
   });
@@ -83,7 +85,7 @@ function ExpenseOverviewHeading({
     if (modalContent.key === 'applyRule') {
       return (
         <ApplyRuleModalContent
-          expenses={expensesWithMatchedRules?.data || []}
+          expenses={expensesWithMatchedRules?.data}
           setModalOpen={setModalOpen}
         />
       );

@@ -27,7 +27,7 @@ const DeductiveExpenses = ({
     (sum, current) => sum + current.total_amount,
     0
   );
-  const totalDeductibleAmount = businessTotal + personalTotal;
+  const totalDeductibleAmount = businessTotal + personalTotal || 0;
   return (
     <Card className="col-span-6 py-6 px-[21px] border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0">
@@ -41,7 +41,7 @@ const DeductiveExpenses = ({
             </Badge>
           </div>
           <p className="text-[28px] text-[#00104B] font-bold">
-            NOK {numberFormatter(totalDeductibleAmount)}
+            NOK {numberFormatter(totalDeductibleAmount) || 0}
           </p>
         </div>
 

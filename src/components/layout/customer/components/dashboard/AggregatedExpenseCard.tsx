@@ -43,10 +43,11 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   const largestItem = (items ? items : personalData)?.reduce((prev, current) =>
     current.total_amount > prev.total_amount ? current : prev
   );
-  const total = (items ? items : personalData)?.reduce(
-    (sum, current) => sum + current.total_amount,
-    0
-  );
+  const total =
+    (items ? items : personalData)?.reduce(
+      (sum, current) => sum + current.total_amount,
+      0
+    ) || 0;
 
   return (
     <div className="bg-white rounded-xl p-6 space-y-6 w-full">

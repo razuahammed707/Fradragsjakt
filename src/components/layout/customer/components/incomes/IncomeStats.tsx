@@ -30,18 +30,19 @@ const IncomeStats: React.FC<{ title: string; filterString?: string }> = ({
     'Sunday',
   ];
 
-  const { manipulateWeekDays, chartItemsByIncomeType } = chartItemsManipulation(
-    title,
-    weekDays,
-    businessIncomeAnalytics,
-    personalIncomeAnalytics
-  );
+  const { manipulateWeekDays, chartItemsByExpenseType } =
+    chartItemsManipulation(
+      title,
+      weekDays,
+      businessIncomeAnalytics as unknown as any,
+      personalIncomeAnalytics as unknown as any
+    );
 
   const chartOptions = {
     series: [
       {
         name: 'Transactions',
-        data: chartItemsByIncomeType || [0],
+        data: chartItemsByExpenseType || [0],
       },
     ] as ApexAxisChartSeries,
     options: {

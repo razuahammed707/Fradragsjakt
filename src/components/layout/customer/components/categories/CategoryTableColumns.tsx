@@ -17,6 +17,13 @@ export type Category = {
   category_for: string;
 };
 
+type UpdateCategoryPayload = {
+  _id: string;
+  title?: string;
+  reference_category?: string;
+  category_for: 'expense' | 'income';
+};
+
 export const CategoryTableColumns = (): ColumnDef<Category>[] => {
   const { translate } = useTranslation();
   const { isAuditor } = useUserInfo();
@@ -83,7 +90,10 @@ export const CategoryTableColumns = (): ColumnDef<Category>[] => {
         <div
           className={`flex space-x-0 items-center ${row?.original?.created_by === 'SYSTEM' ? 'opacity-30 pointer-events-none' : ''}`}
         >
-          <CategoryAddModal origin="category table" category={row?.original} />
+          <CategoryAddModal
+            origin="category table"
+            category={row?.original as UpdateCategoryPayload}
+          />
           <SharedDeleteActionCell
             itemId={row.original._id as string}
             itemOrigin="category"
