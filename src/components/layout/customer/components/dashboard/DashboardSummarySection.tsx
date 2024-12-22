@@ -65,7 +65,6 @@ const DashboardSummarySection = () => {
         0
       )
     : 0;
-  console.log('totalExpenseAmount', rawExpenseAnalytics);
   return (
     <div>
       {/* <h1 className="text-gray-500 font-bold text-xs uppercase mb-2">
@@ -78,7 +77,7 @@ const DashboardSummarySection = () => {
               <h1 className="font-semibold text-sm text-gray-500 mb-2">
                 Total Expenses from bank statement
               </h1>
-              <p className="text-xl font-bold text-[#00104B]">{`NOK ${numberFormatter(totalExpenseAmount)}`}</p>
+              <p className="text-xl font-bold text-red-400">{`NOK ${numberFormatter(totalExpenseAmount)}`}</p>
             </div>
             <div className="grid grid-cols-12 gap-2">
               <DeductiveExpenses businessData={businessData} />

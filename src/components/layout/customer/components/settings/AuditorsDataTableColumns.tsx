@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColumnDef } from '@tanstack/react-table';
-import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 
 export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
@@ -38,20 +37,22 @@ export const AuditorsDataTableColumns = (): ColumnDef<any>[] => {
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }) => (
-        <div className="text-left">
+        <div
+          className={`text-left ${row?.original?.status === 'verified' ? 'text-green-600' : 'text-orange-500'} font-medium my-1`}
+        >
           {transformToUppercase(row.getValue('status'))}
         </div>
       ),
     },
-    {
-      id: 'actions',
-      header: 'Action',
-      cell: ({ row }) => (
-        <SharedDeleteActionCell
-          itemId={row.original._id as string}
-          itemOrigin="auditor"
-        />
-      ),
-    },
+    // {
+    //   id: 'actions',
+    //   header: 'Action',
+    //   cell: ({ row }) => (
+    //     <SharedDeleteActionCell
+    //       itemId={row.original._id as string}
+    //       itemOrigin="auditor"
+    //     />
+    //   ),
+    // },
   ];
 };

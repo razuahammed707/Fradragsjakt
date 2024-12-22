@@ -72,7 +72,7 @@ export const CategoryTableColumns = (): ColumnDef<Category>[] => {
         'Created By'
       ),
       cell: ({ row }) => (
-        <div className="text-left text-xs pl-4 font-medium text-[#00104B]">
+        <div className="text-left text-xs pl-4 font-medium text-[#00104B] my-1">
           {row.getValue('created_by')}
         </div>
       ),

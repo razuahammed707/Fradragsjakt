@@ -5,15 +5,7 @@ import SharedModal from '@/components/SharedModal';
 import CreateRuleModalContent from './CreateRuleModalContent';
 import { Edit2 } from 'lucide-react';
 import { useTranslation } from '@/lib/TranslationProvider';
-
-type UpdateRuleProps = {
-  _id: string;
-  description_contains: string;
-  category: string;
-  category_title: string;
-  expense_type: string;
-  rule_for: string;
-};
+import { UpdateRuleProps } from '@/types/questionnaire';
 
 export default function CreateRuleModal({
   updateRulePayload,

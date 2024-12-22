@@ -7,20 +7,12 @@ import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { UpdateRuleProps } from '@/types/questionnaire';
 
 type RuleFormData = {
   description_contains: string;
   expense_type: 'business' | 'personal';
   category: string;
-  rule_for: 'expense' | 'income';
-};
-
-type UpdateRuleProps = {
-  _id: string;
-  description_contains: string;
-  category: string;
-  category_title: string;
-  expense_type: string;
   rule_for: 'expense' | 'income';
 };
 
@@ -31,7 +23,7 @@ type ExpenseRuleContentProps = {
   categories?: CategoryType[];
   updateRulePayload?: UpdateRuleProps;
   origin: string | undefined;
-  rule_for: 'expense' | 'income';
+  rule_for?: 'expense' | 'income';
 };
 
 function CreateRuleModalContent({

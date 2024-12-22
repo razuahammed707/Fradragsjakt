@@ -31,7 +31,7 @@ const YearlyExpenseTable = ({ data }: YearlyExpenseTableProps) => {
       <div className="">
         <SharedDataTable
           className="max-h-[250px]"
-          columns={YearlyExpenseTableColumns}
+          columns={YearlyExpenseTableColumns()}
           data={data || []}
         />
       </div>
