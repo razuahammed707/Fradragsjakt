@@ -10,6 +10,8 @@ import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { Badge } from './ui/badge';
 import { trpc } from '@/utils/trpc';
 import { cn } from '@/lib/utils';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import useUserInfo from '@/hooks/use-user-info';
 
 type BodyItem = {
   category?: string;
@@ -34,7 +36,8 @@ export default function SharedReportDownloader({
   fullWidth,
 }: SharedReportDownloaderProps) {
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-
+  const { isAuditor } = useUserInfo();
+  const isGreaterThan1600: boolean = useMediaQuery('(min-width: 1601px)');
   const generatePDFWithImage = async () => {
     const doc = new jsPDF();
 
@@ -165,9 +168,17 @@ export default function SharedReportDownloader({
   ) : (
     <Button
       onClick={generatePDFWithImage}
-      className={cn('btn  btn-primary text-white', fullWidth && 'w-full')}
+      className={cn(
+        'btn  btn-primary text-white',
+        fullWidth && 'w-full',
+        !isAuditor && !isGreaterThan1600 && 'text-xs px-3'
+      )}
     >
-      <Download size={16} className="mr-2" /> Report
+      <Download
+        size={!isAuditor && !isGreaterThan1600 ? 14 : 16}
+        className="mr-2"
+      />{' '}
+      Report
     </Button>
   );
 }

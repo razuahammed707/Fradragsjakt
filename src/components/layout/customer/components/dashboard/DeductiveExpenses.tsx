@@ -30,14 +30,16 @@ const DeductiveExpenses = ({
   const totalDeductibleAmount = businessTotal + personalTotal;
   return (
     <Card className="col-span-6 py-6 px-[21px] border border-[#EEF0F4] shadow-none rounded-2xl">
-      <CardContent className="p-0 relative">
-        <Badge className="bg-[#F0EFFE] px-1 absolute top-0 right-0  hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
-          This year
-        </Badge>
+      <CardContent className="p-0">
         <div className=" ">
-          <h4 className="text-sm  text-[#627A97] font-semibold">
-            Total write-offs
-          </h4>
+          <div className="flex justify-between">
+            <h4 className="text-sm  text-[#627A97] font-semibold">
+              Total <span className="text-nowrap">write-offs</span>
+            </h4>
+            <Badge className="bg-[#F0EFFE] px-1 text-nowrap max-h-[22px]  hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
+              This year
+            </Badge>
+          </div>
           <p className="text-[28px] text-[#00104B] font-bold">
             NOK {numberFormatter(totalDeductibleAmount)}
           </p>
