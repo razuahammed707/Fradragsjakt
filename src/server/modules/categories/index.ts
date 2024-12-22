@@ -44,6 +44,14 @@ export const categoryRouter = router({
         }
 
         const total = await Category.countDocuments(query);
+        const totalExpenseCategories = await Category.countDocuments({
+          category_for: 'expense',
+          $or: [{ creator_id: loggedUser?.id }, { created_by: 'SYSTEM' }],
+        });
+        const totalIncomeCategories = await Category.countDocuments({
+          category_for: 'income',
+          $or: [{ creator_id: loggedUser?.id }, { created_by: 'SYSTEM' }],
+        });
         const categories = await Category.find(query)
           .sort({ createdAt: -1 })
           .skip(skip)
@@ -58,6 +66,10 @@ export const categoryRouter = router({
             page,
             limit,
             totalPages: Math.ceil(total / limit),
+          },
+          totals: {
+            totalExpenseCategories,
+            totalIncomeCategories,
           },
         } as ApiResponse<typeof categories>;
       } catch (error: unknown) {

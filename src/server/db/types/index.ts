@@ -11,6 +11,7 @@ export type ApiResponse<T> = {
     limit: number;
     totalPages: number;
   };
+  totals?: Record<string, number>;
 };
 
 export type ApiErrorResponse = {

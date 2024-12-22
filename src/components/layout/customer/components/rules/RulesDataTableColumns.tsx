@@ -10,6 +10,7 @@ import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import CreateRuleModal from './CreateRuleModal';
 import { useTranslation } from '@/lib/TranslationProvider';
 import useUserInfo from '@/hooks/use-user-info';
+import { UpdateRuleProps } from '@/types/questionnaire';
 
 export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
   const { translate } = useTranslation();
@@ -61,7 +62,7 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="text-left">
+        <div className="text-left my-1">
           {transformToUppercase(row.getValue('rule_for'))}
         </div>
       ),
@@ -90,7 +91,7 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
         <div className="flex items-center">
           <CreateRuleModal
             origin="rule update"
-            updateRulePayload={row?.original}
+            updateRulePayload={row?.original as UpdateRuleProps}
           />
           <SharedDeleteActionCell
             itemId={row.original._id as string}

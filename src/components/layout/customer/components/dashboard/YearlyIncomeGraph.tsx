@@ -32,8 +32,6 @@ const YearlyIncomeGraph = () => {
       income_type: '',
     });
 
-  console.log('annual income analytics', incomesAnalytics);
-
   const processAnalyticsData = (analytics: IncomeAnalytics[]) => {
     const monthsOrder = [
       '2024-07',

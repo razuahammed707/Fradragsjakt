@@ -41,6 +41,14 @@ export const rulesRouter = router({
         }
 
         const total = await RuleModel.countDocuments(query);
+        const totalExpenseRules = await RuleModel.countDocuments({
+          rule_for: 'expense',
+          user: loggedUser?.id,
+        });
+        const totalIncomeRules = await RuleModel.countDocuments({
+          rule_for: 'income',
+          user: loggedUser?.id,
+        });
         const rules = await RuleModel.find(query).skip(skip).limit(limit);
 
         return {
@@ -53,6 +61,7 @@ export const rulesRouter = router({
             limit,
             totalPages: Math.ceil(total / limit),
           },
+          totals: { totalExpenseRules, totalIncomeRules },
         } as ApiResponse<typeof rules>;
       } catch (error) {
         console.log(error);

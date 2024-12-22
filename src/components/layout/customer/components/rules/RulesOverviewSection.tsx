@@ -76,13 +76,23 @@ export default function RulesOverviewSection() {
               className="bg-transparent shadow-none data-[state=active]:shadow-none border-b-2 border-transparent  data-[state=active]:border-b-2  data-[state=active]:border-[#5B52F9] rounded-none px-0"
               value="income"
             >
-              Income
+              Income{' '}
+              <div className="bg-violet-100 px-[6px] text-red ml-2 rounded-md">
+                <h5 className="text-[10px] text-violet-600 font-semibold">
+                  {rulesResponse?.totals?.totalIncomeRules}
+                </h5>
+              </div>
             </TabsTrigger>
             <TabsTrigger
               className="bg-transparent shadow-none data-[state=active]:shadow-none border-b-2 border-transparent  data-[state=active]:border-b-2  data-[state=active]:border-[#5B52F9] rounded-none px-0"
               value="expense"
             >
-              Expense
+              Expense{' '}
+              <div className="bg-red-100 px-[6px] text-red ml-2 rounded-md">
+                <h5 className="text-[10px] text-red-500 font-semibold">
+                  {rulesResponse?.totals?.totalExpenseRules}
+                </h5>
+              </div>
             </TabsTrigger>
           </TabsList>
         </div>
