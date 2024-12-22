@@ -45,10 +45,8 @@ export const chartItemsManipulation = (
     return Number(amount.toFixed(1));
   });
 
-  console.log(chartItemsByExpenseType);
-
   return {
     manipulateWeekDays: weekdays,
-    chartItemsByExpenseType,
+    chartItemsByExpenseType: chartItemsByExpenseType || [],
   };
 };

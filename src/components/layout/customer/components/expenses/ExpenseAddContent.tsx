@@ -130,11 +130,9 @@ function ExpenseAddContent({
           fileType: file.type,
           folder: 'files',
         });
-        if (fileLink?.size) {
-          if (fileLink?.size > 2 * 1024 * 1024) {
-            toast.error('File size cannot exceed 10MB');
-            return;
-          }
+        if (file?.size > 2 * 1024 * 1024) {
+          toast.error('File size cannot exceed 10MB');
+          return;
         }
         setUploadedImage(result?.data);
       } catch (error) {
@@ -143,7 +141,7 @@ function ExpenseAddContent({
         setIsUploading(false);
       }
     },
-    [uploadMutation]
+    [uploadMutation, fileLink] // Include fileLink as a dependency
   );
 
   const onDrop = useCallback((acceptedFiles: File[]) => {

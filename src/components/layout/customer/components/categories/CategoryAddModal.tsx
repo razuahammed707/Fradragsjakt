@@ -5,24 +5,34 @@ import SharedModal from '@/components/SharedModal';
 import { useForm } from 'react-hook-form';
 import { FormInput } from '@/components/FormInput';
 import { Edit2, Loader2 } from 'lucide-react';
-import { FormData } from './CategoryTable';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 
+// Define the possible values for category_for
+type CategoryFor = 'expense' | 'income';
+
+// Define the form data interface
+interface FormData {
+  title: string;
+  category_for: CategoryFor;
+  reference_category: string;
+}
+
 type UpdateCategoryPayload = {
   _id: string;
   title?: string;
   reference_category?: string;
-  category_for: string;
+  category_for: CategoryFor;
 };
 
 interface CategoryAddModalProps {
   origin?: string;
   category?: UpdateCategoryPayload;
 }
+
 export default function CategoryAddModal({
   origin,
   category,
@@ -32,7 +42,15 @@ export default function CategoryAddModal({
   const utils = trpc.useUtils();
   const { translate } = useTranslation();
 
-  const { handleSubmit, control, reset, watch } = useForm<FormData>();
+  const { handleSubmit, control, reset, watch } = useForm<FormData>({
+    defaultValues: {
+      title: category?.title || '',
+      category_for: category?.category_for || undefined,
+      reference_category: category?.reference_category || '',
+    },
+  });
+
+  // Now TypeScript knows these are type-safe
   const categoryForValue = watch('category_for');
   const categoryTitleValue = watch('title');
   const categoryMapValue = watch('reference_category');
@@ -71,7 +89,6 @@ export default function CategoryAddModal({
   });
 
   const onSubmit = (data: FormData) => {
-    console.log('update form data of category', data);
     setLoading(true);
     if (origin && category) {
       updateMutation.mutate({ id: category._id, ...data });

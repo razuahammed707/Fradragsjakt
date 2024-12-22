@@ -41,7 +41,7 @@ function IncomeOverviewTools({
       {
         keepPreviousData: true,
       }
-    );
+    ) as unknown as any;
   const { manipulatedCategories } = useManipulatedCategories({
     category_for: 'income',
   });

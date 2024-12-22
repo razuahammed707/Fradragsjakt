@@ -86,7 +86,8 @@ const SummaryChart = ({
               fontSize: '19px',
               fontWeight: 600,
               color: '#1F2937',
-              formatter: () => `NOK ${totalAmount?.toLocaleString()}`,
+              formatter: () =>
+                `NOK ${totalAmount ? totalAmount?.toLocaleString() : 0}`,
             },
           },
         },

@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import { CategoryTableColumns } from './CategoryTableColumns';
 import SharedPagination from '@/components/SharedPagination';
@@ -45,9 +45,10 @@ export default function CategoryTable() {
     }
   );
 
-  const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm), [
-    setSearchTerm,
-  ]);
+  const debouncedSetSearchTerm = useMemo(
+    () => debounce((value: string) => setSearchTerm(value)),
+    [setSearchTerm]
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSetSearchTerm(e.target.value);

@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { questionnaires } from '@/lib/questionnaires';
-import { SelectedAnswer } from './layout/auth/VerifyEmail';
 import { Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
@@ -13,6 +12,7 @@ import {
   filterAndUpdateQuestionnaires,
   showModal,
 } from '@/redux/slices/questionnaire';
+import { SelectedAnswer } from './layout/auth/Onboard';
 
 type QuestionnairesStepperProps = {
   currentStepIndex: number;

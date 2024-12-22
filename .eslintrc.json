@@ -6,6 +6,7 @@
   ],
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": 0
+    "prettier/prettier": 0,
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

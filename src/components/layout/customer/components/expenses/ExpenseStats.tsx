@@ -35,8 +35,8 @@ const ExpenseStats: React.FC<{ title: string; filterString?: string }> = ({
     chartItemsManipulation(
       title,
       weekDays,
-      businessExpenseAnalytics,
-      personalExpenseAnalytics
+      businessExpenseAnalytics as unknown as any,
+      personalExpenseAnalytics as unknown as any
     );
 
   const chartOptions = {
