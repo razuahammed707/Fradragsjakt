@@ -1,5 +1,12 @@
-import { z } from 'zod'; // Import Zod for validation
+import { z } from 'zod';
 
+const subAnswerSchema = z.record(z.string());
+
+const answerSchema = z.record(z.array(subAnswerSchema));
+const userQuestionnaireSchema = z.object({
+  question: z.string(),
+  answers: z.array(answerSchema),
+});
 const userSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
@@ -18,4 +25,8 @@ const userSchema = z.object({
     .optional(),
   isVerified: z.boolean().optional(),
 });
-export const userValidation = { userSchema };
+export const userValidation = {
+  userSchema,
+  userQuestionnaireSchema,
+  answerSchema,
+};

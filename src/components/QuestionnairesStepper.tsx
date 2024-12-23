@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { questionnaires } from '@/lib/questionnaires';
 import { Loader2 } from 'lucide-react';
@@ -26,14 +27,38 @@ export default function QuestionnairesStepper({
   const { data: user } = useSession();
   const utils = trpc.useUtils();
   const { data: loggedUser } = trpc.users.getUserByEmail.useQuery();
+
+  console.log('loggedUser--questionnaires__', loggedUser?.questionnaires);
+
   const dispatch = useAppDispatch();
   const router = useRouter();
   const pathname = usePathname();
 
   const [loading, setLoading] = useState(false);
+
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>(
-    loggedUser?.questionnaires?.length ? [...loggedUser?.questionnaires] : []
+    () => {
+      if (!loggedUser?.questionnaires) return [];
+
+      return loggedUser.questionnaires.map((questionnaire: any) => {
+        if (
+          typeof questionnaire.answers[0] === 'string' ||
+          Array.isArray(questionnaire.answers[0])
+        ) {
+          return questionnaire;
+        }
+
+        return {
+          question: questionnaire.question,
+          answers: questionnaire.answers.map((answerObj: any) => {
+            const [key] = Object.entries(answerObj)[0];
+            return key;
+          }),
+        };
+      });
+    }
   );
+  console.log({ selectedAnswers });
 
   const step = questionnaires[currentStepIndex];
 
@@ -61,7 +86,6 @@ export default function QuestionnairesStepper({
         },
       }
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAnswers, router, updateQuestionnaires, user?.user.role]);
 
   const handleComplete = async () => {
@@ -167,7 +191,11 @@ export default function QuestionnairesStepper({
             </Button>
           ) : (
             <Button
-              disabled={selectedAnswers.length < 7 || loading}
+              disabled={
+                (selectedAnswers.length < 7 &&
+                  pathname.split('/').pop() !== 'write-offs') ||
+                loading
+              }
               type="button"
               variant="purple"
               onClick={handleComplete}

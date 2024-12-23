@@ -119,8 +119,11 @@ const workAndEducationExpenseCalculator = (
             ? deductibleDistance * 1.56 * extractExpense('Number of Workdays') -
               23100
             : 0;
+        console.log({ total, deductionOnDistance });
 
-        return total + deductionOnDistance;
+        return isNaN(total + deductionOnDistance)
+          ? 0
+          : total + deductionOnDistance;
 
       default:
         return total;
@@ -292,10 +295,28 @@ const foreignIncomeExpenseCalculator = (
 };
 
 export const savingExpenseCalculator = (
-  payload: QuestionnaireItem[],
-  questionnaires: IQuestionnaire[]
+  questionnaires: IQuestionnaire[] | undefined
 ) => {
-  //console.log({ payload });
+  if (!questionnaires || !Array.isArray(questionnaires)) {
+    return {
+      workAndEducationExpenseAmount: 0,
+      healthAndFamilyExpenseAmount: 0,
+      bankAndLoansExpenseAmount: 0,
+      hobbyOddjobsAndExtraIncomesExpenseAmount: 0,
+      housingAndPropertyExpenseAmount: 0,
+      giftsOrDonationsExpenseAmount: 0,
+      foreignIncomeExpenseAmount: 0,
+    };
+  }
+
+  const questionnaireMap = questionnaires.reduce<
+    Record<string, QuestionnaireItem | null>
+  >((acc, item) => {
+    if (item && typeof item === 'object' && 'question' in item) {
+      acc[item.question] = item;
+    }
+    return acc;
+  }, {});
 
   const {
     'Health and Family': healthAndFamilyPayload = null,
@@ -305,35 +326,87 @@ export const savingExpenseCalculator = (
     'Housing and Property': housingAndPropertyPayload = null,
     'Gifts or Donations': giftsOrDonationsPayload = null,
     'Foreign Income': foreignIncomePayload = null,
-  } = payload.reduce(
-    (acc, item) => {
-      acc[item.question] = item;
-      return acc;
-    },
-    {} as Record<string, QuestionnaireItem | null>
-  );
+  } = questionnaireMap;
 
-  const healthAndFamilyExpenseAmount = healthAndFamilyPayload
-    ? healthAndFamilyExpenseCalculator(healthAndFamilyPayload)
-    : 0;
-  const workAndEducationExpenseAmount = workAndEducationPayload
-    ? workAndEducationExpenseCalculator(workAndEducationPayload, questionnaires)
-    : 0;
-  const bankAndLoansExpenseAmount = bankAndLoansPayload
-    ? bankAndLoansExpenseCalculator(bankAndLoansPayload)
-    : 0;
-  const hobbyOddjobsAndExtraIncomesExpenseAmount = hobbyOddjobsPayload
-    ? hobbyOddjobsAndExtraIncomesExpenseCalculator(hobbyOddjobsPayload)
-    : 0;
-  const housingAndPropertyExpenseAmount = housingAndPropertyPayload
-    ? housingAndPropertyExpenseCalculator(housingAndPropertyPayload)
-    : 0;
-  const giftsOrDonationsExpenseAmount = giftsOrDonationsPayload
-    ? giftsOrDonationsExpenseCalculator(giftsOrDonationsPayload)
-    : 0;
-  const foreignIncomeExpenseAmount = foreignIncomePayload
-    ? foreignIncomeExpenseCalculator(foreignIncomePayload)
-    : 0;
+  const healthAndFamilyExpenseAmount = (() => {
+    try {
+      return healthAndFamilyPayload
+        ? healthAndFamilyExpenseCalculator(healthAndFamilyPayload)
+        : 0;
+    } catch (error) {
+      console.error('Error calculating Health and Family expense:', error);
+      return 0;
+    }
+  })();
+
+  const workAndEducationExpenseAmount = (() => {
+    try {
+      return workAndEducationPayload
+        ? workAndEducationExpenseCalculator(
+            workAndEducationPayload,
+            questionnaires
+          )
+        : 0;
+    } catch (error) {
+      console.error('Error calculating Work and Education expense:', error);
+      return null;
+    }
+  })();
+
+  const bankAndLoansExpenseAmount = (() => {
+    try {
+      return bankAndLoansPayload
+        ? bankAndLoansExpenseCalculator(bankAndLoansPayload)
+        : 0;
+    } catch (error) {
+      console.error('Error calculating Bank and Loans expense:', error);
+      return 0;
+    }
+  })();
+
+  const hobbyOddjobsAndExtraIncomesExpenseAmount = (() => {
+    try {
+      return hobbyOddjobsPayload
+        ? hobbyOddjobsAndExtraIncomesExpenseCalculator(hobbyOddjobsPayload)
+        : 0;
+    } catch (error) {
+      console.error('Error calculating Hobby and Odd Jobs expense:', error);
+      return 0;
+    }
+  })();
+
+  const housingAndPropertyExpenseAmount = (() => {
+    try {
+      return housingAndPropertyPayload
+        ? housingAndPropertyExpenseCalculator(housingAndPropertyPayload)
+        : 0;
+    } catch (error) {
+      console.error('Error calculating Housing and Property expense:', error);
+      return 0;
+    }
+  })();
+
+  const giftsOrDonationsExpenseAmount = (() => {
+    try {
+      return giftsOrDonationsPayload
+        ? giftsOrDonationsExpenseCalculator(giftsOrDonationsPayload)
+        : 0;
+    } catch (error) {
+      console.error('Error calculating Gifts or Donations expense:', error);
+      return 0;
+    }
+  })();
+
+  const foreignIncomeExpenseAmount = (() => {
+    try {
+      return foreignIncomePayload
+        ? foreignIncomeExpenseCalculator(foreignIncomePayload)
+        : 0;
+    } catch (error) {
+      console.error('Error calculating Foreign Income expense:', error);
+      return 0;
+    }
+  })();
 
   return {
     workAndEducationExpenseAmount,

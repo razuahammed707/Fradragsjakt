@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,35 +10,36 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
-import {
-  addQuestionnaire,
-  questionnaireSelector,
-  showModal,
-} from '@/redux/slices/questionnaire';
+import { showModal } from '@/redux/slices/questionnaire';
 import { FormInput } from '@/components/FormInput';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
+import { Questionnaire } from '@/types/questionnaire';
 
-export function ContentDonation() {
+export function ContentDonation({
+  questionnaire,
+}: {
+  questionnaire?: Questionnaire;
+}) {
   const { translate } = useTranslation();
+  const utils = trpc.useUtils();
+
   const {
     handleSubmit,
     control,
     setValue,
     formState: { isDirty, isValid },
   } = useForm();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  const GiftsOrDonationsQuestionnaire = questionnaires.find(
-    (q) => q.question === 'Gifts or Donations'
-  );
 
   const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
     const answers =
-      GiftsOrDonationsQuestionnaire?.answers.find((answer) =>
+      (questionnaire?.answers.find((answer) =>
         Object.keys(answer).includes(accordionItemTitle)
-      )?.[accordionItemTitle] || [];
+      )?.[accordionItemTitle as unknown as any] as unknown as any) || [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
@@ -45,11 +47,19 @@ export function ContentDonation() {
 
   const appDispatch = useAppDispatch();
 
+  const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
+    onSuccess: () => {
+      utils.users.getUserByEmail.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'User questionnaires updation failed!');
+    },
+  });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
-    const question = 'Gifts or Donations';
+    const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
-    appDispatch(addQuestionnaire(payload));
+    updateQuestionnaires.mutate(payload);
     appDispatch(showModal(false));
   };
 

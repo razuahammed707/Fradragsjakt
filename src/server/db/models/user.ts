@@ -29,7 +29,7 @@ const UserSchema: Schema = new Schema<IUser>(
     questionnaires: [
       {
         question: { type: String, required: true },
-        answers: [String],
+        answers: [],
       },
     ],
     isVerified: {

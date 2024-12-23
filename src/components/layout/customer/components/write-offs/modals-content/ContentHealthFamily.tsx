@@ -12,15 +12,13 @@ import { Questionnaire } from '@/types/questionnaire';
 import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 import { useForm } from 'react-hook-form';
 import { FormInput } from '@/components/FormInput';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
-import {
-  addQuestionnaire,
-  questionnaireSelector,
-  showModal,
-} from '@/redux/slices/questionnaire';
+import { showModal } from '@/redux/slices/questionnaire';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
+import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
 
 type AccordionItemData = {
   id: string;
@@ -36,22 +34,21 @@ export function ContentHealthFamily({
   questionnaire,
 }: ContentHealthFamilyProps) {
   const { translate } = useTranslation();
+  const appDispatch = useAppDispatch();
+  const utils = trpc.useUtils();
+
   const {
     handleSubmit,
     control,
     setValue,
     formState: { isDirty, isValid },
   } = useForm();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  const foreignIncomeQuestionnaire = questionnaires.find(
-    (q) => q.question === questionnaire?.question
-  );
 
   const getDefaultValue = (accordionItemId: string, fieldName: string) => {
     const answers =
-      foreignIncomeQuestionnaire?.answers.find((answer) =>
+      (questionnaire?.answers.find((answer) =>
         Object.keys(answer).includes(accordionItemId)
-      )?.[accordionItemId] || [];
+      )?.[accordionItemId as unknown as any] as unknown as any) || [];
 
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
@@ -234,12 +231,18 @@ export function ContentHealthFamily({
     matchedAccordionData.length > 0 ? matchedAccordionData[0].id : null
   );
 
-  const appDispatch = useAppDispatch();
-
+  const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
+    onSuccess: () => {
+      utils.users.getUserByEmail.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'User questionnaires updation failed!');
+    },
+  });
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
-    appDispatch(addQuestionnaire(payload));
+    updateQuestionnaires.mutate(payload);
     appDispatch(showModal(false));
   };
 

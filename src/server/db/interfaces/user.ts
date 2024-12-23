@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 export interface IQuestionnaire {
   question: string; // E.g., 'Work and Education'
-  answers: string[]; // Array of questions
+  answers: []; // Array of questions
 }
 export interface IUser extends Document {
   firstName: string;

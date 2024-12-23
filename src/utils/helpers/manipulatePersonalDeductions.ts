@@ -1,10 +1,8 @@
-import { QuestionnaireItem } from '@/redux/slices/questionnaire';
 import { savingExpenseCalculator } from './savingExpenseCalculator';
 import { IQuestionnaire } from '@/server/db/interfaces/user';
 
 export const manipulatePersonalDeductions = (
-  questionnaires: QuestionnaireItem[],
-  user: { questionnaires: IQuestionnaire[] }
+  questionnaires: IQuestionnaire[]
 ) => {
   const {
     workAndEducationExpenseAmount,
@@ -14,7 +12,7 @@ export const manipulatePersonalDeductions = (
     housingAndPropertyExpenseAmount,
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
-  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
+  } = savingExpenseCalculator(questionnaires);
   return [
     {
       title: 'Health and Family',
