@@ -144,7 +144,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                           )}
                           <div className="flex justify-between ">
                             <p className="text-xs font-bold text-[#00104B]">
-                              NOK {numberFormatter(Number(amount?.toFixed(2)))}
+                              NOK{' '}
+                              {amount
+                                ? numberFormatter(Number(amount?.toFixed(2)))
+                                : 0}
                             </p>
 
                             {[

@@ -50,8 +50,6 @@ export const expenseRouter = router({
           ];
         }
 
-        console.log('expense query', query);
-
         const total = await ExpenseModel.countDocuments(query);
         const expenses = await ExpenseModel.find(query)
           .skip(skip)
