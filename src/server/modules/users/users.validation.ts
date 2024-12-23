@@ -1,6 +1,7 @@
-import { z } from 'zod'; // Import Zod for validation
+import { z } from 'zod';
 
 const subAnswerSchema = z.record(z.string());
+
 const answerSchema = z.record(z.array(subAnswerSchema));
 const userQuestionnaireSchema = z.object({
   question: z.string(),

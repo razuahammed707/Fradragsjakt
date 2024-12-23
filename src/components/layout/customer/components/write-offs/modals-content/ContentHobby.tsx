@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { FormInput } from '@/components/FormInput';
@@ -9,18 +10,16 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import {
-  addQuestionnaire,
-  questionnaireSelector,
-  showModal,
-} from '@/redux/slices/questionnaire';
+import { useAppDispatch } from '@/redux/hooks';
+import { showModal } from '@/redux/slices/questionnaire';
 import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
 import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from '@/lib/TranslationProvider'; // Import the translation hook
+import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
 
 type ContentHobbyProps = {
   questionnaire?: Questionnaire;
@@ -34,23 +33,23 @@ export type UploadedImageType = {
 };
 
 export function ContentHobby({ questionnaire }: ContentHobbyProps) {
-  const { translate } = useTranslation(); // Get the translate function from the hook
+  const { translate } = useTranslation();
+  const utils = trpc.useUtils();
+
+  const appDispatch = useAppDispatch();
+
   const {
     handleSubmit,
     control,
     setValue,
     formState: { isDirty, isValid },
   } = useForm();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
-  const foreignIncomeQuestionnaire = questionnaires.find(
-    (q) => q.question === questionnaire?.question
-  );
 
   const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
     const answers =
-      foreignIncomeQuestionnaire?.answers.find((answer) =>
+      (questionnaire?.answers.find((answer) =>
         Object.keys(answer).includes(accordionItemTitle)
-      )?.[accordionItemTitle] || [];
+      )?.[accordionItemTitle as unknown as any] as unknown as any) || [];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
@@ -203,17 +202,23 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
     matchedAccordionData.length > 0 ? matchedAccordionData[0].id : null
   );
 
-  const appDispatch = useAppDispatch();
-
   const handleValueChange = (value: string) => {
     setOpenItem((prevOpen) => (prevOpen === value ? null : value));
   };
 
+  const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
+    onSuccess: () => {
+      utils.users.getUserByEmail.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'User questionnaires updation failed!');
+    },
+  });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
-    appDispatch(addQuestionnaire(payload));
+    updateQuestionnaires.mutate(payload);
     appDispatch(showModal(false));
   };
 

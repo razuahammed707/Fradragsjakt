@@ -4,27 +4,36 @@ export const matchQuestionnaireModalQuestion = ({
   questionnaire,
   accordionData,
 }: {
-  questionnaire: string[];
+  questionnaire: string[] | { [key: string]: string }[];
   accordionData: AccordionItemData[];
 }) => {
-  const matchedAccordionData = questionnaire
+  console.log({ questionnaire });
+
+  const matchedAccordionData = Array.isArray(questionnaire)
     ? questionnaire
-        .map((answer) =>
-          accordionData.find((accordion) => {
-            // Normalize function to decompose combined characters and remove special characters
-            const normalize = (str: string) =>
-              str
-                .toLowerCase()
-                .normalize('NFKD')
-                .replace(/[^\w\s]/g, '');
+        .flatMap((item) => {
+          // Handle array of strings or objects with keys
+          if (typeof item === 'string') {
+            return item;
+          } else if (typeof item === 'object' && item !== null) {
+            return Object.keys(item)[0];
+          }
+          return [];
+        })
+        .map((answer) => {
+          const normalize = (str: string) =>
+            str
+              .toLowerCase()
+              .normalize('NFKD')
+              .replace(/[^\w\s]/g, '');
 
-            const normalizedAnswer = normalize(answer); // Normalize the answer
-            const normalizedTitle = normalize(accordion.title); // Normalize the title
+          return accordionData.find((accordion) => {
+            const normalizedAnswer = normalize(answer);
+            const normalizedTitle = normalize(accordion.title);
 
-            // Check if the normalized title contains the normalized answer (partial match)
             return normalizedTitle.includes(normalizedAnswer);
-          })
-        )
+          });
+        })
         .filter((item): item is AccordionItemData => item !== undefined)
     : accordionData;
 

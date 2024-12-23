@@ -11,8 +11,6 @@ import {
   finalCalculation,
 } from '@/utils/helpers/primaryCategoriesWithFormula';
 import { predefinedCategories } from '@/utils/dummy';
-import { useAppSelector } from '@/redux/hooks';
-import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
@@ -51,10 +49,9 @@ const DashboardSummarySection = () => {
     customCategories
   );
 
-  const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 
-  const personalData = manipulatePersonalDeductions(questionnaires, user);
+  const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
 
   const summaryChartData =
     showPersonal === 'business' ? businessData : personalData;

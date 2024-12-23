@@ -6,8 +6,6 @@ import SharedTooltip from '@/components/SharedTooltip';
 import { Separator } from '@/components/ui/separator';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { cn } from '@/lib/utils';
-import { useAppSelector } from '@/redux/hooks';
-import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { trpc } from '@/utils/trpc';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import SharedReportDownloader from '@/components/SharedReportDownloader';
@@ -35,10 +33,9 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   items,
   origin = 'business',
 }) => {
-  const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 
-  const personalData = manipulatePersonalDeductions(questionnaires, user);
+  const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
 
   const largestItem = (items ? items : personalData)?.reduce((prev, current) =>
     current.total_amount > prev.total_amount ? current : prev

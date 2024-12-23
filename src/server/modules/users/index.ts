@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import User from '@/server/db/models/user';
 import { protectedProcedure } from '@/server/middlewares/with-auth';
 import { router } from '@/server/trpc';
@@ -9,10 +10,9 @@ type Answer = z.infer<typeof userValidation.answerSchema>;
 type QuestionnaireItem = z.infer<typeof userValidation.userQuestionnaireSchema>;
 
 export const userRouter = router({
-  // Get all users and the logged-in user from the session
   getUsers: protectedProcedure.query(async ({ ctx }) => {
-    const loggedUser = ctx.user as JwtPayload; // Retrieve the logged-in user from context
-    const users = await User.find({}); // Fetch all users
+    const loggedUser = ctx.user as JwtPayload;
+    const users = await User.find({});
 
     return {
       users,
@@ -26,7 +26,7 @@ export const userRouter = router({
     if (!sessionUser || !sessionUser?.email) {
       throw new Error('You must be logged in to access this data.');
     }
-    const user = await User.findOne({ email: sessionUser.email });
+    const user = await User.findOne({ _id: sessionUser.id });
 
     if (!user) {
       throw new Error('User not found');
@@ -37,31 +37,85 @@ export const userRouter = router({
   updateUser: protectedProcedure
     .input(userValidation.userSchema)
     .mutation(async ({ ctx, input }) => {
-      const { questionnaires } = input;
+      const { questionnaires = [] } = input;
 
       const sessionUser = ctx.user as JwtPayload;
       if (!sessionUser || !sessionUser?.email) {
         throw new Error('You must be logged in to update this data.');
       }
 
-      const user = await User.findOneAndUpdate(
-        { email: sessionUser.email },
-        { questionnaires: questionnaires },
-        { new: true } // This option returns the updated document
-      );
-
+      const user = await User.findOne({ email: sessionUser.email });
       if (!user) {
-        throw new Error('User not found');
+        throw new Error('User not found.');
       }
 
-      return user;
+      const existingQuestionnaires = user.questionnaires || [];
+
+      const mergedQuestionnaires = questionnaires.map(
+        (payloadQuestionnaire) => {
+          const existingQuestionnaire = existingQuestionnaires.find(
+            (q: any) => q.question === payloadQuestionnaire.question
+          );
+
+          if (existingQuestionnaire) {
+            const updatedAnswers = payloadQuestionnaire.answers.map(
+              (payloadAnswer) => {
+                const existingAnswer = existingQuestionnaire.answers.find(
+                  (answer: any) => Object.keys(answer)[0] === payloadAnswer
+                );
+
+                if (existingAnswer) {
+                  return existingAnswer;
+                }
+                return { [payloadAnswer]: [] };
+              }
+            );
+
+            return {
+              question: payloadQuestionnaire.question,
+              answers: updatedAnswers,
+            };
+          }
+
+          return {
+            question: payloadQuestionnaire.question,
+            answers: payloadQuestionnaire.answers.map((answer) => ({
+              [answer]: [],
+            })),
+          };
+        }
+      );
+
+      const preservedQuestionnaires = existingQuestionnaires.filter(
+        (existingQuestionnaire: any) =>
+          !questionnaires.some(
+            (payloadQuestionnaire) =>
+              payloadQuestionnaire.question === existingQuestionnaire.question
+          )
+      );
+
+      const finalQuestionnaires = [
+        ...mergedQuestionnaires,
+        ...preservedQuestionnaires,
+      ];
+
+      const updatedUser = await User.findOneAndUpdate(
+        { email: sessionUser.email },
+        { questionnaires: finalQuestionnaires },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        throw new Error('User update failed');
+      }
+
+      return updatedUser;
     }),
 
   updateUserQuestionnaires: protectedProcedure
     .input(userValidation.userQuestionnaireSchema)
     .mutation(async ({ ctx, input }) => {
       const { question, answers } = input;
-
       const sessionUser = ctx.user as JwtPayload;
       if (!sessionUser?.email) {
         throw new Error('You must be logged in to update questionnaires.');
@@ -69,84 +123,73 @@ export const userRouter = router({
 
       const user = await User.findOne({ email: sessionUser.email });
       if (!user) {
-        throw new Error('User not found');
+        throw new Error('User not found.');
       }
-
-      // Merge function similar to Redux logic
       const mergeAnswers = (
-        existingAnswers: Answer[],
+        existingAnswers: (string | Answer)[],
         newAnswers: Answer[]
       ): Answer[] => {
-        const mergedAnswers = existingAnswers.map((existingAnswer) => {
-          const existingKey = Object.keys(existingAnswer)[0];
-          const newAnswer = newAnswers.find(
-            (answer) => Object.keys(answer)[0] === existingKey
-          );
+        const mergedMap = new Map<string, Map<string, string>>();
 
-          if (newAnswer) {
-            const mergedFields = [
-              ...Object.values(existingAnswer)[0].map((field) => {
-                const fieldKey = Object.keys(field)[0];
-                const matchingField = Object.values(newAnswer)[0].find(
-                  (newField) => Object.keys(newField)[0] === fieldKey
-                );
-                return matchingField || field;
-              }),
-              ...Object.values(newAnswer)[0].filter(
-                (newField) =>
-                  !Object.values(existingAnswer)[0].some(
-                    (field) =>
-                      Object.keys(field)[0] === Object.keys(newField)[0]
-                  )
-              ),
-            ];
-            return { [existingKey]: mergedFields };
+        existingAnswers.forEach((answer) => {
+          if (typeof answer === 'string') {
+            mergedMap.set(answer, new Map());
+          } else {
+            const [key, fields] = Object.entries(answer)[0];
+            const fieldMap = new Map(
+              fields.map((field) => Object.entries(field)[0])
+            );
+            mergedMap.set(key, fieldMap);
           }
-          return existingAnswer;
         });
 
-        const newAnswersToAdd = newAnswers.filter(
-          (newAnswer) =>
-            !existingAnswers.some(
-              (existingAnswer) =>
-                Object.keys(existingAnswer)[0] === Object.keys(newAnswer)[0]
-            )
-        );
+        newAnswers.forEach((answer) => {
+          const [key, fields] = Object.entries(answer)[0];
+          if (!mergedMap.has(key)) {
+            mergedMap.set(
+              key,
+              new Map(fields.map((field) => Object.entries(field)[0]))
+            );
+          } else {
+            const existingFieldMap = mergedMap.get(key)!;
+            fields.forEach((field) => {
+              const [fieldKey, fieldValue] = Object.entries(field)[0];
+              existingFieldMap.set(fieldKey, fieldValue); // Overwrite if field exists or add new
+            });
+          }
+        });
 
-        return [...mergedAnswers, ...newAnswersToAdd];
+        return Array.from(mergedMap.entries()).map(([key, fieldsMap]) => ({
+          [key]: Array.from(fieldsMap.entries()).map(
+            ([fieldKey, fieldValue]) => ({
+              [fieldKey]: fieldValue,
+            })
+          ),
+        }));
       };
 
-      // Get existing questionnaires or initialize empty array
       const questionnaires = user.questionnaires || [];
-
-      // Find existing questionnaire with same question
       const existingIndex = questionnaires.findIndex(
         (item: QuestionnaireItem) => item.question === question
       );
 
-      let updatedQuestionnaires;
       if (existingIndex !== -1) {
-        // Update existing questionnaire
         const existingQuestionnaire = questionnaires[existingIndex];
         questionnaires[existingIndex] = {
-          ...existingQuestionnaire,
+          question: existingQuestionnaire.question,
           answers: mergeAnswers(existingQuestionnaire.answers, answers),
         };
-        updatedQuestionnaires = questionnaires;
       } else {
-        // Add new questionnaire
-        updatedQuestionnaires = [...questionnaires, { question, answers }];
+        questionnaires.push({ question, answers });
       }
-
-      // Update user with merged questionnaires
       const updatedUser = await User.findOneAndUpdate(
         { email: sessionUser.email },
-        { questionnaires: updatedQuestionnaires },
+        { questionnaires },
         { new: true }
       );
 
       if (!updatedUser) {
-        throw new Error('Failed to update user questionnaires');
+        throw new Error('Failed to update user questionnaires.');
       }
 
       return updatedUser;

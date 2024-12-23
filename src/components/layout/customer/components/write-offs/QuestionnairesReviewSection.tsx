@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { View } from 'lucide-react';
@@ -51,7 +52,9 @@ const modalContentMap: Record<
   'Housing and Property': ({ questionnaire }) => (
     <ContentHousing questionnaire={questionnaire} />
   ),
-  'Gifts or Donations': () => <ContentDonation />,
+  'Gifts or Donations': ({ questionnaire }) => (
+    <ContentDonation questionnaire={questionnaire} />
+  ),
   'Foreign Income': ({ questionnaire }) => (
     <ContentForeignIncome questionnaire={questionnaire} />
   ),
@@ -67,11 +70,9 @@ const QuestionnairesReviewSection = () => {
   const [selectedTitle, setSelectedTitle] = useState<string>('');
 
   const dispatch = useAppDispatch();
-  const { questionnaires } = useAppSelector(questionnaireSelector);
 
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-  console.log('user_questionnaires', user?.questionnaires);
 
   const {
     workAndEducationExpenseAmount,
@@ -81,9 +82,9 @@ const QuestionnairesReviewSection = () => {
     housingAndPropertyExpenseAmount,
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
-  } = savingExpenseCalculator(questionnaires, user?.questionnaires);
+  } = savingExpenseCalculator(user?.questionnaires);
 
-  const personalData = manipulatePersonalDeductions(questionnaires, user);
+  const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
 
   const personalTotal = personalData?.reduce(
     (sum, current) => sum + current.total_amount,
@@ -232,7 +233,9 @@ const QuestionnairesReviewSection = () => {
                   {question.title}
                 </p>
               </div>
-              {question.amount !== 0 && <p>NOK {question.amount.toFixed(2)}</p>}
+              {question.amount !== 0 && (
+                <p>NOK {question?.amount?.toFixed(2)}</p>
+              )}
             </div>
           ))}
           <Separator className="bg-[#E4E4E7] my-6" />
@@ -269,7 +272,7 @@ const QuestionnairesReviewSection = () => {
             </Button>
           )}
           <SharedReportDownloader
-            body={getWriteOffs()}
+            body={getWriteOffs() as unknown as any}
             total={personalTotal}
             origin="write off questionnaires"
             fullWidth

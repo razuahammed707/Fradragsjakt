@@ -3,9 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import CircularProgressChart from './CircularProgressChart';
-import { useAppSelector } from '@/redux/hooks';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
-import { questionnaireSelector } from '@/redux/slices/questionnaire';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import { trpc } from '@/utils/trpc';
 
@@ -14,10 +12,9 @@ const DeductiveExpenses = ({
 }: {
   businessData: { total_amount: number }[];
 }) => {
-  const { questionnaires } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
 
-  const personalData = manipulatePersonalDeductions(questionnaires, user);
+  const personalData = manipulatePersonalDeductions(user?.questionnaires);
 
   const personalTotal = personalData?.reduce(
     (sum, current) => sum + current.total_amount,
