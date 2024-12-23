@@ -16,8 +16,8 @@ import { ClientProviders } from '@/config/trpc/ClientProviders';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Fradragsjakt',
-  description: 'Fradragsjakt is an tax saving application',
+  title: 'Skattepluss',
+  description: 'Skattepluss is an tax saving application',
 };
 
 export async function generateStaticParams() {
