@@ -3,7 +3,7 @@
 import { signIn, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
@@ -16,45 +16,87 @@ import { useTranslation } from '@/lib/TranslationProvider';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { data: user, status } = useSession();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
-  const { translate } = useTranslation(); // Localization dictionary
+  const { translate } = useTranslation();
+
+  const handleRouting = useCallback(async () => {
+    if (!session?.user?.role || isRedirecting) return;
+
+    setIsRedirecting(true);
+
+    try {
+      const { hasAnswers } = session.user;
+      const role = session.user.role;
+      let targetRoute = '';
+
+      switch (role) {
+        case 'auditor':
+          targetRoute = '/auditor/dashboard';
+          break;
+        case 'customer':
+          targetRoute = hasAnswers ? '/customer/dashboard' : '/onboard';
+          break;
+        default:
+          targetRoute = `/${role}/dashboard`;
+      }
+
+      // Prefetch the target route
+      await router.prefetch(targetRoute);
+
+      // Navigate to the target route
+      await router.push(targetRoute);
+    } catch (error) {
+      console.error('Routing error:', error);
+      toast.error('Error during navigation', { duration: 4000 });
+      setIsRedirecting(false);
+    }
+  }, [session, router, isRedirecting]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
 
-    if (result?.error) {
-      toast.error(result.error, { duration: 4000 });
-    } else {
-      toast.success(translate('page.login.sign_in'), { duration: 1000 });
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (result?.error) {
+        toast.error(result.error, { duration: 4000 });
+      } else {
+        toast.success(translate('page.login.sign_in'), { duration: 1000 });
+        // Wait for session to update
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error(`An unexpected error occurred: ${error}`, { duration: 4000 });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    if (status === 'authenticated' && user?.user.role === 'auditor') {
-      router.push(`/${user?.user.role}/dashboard`);
-    } else if (
-      status === 'authenticated' &&
-      user?.user.role &&
-      !user?.user.hasAnswers
-    ) {
-      router.push(`/onboard`);
-    } else if (
-      status === 'authenticated' &&
-      user?.user.role &&
-      user?.user.hasAnswers
-    ) {
-      router.push(`/${user?.user.role}/dashboard`);
+    if (status === 'authenticated') {
+      console.log('Session:', session); // Debugging log
+      console.log('Auth status:', status); // Debugging log
+      handleRouting();
     }
-  }, [status, router, user]);
+  }, [status, session, handleRouting]);
+
+  if (isRedirecting) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-gray-600">Wait a sec...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col space-y-8 items-center text-black justify-center h-screen bg-gray-100">

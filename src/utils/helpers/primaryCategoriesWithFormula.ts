@@ -92,7 +92,7 @@ export const finalCalculation = (
       return {
         title: 'Custom Category Expenses',
         predefinedCategories: customCategories,
-        total_amount,
+        total_amount: total_amount || 0,
         total_original_amount,
       };
     }
