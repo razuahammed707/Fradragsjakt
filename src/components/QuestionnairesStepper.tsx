@@ -128,8 +128,8 @@ export default function QuestionnairesStepper({
               {step?.question}
             </h2>
             <p className="text-gray-600 text-center text-[var(--500,#71717A)] font-inter text-[12px] font-medium leading-normal">
-              This info allows Keeper to suggest tax savings. Select all that
-              apply.
+              This information allows Skattepluss to suggest tax savings. Select
+              all that apply.
             </p>
           </div>
         </div>
