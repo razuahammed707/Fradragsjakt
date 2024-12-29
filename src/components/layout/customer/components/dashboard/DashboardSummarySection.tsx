@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import DeductiveExpenses from './DeductiveExpenses';
 import SummaryChart from './SummaryChart';
-import YearlyExpenseGraph from './YearlyExpenseGraph';
 import { trpc } from '@/utils/trpc';
 import AggregatedExpenseCard from './AggregatedExpenseCard';
 import {
@@ -15,6 +14,7 @@ import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonal
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
+import RecentExpenseTable from './RecentExpenseTable';
 
 const DashboardSummarySection = () => {
   const [showPersonal, setShowPersonal] = useState<'personal' | 'business'>(
@@ -86,7 +86,8 @@ const DashboardSummarySection = () => {
             </div>
           </div>
         </div>
-        <YearlyExpenseGraph />
+        {/* <YearlyExpenseGraph /> */}
+        <RecentExpenseTable data={[]} />
         <div className="col-span-12 grid grid-cols-2 gap-2">
           <AggregatedExpenseCard
             origin="business"

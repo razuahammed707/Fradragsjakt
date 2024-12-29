@@ -1,22 +1,47 @@
 'use client';
 import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import CompanyLogo from '@/components/CompanyLogo';
+import { trpc } from '@/utils/trpc';
+import toast from 'react-hot-toast';
+import { FormInput } from '@/components/FormInput';
+import { useForm } from 'react-hook-form';
+import { Label } from '@/components/ui/label';
+
+type FormData = {
+  email: string;
+};
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const { handleSubmit, control, reset } = useForm<FormData>({
+    defaultValues: {
+      email: '',
+    },
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
-
-    setTimeout(() => {
+  const mutation = trpc.auth.forgotPassword.useMutation({
+    onSuccess: () => {
+      toast.success(
+        'Password reset link has been sent to your email. Please check.',
+        {
+          duration: 4000,
+        }
+      );
+      reset();
       setIsSubmitting(false);
-    }, 2000);
+    },
+    onError: (error) => {
+      toast.error(error.message, {
+        duration: 4000,
+      });
+      setIsSubmitting(false);
+    },
+  });
+
+  const onSubmit = (data: FormData) => {
+    setIsSubmitting(true);
+    mutation.mutate(data);
   };
 
   return (
@@ -33,21 +58,16 @@ const ForgotPassword = () => {
           Enter your email address, and we’ll send you a link to reset your
           password.
         </p>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email address
-            </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="example@domain.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full mt-1"
+            <Label className="block mb-2 text-[#101010] text-xs font-medium">
+              Email Address
+            </Label>
+            <FormInput
+              name="email"
+              control={control}
+              type="text"
+              placeholder="Email address"
               required
             />
           </div>

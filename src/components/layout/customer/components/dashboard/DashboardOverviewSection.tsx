@@ -2,7 +2,7 @@
 
 import React from 'react';
 import MonthlyOverview from './MonthlyOverview';
-import YearlyExpenseTable from './YearlyExpenseTable';
+import YearlyExpenseTable from './RecentExpenseTable';
 import { trpc } from '@/utils/trpc';
 
 const DashboardOverviewSection = () => {

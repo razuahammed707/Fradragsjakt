@@ -181,7 +181,7 @@ const YearlyIncomeGraph = () => {
           options={getOptions(showPersonal === 'personal')}
           series={showPersonal === 'business' ? businessSeries : personalSeries}
           type="area"
-          height={315}
+          height={231}
         />
       )}
     </Card>

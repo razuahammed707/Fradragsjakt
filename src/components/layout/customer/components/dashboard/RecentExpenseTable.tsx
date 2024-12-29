@@ -4,7 +4,7 @@ import React from 'react';
 import { YearlyExpenseTableColumns } from './YearlyExpenseTableColumns';
 
 // Define the type for a single expense item
-type YearlyExpenseItem = {
+type RecentExpenseTableItem = {
   _id: string;
   id: string;
   transaction_date?: string;
@@ -16,13 +16,13 @@ type YearlyExpenseItem = {
 };
 
 // Correct the props type for the component
-type YearlyExpenseTableProps = {
-  data: YearlyExpenseItem[];
+type RecentExpenseTableProps = {
+  data: RecentExpenseTableItem[];
 };
 
-const YearlyExpenseTable = ({ data }: YearlyExpenseTableProps) => {
+const RecentExpenseTable = ({ data }: RecentExpenseTableProps) => {
   return (
-    <div className="col-span-9 space-y-6 p-6 rounded-2xl bg-white">
+    <div className="col-span-7 space-y-6 p-6 rounded-2xl bg-white">
       <div>
         <h4 className="text-sm text-[#101010] font-semibold">
           Recent Expenses Overview
@@ -39,4 +39,4 @@ const YearlyExpenseTable = ({ data }: YearlyExpenseTableProps) => {
   );
 };
 
-export default YearlyExpenseTable;
+export default RecentExpenseTable;
