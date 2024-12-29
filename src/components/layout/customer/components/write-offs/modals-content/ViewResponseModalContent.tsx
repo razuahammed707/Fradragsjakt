@@ -39,9 +39,9 @@ const ViewResponseModalContent = () => {
     return aIndex - bIndex;
   });
 
-  const expenseAmounts: ExpenseAmounts = savingExpenseCalculator(
+  const expenseAmounts = savingExpenseCalculator(
     user?.questionnaires || []
-  );
+  ) as unknown as any;
 
   return (
     <div className="text-[#101010] space-y-2">
@@ -72,7 +72,7 @@ const ViewResponseModalContent = () => {
                                   >
                                     <p>{k} </p>
                                     <p className="font-medium">
-                                      {v == 'yes'
+                                      {(v as unknown as any) == 'yes'
                                         ? v || 0
                                         : k?.includes('rate')
                                           ? `${v || 0} %`
@@ -80,7 +80,7 @@ const ViewResponseModalContent = () => {
                                             ? v || 0
                                             : k?.includes('share')
                                               ? `${v || 0} %`
-                                              : `NOK ${v || 0}`}{' '}
+                                              : (`NOK ${v || 0}` as unknown as any)}
                                     </p>
                                   </div>
                                 )
@@ -88,7 +88,7 @@ const ViewResponseModalContent = () => {
                           </div>
                         ))
                       ) : (
-                        <span>{value}</span>
+                        <span>{value as unknown as any}</span>
                       )}
                     </div>
                   ))}

@@ -17,13 +17,14 @@ type AuditorFormData = {
 
 type UpdateAuditorModalProps = {
   onSubmit: (data: AuditorFormData) => void;
+  isLoading: boolean;
 };
 
 export default function UpdateAuditorModal({
   onSubmit,
+  isLoading,
 }: UpdateAuditorModalProps) {
   const [open, setOpen] = useState(true);
-  const [loading, setLoading] = useState(false);
 
   const { handleSubmit, control, reset } = useForm<AuditorFormData>({
     defaultValues: {
@@ -34,10 +35,7 @@ export default function UpdateAuditorModal({
   });
 
   const handleFormSubmit = (data: AuditorFormData) => {
-    setLoading(true);
     onSubmit(data);
-    setLoading(false);
-    setOpen(false);
     reset();
   };
 
@@ -92,15 +90,18 @@ export default function UpdateAuditorModal({
             required
             customClassName="mt-1"
           />
+          <small className="text-left text-gray-500">
+            Password must be at least 6 characters long
+          </small>
         </div>
 
         <div className="w-full">
           <Button
             className="w-full h-11 text-white"
-            disabled={loading}
+            disabled={isLoading}
             type="submit"
           >
-            {loading ? (
+            {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin text-white" />
             ) : (
               'Submit'

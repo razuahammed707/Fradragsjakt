@@ -28,8 +28,6 @@ export default function QuestionnairesStepper({
   const utils = trpc.useUtils();
   const { data: loggedUser } = trpc.users.getUserByEmail.useQuery();
 
-  console.log('loggedUser--questionnaires__', loggedUser?.questionnaires);
-
   const dispatch = useAppDispatch();
   const router = useRouter();
   const pathname = usePathname();
@@ -58,7 +56,6 @@ export default function QuestionnairesStepper({
       });
     }
   );
-  console.log({ selectedAnswers });
 
   const step = questionnaires[currentStepIndex];
 
@@ -79,14 +76,14 @@ export default function QuestionnairesStepper({
           dispatch(filterAndUpdateQuestionnaires(selectedAnswers));
           dispatch(showModal(false));
           if (pathname.split('/').pop() !== 'write-offs')
-            router.push(`/${user?.user.role}/dashboard`);
+            router.push(`/${loggedUser?.role}/dashboard`);
         },
         onError: (error) => {
           console.error('Failed to update questionnaires:', error);
         },
       }
     );
-  }, [selectedAnswers, router, updateQuestionnaires, user?.user.role]);
+  }, [selectedAnswers, router, updateQuestionnaires, user?.user?.email]);
 
   const handleComplete = async () => {
     setLoading(true);

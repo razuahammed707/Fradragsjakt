@@ -1,7 +1,7 @@
-// app/[lang]/layout.tsx  (Move from app/layout.tsx)
+// app/[lang]/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css'; // Update path
+import './globals.css';
 import { getServerSession } from 'next-auth';
 import { Toaster } from 'react-hot-toast';
 import Providers from '@/lib/StoreProviders';
@@ -17,7 +17,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Skattepluss',
-  description: 'Skattepluss is an tax saving application',
+  description: 'Skattepluss is a tax saving application',
 };
 
 export async function generateStaticParams() {

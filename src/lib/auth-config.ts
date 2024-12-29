@@ -1,12 +1,9 @@
-import { AuthOptions, Session } from 'next-auth';
-import { Account, User as AuthUser, Profile } from 'next-auth';
+import { AuthOptions } from 'next-auth';
 import bcrypt from 'bcrypt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import connectToDatabase from '@/server/config/mongoose';
 import User from '@/server/db/models/user';
-import { JWT } from 'next-auth/jwt';
-import AuditorModel from '@/server/db/models/auditor';
 
 declare module 'next-auth' {
   interface User {
@@ -87,86 +84,75 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60, // Add update age to reduce token updates
   },
   callbacks: {
-    async signIn({
-      user,
-      account,
-    }: {
-      user: AuthUser;
-      account: Account | null;
-      profile?: Profile | undefined;
-    }): Promise<boolean> {
+    async signIn({ user, account }) {
       if (account?.provider === 'google') {
         await connectToDatabase();
-        try {
-          const existingUser = await User.findOne({ email: user.email });
-          if (!existingUser) {
-            const newUser = new User({
-              email: user.email,
-              firstName: user.name,
-              lastName: user.name,
-              role: 'customer',
-              provider: 'google',
-              image: user?.image || '',
-              isVerified: true,
-            });
-            await newUser.save();
-          }
-          return true;
-        } catch (err) {
-          console.error('Error saving user during Google sign-in', err);
-          return false;
+        const existingUser = await User.findOne({ email: user.email });
+        if (!existingUser) {
+          await User.create({
+            email: user.email,
+            firstName: user.name,
+            lastName: user.name,
+            role: 'customer',
+            provider: 'google',
+            image: user?.image || '',
+            isVerified: true,
+          });
         }
-      }
-
-      if (account?.provider === 'credentials') {
         return true;
       }
-
-      return false;
+      return account?.provider === 'credentials';
     },
-    async jwt({
-      token,
-      user,
-    }: {
-      token: JWT;
-      user: AuthUser | null;
-    }): Promise<JWT> {
+    async jwt({ token, user }) {
       if (user) {
-        const retrievedUser = await User.findOne({ email: user.email });
+        await connectToDatabase();
+        // Combine queries into a single aggregation pipeline
+        const [userInfo] = await User.aggregate([
+          { $match: { email: user.email } },
+          {
+            $lookup: {
+              from: 'auditors',
+              let: { userId: '$_id' },
+              pipeline: [
+                { $match: { $expr: { $eq: ['$auditor', '$$userId'] } } },
+                {
+                  $lookup: {
+                    from: 'users',
+                    localField: 'customer',
+                    foreignField: '_id',
+                    as: 'customerInfo',
+                  },
+                },
+                { $unwind: '$customerInfo' },
+              ],
+              as: 'auditorInfo',
+            },
+          },
+        ]);
 
-        if (retrievedUser) {
-          token.id = retrievedUser.id;
+        if (userInfo) {
+          token.id = userInfo._id;
+          token.email = userInfo.email;
+          token.firstName = userInfo.firstName || user.name;
+          token.lastName = userInfo.lastName;
+          token.role = userInfo.role || 'customer';
+          token.hasAnswers = userInfo.questionnaires?.length > 0;
 
-          if (retrievedUser.role === 'auditor') {
-            const auditor = await AuditorModel.find({
-              auditor: retrievedUser._id,
-            }).populate('customer', 'firstName email');
-
-            if (auditor && auditor.length > 0) {
-              token.id = auditor[0].customer._id;
-              token.audit_for = auditor[0].customer.firstName;
-              token.customer_email = auditor[0].customer.email;
-            }
+          if (userInfo.role === 'auditor' && userInfo.auditorInfo?.[0]) {
+            const customerInfo = userInfo.auditorInfo[0].customerInfo;
+            token.id = customerInfo._id;
+            token.audit_for = customerInfo.firstName;
+            token.customer_email = customerInfo.email;
           }
-
-          token.email = retrievedUser.email;
-          token.firstName = retrievedUser.firstName || user.name;
-          token.lastName = retrievedUser.lastName;
-          token.role = retrievedUser.role || 'customer';
-          token.hasAnswers = retrievedUser.questionnaires?.length > 0;
         }
       }
       return token;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: Session;
-      token: JWT;
-    }): Promise<Session> {
+    async session({ session, token }) {
       session.user = {
         id: token.id,
         role: token.role || 'customer',
@@ -178,6 +164,7 @@ export const authOptions: AuthOptions = {
         customer_email: token.customer_email || '',
       };
 
+      console.log('session', session);
       return session;
     },
   },

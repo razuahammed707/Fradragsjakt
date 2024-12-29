@@ -23,15 +23,19 @@ export const userRouter = router({
   getUserByEmail: protectedProcedure.query(async ({ ctx }) => {
     const sessionUser = ctx.user as JwtPayload;
 
-    if (!sessionUser || !sessionUser?.email) {
+    if (!sessionUser || !sessionUser.id) {
       throw new Error('You must be logged in to access this data.');
     }
-    const user = await User.findOne({ _id: sessionUser.id });
+
+    const user = await User.findOne({
+      $or: [{ _id: sessionUser.id }, { email: sessionUser.email }],
+    });
 
     if (!user) {
       throw new Error('User not found');
     }
-    return user;
+
+    return sessionUser?.audit_for ? { ...user._doc, role: 'auditor' } : user;
   }),
 
   updateUser: protectedProcedure

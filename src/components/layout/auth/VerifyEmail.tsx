@@ -60,10 +60,11 @@ export default function VerifyEmail() {
     onError: handleVerificationError,
   });
 
-  const { mutate: verifyAuditor } = trpc.auditor.verifyAuditor.useMutation({
-    onSuccess: (data) => handleVerificationSuccess(data, 'auditor'),
-    onError: handleVerificationError,
-  });
+  const { mutate: verifyAuditor, isLoading } =
+    trpc.auditor.verifyAuditor.useMutation({
+      onSuccess: (data) => handleVerificationSuccess(data, 'auditor'),
+      onError: handleVerificationError,
+    });
 
   const handleAuditorSubmit = (data: any) => {
     setIsVerifying(true);
@@ -94,7 +95,10 @@ export default function VerifyEmail() {
       }}
     >
       {role === 'auditor' ? (
-        <UpdateAuditorModal onSubmit={handleAuditorSubmit} />
+        <UpdateAuditorModal
+          onSubmit={handleAuditorSubmit}
+          isLoading={isLoading}
+        />
       ) : (
         <table
           role="presentation"
