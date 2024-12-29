@@ -1,11 +1,10 @@
-'use server';
-import { NextRequest, NextResponse } from 'next/server';
+// middleware.ts
+import { NextResponse, NextRequest } from 'next/server';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import { Locale, i18n } from '../i18n.config';
 
 function getLocale(request: NextRequest): string | undefined {
-  // Check for a preferred-language cookie
   const preferredLanguage = request.cookies.get('preferred-language')
     ?.value as Locale;
 
@@ -23,13 +22,13 @@ function getLocale(request: NextRequest): string | undefined {
   return locale;
 }
 
-// Protected routes that require authentication
 const protectedRoutes = [
   '/customer/dashboard',
   '/customer/categories',
   '/customer/rules',
   '/customer/expenses',
   '/customer/write-off',
+  '/customer/settings',
 ];
 
 export async function middleware(request: NextRequest) {
@@ -54,7 +53,12 @@ export async function middleware(request: NextRequest) {
       url.searchParams.append(key, value);
     });
 
-    return NextResponse.redirect(url);
+    const response = NextResponse.redirect(url);
+    response.headers.set(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, proxy-revalidate'
+    );
+    return response;
   }
 
   // Check if the current path (without locale) matches any protected route
@@ -67,12 +71,34 @@ export async function middleware(request: NextRequest) {
 
   // If it's a protected route, check for authentication
   if (isProtectedRoute) {
-    const sessionToken = request.cookies.get('next-auth.session-token')?.value;
+    const sessionToken =
+      request.cookies.get('next-auth.session-token')?.value ||
+      request.cookies.get('__Secure-next-auth.session-token')?.value;
+
     if (!sessionToken) {
-      // Get the current locale from the pathname
       const locale = pathname.split('/')[1];
-      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+      const response = NextResponse.redirect(
+        new URL(`/${locale}/login`, request.url)
+      );
+
+      // Add cache control headers
+      response.headers.set(
+        'Cache-Control',
+        'no-store, no-cache, must-revalidate, proxy-revalidate'
+      );
+      response.headers.set('Pragma', 'no-cache');
+      response.headers.set('Expires', '0');
+
+      return response;
     }
+
+    // Add cache headers for authenticated requests
+    const response = NextResponse.next();
+    response.headers.set(
+      'Cache-Control',
+      'private, no-cache, no-store, must-revalidate'
+    );
+    return response;
   }
 
   return NextResponse.next();

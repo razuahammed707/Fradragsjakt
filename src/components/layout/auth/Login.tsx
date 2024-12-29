@@ -3,7 +3,7 @@
 import { signIn, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
@@ -17,47 +17,27 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { data: session, status } = useSession();
-  const [loading, setLoading] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { translate } = useTranslation();
 
-  const handleRouting = useCallback(async () => {
-    if (!session?.user?.role || isRedirecting) return;
-
-    setIsRedirecting(true);
-
-    try {
-      const { hasAnswers } = session.user;
-      const role = session.user.role;
-      let targetRoute = '';
-
-      switch (role) {
-        case 'auditor':
-          targetRoute = '/auditor/dashboard';
-          break;
-        case 'customer':
-          targetRoute = hasAnswers ? '/customer/dashboard' : '/onboard';
-          break;
-        default:
-          targetRoute = `/${role}/dashboard`;
+  // Simplified routing logic - removed useCallback as it's not needed here
+  const getTargetRoute = (role: string, hasAnswers: boolean) => {
+    console.log('role and hasAnswers from login', role, hasAnswers);
+    if (role) {
+      if (role === 'customer') {
+        return hasAnswers ? '/customer/dashboard' : '/onboard';
       }
-
-      // Prefetch the target route
-      await router.prefetch(targetRoute);
-
-      // Navigate to the target route
-      await router.push(targetRoute);
-    } catch (error) {
-      console.error('Routing error:', error);
-      toast.error('Error during navigation', { duration: 4000 });
-      setIsRedirecting(false);
+      return role === 'auditor' ? '/auditor/dashboard' : `/${role}/dashboard`;
     }
-  }, [session, router, isRedirecting]);
+  };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
 
     try {
       const result = await signIn('credentials', {
@@ -68,28 +48,40 @@ export default function Login() {
 
       if (result?.error) {
         toast.error(result.error, { duration: 4000 });
-      } else {
-        toast.success(translate('page.login.sign_in'), { duration: 1000 });
-        // Wait for session to update
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        router.refresh();
+        setIsSubmitting(false);
       }
     } catch (error) {
       toast.error(`An unexpected error occurred: ${error}`, { duration: 4000 });
-    } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      console.log('Session:', session); // Debugging log
-      console.log('Auth status:', status); // Debugging log
-      handleRouting();
-    }
-  }, [status, session, handleRouting]);
+  // Handle Google sign in
+  const handleGoogleSignIn = () => {
+    signIn('google');
+  };
 
-  if (isRedirecting) {
+  // Navigation effect
+  useEffect(() => {
+    // Only proceed if we have an authenticated session
+    if (status === 'authenticated' && session?.user) {
+      const { role, hasAnswers } = session.user;
+
+      const targetRoute = getTargetRoute(role, hasAnswers);
+
+      if (role && targetRoute) {
+        // Add a small delay to ensure session is properly synced
+        const timer = setTimeout(() => {
+          router.replace(targetRoute); // Use replace instead of push
+        }, 100);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [session, status, router]);
+
+  // Loading state
+  if (status === 'loading' || (status === 'authenticated' && session?.user)) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -97,6 +89,8 @@ export default function Login() {
       </div>
     );
   }
+
+  console.log('session from lo gin', session);
 
   return (
     <div className="flex flex-col space-y-8 items-center text-black justify-center h-screen bg-gray-100">
@@ -141,11 +135,11 @@ export default function Login() {
             />
           </div>
           <Button
-            disabled={loading || status === 'loading'}
+            disabled={isSubmitting}
             type="submit"
             className="w-full text-white"
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {translate('page.login.sign_in')}
           </Button>
         </form>
@@ -172,7 +166,7 @@ export default function Login() {
 
         <Button
           variant="outline"
-          onClick={() => signIn('google')}
+          onClick={handleGoogleSignIn}
           className="w-full flex items-center justify-center"
         >
           <FcGoogle className="text-lg" />

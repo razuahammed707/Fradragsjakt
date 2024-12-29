@@ -112,6 +112,9 @@ export default function SignUp() {
             placeholder={translate('page.signup.password')}
             required
           />
+          <small className="text-left text-gray-500">
+            Password must be at least 6 characters long
+          </small>
           {/* <FormInput
             name="role"
             control={control}

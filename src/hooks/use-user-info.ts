@@ -1,19 +1,10 @@
-import { trpc } from '../utils/trpc';
+import { useSession } from 'next-auth/react';
 
 const useUserInfo = () => {
-  const { data, error, isLoading, isError } =
-    trpc.users.getUserByEmail.useQuery();
+  const { data: session } = useSession();
 
   return {
-    role: data?.role ?? null,
-    email: data?.email ?? null,
-    firstName: data?.firstName ?? null,
-    lastName: data?.lastName ?? null,
-    isVerified: data?.isVerified ?? null,
-    isAuditor: data?.role === 'auditor' ? true : false,
-    isLoading,
-    isError,
-    error,
+    isAuditor: session?.user?.role === 'auditor' ? true : false,
   };
 };
 
