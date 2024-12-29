@@ -152,7 +152,9 @@ export default function Login() {
             </label>
           </div>
           <p className="text-sm font-medium">
-            {translate('page.login.forgot_password')}
+            <Link href="/forgot-password" className="text-[#00104B]">
+              {translate('page.login.forgot_password')}
+            </Link>
           </p>
         </div>
 

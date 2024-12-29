@@ -53,7 +53,7 @@ export const categoryRouter = router({
           $or: [{ creator_id: loggedUser?.id }, { created_by: 'SYSTEM' }],
         });
         const categories = await Category.find(query)
-          .sort({ createdAt: -1 })
+          .sort({ title: 1 })
           .skip(skip)
           .limit(limit);
 

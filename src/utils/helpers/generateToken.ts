@@ -26,8 +26,7 @@ export const generateTokenAndSendMail = async (
     const emailTemplate =
       templateFor === 'Password Reset' ? PASSWORD_RESET : VERIFY_EMAIL_TEMPLATE;
 
-    // Construct the verification/reset URL
-    const url = `${process.env.CLIENT_URL}?token=${encodeURIComponent(token)}`;
+    const baseUrl = `${templateFor === 'Password Reset' ? `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(token)}` : `${process.env.CLIENT_URL}/verify?token=${encodeURIComponent(token)}`}`;
 
     // Send email
     sendEmail(
@@ -39,7 +38,7 @@ export const generateTokenAndSendMail = async (
             : 'New Account Registration - Skattepluss',
         data: {
           firstName: user.firstName,
-          token: url,
+          token: baseUrl,
         },
       },
       emailTemplate
