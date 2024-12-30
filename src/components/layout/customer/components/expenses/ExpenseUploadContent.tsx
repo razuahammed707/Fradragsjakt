@@ -14,7 +14,8 @@ import { useTranslation } from '@/lib/TranslationProvider';
 
 type FormData = {
   Description: string;
-  Amount: string;
+  Withdrawal: string;
+  Deposit: string;
   Date?: string;
 };
 
@@ -31,7 +32,8 @@ type FileRowData = {
 
 type ExpenseData = {
   description: string;
-  amount: number;
+  withdrawal: number;
+  deposit: number;
   transaction_date?: string | null;
 };
 
@@ -42,9 +44,14 @@ const targetColumns: Column[] = [
     key: 'date',
   },
   {
-    title: 'Amount',
-    dataIndex: 'amount',
-    key: 'amount',
+    title: 'Withdrawal',
+    dataIndex: 'withdrawal',
+    key: 'withdrawal',
+  },
+  {
+    title: 'Deposit',
+    dataIndex: 'deposit',
+    key: 'deposit',
   },
   {
     title: 'Description',
@@ -64,8 +71,6 @@ const parseFileData = (data: string[][]): ParsedFileResult => {
     dataIndex: `column_${index}`,
     key: `column_${index}`,
   }));
-
-  console.log('headers', headers);
 
   const parsedData: FileRowData[] = data
     .slice(1)
@@ -120,34 +125,38 @@ const mapToExpenseData = (
       const descriptionColumnIndex = headers.findIndex(
         (col) => col.title === formData.Description
       );
-      const amountColumnIndex = headers.findIndex(
-        (col) => col.title === formData.Amount
+      const withdrawalColumnIndex = headers.findIndex(
+        (col) => col.title === formData.Withdrawal
+      );
+      const depositColumnIndex = headers.findIndex(
+        (col) => col.title === formData.Deposit
       );
       const dateColumnIndex = headers.findIndex(
         (col) => col.title === formData.Date
       );
 
       const description = row[`column_${descriptionColumnIndex}`];
-      const amount = row[`column_${amountColumnIndex}`];
+      const withdrawal = row[`column_${withdrawalColumnIndex}`];
+      const deposit = row[`column_${depositColumnIndex}`];
       const date = row[`column_${dateColumnIndex}`];
 
-      if (description && amount) {
-        const parsedAmount = parseFloat(amount.replace(/[^\d.-]/g, ''));
-        if (!isNaN(parsedAmount)) {
+      if (description && (withdrawal || deposit)) {
+        const parsedWithdrawal = parseFloat(
+          withdrawal?.replace(/[^\d.-]/g, '') || '0'
+        );
+        const parsedDeposit = parseFloat(
+          deposit?.replace(/[^\d.-]/g, '') || '0'
+        );
+
+        if (!isNaN(parsedWithdrawal) || !isNaN(parsedDeposit)) {
           const parsedDate = moment.utc(date, 'DD/MM/YYYY', true);
 
           const payload = {
             description: description.trim(),
-            amount: parsedAmount,
-            transaction_date: new Date(),
-          } as {
-            description: string;
-            amount: number;
-            transaction_date?: unknown;
+            withdrawal: parsedWithdrawal || 0,
+            deposit: parsedDeposit || 0,
+            transaction_date: parsedDate?.toDate() || new Date(),
           };
-          if (parsedDate) {
-            payload.transaction_date = parsedDate || new Date();
-          }
           return payload;
         }
       }
@@ -235,10 +244,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   });
 
   const onSubmit = (formData: FormData): void => {
-    console.log({ formData });
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
-
-    console.log('mapped expenses', mappedExpenses);
     setLoading(true);
     mutation.mutate(mappedExpenses);
   };
@@ -267,7 +273,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
             {fileLink?.name}
           </span>
           <p className="text-[#71717A] font-medium">
-            The best match to each field on the selected file have been
+            The best match to each field on the selected file has been
             auto-selected.
           </p>
         </div>
@@ -326,7 +332,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
             ))}
             <Button
               type="submit"
-              className="w-full mt-7 text-white "
+              className="w-full mt-7 text-white"
               variant="purple"
               disabled={loading || !isDirty || !isValid}
             >
