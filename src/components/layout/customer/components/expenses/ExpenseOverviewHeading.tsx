@@ -9,7 +9,6 @@ import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
 import ExpenseAddContent from './ExpenseAddContent';
 import SharedModal from '../../../../SharedModal';
-import ExpenseUploadContent from './ExpenseUploadContent';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/navigation';
@@ -19,6 +18,7 @@ import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import useUserInfo from '@/hooks/use-user-info';
+import StatementUploadContent from '@/components/StatementUploadContent';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
@@ -91,7 +91,7 @@ function ExpenseOverviewHeading({
       );
     }
     if (modalContent.key === 'uploadStatements') {
-      return <ExpenseUploadContent setModalOpen={setModalOpen} />;
+      return <StatementUploadContent setModalOpen={setModalOpen} />;
     }
     return <></>;
   };

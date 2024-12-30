@@ -34,7 +34,7 @@ type ExpenseData = {
   description: string;
   withdrawal: number;
   deposit: number;
-  transaction_date?: string | null;
+  transaction_date: Date;
 };
 
 const targetColumns: Column[] = [
@@ -59,6 +59,92 @@ const targetColumns: Column[] = [
     key: 'description',
   },
 ];
+
+const findBestMatch = (
+  columnTitle: string,
+  headers: Column[]
+): string | undefined => {
+  // Convert to lowercase for case-insensitive matching
+  const targetTitle = columnTitle.toLowerCase();
+
+  // First try exact match
+  const exactMatch = headers.find(
+    (header) => header.title.toLowerCase() === targetTitle
+  );
+  if (exactMatch) return exactMatch.title;
+
+  // Then try partial match
+  const partialMatch = headers.find((header) => {
+    const headerLower = header.title.toLowerCase();
+    return (
+      headerLower.includes(targetTitle) || targetTitle.includes(headerLower)
+    );
+  });
+  if (partialMatch) return partialMatch.title;
+
+  // Common variations for date
+  if (targetTitle === 'date') {
+    const dateVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('date') ||
+        headerLower.includes('time') ||
+        headerLower.includes('when') ||
+        headerLower.includes('posted') ||
+        headerLower.includes('transaction')
+      );
+    });
+    if (dateVariations) return dateVariations.title;
+  }
+
+  // Common variations for description
+  if (targetTitle === 'description') {
+    const descVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('desc') ||
+        headerLower.includes('narration') ||
+        headerLower.includes('details') ||
+        headerLower.includes('transaction') ||
+        headerLower.includes('particulars') ||
+        headerLower.includes('remarks')
+      );
+    });
+    if (descVariations) return descVariations.title;
+  }
+
+  // Common variations for withdrawal
+  if (targetTitle === 'withdrawal') {
+    const withdrawalVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('withdrawal') ||
+        headerLower.includes('debit') ||
+        headerLower.includes('out') ||
+        headerLower.includes('spent') ||
+        (headerLower.includes('amount') && headerLower.includes('dr'))
+      );
+    });
+    if (withdrawalVariations) return withdrawalVariations.title;
+  }
+
+  // Common variations for deposit
+  if (targetTitle === 'deposit') {
+    const depositVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('deposit') ||
+        headerLower.includes('credit') ||
+        headerLower.includes('in') ||
+        headerLower.includes('received') ||
+        (headerLower.includes('amount') && headerLower.includes('cr'))
+      );
+    });
+    if (depositVariations) return depositVariations.title;
+  }
+
+  return undefined;
+};
 
 interface ParsedFileResult {
   fileData: FileRowData[];
@@ -121,7 +207,7 @@ const mapToExpenseData = (
   headers: Column[]
 ): ExpenseData[] => {
   return fileData
-    .map((row) => {
+    ?.map((row) => {
       const descriptionColumnIndex = headers.findIndex(
         (col) => col.title === formData.Description
       );
@@ -165,27 +251,39 @@ const mapToExpenseData = (
     .filter((item): item is ExpenseData => item !== null);
 };
 
-type ExpenseUploadContentProps = {
+type StatementUploadContentProps = {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
 };
-const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
+
+const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
   setModalOpen,
 }) => {
   const [loading, setLoading] = useState(false);
   const utils = trpc.useUtils();
+
+  const [fileLink, setFileLink] = useState<File | null>(null);
+  const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
+  const [fileData, setFileData] = useState<FileRowData[]>([]);
+  const [headers, setHeaders] = useState<Column[]>([]);
+  const [isFileProcessed, setIsFileProcessed] = useState(false);
+
   const {
     handleSubmit,
     control,
     reset,
-    formState: { isDirty, isValid },
-  } = useForm<FormData>();
-  const [fileLink, setFileLink] = useState<File | null>(null);
-
-  const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
-  const [fileData, setFileData] = useState<FileRowData[]>([]);
-
-  const [headers, setHeaders] = useState<Column[]>([]);
-  const [isFileProcessed, setIsFileProcessed] = useState(false);
+    formState: { isValid },
+  } = useForm<FormData>({
+    mode: 'onChange',
+    defaultValues: React.useMemo(() => {
+      return targetColumns.reduce((acc, column) => {
+        const match = findBestMatch(column.title, headers);
+        if (match) {
+          acc[column.title as keyof FormData] = match;
+        }
+        return acc;
+      }, {} as FormData);
+    }, [headers]),
+  });
 
   const handleFileProcessing = (file: File): void => {
     const reader = new FileReader();
@@ -245,6 +343,8 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
 
   const onSubmit = (formData: FormData): void => {
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
+    console.log({ mappedExpenses });
+
     setLoading(true);
     mutation.mutate(mappedExpenses);
   };
@@ -257,24 +357,25 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
       })),
     [headers]
   );
+
   const { translate } = useTranslation();
 
   return (
     <div className="mt-4">
       <h1 className="font-medium text-lg text-black mb-4">
         {isFileProcessed
-          ? 'Return'
+          ? 'Review Mapped Fields'
           : translate('componentsExpenseModal.expense.uploadTitle')}
       </h1>
       {isFileProcessed ? (
         <div className="text-xs space-y-4">
-          <p className="text-black font-medium mb-4">Your selected file</p>
+          <p className="text-black font-medium mb-4">Selected File</p>
           <span className="text-[#5B52F9] bg-[#F0EFFE] font-medium px-3 rounded-lg py-2">
             {fileLink?.name}
           </span>
           <p className="text-[#71717A] font-medium">
-            The best match to each field on the selected file has been
-            auto-selected.
+            Fields have been auto-matched based on your CSV headers. Please
+            review and adjust if needed.
           </p>
         </div>
       ) : (
@@ -327,6 +428,7 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
                   placeholder={column.title}
                   options={headerOptions}
                   required={column.title === 'Date' ? false : true}
+                  defaultValue={findBestMatch(column.title, headers)}
                 />
               </div>
             ))}
@@ -334,10 +436,10 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
               type="submit"
               className="w-full mt-7 text-white"
               variant="purple"
-              disabled={loading || !isDirty || !isValid}
+              disabled={loading || !isValid}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Process Expense Data
+              Process Statements Data
             </Button>
           </form>
         </>
@@ -346,4 +448,4 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   );
 };
 
-export default ExpenseUploadContent;
+export default StatementUploadContent;

@@ -10,12 +10,12 @@ import { trpc } from '@/utils/trpc';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import { debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
-import IncomeUploadStatements from './IncomeUploadStatements';
 import Image from 'next/image';
 import IncomeAddContent from './IncomeAddContent';
 import IncomeDataTableFilter from './IncomeDataTableFilter';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import useUserInfo from '@/hooks/use-user-info';
+import StatementUploadContent from '@/components/StatementUploadContent';
 
 type IncomeOverviewToolsProps = {
   setSearchTerm: (value: string) => void;
@@ -69,7 +69,7 @@ function IncomeOverviewTools({
       );
     }
     if (modalContent.key === 'uploadStatements') {
-      return <IncomeUploadStatements setModalOpen={setModalOpen} />;
+      return <StatementUploadContent setModalOpen={setModalOpen} />;
     }
     return <></>;
   };
