@@ -2,8 +2,8 @@
 import { SharedDataTable } from '@/components/SharedDataTable';
 import React from 'react';
 import { YearlyExpenseTableColumns } from './YearlyExpenseTableColumns';
+import { trpc } from '@/utils/trpc';
 
-// Define the type for a single expense item
 type RecentExpenseTableItem = {
   _id: string;
   id: string;
@@ -14,13 +14,22 @@ type RecentExpenseTableItem = {
   expense_type: string;
   amount: number;
 };
-
-// Correct the props type for the component
-type RecentExpenseTableProps = {
+type RecentExpenseTableItems = {
   data: RecentExpenseTableItem[];
 };
 
-const RecentExpenseTable = ({ data }: RecentExpenseTableProps) => {
+const RecentExpenseTable = () => {
+  const { data: expensesResponse } = trpc.expenses.getExpenses.useQuery(
+    {
+      page: 1,
+      limit: 5,
+    },
+    {
+      keepPreviousData: true,
+    }
+  ) as { data?: RecentExpenseTableItems };
+  console.log({ expensesResponse });
+
   return (
     <div className="col-span-7 space-y-6 p-6 rounded-2xl bg-white">
       <div>
@@ -30,9 +39,9 @@ const RecentExpenseTable = ({ data }: RecentExpenseTableProps) => {
       </div>
       <div className="">
         <SharedDataTable
-          className="max-h-[250px]"
+          className="max-h-[325px]"
           columns={YearlyExpenseTableColumns()}
-          data={data || []}
+          data={expensesResponse?.data || []}
         />
       </div>
     </div>
