@@ -224,7 +224,7 @@ function ExpenseAddContent({
             ),
             defaultValue: payload?.expense_type,
             options: [
-              { title: 'Business', value: 'business' },
+              { title: 'Deductible', value: 'business' },
               { title: 'Personal', value: 'personal' },
               { title: 'Unknown', value: 'unknown' },
             ],

@@ -14,7 +14,8 @@ import { useTranslation } from '@/lib/TranslationProvider';
 
 type FormData = {
   Description: string;
-  Amount: string;
+  Withdrawal: string;
+  Deposit: string;
   Date?: string;
 };
 
@@ -31,8 +32,9 @@ type FileRowData = {
 
 type ExpenseData = {
   description: string;
-  amount: number;
-  transaction_date?: string | null;
+  withdrawal: number;
+  deposit: number;
+  transaction_date: Date;
 };
 
 const targetColumns: Column[] = [
@@ -42,9 +44,14 @@ const targetColumns: Column[] = [
     key: 'date',
   },
   {
-    title: 'Amount',
-    dataIndex: 'amount',
-    key: 'amount',
+    title: 'Withdrawal',
+    dataIndex: 'withdrawal',
+    key: 'withdrawal',
+  },
+  {
+    title: 'Deposit',
+    dataIndex: 'deposit',
+    key: 'deposit',
   },
   {
     title: 'Description',
@@ -52,6 +59,92 @@ const targetColumns: Column[] = [
     key: 'description',
   },
 ];
+
+const findBestMatch = (
+  columnTitle: string,
+  headers: Column[]
+): string | undefined => {
+  // Convert to lowercase for case-insensitive matching
+  const targetTitle = columnTitle.toLowerCase();
+
+  // First try exact match
+  const exactMatch = headers.find(
+    (header) => header.title.toLowerCase() === targetTitle
+  );
+  if (exactMatch) return exactMatch.title;
+
+  // Then try partial match
+  const partialMatch = headers.find((header) => {
+    const headerLower = header.title.toLowerCase();
+    return (
+      headerLower.includes(targetTitle) || targetTitle.includes(headerLower)
+    );
+  });
+  if (partialMatch) return partialMatch.title;
+
+  // Common variations for date
+  if (targetTitle === 'date') {
+    const dateVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('date') ||
+        headerLower.includes('time') ||
+        headerLower.includes('when') ||
+        headerLower.includes('posted') ||
+        headerLower.includes('transaction')
+      );
+    });
+    if (dateVariations) return dateVariations.title;
+  }
+
+  // Common variations for description
+  if (targetTitle === 'description') {
+    const descVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('desc') ||
+        headerLower.includes('narration') ||
+        headerLower.includes('details') ||
+        headerLower.includes('transaction') ||
+        headerLower.includes('particulars') ||
+        headerLower.includes('remarks')
+      );
+    });
+    if (descVariations) return descVariations.title;
+  }
+
+  // Common variations for withdrawal
+  if (targetTitle === 'withdrawal') {
+    const withdrawalVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('withdrawal') ||
+        headerLower.includes('debit') ||
+        headerLower.includes('out') ||
+        headerLower.includes('spent') ||
+        (headerLower.includes('amount') && headerLower.includes('dr'))
+      );
+    });
+    if (withdrawalVariations) return withdrawalVariations.title;
+  }
+
+  // Common variations for deposit
+  if (targetTitle === 'deposit') {
+    const depositVariations = headers.find((header) => {
+      const headerLower = header.title.toLowerCase();
+      return (
+        headerLower.includes('deposit') ||
+        headerLower.includes('credit') ||
+        headerLower.includes('in') ||
+        headerLower.includes('received') ||
+        (headerLower.includes('amount') && headerLower.includes('cr'))
+      );
+    });
+    if (depositVariations) return depositVariations.title;
+  }
+
+  return undefined;
+};
 
 interface ParsedFileResult {
   fileData: FileRowData[];
@@ -64,8 +157,6 @@ const parseFileData = (data: string[][]): ParsedFileResult => {
     dataIndex: `column_${index}`,
     key: `column_${index}`,
   }));
-
-  console.log('headers', headers);
 
   const parsedData: FileRowData[] = data
     .slice(1)
@@ -116,38 +207,42 @@ const mapToExpenseData = (
   headers: Column[]
 ): ExpenseData[] => {
   return fileData
-    .map((row) => {
+    ?.map((row) => {
       const descriptionColumnIndex = headers.findIndex(
         (col) => col.title === formData.Description
       );
-      const amountColumnIndex = headers.findIndex(
-        (col) => col.title === formData.Amount
+      const withdrawalColumnIndex = headers.findIndex(
+        (col) => col.title === formData.Withdrawal
+      );
+      const depositColumnIndex = headers.findIndex(
+        (col) => col.title === formData.Deposit
       );
       const dateColumnIndex = headers.findIndex(
         (col) => col.title === formData.Date
       );
 
       const description = row[`column_${descriptionColumnIndex}`];
-      const amount = row[`column_${amountColumnIndex}`];
+      const withdrawal = row[`column_${withdrawalColumnIndex}`];
+      const deposit = row[`column_${depositColumnIndex}`];
       const date = row[`column_${dateColumnIndex}`];
 
-      if (description && amount) {
-        const parsedAmount = parseFloat(amount.replace(/[^\d.-]/g, ''));
-        if (!isNaN(parsedAmount)) {
+      if (description && (withdrawal || deposit)) {
+        const parsedWithdrawal = parseFloat(
+          withdrawal?.replace(/[^\d.-]/g, '') || '0'
+        );
+        const parsedDeposit = parseFloat(
+          deposit?.replace(/[^\d.-]/g, '') || '0'
+        );
+
+        if (!isNaN(parsedWithdrawal) || !isNaN(parsedDeposit)) {
           const parsedDate = moment.utc(date, 'DD/MM/YYYY', true);
 
           const payload = {
             description: description.trim(),
-            amount: parsedAmount,
-            transaction_date: new Date(),
-          } as {
-            description: string;
-            amount: number;
-            transaction_date?: unknown;
+            withdrawal: parsedWithdrawal || 0,
+            deposit: parsedDeposit || 0,
+            transaction_date: parsedDate?.toDate() || new Date(),
           };
-          if (parsedDate) {
-            payload.transaction_date = parsedDate || new Date();
-          }
           return payload;
         }
       }
@@ -156,27 +251,39 @@ const mapToExpenseData = (
     .filter((item): item is ExpenseData => item !== null);
 };
 
-type ExpenseUploadContentProps = {
+type StatementUploadContentProps = {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
 };
-const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
+
+const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
   setModalOpen,
 }) => {
   const [loading, setLoading] = useState(false);
   const utils = trpc.useUtils();
+
+  const [fileLink, setFileLink] = useState<File | null>(null);
+  const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
+  const [fileData, setFileData] = useState<FileRowData[]>([]);
+  const [headers, setHeaders] = useState<Column[]>([]);
+  const [isFileProcessed, setIsFileProcessed] = useState(false);
+
   const {
     handleSubmit,
     control,
     reset,
-    formState: { isDirty, isValid },
-  } = useForm<FormData>();
-  const [fileLink, setFileLink] = useState<File | null>(null);
-
-  const [mediaUploadLoading, setMediaUploadLoading] = useState(false);
-  const [fileData, setFileData] = useState<FileRowData[]>([]);
-
-  const [headers, setHeaders] = useState<Column[]>([]);
-  const [isFileProcessed, setIsFileProcessed] = useState(false);
+    formState: { isValid },
+  } = useForm<FormData>({
+    mode: 'onChange',
+    defaultValues: React.useMemo(() => {
+      return targetColumns.reduce((acc, column) => {
+        const match = findBestMatch(column.title, headers);
+        if (match) {
+          acc[column.title as keyof FormData] = match;
+        }
+        return acc;
+      }, {} as FormData);
+    }, [headers]),
+  });
 
   const handleFileProcessing = (file: File): void => {
     const reader = new FileReader();
@@ -235,10 +342,9 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   });
 
   const onSubmit = (formData: FormData): void => {
-    console.log({ formData });
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
+    console.log({ mappedExpenses });
 
-    console.log('mapped expenses', mappedExpenses);
     setLoading(true);
     mutation.mutate(mappedExpenses);
   };
@@ -251,24 +357,25 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
       })),
     [headers]
   );
+
   const { translate } = useTranslation();
 
   return (
     <div className="mt-4">
       <h1 className="font-medium text-lg text-black mb-4">
         {isFileProcessed
-          ? 'Return'
+          ? 'Review Mapped Fields'
           : translate('componentsExpenseModal.expense.uploadTitle')}
       </h1>
       {isFileProcessed ? (
         <div className="text-xs space-y-4">
-          <p className="text-black font-medium mb-4">Your selected file</p>
+          <p className="text-black font-medium mb-4">Selected File</p>
           <span className="text-[#5B52F9] bg-[#F0EFFE] font-medium px-3 rounded-lg py-2">
             {fileLink?.name}
           </span>
           <p className="text-[#71717A] font-medium">
-            The best match to each field on the selected file have been
-            auto-selected.
+            Fields have been auto-matched based on your CSV headers. Please
+            review and adjust if needed.
           </p>
         </div>
       ) : (
@@ -321,17 +428,18 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
                   placeholder={column.title}
                   options={headerOptions}
                   required={column.title === 'Date' ? false : true}
+                  defaultValue={findBestMatch(column.title, headers)}
                 />
               </div>
             ))}
             <Button
               type="submit"
-              className="w-full mt-7 text-white "
+              className="w-full mt-7 text-white"
               variant="purple"
-              disabled={loading || !isDirty || !isValid}
+              disabled={loading || !isValid}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Process Expense Data
+              Process Statements Data
             </Button>
           </form>
         </>
@@ -340,4 +448,4 @@ const ExpenseUploadContent: React.FC<ExpenseUploadContentProps> = ({
   );
 };
 
-export default ExpenseUploadContent;
+export default StatementUploadContent;
