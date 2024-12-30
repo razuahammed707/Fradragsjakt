@@ -87,7 +87,7 @@ const DashboardSummarySection = () => {
           </div>
         </div>
         {/* <YearlyExpenseGraph /> */}
-        <RecentExpenseTable data={[]} />
+        <RecentExpenseTable />
         <div className="col-span-12 grid grid-cols-2 gap-2">
           <AggregatedExpenseCard
             origin="business"

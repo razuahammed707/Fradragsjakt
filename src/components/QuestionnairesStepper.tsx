@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { questionnaires } from '@/lib/questionnaires';
-import { Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { trpc } from '@/utils/trpc';
@@ -111,7 +110,21 @@ export default function QuestionnairesStepper({
   };
 
   const goToNextStep = () => setCurrentStepIndex((prev) => prev + 1);
+
   const goToPreviousStep = () => setCurrentStepIndex((prev) => prev - 1);
+
+  const handleSkip = () => {
+    // Remove answers for current question if any exist
+    setSelectedAnswers((prev) =>
+      prev.filter((item) => item.question !== step?.question)
+    );
+    goToNextStep();
+  };
+
+  // Check if current step has any selected answers
+  const hasSelectedAnswers = selectedAnswers.some(
+    (item) => item.question === step?.question && item.answers.length > 0
+  );
 
   return (
     <>
@@ -123,7 +136,23 @@ export default function QuestionnairesStepper({
         )}
       >
         <div className="text-center space-y-6">
-          <div className="space-y-3">
+          <div className="space-y-3 relative">
+            {currentStepIndex > 0 ? (
+              <Button
+                type="button"
+                className="absolute left-0 top-0 border-none p-0 hover:bg-gray-100 transition-colors"
+                variant="white"
+                onClick={goToPreviousStep}
+              >
+                <ChevronLeft
+                  color="#8F8F8F"
+                  className="hover:text-gray-700 transition-colors"
+                />
+              </Button>
+            ) : (
+              <span />
+            )}
+
             <h2 className="text-[var(--700,#18181B)] font-inter text-[20px] md:text-[24px] font-bold leading-normal">
               {step?.question}
             </h2>
@@ -163,36 +192,30 @@ export default function QuestionnairesStepper({
           ))}
         </div>
         <div
-          className={`flex ${currentStepIndex > 0 && 'space-x-2'} w-full justify-between, `}
+          className={`flex ${currentStepIndex > 0 && 'space-x-2'} w-full justify-between`}
         >
-          {currentStepIndex > 0 ? (
-            <Button
-              type="button"
-              className="w-full"
-              variant="white"
-              onClick={goToPreviousStep}
-            >
-              Previous
-            </Button>
-          ) : (
-            <span />
-          )}
           {currentStepIndex < questionnaires.length - 1 ? (
-            <Button
-              className="w-full"
-              type="button"
-              variant="purple"
-              onClick={goToNextStep}
-            >
-              Next
-            </Button>
+            <div className="flex space-x-2 w-full">
+              <Button
+                type="button"
+                className="w-full"
+                variant="white"
+                onClick={handleSkip}
+              >
+                Skip
+              </Button>
+              <Button
+                className="w-full"
+                type="button"
+                variant="purple"
+                onClick={goToNextStep}
+                disabled={!hasSelectedAnswers}
+              >
+                Next
+              </Button>
+            </div>
           ) : (
             <Button
-              disabled={
-                (selectedAnswers.length < 7 &&
-                  pathname.split('/').pop() !== 'write-offs') ||
-                loading
-              }
               type="button"
               variant="purple"
               onClick={handleComplete}
