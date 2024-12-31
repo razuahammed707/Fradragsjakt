@@ -136,10 +136,11 @@ export const IncomeRouter = router({
         return {
           status: 200,
           message: 'Analytics for business an personal income are fetched.',
-          data: incomes[0],
+          data: incomes ? incomes[0] : [],
         } as ApiResponse<(typeof incomes)[0]>;
       } catch (error: unknown) {
         const { message } = errorHandler(error);
+        console.log('error messsage from income', message);
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
@@ -200,7 +201,10 @@ export const IncomeRouter = router({
           category: IncomeType.unknown,
         });
 
-        const rules = await RuleModel.find({ user: loggedUser?.id });
+        const rules = await RuleModel.find({
+          user: loggedUser?.id,
+          rule_for: 'income',
+        });
 
         // Use Promise.all to ensure all async operations complete
         const incomesWithRules = await IncomeHelpers.getIncomesWithRules(
@@ -251,31 +255,31 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  createBulkIncomes: protectedProcedure
-    .input(IncomeValidations.createBulkIncomeSchema)
-    .mutation(async ({ ctx, input: incomes }) => {
-      try {
-        const loggedUser = ctx.user as JwtPayload;
+  // createBulkIncomes: protectedProcedure
+  //   .input(IncomeValidations.createBulkIncomeSchema)
+  //   .mutation(async ({ ctx, input: incomes }) => {
+  //     try {
+  //       const loggedUser = ctx.user as JwtPayload;
 
-        const createdIncomes = await Promise.all(
-          incomes.map(async (singleIncome) => {
-            return await IncomeHelpers.createIncomeFromBulkInput(
-              singleIncome,
-              loggedUser.id
-            );
-          })
-        );
+  //       const createdIncomes = await Promise.all(
+  //         incomes.map(async (singleIncome) => {
+  //           return await IncomeHelpers.createIncomeFromBulkInput(
+  //             singleIncome,
+  //             loggedUser.id
+  //           );
+  //         })
+  //       );
 
-        return {
-          status: 201,
-          message: 'Incomes created successfully',
-          data: createdIncomes,
-        } as ApiResponse<typeof createdIncomes>;
-      } catch (error: unknown) {
-        const { message } = errorHandler(error);
-        throw new ApiError(httpStatus.NOT_FOUND, message);
-      }
-    }),
+  //       return {
+  //         status: 201,
+  //         message: 'Incomes created successfully',
+  //         data: createdIncomes,
+  //       } as ApiResponse<typeof createdIncomes>;
+  //     } catch (error: unknown) {
+  //       const { message } = errorHandler(error);
+  //       throw new ApiError(httpStatus.NOT_FOUND, message);
+  //     }
+  //   }),
   updateBulkIncome: protectedProcedure
     .input(IncomeValidations.updateBulkIncomeSchema)
 
