@@ -9,31 +9,27 @@ import { generateTokenAndSendMail } from '@/utils/helpers/generateToken';
 import { ApiError } from '@/lib/exceptions';
 
 export const authRouter = router({
-  // Sign Up Procedure
   signup: publicProcedure
-    .input(authValidation.signupSchema) // Validate input with Zod schema
+    .input(authValidation.signupSchema)
     .mutation(async ({ input }) => {
-      const { email, password, firstName, lastName /* role */ } = input;
+      const { email, password, firstName, lastName, profile } = input;
 
-      // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        throw new Error('User already exists'); // Handle user already existing
+        throw new Error('User already exists');
       }
 
-      // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create new user
       const newUser = new User({
         email,
         password: hashedPassword,
         firstName,
         lastName,
-        /* role, */
+        profile,
       });
 
-      await newUser.save(); // Save user to the database
+      await newUser.save();
 
       await generateTokenAndSendMail(
         newUser,
@@ -55,7 +51,6 @@ export const authRouter = router({
     .mutation(async ({ input }) => {
       const { email } = input;
 
-      // Find the user by ID
       const user = await User.findOne({ email: email });
       if (!user) {
         throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
@@ -71,24 +66,21 @@ export const authRouter = router({
   verifyEmail: publicProcedure
     .input(
       z.object({
-        token: z.string(), // Expect a token as input
+        token: z.string(),
       })
     )
     .mutation(async ({ input }) => {
       const { token } = input;
 
-      // Decode the token and extract user info
       const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
         id: string;
       };
 
-      // Find the user by ID
       const user = await User.findById(decoded.id);
       if (!user) {
         throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
       }
 
-      // Check if the user is already verified
       if (user.isVerified) {
         return {
           message: 'User is already verified.',
@@ -97,7 +89,6 @@ export const authRouter = router({
         };
       }
 
-      // Update the user's verification status
       user.isVerified = true;
       await user.save();
 
@@ -118,7 +109,6 @@ export const authRouter = router({
     .mutation(async ({ input }) => {
       const { token, password } = input;
 
-      // Verify token and extract user ID
       let decoded;
       try {
         decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
@@ -131,10 +121,8 @@ export const authRouter = router({
         );
       }
 
-      // Hash the new password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Find user by ID and update the password
       const updatedUser = await User.findByIdAndUpdate(
         decoded.id,
         { password: hashedPassword },

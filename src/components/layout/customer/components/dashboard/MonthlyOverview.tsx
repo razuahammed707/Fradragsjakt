@@ -16,7 +16,7 @@ const MonthlyOverview = () => {
   const writeOffs = expenses?.data?.categoryWiseExpenses;
 
   return (
-    <Card className="col-span-3 p-6 border border-[#EEF0F4] shadow-none rounded-2xl">
+    <Card className="col-span-6 p-6 border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0 flex flex-col justify-between h-full">
         <div className="flex justify-between">
           <h4 className="text-sm text-[#627A97] font-semibold mb-3">

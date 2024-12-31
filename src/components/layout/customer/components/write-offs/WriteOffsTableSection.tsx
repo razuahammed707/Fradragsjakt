@@ -6,15 +6,16 @@ import SharedPagination from '@/components/SharedPagination';
 import SearchInput from '@/components/SearchInput';
 import { WriteOffsTableColumns } from './WriteOffsTableColumns';
 import { trpc } from '@/utils/trpc';
-import { debounce } from '@/lib/utils';
+import { cn, debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
 import SharedReportDownloader from '@/components/SharedReportDownloader';
+import useIsWithinDashboard from '@/hooks/is-within-dashboard';
 
 export default function WriteOffsTableSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const isWithinDashboard = useIsWithinDashboard();
   const { data: writeOffs } = trpc.expenses.getWriteOffs.useQuery({
     page: currentPage,
     limit: pageLimit,
@@ -39,12 +40,24 @@ export default function WriteOffsTableSection() {
     debouncedSetSearchTerm(e.target.value);
   };
   return (
-    <div className="rounded-2xl mt-2 p-6 bg-white">
+    <div
+      className={cn(
+        'col-span-6 rounded-2xl p-6 bg-white',
+        !isWithinDashboard && 'mt-2'
+      )}
+    >
       <div className="flex justify-between items-center mb-4  ">
-        <h2 className="text-xl text-[#101010] font-bold">
-          {translate('page.writeoffoverview.title')}
+        <h2
+          className={cn(
+            'text-xl  font-bold',
+            isWithinDashboard && 'text-sm font-semibold'
+          )}
+        >
+          {isWithinDashboard
+            ? 'Write-offs overview'
+            : translate('page.writeoffoverview.title')}
         </h2>
-        <div className="flex gap-2">
+        <div className={cn('flex gap-2', isWithinDashboard && 'hidden')}>
           <SearchInput
             className=""
             placeholder={translate(
@@ -62,12 +75,13 @@ export default function WriteOffsTableSection() {
           />
         </div>
       </div>
-      <div className="mt-10">
+      <div className={cn(!isWithinDashboard && 'mt-10')}>
         <SharedDataTable
           columns={WriteOffsTableColumns()}
           data={writeOffs?.data || []}
+          className={cn(isWithinDashboard && 'h-[350px]')}
         />
-        <div className="mt-10">
+        <div className={cn('mt-10', isWithinDashboard && 'hidden')}>
           <SharedPagination
             currentPage={currentPage}
             pageLimit={pageLimit}

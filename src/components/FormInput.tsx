@@ -48,7 +48,9 @@ export function FormInput({
         defaultValue={defaultValue}
         render={({ field }) => (
           <Select value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger className={`w-full ${customClassName}`}>
+            <SelectTrigger
+              className={`w-full data-[placeholder]:text-muted-foreground ${customClassName}`}
+            >
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
