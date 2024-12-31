@@ -12,6 +12,7 @@ import {
   TranslationProvider,
 } from '@/lib/TranslationProvider';
 import { ClientProviders } from '@/config/trpc/ClientProviders';
+import { ProgressbarProvider } from '@/lib/ProgressbarProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -41,7 +42,9 @@ export default async function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <TranslationProvider dict={dictionary}>
           <Providers>
-            <ClientProviders session={session}>{children}</ClientProviders>
+            <ClientProviders session={session}>
+              <ProgressbarProvider>{children}</ProgressbarProvider>
+            </ClientProviders>
             <Toaster position="top-center" />
           </Providers>
         </TranslationProvider>
