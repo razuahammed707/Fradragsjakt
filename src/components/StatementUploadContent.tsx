@@ -325,10 +325,11 @@ const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
     accept: { 'text/csv': ['.csv'] },
   });
 
-  const mutation = trpc.expenses.createBulkExpenses.useMutation({
+  const mutation = trpc.expenses.populateStatement.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
-      toast.success('Expenses created successfully!', {
+      utils.incomes.getIncomes.invalidate();
+      toast.success('Data populated successfully from statement', {
         duration: 4000,
       });
       reset();

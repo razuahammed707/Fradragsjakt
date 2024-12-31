@@ -105,7 +105,7 @@ export const authOptions: AuthOptions = {
             const newUser = new User({
               email: user.email,
               firstName: user.name,
-              lastName: user.name,
+              lastName: '',
               role: 'customer',
               provider: 'google',
               image: user?.image || '',
