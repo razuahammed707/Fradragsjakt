@@ -19,6 +19,7 @@ type FormData = {
   lastName: string;
   email: string;
   password: string;
+  profile: string;
 };
 
 export default function SignUp() {
@@ -96,22 +97,39 @@ export default function SignUp() {
               required
             />
           </div>
-
           <FormInput
-            name="email"
+            name="profile"
             control={control}
-            type="email"
-            placeholder={translate('page.signup.email')}
-            required
+            type="select"
+            placeholder="Select Profile"
+            options={[
+              { title: 'Married', value: 'married' },
+              { title: 'Dependents', value: 'dependents' },
+              { title: 'Freelancer', value: 'freelancer' },
+              { title: 'Employee', value: 'employee' },
+              { title: 'Business Owner', value: 'business owner' },
+              { title: 'Student', value: 'student' },
+              { title: 'Sole Proprietorship', value: 'sole proprietorship' },
+            ]}
           />
+          <div className="flex space-x-2">
+            <FormInput
+              name="email"
+              control={control}
+              type="email"
+              placeholder={translate('page.signup.email')}
+              required
+            />
 
-          <FormInput
-            name="password"
-            control={control}
-            type="password"
-            placeholder={translate('page.signup.password')}
-            required
-          />
+            <FormInput
+              name="password"
+              control={control}
+              type="password"
+              placeholder={translate('page.signup.password')}
+              required
+            />
+          </div>
+
           <small className="text-left text-gray-500">
             Password must be at least 6 characters long
           </small>
