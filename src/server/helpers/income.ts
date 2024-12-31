@@ -84,7 +84,7 @@ async function createIncomeRecord(input: IIncome, userId: string) {
 }
 
 async function createIncomeFromBulkInput(
-  input: { description: string; amount: number },
+  input: { description: string; deposit: number },
   userId: string
 ) {
   try {
@@ -93,6 +93,8 @@ async function createIncomeFromBulkInput(
     const incomeData = {
       ...input,
       user: userId,
+      description: input.description,
+      amount: input.deposit,
       income_type:
         rule?.income_type || rule?.expense_type || IncomeType.unknown,
       category: rule?.category_title || 'unknown',
@@ -349,7 +351,7 @@ const getBusinessAndPersonalIncomeAnalytics = async (
       },
     ]);
 
-    return result.map((analytics) => ({
+    return result?.map((analytics) => ({
       businessIncomeAnalytics: ensureSevenDaysCoverage(
         analytics.businessIncomeAnalytics,
         dateArray

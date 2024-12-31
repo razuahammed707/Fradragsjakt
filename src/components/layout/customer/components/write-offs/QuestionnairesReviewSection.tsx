@@ -32,6 +32,7 @@ import SharedReportDownloader from '@/components/SharedReportDownloader';
 import ViewResponseModalContent from './modals-content/ViewResponseModalContent';
 import useUserInfo from '@/hooks/use-user-info';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import useIsWithinDashboard from '@/hooks/is-within-dashboard';
 
 const modalContentMap: Record<
   string,
@@ -65,6 +66,7 @@ const modalContentMap: Record<
 const QuestionnairesReviewSection = () => {
   const { isAuditor } = useUserInfo();
   const { translate } = useTranslation();
+  const isWithinDashboard = useIsWithinDashboard();
   const isGreaterThan1600: boolean = useMediaQuery('(min-width: 1601px)');
 
   const [selectedTitle, setSelectedTitle] = useState<string>('');
@@ -167,7 +169,12 @@ const QuestionnairesReviewSection = () => {
 
   return (
     <>
-      <div className="col-span-3 flex border flex-col justify-between bg-white sticky top-0 rounded-2xl h-[calc(100vh-116px)] p-6">
+      <div
+        className={cn(
+          'col-span-3 flex border flex-col justify-between bg-white sticky top-0 rounded-2xl max-h-[calc(100vh-116px)] p-6',
+          isWithinDashboard && 'col-span-6'
+        )}
+      >
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <Image
@@ -204,40 +211,50 @@ const QuestionnairesReviewSection = () => {
             !isGreaterThan1600 && 'space-y-2'
           )}
         >
-          {getWriteOffs().map((question, i) => (
-            <div
-              key={i}
-              onClick={() => handleButtonClick(question.title)}
-              className={cn(
-                'flex justify-between items-center p-2 bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100',
-                user?.questionnaires?.find(
-                  (item: Questionnaire) => item.question === question.title
-                )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none',
-                isAuditor && 'pointer-events-none'
-              )}
-            >
-              <div className="flex space-x-2">
-                <Image
-                  src={question.amount === 0 ? CrossIcon : MarkIcon}
-                  alt="titleImg1"
-                  height={18}
-                  width={18}
-                />
-                <p
-                  className={cn(
-                    user?.questionnaires?.find(
-                      (item: Questionnaire) => item.question === question.title
-                    )?.answers?.length === 0 && 'text-gray-400'
-                  )}
-                >
-                  {question.title}
-                </p>
+          <div
+            className={cn(
+              'text-sm text-[#101010] space-y-4',
+              !isGreaterThan1600 && 'space-y-2',
+              isWithinDashboard && 'max-h-[200px] overflow-y-auto'
+            )}
+          >
+            {getWriteOffs().map((question, i) => (
+              <div
+                key={i}
+                onClick={() => handleButtonClick(question.title)}
+                className={cn(
+                  'flex justify-between items-center p-2  bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100',
+                  user?.questionnaires?.find(
+                    (item: Questionnaire) => item.question === question.title
+                  )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none',
+                  isAuditor && 'pointer-events-none',
+                  isWithinDashboard && 'mr-1'
+                )}
+              >
+                <div className="flex space-x-2">
+                  <Image
+                    src={question.amount === 0 ? CrossIcon : MarkIcon}
+                    alt="titleImg1"
+                    height={18}
+                    width={18}
+                  />
+                  <p
+                    className={cn(
+                      user?.questionnaires?.find(
+                        (item: Questionnaire) =>
+                          item.question === question.title
+                      )?.answers?.length === 0 && 'text-gray-400'
+                    )}
+                  >
+                    {question.title}
+                  </p>
+                </div>
+                {question.amount !== 0 && (
+                  <p>NOK {question?.amount?.toFixed(2)}</p>
+                )}
               </div>
-              {question.amount !== 0 && (
-                <p>NOK {question?.amount?.toFixed(2)}</p>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
           <Separator className="bg-[#E4E4E7] my-6" />
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -257,7 +274,7 @@ const QuestionnairesReviewSection = () => {
             <p>NOK 2,886</p>
           </div> */}
         </div>
-        <div className="flex space-x-2">
+        <div className={cn('flex space-x-2', isWithinDashboard && 'hidden')}>
           {!isAuditor && (
             <Button
               onClick={() =>

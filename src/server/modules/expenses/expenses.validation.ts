@@ -37,6 +37,17 @@ const expenseUpdatePayloadSchema = z.object({
   category: z.string(),
   expense_type: z.string(),
 });
+// Schema for the expense update payload
+const populateStatementSchema = z.array(
+  z.object({
+    description: z.string({
+      required_error: 'Description is required',
+    }),
+    withdrawal: z.number(),
+    deposit: z.number(),
+    transaction_date: z.any(),
+  })
+);
 
 // Schema for the updateBulkExpense API input
 const updateBulkExpenseSchema = z.object({
@@ -52,4 +63,5 @@ export const expenseValidation = {
   createExpenseSchema,
   createBulkExpenseSchema,
   updateBulkExpenseSchema,
+  populateStatementSchema,
 };

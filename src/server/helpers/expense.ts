@@ -93,7 +93,7 @@ async function createExpenseRecord(input: IExpense, userId: string) {
 }
 
 async function createExpenseFromBulkInput(
-  input: { description: string; amount: number },
+  input: { description: string; withdrawal: number },
   userId: string
 ) {
   try {
@@ -101,8 +101,9 @@ async function createExpenseFromBulkInput(
     const rule = await findMatchingRule(input.description, userId);
 
     const expenseData = {
-      ...input,
       user: userId,
+      amount: input?.withdrawal,
+      description: input.description,
       expense_type: rule?.expense_type || ExpenseType.unknown,
       category: rule?.category_title || 'unknown',
       rule: rule?._id,
@@ -121,29 +122,43 @@ async function createExpenseFromBulkInput(
   }
 }
 
+const escapeRegExp = (string: string): string => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
 const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
   try {
     const expensesWithRules = (
       await Promise.all(
         rules.map(async (rule) => {
-          const escapedDescription = rule.description_contains.replace(
-            /[-/\\^$*+?.()|[\]{}]/g,
-            '\\$&'
-          );
+          // Create pattern with word boundaries for exact matches
+          const pattern = rule.description_contains
+            .split(/\s*,\s*/) // Split by comma with optional spaces
+            .map((term) => `\\b${escapeRegExp(term.trim())}\\b`)
+            .join('|');
+
           const expenses = await ExpenseModel.find({
             user: loggedUser?.id,
             expense_type: ExpenseType.unknown,
-            category: ExpenseType.unknown,
+            category: 'unknown',
             description: {
-              $regex: escapedDescription,
-              $options: 'i',
+              $regex: pattern,
+              $options: 'i', // case insensitive
             },
           })
             .sort({ createdAt: -1 })
             .select('amount description category expense_type')
             .lean();
 
-          // Only return rules with matched expenses
+          // Debug logging
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`Rule pattern: ${pattern}`);
+            console.log(
+              `Matches for "${rule.description_contains}":`,
+              expenses.map((e) => e.description)
+            );
+          }
+
           return expenses.length > 0
             ? {
                 rule: rule.description_contains,
@@ -157,7 +172,8 @@ const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
             : null;
         })
       )
-    ).filter((result) => result !== null);
+    ).filter(Boolean);
+
     return expensesWithRules;
   } catch (error) {
     const { message } = errorHandler(error);

@@ -9,6 +9,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: string;
+  profile: string;
   image: string;
   provider: string;
   questionnaires: IQuestionnaire[];

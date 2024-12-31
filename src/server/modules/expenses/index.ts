@@ -17,6 +17,7 @@ import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
 import mongoose from 'mongoose';
 import { parseFilterString } from '@/utils/helpers/parseFilterString';
+import { IncomeHelpers } from '@/server/helpers/income';
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -255,13 +256,18 @@ export const expenseRouter = router({
           category: ExpenseType.unknown,
         });
 
-        const rules = await RuleModel.find({ user: loggedUser?.id });
+        const rules = await RuleModel.find({
+          user: loggedUser?.id,
+          rule_for: 'expense',
+        });
 
         // Use Promise.all to ensure all async operations complete
         const expensesWithRules = await ExpenseHelpers.getExpensesWithRules(
           rules,
           loggedUser
         );
+
+        console.log('matched rules from expenses', expensesWithRules);
 
         const expensesWithAllRules = {
           expensesWithRules,
@@ -306,28 +312,70 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  createBulkExpenses: protectedProcedure
-    .input(expenseValidation.createBulkExpenseSchema)
-    .mutation(async ({ ctx, input: expenses }) => {
+  // createBulkExpenses: protectedProcedure
+  //   .input(expenseValidation.createBulkExpenseSchema)
+  //   .mutation(async ({ ctx, input: expenses }) => {
+  //     try {
+  //       const loggedUser = ctx.user as JwtPayload;
+
+  //       console.log('expenses payload', expenses);
+
+  //       const createdExpenses = await Promise.all(
+  //         expenses.map(async (singleExpense) => {
+  //           return await ExpenseHelpers.createExpenseFromBulkInput(
+  //             singleExpense,
+  //             loggedUser.id
+  //           );
+  //         })
+  //       );
+
+  //       return {
+  //         status: 201,
+  //         message: 'Expenses created successfully',
+  //         data: createdExpenses,
+  //       } as ApiResponse<typeof createdExpenses>;
+  //     } catch (error: unknown) {
+  //       const { message } = errorHandler(error);
+  //       throw new ApiError(httpStatus.NOT_FOUND, message);
+  //     }
+  //   }),
+  populateStatement: protectedProcedure
+    .input(expenseValidation.populateStatementSchema)
+    .mutation(async ({ ctx, input: statements }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        console.log('expenses payload', expenses);
+        // Process each statement only once, creating both expense and income
+        const results = await Promise.all(
+          statements.map(async (statement) => {
+            const [expense, income] = await Promise.all([
+              ExpenseHelpers.createExpenseFromBulkInput(
+                statement,
+                loggedUser.id
+              ),
+              IncomeHelpers.createIncomeFromBulkInput(statement, loggedUser.id),
+            ]);
 
-        const createdExpenses = await Promise.all(
-          expenses.map(async (singleExpense) => {
-            return await ExpenseHelpers.createExpenseFromBulkInput(
-              singleExpense,
-              loggedUser.id
-            );
+            return {
+              expense,
+              income,
+            };
           })
         );
 
+        // Separate the results for the response
+        const createdExpenses = results.map((r) => r.expense);
+        const createdIncomes = results.map((r) => r.income);
+
         return {
           status: 201,
-          message: 'Expenses created successfully',
-          data: createdExpenses,
-        } as ApiResponse<typeof createdExpenses>;
+          message: 'Statements processed successfully',
+          data: {
+            expenses: createdExpenses,
+            incomes: createdIncomes,
+            totalProcessed: statements.length,
+          },
+        };
       } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);
