@@ -2,7 +2,7 @@ import SharedModal from '@/components/SharedModal';
 import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import Success from '../../../../../../public/images/Success.svg';
+import Success from '../../../../../../public/Success.svg';
 const ImportConfirmationModal = () => {
   const [isOpen, setIsOpen] = useState(true);
 
