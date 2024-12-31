@@ -69,7 +69,7 @@ export function ContentDonation({
         {translate('contentDonation.reviewQuestionnaire')}
       </p>
       <CardHeader className="px-0">
-        <CardTitle className="start text-xl font-semibold">
+        <CardTitle className="start text-sm font-bold text-violet-600 underline">
           {translate('contentDonation.cardTitle')}
         </CardTitle>
         <CardDescription className="text-xs">
@@ -79,8 +79,8 @@ export function ContentDonation({
       <CardContent className="px-0">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">
+            <div className="flex flex-col space-y-1.5 ">
+              <Label htmlFor="name " className="text-[12px] font-normal ">
                 {translate('contentDonation.fields.donationAmount')}
               </Label>
               <FormInput
@@ -95,7 +95,7 @@ export function ContentDonation({
                 )}
                 required
               />
-              <Label className="text-black pt-[12px] pb-[6px]">
+              <Label className="text-black pt-[12px] pb-[6px] text-[12px] font-normal">
                 {translate('contentDonation.fields.uploadVerificationDocument')}
               </Label>
               <FormReceiptInput
