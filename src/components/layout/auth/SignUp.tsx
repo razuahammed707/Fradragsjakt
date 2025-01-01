@@ -49,18 +49,21 @@ export default function SignUp() {
 
   const mutation = trpc.auth.signup.useMutation({
     onSuccess: () => {
-      toast.success(translate('page.signup.verification_email_sent'), {
+      toast.success('Verification email sent.', {
         duration: 4000,
       });
       reset();
       setLoading(false);
     },
     onError: (error) => {
-      setError(error.message || translate('page.signup.error_message'));
+      const simplifiedError =
+        error.message?.includes('password') && error.message?.includes('6')
+          ? 'Password is too short, it must be at least 6 characters long.'
+          : error.message || 'An error occurred. Please try again.';
+      setError(simplifiedError);
       setLoading(false);
     },
   });
-
   const onSubmit = (data: FormData) => {
     setError(null);
     setLoading(true);
@@ -120,30 +123,17 @@ export default function SignUp() {
               placeholder={translate('page.signup.email')}
               required
             />
-
-            <FormInput
-              name="password"
-              control={control}
-              type="password"
-              placeholder={translate('page.signup.password')}
-              required
-            />
           </div>
-
+          <FormInput
+            name="password"
+            control={control}
+            type="password"
+            placeholder={translate('page.signup.password')}
+            required
+          />
           <small className="text-left text-gray-500">
             Password must be at least 6 characters long
           </small>
-          {/* <FormInput
-            name="role"
-            control={control}
-            type="select"
-            placeholder="Select Role"
-            options={[
-              { title: 'Auditor', value: 'auditor' },
-              { title: 'Customer', value: 'customer' },
-            ]}
-            required
-          /> */}
 
           <Button
             type="submit"
