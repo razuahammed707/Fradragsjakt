@@ -250,7 +250,7 @@ const QuestionnairesReviewSection = () => {
                   </p>
                 </div>
                 {question.amount !== 0 && (
-                  <p>NOK {question?.amount?.toFixed(2)}</p>
+                  <p>NOK {numberFormatter(question?.amount || 0)}</p>
                 )}
               </div>
             ))}
