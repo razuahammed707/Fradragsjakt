@@ -8,7 +8,7 @@ import SharedModal from '../../../../SharedModal';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
-import { debounce } from '@/lib/utils';
+import { cn, debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
 import Image from 'next/image';
 import IncomeAddContent from './IncomeAddContent';
@@ -16,6 +16,7 @@ import IncomeDataTableFilter from './IncomeDataTableFilter';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
+import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 
 type IncomeOverviewToolsProps = {
   setSearchTerm: (value: string) => void;
@@ -68,8 +69,11 @@ function IncomeOverviewTools({
         />
       );
     }
+    if (modalContent.key === 'confirmation') {
+      return <ConfirmationModalContent setModalOpen={setModalOpen} />;
+    }
     if (modalContent.key === 'uploadStatements') {
-      return <StatementUploadContent setModalOpen={setModalOpen} />;
+      return <StatementUploadContent setModalContent={setModalContent} />;
     }
     return <></>;
   };
@@ -153,7 +157,9 @@ function IncomeOverviewTools({
           <SharedModal
             open={isModalOpen}
             onOpenChange={setModalOpen}
-            customClassName="max-w-[650px]"
+            customClassName={cn(
+              modalContent.key !== 'confirmation' && 'max-w-[650px]'
+            )}
           >
             <div className="bg-white">{renderContent()}</div>
           </SharedModal>

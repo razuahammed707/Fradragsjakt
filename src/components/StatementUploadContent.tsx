@@ -252,11 +252,11 @@ const mapToExpenseData = (
 };
 
 type StatementUploadContentProps = {
-  setModalOpen: Dispatch<SetStateAction<boolean>>;
+  setModalContent: Dispatch<SetStateAction<{ key: string }>>;
 };
 
 const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
-  setModalOpen,
+  setModalContent,
 }) => {
   const [loading, setLoading] = useState(false);
   const utils = trpc.useUtils();
@@ -329,11 +329,8 @@ const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
       utils.incomes.getIncomes.invalidate();
-      toast.success('Data populated successfully from statement', {
-        duration: 4000,
-      });
       reset();
-      setModalOpen(false);
+      setModalContent({ key: 'confirmation' });
       setLoading(false);
     },
     onError: (error) => {
