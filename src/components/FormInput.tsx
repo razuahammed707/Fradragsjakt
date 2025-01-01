@@ -9,6 +9,7 @@ import {
 import { Control, Controller } from 'react-hook-form';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 
 type Option = {
   title: string;
@@ -87,6 +88,26 @@ export function FormInput({
       />
     );
   }
+  if (type === 'number') {
+    return (
+      <Controller
+        name={name}
+        control={control}
+        rules={{ required }}
+        defaultValue={numberFormatter(defaultValue as number)}
+        render={({ field }) => (
+          <Input
+            {...field}
+            type="text"
+            value={numberFormatter(field.value as number)}
+            placeholder={placeholder}
+            className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
+            required={required}
+          />
+        )}
+      />
+    );
+  }
 
   return (
     <Controller
@@ -97,7 +118,7 @@ export function FormInput({
       render={({ field }) => (
         <Input
           {...field}
-          type={type}
+          type="text"
           placeholder={placeholder}
           className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
           required={required}
