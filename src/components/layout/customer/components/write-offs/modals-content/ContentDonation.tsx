@@ -69,7 +69,7 @@ export function ContentDonation({
         {translate('contentDonation.reviewQuestionnaire')}
       </p>
       <CardHeader className="px-0">
-        <CardTitle className="start text-sm font-bold text-violet-600 underline">
+        <CardTitle className="start text-sm font-bold text-violet-600 ">
           {translate('contentDonation.cardTitle')}
         </CardTitle>
         <CardDescription className="text-xs">

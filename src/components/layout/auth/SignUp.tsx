@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import CompanyLogo from '@/components/CompanyLogo';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { cn } from '@/lib/utils';
 
 type FormData = {
   firstName: string;
@@ -58,7 +59,7 @@ export default function SignUp() {
     onError: (error) => {
       const simplifiedError =
         error.message?.includes('password') && error.message?.includes('6')
-          ? 'Password is too short, it must be at least 6 characters long.'
+          ? 'Password is too short, it must be at least 6 characters long!'
           : error.message || 'An error occurred. Please try again.';
       setError(simplifiedError);
       setLoading(false);
@@ -81,8 +82,6 @@ export default function SignUp() {
           </h2>
           <p className="text-sm">{translate('page.signup.subtitle')}</p>
         </div>
-        {error && <p className="text-red-500">{error}</p>}
-
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="flex space-x-2">
             <FormInput
@@ -115,25 +114,30 @@ export default function SignUp() {
               { title: 'Sole Proprietorship', value: 'sole proprietorship' },
             ]}
           />
-          <div className="flex space-x-2">
-            <FormInput
-              name="email"
-              control={control}
-              type="email"
-              placeholder={translate('page.signup.email')}
-              required
-            />
-          </div>
           <FormInput
-            name="password"
+            name="email"
             control={control}
-            type="password"
-            placeholder={translate('page.signup.password')}
+            type="email"
+            placeholder={translate('page.signup.email')}
             required
           />
-          <small className="text-left text-gray-500">
-            Password must be at least 6 characters long
-          </small>
+          <div className="text-left">
+            <FormInput
+              name="password"
+              control={control}
+              type="password"
+              placeholder={translate('page.signup.password')}
+              required
+            />
+            <small
+              className={cn(
+                'text-left text-gray-500',
+                error && 'text-red-500 shadow-sm font-medium'
+              )}
+            >
+              {error ? error : 'Password must be at least 6 characters long.'}
+            </small>
+          </div>
 
           <Button
             type="submit"
