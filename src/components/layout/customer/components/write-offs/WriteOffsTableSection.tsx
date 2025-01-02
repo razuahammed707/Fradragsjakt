@@ -10,12 +10,15 @@ import { cn, debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
 import SharedReportDownloader from '@/components/SharedReportDownloader';
 import useIsWithinDashboard from '@/hooks/is-within-dashboard';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function WriteOffsTableSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState('');
   const isWithinDashboard = useIsWithinDashboard();
+  const { data: session } = useSession();
   const { data: writeOffs } = trpc.expenses.getWriteOffs.useQuery({
     page: currentPage,
     limit: pageLimit,
@@ -54,7 +57,7 @@ export default function WriteOffsTableSection() {
           )}
         >
           {isWithinDashboard
-            ? 'Write-offs overview'
+            ? 'Write-offs overview '
             : translate('page.writeoffoverview.title')}
         </h2>
         <div className={cn('flex gap-2', isWithinDashboard && 'hidden')}>
@@ -79,7 +82,7 @@ export default function WriteOffsTableSection() {
         <SharedDataTable
           columns={WriteOffsTableColumns()}
           data={writeOffs?.data || []}
-          className={cn(isWithinDashboard && 'h-[350px]')}
+          className={cn(isWithinDashboard && 'h-[330px]')}
         />
         <div className={cn('mt-10', isWithinDashboard && 'hidden')}>
           <SharedPagination
@@ -90,6 +93,14 @@ export default function WriteOffsTableSection() {
             onPageLimitChange={handlePageLimitChange}
           />
         </div>
+        {isWithinDashboard && (
+          <Link
+            href={`/${session?.user?.role}/write-offs`}
+            className="flex justify-center font-medium text-sm text-[#5B52F9]"
+          >
+            View more ...
+          </Link>
+        )}
       </div>
     </div>
   );

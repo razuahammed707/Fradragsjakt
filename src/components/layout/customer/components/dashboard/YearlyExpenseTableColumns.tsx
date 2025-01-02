@@ -3,15 +3,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import ArrowUpDown from '../../../../../../public/sort.png';
-import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
-import ExpenseDetailsModal from '../expenses/ExpenseDetailsModal';
-import ExpenseUpdateModal from '../expenses/ExpenseUpdateModal';
 import formatDate from '@/utils/helpers/formatDate';
-import useUserInfo from '@/hooks/use-user-info';
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Expense = {
   _id: string;
   id: string;
@@ -24,34 +18,7 @@ export type Expense = {
 };
 
 export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
-  const { isAuditor } = useUserInfo();
   return [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          className="border border-[#E4E4E7] shadow-none rounded-none  data-[state=checked]:text-white"
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-
-      cell: ({ row }) => (
-        <Checkbox
-          className="border border-[#E4E4E7] shadow-none rounded-none  data-[state=checked]:text-white"
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-      size: 200,
-    },
     {
       accessorKey: 'transaction_date',
       header: 'Date',
@@ -60,7 +27,7 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
         const createdAt = row.original.createdAt;
         const dateToRender = transactionDate || createdAt || '';
         return (
-          <div className="w-[100px]">
+          <div className="w-[90px]">
             <span className="text-[#00104B]">{formatDate(dateToRender)}</span>
           </div>
         );
@@ -70,11 +37,11 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
       accessorKey: 'description',
       header: 'Expense description',
       cell: ({ row }) => (
-        <div className="w-[250px]">{row.getValue('description')}</div>
+        <div className="w-[220px]">{row.getValue('description')}</div>
       ), // Center aligned
       size: 100, // Adjust column size
       minSize: 100,
-      maxSize: 200,
+      maxSize: 150,
     },
     {
       accessorKey: 'expense_type',
@@ -119,23 +86,11 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
         };
 
         return (
-          <div className="text-left font-medium w-[150px]">
+          <div className="text-left font-medium w-[120px]">
             {formatToNOK(amount)}
           </div>
         ); // Center aligned
       },
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => (
-        <div className="w-full">
-          <div className="flex items-center space-x-1">
-            <ExpenseDetailsModal payload={row.original} />
-            {!isAuditor && <ExpenseUpdateModal payload={row.original} />}
-          </div>
-        </div>
-      ),
     },
   ];
 };

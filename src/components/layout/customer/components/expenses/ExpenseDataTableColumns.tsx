@@ -105,7 +105,11 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
         </Button>
       ),
       cell: ({ row }) => (
-        <span>{transformToUppercase(row.getValue('expense_type'))}</span>
+        <span>
+          {row.getValue('expense_type') === 'business'
+            ? 'Deductible'
+            : transformToUppercase(row.getValue('expense_type'))}
+        </span>
       ),
     },
     {
