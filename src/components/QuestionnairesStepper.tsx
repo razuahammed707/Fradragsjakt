@@ -114,10 +114,11 @@ export default function QuestionnairesStepper({
   const goToPreviousStep = () => setCurrentStepIndex((prev) => prev - 1);
 
   const handleSkip = () => {
-    // Remove answers for current question if any exist
-    setSelectedAnswers((prev) =>
-      prev.filter((item) => item.question !== step?.question)
-    );
+    if (pathname.split('/').pop() !== 'write-offs') {
+      setSelectedAnswers((prev) =>
+        prev.filter((item) => item.question !== step?.question)
+      );
+    }
     goToNextStep();
   };
 

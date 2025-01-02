@@ -33,7 +33,7 @@ interface CategoryOption {
 }
 
 const expenseTypes: FilterItem[] = [
-  { id: 'business', label: 'Business' },
+  { id: 'business', label: 'Deductible' },
   { id: 'personal', label: 'Personal' },
   { id: 'unknown', label: 'Unknown' },
 ];
@@ -110,7 +110,7 @@ export default function ExpenseDataTableFilter({
             className="px-1 h-9 cursor-pointer hover:bg-gray-400 text-sm  font-normal bg-gray-300 flex items-center gap-1"
             onClick={() => handleBadgeClick(item)}
           >
-            {transformToUppercase(item)}
+            {item === 'business' ? 'Deductible' : transformToUppercase(item)}
             <X className="h-3 w-3" />
           </Badge>
         ))}

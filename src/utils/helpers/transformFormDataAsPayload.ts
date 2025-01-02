@@ -21,7 +21,7 @@ export const transformFormDataToPayload = (
     ([mainQuestion, subQuestions]) => ({
       [mainQuestion]: Object.entries(subQuestions).map(
         ([subQuestion, answer]) => ({
-          [subQuestion]: answer.replace(/[^\d]/g, ''),
+          [subQuestion]: answer.replace(/\s+/g, ''),
         })
       ),
     })

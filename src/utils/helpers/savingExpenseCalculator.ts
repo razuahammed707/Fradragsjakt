@@ -13,45 +13,53 @@ const healthAndFamilyExpenseCalculator = (
 ) => {
   if (!healthAndFamilyPayload || !healthAndFamilyPayload.answers) return 0;
 
-  return healthAndFamilyPayload.answers.reduce((total, answer) => {
-    const [key, value] = Object.entries(answer)[0];
+  let maxDeductionOnNumber = 0; // Initialize outside reduce to track max deduction
 
-    const extractExpense = (field: string) =>
-      safeParseNumber(
-        value.find((item: SubAnswer) => field in item)?.[field] || ''
-      ) || 0;
+  const totalDeduction = healthAndFamilyPayload.answers.reduce(
+    (total, answer) => {
+      const [key, value] = Object.entries(answer)[0];
 
-    switch (key) {
-      case 'Have children aged 11 years or younger':
-        const documentedExpense = extractExpense('Documented Expense') || 0;
-        const deductionOnNumber =
-          extractExpense('How many children do you have under the age of 12?') >
-          0
-            ? 25000 +
-              (extractExpense(
-                'How many children do you have under the age of 12?'
-              ) -
-                1) *
-                15000
+      const extractExpense = (field: string) =>
+        safeParseNumber(
+          value.find((item: SubAnswer) => field in item)?.[field] || ''
+        ) || 0;
+
+      switch (key) {
+        case 'Have children aged 11 years or younger': {
+          const documentedExpense = extractExpense('Documented Expense') || 0;
+          const childrenCount = extractExpense(
+            'How many children do you have under the age of 12?'
+          );
+
+          // Calculate maximum deduction based on number of children
+          maxDeductionOnNumber =
+            childrenCount > 0 ? 25000 + (childrenCount - 1) * 15000 : 0;
+
+          return total + documentedExpense;
+        }
+
+        case 'I have children aged 12 or older with special care needs': {
+          const haveSpecial =
+            value.find(
+              (item: SubAnswer) =>
+                'Do you have children with needs for special care?' in item
+            )?.['Do you have children with needs for special care?'] === 'yes';
+
+          const deductionOnSpecial12 = haveSpecial
+            ? extractExpense('Documented care expenses')
             : 0;
-        return total + Math.min(documentedExpense, deductionOnNumber);
 
-      case 'I have children aged 12 or older with special care needs':
-        const haveSpecial =
-          value.find(
-            (item: SubAnswer) =>
-              'Do you have children with needs for special care' in item
-          )?.['Do you have children with needs for special care'] === 'yes';
-        const deductionOnSpecial12 = haveSpecial
-          ? extractExpense('Documented care expenses')
-          : 0;
+          return total + deductionOnSpecial12;
+        }
 
-        return total + deductionOnSpecial12;
+        default:
+          return total;
+      }
+    },
+    0
+  );
 
-      default:
-        return total;
-    }
-  }, 0);
+  return Math.min(totalDeduction, maxDeductionOnNumber);
 };
 
 const workAndEducationExpenseCalculator = (
