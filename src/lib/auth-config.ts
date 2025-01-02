@@ -87,6 +87,8 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
     async signIn({
@@ -129,12 +131,16 @@ export const authOptions: AuthOptions = {
     async jwt({
       token,
       user,
+      trigger,
+      session,
     }: {
       token: JWT;
       user: AuthUser | null;
+      trigger?: 'signIn' | 'signUp' | 'update';
+      session?: Session;
     }): Promise<JWT> {
-      if (user) {
-        const retrievedUser = await User.findOne({ email: user.email });
+      if (trigger === 'signIn' || (trigger === 'update' && session)) {
+        const retrievedUser = await User.findOne({ email: user?.email });
 
         if (retrievedUser) {
           token.id = retrievedUser.id;
@@ -152,7 +158,7 @@ export const authOptions: AuthOptions = {
           }
 
           token.email = retrievedUser.email;
-          token.firstName = retrievedUser.firstName || user.name;
+          token.firstName = retrievedUser.firstName || user?.name;
           token.lastName = retrievedUser.lastName;
           token.role = retrievedUser.role || 'customer';
           token.hasAnswers = retrievedUser.questionnaires?.length > 0;
