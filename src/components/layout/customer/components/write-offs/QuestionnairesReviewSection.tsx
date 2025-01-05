@@ -85,7 +85,7 @@ const QuestionnairesReviewSection = () => {
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(user?.questionnaires);
-  console.log({ bankAndLoansExpenseAmount });
+  console.log({ workAndEducationExpenseAmount });
 
   const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
 
@@ -228,6 +228,9 @@ const QuestionnairesReviewSection = () => {
                   user?.questionnaires?.find(
                     (item: Questionnaire) => item.question === question.title
                   )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none',
+                  !user?.questionnaires?.find(
+                    (item: Questionnaire) => item.question === question.title
+                  ) && 'bg-gray-200 pointer-events-none',
                   isAuditor && 'pointer-events-none',
                   isWithinDashboard && 'mr-1'
                 )}
@@ -264,16 +267,7 @@ const QuestionnairesReviewSection = () => {
                 NOK {numberFormatter(personalTotal)}
               </p>
             </div>
-            {/* <div className="flex justify-between items-center">
-              <p>Potential Savings</p>
-              <p className="font-medium">NOK 2,086</p>
-            </div> */}
           </div>
-          {/* <Separator className="bg-[#E4E4E7] my-6" />
-          <div className="flex justify-between items-center font-medium">
-            <p>Total (write-offs)</p>
-            <p>NOK 2,886</p>
-          </div> */}
         </div>
         <div className={cn('flex space-x-2', isWithinDashboard && 'hidden')}>
           {!isAuditor && (
