@@ -387,6 +387,32 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             )}
             required
           />
+          <p className="text-black pt-3 pb-1">Room Area</p>
+          <FormInput
+            name="Have a separate room in your house used only as your home office.Room Area"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="200 sq ft"
+            defaultValue={getDefaultValue(
+              'Have a separate room in your house used only as your home office',
+              'Room Area'
+            )}
+            required
+          />
+          <p className="text-black pt-3 pb-1">Operating Cost</p>
+          <FormInput
+            name="Have a separate room in your house used only as your home office.Operating Cost"
+            customClassName="w-full"
+            type="number"
+            control={control}
+            placeholder="NOK 200"
+            defaultValue={getDefaultValue(
+              'Have a separate room in your house used only as your home office',
+              'Operating Cost'
+            )}
+            required
+          />
         </>
       ),
     },

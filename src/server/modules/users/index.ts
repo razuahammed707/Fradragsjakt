@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import User from '@/server/db/models/user';
+import httpStatus from 'http-status';
 import { protectedProcedure } from '@/server/middlewares/with-auth';
 import { router } from '@/server/trpc';
 import { JwtPayload } from 'jsonwebtoken';
 import { userValidation } from './users.validation';
 import { z } from 'zod';
+import { errorHandler } from '@/server/middlewares/error-handler';
+import { ApiError } from '@/lib/exceptions';
 
 type Answer = z.infer<typeof userValidation.answerSchema>;
 type QuestionnaireItem = z.infer<typeof userValidation.userQuestionnaireSchema>;
@@ -21,21 +24,27 @@ export const userRouter = router({
   }),
 
   getUserByEmail: protectedProcedure.query(async ({ ctx }) => {
-    const sessionUser = ctx.user as JwtPayload;
+    try {
+      const sessionUser = ctx.user as JwtPayload;
 
-    if (!sessionUser || !sessionUser.id) {
-      throw new Error('You must be logged in to access this data.');
+      if (!sessionUser || !sessionUser.id) {
+        throw new Error('You must be logged in to access this data.');
+      }
+
+      const user = await User.findOne({
+        $or: [{ _id: sessionUser.id }, { email: sessionUser.email }],
+      });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      return sessionUser?.audit_for ? { ...user._doc, role: 'auditor' } : user;
+    } catch (error) {
+      console.log('error from get user by email', error);
+      const { message } = errorHandler(error);
+      throw new ApiError(httpStatus.NOT_FOUND, message);
     }
-
-    const user = await User.findOne({
-      $or: [{ _id: sessionUser.id }, { email: sessionUser.email }],
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    return sessionUser?.audit_for ? { ...user._doc, role: 'auditor' } : user;
   }),
 
   updateUser: protectedProcedure

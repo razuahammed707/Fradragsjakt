@@ -13,7 +13,7 @@ const healthAndFamilyExpenseCalculator = (
 ) => {
   if (!healthAndFamilyPayload || !healthAndFamilyPayload.answers) return 0;
 
-  let maxDeductionOnNumber = 0; // Initialize outside reduce to track max deduction
+  let maxDeductionOnNumber = 0;
 
   const totalDeduction = healthAndFamilyPayload.answers.reduce(
     (total, answer) => {
@@ -31,7 +31,6 @@ const healthAndFamilyExpenseCalculator = (
             'How many children do you have under the age of 12?'
           );
 
-          // Calculate maximum deduction based on number of children
           maxDeductionOnNumber =
             childrenCount > 0 ? 25000 + (childrenCount - 1) * 15000 : 0;
 
@@ -127,8 +126,6 @@ const workAndEducationExpenseCalculator = (
             ? deductibleDistance * 1.56 * extractExpense('Number of Workdays') -
               23100
             : 0;
-        console.log({ total, deductionOnDistance });
-
         return isNaN(total + deductionOnDistance)
           ? 0
           : total + deductionOnDistance;
@@ -155,6 +152,7 @@ const bankAndLoansExpenseCalculator = (
     switch (key) {
       case 'Have a loan':
         const deduction = extractExpense('Total interest paid') * 0.22; // 22%
+
         return total + deduction;
 
       case 'Have refinanced a loan in the last year':

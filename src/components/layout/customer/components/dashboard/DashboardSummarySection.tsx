@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import DeductiveExpenses from './DeductiveExpenses';
 import SummaryChart from './SummaryChart';
 import { trpc } from '@/utils/trpc';
-import AggregatedExpenseCard from './AggregatedExpenseCard';
 import {
   CustomCategory,
   finalCalculation,
@@ -64,9 +63,6 @@ const DashboardSummarySection = () => {
     : 0;
   return (
     <div>
-      {/* <h1 className="text-gray-500 font-bold text-xs uppercase mb-2">
-        Write-offs Overview
-      </h1> */}
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-5">
           <div>
@@ -86,19 +82,7 @@ const DashboardSummarySection = () => {
             </div>
           </div>
         </div>
-        {/* <YearlyExpenseGraph /> */}
         <RecentExpenseTable />
-        <div className="col-span-12 grid grid-cols-2 gap-2">
-          <AggregatedExpenseCard
-            origin="business"
-            items={businessData}
-            title="Write-offs From Business Spending (Total)"
-          />
-          <AggregatedExpenseCard
-            title="Write-offs From Personal Spending (Total)"
-            origin="personal"
-          />
-        </div>
       </div>
     </div>
   );

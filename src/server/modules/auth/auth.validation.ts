@@ -5,6 +5,6 @@ const signupSchema = z.object({
   password: z.string().min(6),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  profile: z.string(),
+  profile: z.array(z.string()),
 });
 export const authValidation = { signupSchema };
