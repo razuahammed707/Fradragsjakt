@@ -173,7 +173,7 @@ const QuestionnairesReviewSection = () => {
       <div
         className={cn(
           'col-span-3 flex border flex-col justify-between bg-white sticky top-0 rounded-2xl max-h-[calc(100vh-116px)] p-6',
-          isWithinDashboard && 'col-span-6'
+          isWithinDashboard && 'col-span-5'
         )}
       >
         <div className="space-y-4">
@@ -215,8 +215,7 @@ const QuestionnairesReviewSection = () => {
           <div
             className={cn(
               'text-sm text-[#101010] space-y-4',
-              !isGreaterThan1600 && 'space-y-2',
-              isWithinDashboard && 'max-h-[200px] overflow-y-auto'
+              !isGreaterThan1600 && 'space-y-2'
             )}
           >
             {getWriteOffs().map((question, i) => (
@@ -269,8 +268,8 @@ const QuestionnairesReviewSection = () => {
             </div>
           </div>
         </div>
-        <div className={cn('flex space-x-2', isWithinDashboard && 'hidden')}>
-          {!isAuditor && (
+        <div className={'flex space-x-2'}>
+          {!isAuditor && !isWithinDashboard && (
             <Button
               onClick={() =>
                 handleButtonClick(translate('questionnaire.edit_response'))

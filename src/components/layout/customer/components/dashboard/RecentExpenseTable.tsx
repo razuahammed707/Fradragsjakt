@@ -5,6 +5,8 @@ import { YearlyExpenseTableColumns } from './YearlyExpenseTableColumns';
 import { trpc } from '@/utils/trpc';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { cn } from '@/lib/utils';
+import useIsWithinDashboard from '@/hooks/is-within-dashboard';
 
 type RecentExpenseTableItem = {
   _id: string;
@@ -21,6 +23,7 @@ type RecentExpenseTableItems = {
 };
 
 const RecentExpenseTable = () => {
+  const isWithinDashboard = useIsWithinDashboard();
   const { data: session } = useSession();
   const { data: expensesResponse } = trpc.expenses.getExpenses.useQuery(
     {
@@ -42,9 +45,12 @@ const RecentExpenseTable = () => {
       </div>
 
       <SharedDataTable
-        className="max-h-[314px] border mt-6 "
         columns={YearlyExpenseTableColumns()}
         data={expensesResponse?.data || []}
+        className={cn(
+          'max-h-[314px] border mt-6 ',
+          isWithinDashboard && 'max-h-[350px] h-[350px] mb-2'
+        )}
       />
       <Link
         href={`/${session?.user?.role}/expenses`}

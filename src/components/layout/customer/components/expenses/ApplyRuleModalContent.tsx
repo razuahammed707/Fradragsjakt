@@ -54,7 +54,7 @@ function ApplyRuleModalContent({
   expenses: { expensesWithRules },
   setModalOpen,
 }: ExpenseRuleContentProps) {
-  const { translate } = useTranslation(); // Translation hook
+  const { translate } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [selectedRule, setSelectedRule] = useState<string>(
     expensesWithRules[0]?.rule || ''
@@ -94,6 +94,7 @@ function ApplyRuleModalContent({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
       utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
+      utils.expenses.getUnknownExpensesWithMatchedRules.invalidate();
       toast.success(translate('applyRuleModal.toast.success'));
       setLoading(false);
       setModalOpen(false);
@@ -110,10 +111,6 @@ function ApplyRuleModalContent({
 
   const handleApplyRule = () => {
     setLoading(true);
-    console.log(
-      'incomes before applying rule',
-      selectedRuleData?.expensePayload
-    );
     if (selectedRuleData?.expensePayload) {
       const expenses =
         tableData

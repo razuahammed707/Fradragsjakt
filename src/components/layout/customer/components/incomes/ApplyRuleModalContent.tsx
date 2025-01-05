@@ -94,6 +94,7 @@ function ApplyRuleModalContent({
     onSuccess: () => {
       utils.incomes.getIncomes.invalidate();
       utils.incomes.getCategoryAndIncomeTypeWiseIncomes.invalidate();
+      utils.incomes.getUnknownIncomesWithMatchedRules.invalidate();
 
       toast.success('Incomes updated successfully');
       setLoading(false);
