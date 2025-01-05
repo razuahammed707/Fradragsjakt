@@ -96,7 +96,7 @@ const IncomeCardsSection = ({ filterString }: IFilterProps) => {
     <div className="grid grid-cols-2 gap-3">
       <div className="grid grid-cols-2 gap-3">
         <IncomeStatsByType
-          type="Business"
+          type="Deductible"
           amount={incomeStats.business}
           filterString={filterString}
         />
