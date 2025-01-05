@@ -85,6 +85,7 @@ const QuestionnairesReviewSection = () => {
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(user?.questionnaires);
+  console.log({ bankAndLoansExpenseAmount });
 
   const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
 
