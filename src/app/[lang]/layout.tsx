@@ -2,7 +2,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { getServerSession } from 'next-auth';
 import { Toaster } from 'react-hot-toast';
 import Providers from '@/lib/StoreProviders';
 import { getDictionary } from '@/lib/dictionary';
@@ -13,6 +12,7 @@ import {
 } from '@/lib/TranslationProvider';
 import { ClientProviders } from '@/config/trpc/ClientProviders';
 import { ProgressbarProvider } from '@/lib/ProgressbarProvider';
+import { auth } from '@/auth';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,7 +32,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { lang: Locale };
 }>) {
-  const session = await getServerSession();
+  const session = await auth();
   const dictionary = (await getDictionary(lang).catch((e) =>
     console.log(e)
   )) as NestedTranslation;
