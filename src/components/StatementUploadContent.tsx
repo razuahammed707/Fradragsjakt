@@ -152,7 +152,8 @@ interface ParsedFileResult {
 }
 
 const parseFileData = (data: string[][]): ParsedFileResult => {
-  const headers: Column[] = data[0].slice(1).map((header, index) => ({
+  // Create headers from all columns, not skipping the first one
+  const headers: Column[] = data[0].map((header, index) => ({
     title: header,
     dataIndex: `column_${index}`,
     key: `column_${index}`,
@@ -160,12 +161,13 @@ const parseFileData = (data: string[][]): ParsedFileResult => {
 
   const parsedData: FileRowData[] = data
     .slice(1)
-    .filter((row) => row.slice(1).some((cell) => cell && cell.trim() !== ''))
+    .filter((row) => row.some((cell) => cell && cell.trim() !== ''))
     .map((row, rowIndex) => {
       const cleanedRow = [];
       let tempValue = '';
 
-      for (let i = 1; i < row.length; i++) {
+      // Process all columns, including the first one
+      for (let i = 0; i < row.length; i++) {
         const cell = row[i].trim();
 
         if (cell.startsWith('"') && !cell.endsWith('"')) {
@@ -194,13 +196,11 @@ const parseFileData = (data: string[][]): ParsedFileResult => {
       return Object.keys(processedRow).length > 1 ? processedRow : null;
     })
     .filter((row): row is FileRowData => row !== null);
-
   return {
     fileData: parsedData,
     headers: headers,
   };
 };
-
 const mapToExpenseData = (
   formData: FormData,
   fileData: FileRowData[],
@@ -235,13 +235,41 @@ const mapToExpenseData = (
         );
 
         if (!isNaN(parsedWithdrawal) || !isNaN(parsedDeposit)) {
-          const parsedDate = moment.utc(date, 'DD/MM/YYYY', true);
+          // Try parsing the date with multiple formats
+          const parsedDate = moment(
+            date,
+            [
+              'MM/DD/YYYY',
+              'DD/MM/YYYY',
+              'YYYY-MM-DD',
+              'DD-MM-YYYY',
+              'MM-DD-YYYY',
+              'YYYY/MM/DD',
+              'DD.MM.YYYY',
+              'MM.DD.YYYY',
+              'YYYY.MM.DD',
+              'M/D/YYYY',
+              'D/M/YYYY',
+              'MM/D/YYYY',
+              'M/DD/YYYY',
+              moment.ISO_8601,
+              'MMMM DD, YYYY',
+              'DD MMMM YYYY',
+              'MMM DD, YYYY',
+              'DD MMM YYYY',
+            ],
+            true
+          );
+
+          const finalDate = parsedDate.isValid()
+            ? parsedDate.toDate()
+            : moment(date, moment.ISO_8601).toDate();
 
           const payload = {
             description: description.trim(),
             withdrawal: parsedWithdrawal || 0,
             deposit: parsedDeposit || 0,
-            transaction_date: parsedDate?.toDate() || new Date(),
+            transaction_date: finalDate,
           };
           return payload;
         }
@@ -341,7 +369,6 @@ const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
 
   const onSubmit = (formData: FormData): void => {
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
-    console.log({ mappedExpenses });
 
     setLoading(true);
     mutation.mutate(mappedExpenses);

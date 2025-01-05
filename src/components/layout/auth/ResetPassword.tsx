@@ -24,6 +24,7 @@ const ResetPassword = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const router = useRouter();
@@ -52,6 +53,14 @@ const ResetPassword = () => {
     try {
       setIsSubmitting(true);
 
+      // Ensure password is at least 6 characters long
+      if (data.password.length < 6) {
+        toast.error('Password must be at least 6 characters long');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Ensure passwords match
       if (data.password !== data.confirmPassword) {
         toast.error('Passwords do not match');
         setIsSubmitting(false);
@@ -74,7 +83,12 @@ const ResetPassword = () => {
     }
   };
 
-  const isButtonDisabled = !password || !confirmPassword || isSubmitting;
+  const isButtonDisabled =
+    !password ||
+    !confirmPassword ||
+    isSubmitting ||
+    password.length < 6 ||
+    password !== confirmPassword;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
@@ -83,6 +97,7 @@ const ResetPassword = () => {
       </div>
       <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-md">
         <h2 className="text-2xl font-bold text-center mb-6">Reset Password</h2>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <Label className="block mb-2 text-[#101010] text-xs font-medium">
@@ -95,6 +110,9 @@ const ResetPassword = () => {
               placeholder="Create new password"
               required
             />
+            <ul className="mt-2 text-xs text-gray-600 list-disc pl-5">
+              <li>Must be at least 6 characters long</li>
+            </ul>
           </div>
           <div>
             <Label className="block mb-2 text-[#101010] text-xs font-medium">
@@ -108,6 +126,7 @@ const ResetPassword = () => {
               required
             />
           </div>
+
           <Button
             type="submit"
             disabled={isButtonDisabled}

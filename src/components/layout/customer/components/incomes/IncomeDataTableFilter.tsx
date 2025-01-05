@@ -33,7 +33,7 @@ interface CategoryOption {
 }
 
 const incomeTypes: FilterItem[] = [
-  { id: 'business', label: 'Business' },
+  { id: 'business', label: 'Deductible' },
   { id: 'personal', label: 'Personal' },
   { id: 'unknown', label: 'Unknown' },
 ];

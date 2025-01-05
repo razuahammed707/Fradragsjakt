@@ -46,7 +46,7 @@ const DeductiveExpenses = ({
           <div className="flex justify-between items-center px-4 bg-[#F0EFFE] py-2 rounded-2xl">
             <div className="flex flex-col">
               <span className="text-sm text-[#101010] font-semibold">
-                Bussiness
+                Deductible
               </span>
               <span className="text-sm text-[#627A97] font-medium">
                 Savings from

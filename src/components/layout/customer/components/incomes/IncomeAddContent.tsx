@@ -237,7 +237,7 @@ function IncomeAddContent({
             label: translate('componentsIncomeModal.income.label.income_type'),
             defaultValue: payload?.income_type,
             options: [
-              { title: 'Business', value: 'business' },
+              { title: 'Deductible', value: 'business' },
               { title: 'Personal', value: 'personal' },
               { title: 'Unknown', value: 'unknown' },
             ],

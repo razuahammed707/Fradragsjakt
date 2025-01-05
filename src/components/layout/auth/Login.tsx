@@ -9,30 +9,19 @@ import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react'; // Importing Eye and EyeOff icons
 import CompanyLogo from '@/components/CompanyLogo';
 import { useTranslation } from '@/lib/TranslationProvider';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
   const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { translate } = useTranslation();
 
-  // Simplified routing logic - removed useCallback as it's not needed here
-  const getTargetRoute = (role: string, hasAnswers: boolean) => {
-    console.log('role and hasAnswers from login', role, hasAnswers);
-    if (role) {
-      if (role === 'customer') {
-        return hasAnswers ? '/customer/dashboard' : '/onboard';
-      }
-      return role === 'auditor' ? '/auditor/dashboard' : `/${role}/dashboard`;
-    }
-  };
-
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
@@ -56,23 +45,23 @@ export default function Login() {
     }
   };
 
-  // Handle Google sign in
   const handleGoogleSignIn = () => {
     signIn('google');
   };
 
-  // Navigation effect
   useEffect(() => {
-    // Only proceed if we have an authenticated session
     if (status === 'authenticated' && session?.user) {
       const { role, hasAnswers } = session.user;
-
-      const targetRoute = getTargetRoute(role, hasAnswers);
+      const targetRoute =
+        role === 'customer'
+          ? hasAnswers
+            ? '/customer/dashboard'
+            : '/onboard'
+          : `/${role}/dashboard`;
 
       if (role && targetRoute) {
-        // Add a small delay to ensure session is properly synced
         const timer = setTimeout(() => {
-          router.replace(targetRoute); // Use replace instead of push
+          router.replace(targetRoute);
         }, 100);
 
         return () => clearTimeout(timer);
@@ -80,7 +69,6 @@ export default function Login() {
     }
   }, [session, status, router]);
 
-  // Loading state
   if (status === 'loading' || (status === 'authenticated' && session?.user)) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
@@ -89,8 +77,6 @@ export default function Login() {
       </div>
     );
   }
-
-  console.log('session from lo gin', session);
 
   return (
     <div className="flex flex-col space-y-8 items-center text-black justify-center h-screen bg-gray-100">
@@ -120,12 +106,12 @@ export default function Login() {
               required
             />
           </div>
-          <div>
+          <div className="relative">
             <label htmlFor="password" className="sr-only">
               {translate('page.login.password')}
             </label>
             <Input
-              type="password"
+              type={showPassword ? 'text' : 'password'} // Toggle password visibility
               id="password"
               placeholder={translate('page.login.password')}
               value={password}
@@ -133,6 +119,17 @@ export default function Login() {
               className="w-full"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
           </div>
           <Button
             disabled={isSubmitting}

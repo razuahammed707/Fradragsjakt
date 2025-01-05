@@ -85,6 +85,7 @@ const QuestionnairesReviewSection = () => {
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(user?.questionnaires);
+  console.log({ workAndEducationExpenseAmount });
 
   const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
 
@@ -172,7 +173,7 @@ const QuestionnairesReviewSection = () => {
       <div
         className={cn(
           'col-span-3 flex border flex-col justify-between bg-white sticky top-0 rounded-2xl max-h-[calc(100vh-116px)] p-6',
-          isWithinDashboard && 'col-span-6'
+          isWithinDashboard && 'col-span-5'
         )}
       >
         <div className="space-y-4">
@@ -214,8 +215,7 @@ const QuestionnairesReviewSection = () => {
           <div
             className={cn(
               'text-sm text-[#101010] space-y-4',
-              !isGreaterThan1600 && 'space-y-2',
-              isWithinDashboard && 'max-h-[200px] overflow-y-auto'
+              !isGreaterThan1600 && 'space-y-2'
             )}
           >
             {getWriteOffs().map((question, i) => (
@@ -227,6 +227,9 @@ const QuestionnairesReviewSection = () => {
                   user?.questionnaires?.find(
                     (item: Questionnaire) => item.question === question.title
                   )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none',
+                  !user?.questionnaires?.find(
+                    (item: Questionnaire) => item.question === question.title
+                  ) && 'bg-gray-200 pointer-events-none',
                   isAuditor && 'pointer-events-none',
                   isWithinDashboard && 'mr-1'
                 )}
@@ -263,19 +266,10 @@ const QuestionnairesReviewSection = () => {
                 NOK {numberFormatter(personalTotal)}
               </p>
             </div>
-            {/* <div className="flex justify-between items-center">
-              <p>Potential Savings</p>
-              <p className="font-medium">NOK 2,086</p>
-            </div> */}
           </div>
-          {/* <Separator className="bg-[#E4E4E7] my-6" />
-          <div className="flex justify-between items-center font-medium">
-            <p>Total (write-offs)</p>
-            <p>NOK 2,886</p>
-          </div> */}
         </div>
-        <div className={cn('flex space-x-2', isWithinDashboard && 'hidden')}>
-          {!isAuditor && (
+        <div className={'flex space-x-2'}>
+          {!isAuditor && !isWithinDashboard && (
             <Button
               onClick={() =>
                 handleButtonClick(translate('questionnaire.edit_response'))
