@@ -5,7 +5,7 @@ const UserSchema: Schema = new Schema<IUser>(
   {
     firstName: { type: String },
     lastName: { type: String },
-    profile: { type: String },
+    profile: { type: [String] },
     email: { type: String, required: true, unique: true },
     password: {
       type: String,

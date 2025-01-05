@@ -14,13 +14,14 @@ import { Loader2 } from 'lucide-react';
 import CompanyLogo from '@/components/CompanyLogo';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { cn } from '@/lib/utils';
+import { MultiSelectFormInput } from '@/components/MultiSelectFormInput';
 
 type FormData = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  profile: string;
+  profile: string[];
 };
 
 export default function SignUp() {
@@ -68,6 +69,7 @@ export default function SignUp() {
   const onSubmit = (data: FormData) => {
     setError(null);
     setLoading(true);
+    console.log({ data });
     mutation.mutate(data);
   };
 
@@ -99,20 +101,21 @@ export default function SignUp() {
               required
             />
           </div>
-          <FormInput
+
+          <MultiSelectFormInput
             name="profile"
-            control={control}
-            type="select"
-            placeholder="Select Profile"
             options={[
-              { title: 'Married', value: 'married' },
-              { title: 'Dependents', value: 'dependents' },
-              { title: 'Freelancer', value: 'freelancer' },
-              { title: 'Employee', value: 'employee' },
-              { title: 'Business Owner', value: 'business owner' },
-              { title: 'Student', value: 'student' },
-              { title: 'Sole Proprietorship', value: 'sole proprietorship' },
+              { label: 'Married', value: 'married' },
+              { label: 'Dependents', value: 'dependents' },
+              { label: 'Freelancer', value: 'freelancer' },
+              { label: 'Employee', value: 'employee' },
+              { label: 'Business Owner', value: 'business owner' },
+              { label: 'Student', value: 'student' },
+              { label: 'Sole Proprietorship', value: 'sole proprietorship' },
             ]}
+            placeholder="Choose Profile..."
+            control={control}
+            customClassName=""
           />
           <FormInput
             name="email"

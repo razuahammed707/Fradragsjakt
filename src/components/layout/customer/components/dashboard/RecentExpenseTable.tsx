@@ -48,8 +48,8 @@ const RecentExpenseTable = () => {
         columns={YearlyExpenseTableColumns()}
         data={expensesResponse?.data || []}
         className={cn(
-          'max-h-[314px] border mt-6 ',
-          isWithinDashboard && 'max-h-[350px] h-[350px] mb-2'
+          'max-h-[312px] border mt-6 ',
+          isWithinDashboard && ' mb-2'
         )}
       />
       <Link
