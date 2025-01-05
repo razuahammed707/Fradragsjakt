@@ -64,7 +64,7 @@ const DashboardTotalIncomeChart = ({
           <div className="flex justify-between items-center px-4 bg-[#F0EFFE] rounded-2xl">
             <div className="flex flex-col">
               <span className="text-sm text-[#101010] font-semibold">
-                Business
+                Deductible
               </span>
               <span className="text-sm text-[#627A97] font-medium">
                 Incomes from
