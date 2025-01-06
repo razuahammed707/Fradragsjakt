@@ -9,14 +9,14 @@ import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, Eye, EyeOff } from 'lucide-react'; // Importing Eye and EyeOff icons
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import CompanyLogo from '@/components/CompanyLogo';
 import { useTranslation } from '@/lib/TranslationProvider';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -36,7 +36,10 @@ export default function Login() {
       });
 
       if (result?.error) {
-        toast.error(result.error, { duration: 4000 });
+        console.log('result.error', result);
+        toast.error('Invalid email or password. Please try again.', {
+          duration: 3000,
+        });
         setIsSubmitting(false);
       }
     } catch (error) {
