@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import CircularProgressChart from './CircularProgressChart';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
@@ -33,9 +32,6 @@ const DeductiveExpenses = ({
             <h4 className="text-sm  text-[#627A97] font-semibold">
               Total <span className="text-nowrap">write-offs</span>
             </h4>
-            <Badge className="bg-[#F0EFFE] px-1 text-nowrap max-h-[22px]  hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium">
-              This year
-            </Badge>
           </div>
           <p className="text-[28px] text-[#00104B] font-bold">
             NOK {numberFormatter(totalDeductibleAmount) || 0}
