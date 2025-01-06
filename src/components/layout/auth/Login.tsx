@@ -73,7 +73,7 @@ export default function Login() {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="mt-4 text-gray-600">Wait a sec...</p>
+        <p className="mt-4 text-gray-600">Wait a sec..</p>
       </div>
     );
   }
