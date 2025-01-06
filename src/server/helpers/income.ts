@@ -84,7 +84,12 @@ async function createIncomeRecord(input: IIncome, userId: string) {
 }
 
 async function createIncomeFromBulkInput(
-  input: { description: string; deposit: number },
+  input: {
+    description: string;
+    withdrawal: number;
+    deposit: number;
+    transaction_date?: any;
+  },
   userId: string
 ) {
   try {
@@ -99,6 +104,7 @@ async function createIncomeFromBulkInput(
         rule?.income_type || rule?.expense_type || IncomeType.unknown,
       category: rule?.category_title || 'unknown',
       rule: rule?._id,
+      transaction_date: new Date(input.transaction_date),
     };
 
     return await IncomeModel.findOneAndUpdate(

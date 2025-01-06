@@ -29,7 +29,7 @@ export default function RulesOverviewSection() {
     setPageLimit(page);
   };
 
-  const { data: rulesResponse } = trpc.rules.getRules.useQuery(
+  const { data: rulesResponse, isLoading } = trpc.rules.getRules.useQuery(
     {
       page: currentPage,
       limit: pageLimit,
@@ -111,6 +111,7 @@ export default function RulesOverviewSection() {
         <TabsContent value="all">
           <div className=" ">
             <SharedDataTable
+              loading={isLoading}
               className="min-h-[500px]"
               columns={RulesDataTableColumns()}
               data={rulesResponse?.data ?? []}
@@ -129,6 +130,7 @@ export default function RulesOverviewSection() {
         <TabsContent value="income">
           <div className="mt-10">
             <SharedDataTable
+              loading={isLoading}
               className="min-h-[500px]"
               columns={RulesDataTableColumns()}
               data={
@@ -151,6 +153,7 @@ export default function RulesOverviewSection() {
         <TabsContent value="expense">
           <div className="mt-10">
             <SharedDataTable
+              loading={isLoading}
               className="min-h-[500px]"
               columns={RulesDataTableColumns()}
               data={

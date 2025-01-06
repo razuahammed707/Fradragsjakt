@@ -93,7 +93,12 @@ async function createExpenseRecord(input: IExpense, userId: string) {
 }
 
 async function createExpenseFromBulkInput(
-  input: { description: string; withdrawal: number },
+  input: {
+    description: string;
+    withdrawal: number;
+    deposit: number;
+    transaction_date?: any;
+  },
   userId: string
 ) {
   try {
@@ -107,9 +112,8 @@ async function createExpenseFromBulkInput(
       expense_type: rule?.expense_type || ExpenseType.unknown,
       category: rule?.category_title || 'unknown',
       rule: rule?._id,
+      transaction_date: new Date(input.transaction_date),
     };
-
-    // console.log('expense data', expenseData);
 
     return await ExpenseModel.findOneAndUpdate(
       { description: input.description, user: userId },

@@ -369,6 +369,7 @@ const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
 
   const onSubmit = (formData: FormData): void => {
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
+    console.log({ mappedExpenses });
 
     setLoading(true);
     mutation.mutate(mappedExpenses);

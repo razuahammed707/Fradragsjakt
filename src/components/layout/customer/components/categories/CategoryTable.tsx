@@ -33,7 +33,7 @@ export default function CategoryTable() {
     setPageLimit(page);
   };
 
-  const { data } = trpc.categories.getCategories.useQuery(
+  const { data, isLoading } = trpc.categories.getCategories.useQuery(
     {
       page: currentPage,
       limit: pageLimit,
@@ -122,6 +122,7 @@ export default function CategoryTable() {
         <TabsContent value="all">
           <div className=" ">
             <SharedDataTable
+              loading={isLoading}
               className="min-h-[500px]"
               columns={CategoryTableColumns()}
               data={data?.data ?? []}
@@ -140,6 +141,7 @@ export default function CategoryTable() {
         <TabsContent value="income">
           <div className="mt-10">
             <SharedDataTable
+              loading={isLoading}
               className="min-h-[500px]"
               columns={CategoryTableColumns()}
               data={data?.data ?? []}
@@ -158,6 +160,7 @@ export default function CategoryTable() {
         <TabsContent value="expense">
           <div className="mt-10">
             <SharedDataTable
+              loading={isLoading}
               className="min-h-[500px]"
               columns={CategoryTableColumns()}
               data={data?.data ?? []}
