@@ -1,79 +1,99 @@
 'use client';
 
 import { signIn, useSession } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
-import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, Eye, EyeOff } from 'lucide-react'; // Importing Eye and EyeOff icons
 import CompanyLogo from '@/components/CompanyLogo';
 import { useTranslation } from '@/lib/TranslationProvider';
 
+// Type definitions for better type safety
+interface LoginFormState {
+  email: string;
+  password: string;
+  isSubmitting: boolean;
+}
+
+const INITIAL_FORM_STATE: LoginFormState = {
+  email: '',
+  password: '',
+  isSubmitting: false,
+};
+
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+  const [formState, setFormState] =
+    useState<LoginFormState>(INITIAL_FORM_STATE);
   const { data: session, status } = useSession();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { translate } = useTranslation();
 
+  const isLoading =
+    status === 'loading' || (status === 'authenticated' && session?.user);
+
+  // Memoized route calculation
+  const getTargetRoute = (role: string, hasAnswers: boolean): string => {
+    if (!role) return '/login';
+
+    if (role === 'customer') {
+      return hasAnswers ? '/customer/dashboard' : '/onboard';
+    }
+    return role === 'auditor' ? '/auditor/dashboard' : `/${role}/dashboard`;
+  };
+
+  // Form handlers
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormState((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting) return;
+    if (formState.isSubmitting) return;
 
-    setIsSubmitting(true);
+    setFormState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
       const result = await signIn('credentials', {
         redirect: false,
-        email,
-        password,
+        email: formState.email,
+        password: formState.password,
       });
 
       if (result?.error) {
         toast.error(result.error, { duration: 4000 });
-        setIsSubmitting(false);
       }
     } catch (error) {
       toast.error(`An unexpected error occurred: ${error}`, { duration: 4000 });
-      setIsSubmitting(false);
+    } finally {
+      setFormState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
-  const handleGoogleSignIn = () => {
-    signIn('google');
-  };
-
+  // Navigation effect
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
       const { role, hasAnswers } = session.user;
-      const targetRoute =
-        role === 'customer'
-          ? hasAnswers
-            ? '/customer/dashboard'
-            : '/onboard'
-          : `/${role}/dashboard`;
+      const targetRoute = getTargetRoute(role, hasAnswers);
 
-      if (role && targetRoute) {
-        const timer = setTimeout(() => {
-          router.replace(targetRoute);
-        }, 100);
+      const timer = setTimeout(() => {
+        router.replace(targetRoute);
+      }, 100);
 
-        return () => clearTimeout(timer);
-      }
+      return () => clearTimeout(timer);
     }
   }, [session, status, router]);
 
-  if (status === 'loading' || (status === 'authenticated' && session?.user)) {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="mt-4 text-gray-600">Wait a sec...</p>
+        <p className="mt-4 text-gray-600">{translate('common.loading')}</p>
       </div>
     );
   }
@@ -92,51 +112,32 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="sr-only">
-              {translate('page.login.email')}
-            </label>
-            <Input
-              type="email"
-              id="email"
-              placeholder={translate('page.login.email')}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full"
-              required
-            />
-          </div>
-          <div className="relative">
-            <label htmlFor="password" className="sr-only">
-              {translate('page.login.password')}
-            </label>
-            <Input
-              type={showPassword ? 'text' : 'password'} // Toggle password visibility
-              id="password"
-              placeholder={translate('page.login.password')}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </button>
-          </div>
+          <Input
+            type="email"
+            name="email"
+            value={formState.email}
+            onChange={handleInputChange}
+            placeholder={translate('page.login.email')}
+            className="w-full"
+            required
+          />
+          <Input
+            type="password"
+            name="password"
+            value={formState.password}
+            onChange={handleInputChange}
+            placeholder={translate('page.login.password')}
+            className="w-full"
+            required
+          />
           <Button
-            disabled={isSubmitting}
+            disabled={formState.isSubmitting}
             type="submit"
             className="w-full text-white"
           >
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {formState.isSubmitting && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
             {translate('page.login.sign_in')}
           </Button>
         </form>
@@ -148,24 +149,28 @@ export default function Login() {
               {translate('page.login.remember_me')}
             </label>
           </div>
-          <p className="text-sm font-medium">
-            <Link href="/forgot-password" className="text-[#00104B]">
-              {translate('page.login.forgot_password')}
-            </Link>
-          </p>
+          <Link
+            href="/forgot-password"
+            className="text-sm font-medium text-[#00104B]"
+          >
+            {translate('page.login.forgot_password')}
+          </Link>
         </div>
 
-        <div className="flex items-center justify-between">
-          <span className="border-t w-full inline-block"></span>
-          <span className="px-4 min-w-[200px] text-gray-500">
-            {translate('page.login.continue_with')}
-          </span>
-          <span className="border-t w-full inline-block"></span>
+        <div className="relative py-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t"></div>
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-4 text-gray-500">
+              {translate('page.login.continue_with')}
+            </span>
+          </div>
         </div>
 
         <Button
           variant="outline"
-          onClick={handleGoogleSignIn}
+          onClick={() => signIn('google')}
           className="w-full flex items-center justify-center"
         >
           <FcGoogle className="text-lg" />
@@ -173,6 +178,7 @@ export default function Login() {
             {translate('page.login.google')}
           </span>
         </Button>
+
         <p className="text-sm text-[#71717A] font-medium">
           {translate('page.login.no_account')}{' '}
           <Link href="/signup" className="text-[#00104B]">
