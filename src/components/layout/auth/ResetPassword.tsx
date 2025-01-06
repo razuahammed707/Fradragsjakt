@@ -110,9 +110,7 @@ const ResetPassword = () => {
               placeholder="Create new password"
               required
             />
-            <ul className="mt-2 text-xs text-gray-600 list-disc pl-5">
-              <li>Must be at least 6 characters long</li>
-            </ul>
+            <ul className="mt-2 text-xs text-gray-600 list-disc pl-5"></ul>
           </div>
           <div>
             <Label className="block mb-2 text-[#101010] text-xs font-medium">
@@ -124,6 +122,7 @@ const ResetPassword = () => {
               type="password"
               placeholder="Confirm new password"
               required
+              showPasswordRequirements={false}
             />
           </div>
 

@@ -42,6 +42,7 @@ export default function WriteOffsTableSection() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSetSearchTerm(e.target.value);
   };
+
   return (
     <div
       className={cn(
@@ -49,10 +50,10 @@ export default function WriteOffsTableSection() {
         !isWithinDashboard && 'mt-2'
       )}
     >
-      <div className="flex justify-between items-center mb-4  ">
+      <div className="flex justify-between items-center mb-4">
         <h2
           className={cn(
-            'text-xl  font-bold',
+            'text-xl font-bold',
             isWithinDashboard && 'text-sm font-semibold'
           )}
         >
@@ -62,7 +63,6 @@ export default function WriteOffsTableSection() {
         </h2>
         <div className={cn('flex gap-2', isWithinDashboard && 'hidden')}>
           <SearchInput
-            className=""
             placeholder={translate(
               'page.search.write_off',
               'Search Write-offs'
@@ -93,7 +93,7 @@ export default function WriteOffsTableSection() {
             onPageLimitChange={handlePageLimitChange}
           />
         </div>
-        {isWithinDashboard && (
+        {isWithinDashboard && writeOffs?.data?.length > 0 && (
           <Link
             href={`/${session?.user?.role}/write-offs`}
             className="flex justify-center font-medium text-sm text-[#5B52F9]"
