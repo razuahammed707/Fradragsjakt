@@ -19,7 +19,6 @@ function ExpenseOverviewSection({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -33,7 +32,6 @@ function ExpenseOverviewSection({
         keepPreviousData: true,
       }
     );
-  console.log({ expensesResponse });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

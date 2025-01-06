@@ -74,6 +74,8 @@ const workAndEducationExpenseCalculator = (
     )
     ? 3850
     : 0;
+  console.log('initialAmount', initialAmount);
+
   return workAndEducationPayload.answers.reduce((total, answer) => {
     const [key, value] = Object.entries(answer)[0];
 
@@ -114,7 +116,9 @@ const workAndEducationExpenseCalculator = (
       case 'Have a separate room in your house used only as your home office':
         const deductionOnSeperateRoom =
           (extractExpense('Room Area') / extractExpense('Home Area')) *
-          extractExpense('Operating Cost');
+            extractExpense('Operating Cost') || 0;
+        console.log({ deductionOnSeperateRoom });
+
         return total + deductionOnSeperateRoom;
 
       case 'The return distance between home and work is more than 37 kilometres':
