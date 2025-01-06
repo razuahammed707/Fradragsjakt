@@ -2,8 +2,11 @@ import CustomerCategories from '@/components/layout/customer/Categories';
 
 import React from 'react';
 export const metadata = {
-  title: 'Skattepluss Categories Page',
+  title: 'Skattepluss | Categories',
+  description:
+    'Manage and explore various categories efficiently in Skattepluss. Audit categories with ease.',
 };
+
 function Categories() {
   return (
     <>
