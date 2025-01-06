@@ -45,8 +45,8 @@ export async function middleware(request: NextRequest) {
   // If it's a protected route, check for authentication
   if (isProtectedRoute) {
     const sessionToken =
-      request.cookies.get('next-auth.session-token')?.value ||
-      request.cookies.get('__Secure-next-auth.session-token')?.value;
+      request.cookies.get('authjs.session-token')?.value ||
+      request.cookies.get('__Secure-authjs.session-token')?.value;
 
     if (!sessionToken) {
       const locale = pathname.split('/')[1];
