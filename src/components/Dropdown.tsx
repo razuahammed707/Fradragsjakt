@@ -10,11 +10,13 @@ import {
 import { Button } from './ui/button';
 import Avatar from '../../public/images/user_avatar.png';
 import Image from 'next/image';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { LogOut, Settings, Info } from 'lucide-react';
+import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 
 function ProfileDropdown({ role }: { role: string }) {
+  const { data: session } = useSession();
   const logOut = () => {
     localStorage.clear();
     localStorage.removeItem('persist:root');
@@ -37,10 +39,12 @@ function ProfileDropdown({ role }: { role: string }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[213px]">
         <DropdownMenuLabel className="text-Black font-bold p-2">
-          User
+          {transformToUppercase(
+            session?.user?.firstName + ' ' + session?.user?.lastName
+          )}
         </DropdownMenuLabel>
         <DropdownMenuLabel className="text-gray-700 font-normal p-2">
-          Customer
+          {transformToUppercase(session?.user?.role)}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="flex items-center text-gray-600 font-medium p-2">
