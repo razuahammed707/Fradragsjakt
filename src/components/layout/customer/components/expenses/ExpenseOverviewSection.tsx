@@ -33,6 +33,7 @@ function ExpenseOverviewSection({
         keepPreviousData: true,
       }
     );
+  console.log({ expensesResponse });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
