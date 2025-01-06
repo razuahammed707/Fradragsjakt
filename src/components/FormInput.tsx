@@ -24,13 +24,13 @@ export interface FormInputProps {
   type: 'text' | 'email' | 'password' | 'select' | 'number' | 'textarea';
   placeholder?: string;
   options?: Option[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control?: Control<any>;
   required?: boolean;
   customClassName?: string;
   defaultValue?: string | number;
   rows?: number;
-  errorMessage?: string; // Add an optional error message prop
+  errorMessage?: string;
+  showPasswordRequirements?: boolean; // New prop to control password requirements visibility
 }
 
 export function FormInput({
@@ -43,7 +43,8 @@ export function FormInput({
   customClassName,
   defaultValue = '',
   rows,
-  errorMessage, // Receive the errorMessage as prop
+  errorMessage,
+  showPasswordRequirements = true, // Default to true to maintain existing behavior
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -75,8 +76,7 @@ export function FormInput({
             </Select>
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
-            )}{' '}
-            {/* Display error globally */}
+            )}
           </div>
         )}
       />
@@ -102,8 +102,7 @@ export function FormInput({
             />
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
-            )}{' '}
-            {/* Display error globally */}
+            )}
           </div>
         )}
       />
@@ -130,8 +129,7 @@ export function FormInput({
             />
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
-            )}{' '}
-            {/* Display error globally */}
+            )}
           </div>
         )}
       />
@@ -145,10 +143,12 @@ export function FormInput({
         control={control}
         rules={{
           required,
-          minLength: {
-            value: 6,
-            message: 'Password must be at least 6 characters long.',
-          },
+          ...(showPasswordRequirements && {
+            minLength: {
+              value: 6,
+              message: 'Password must be at least 6 characters long.',
+            },
+          }),
         }}
         defaultValue={defaultValue}
         render={({ field, fieldState: { error } }) => (
@@ -169,15 +169,22 @@ export function FormInput({
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            {error && (
-              <div className="text-red-500 text-sm mt-1">{error.message}</div>
-            )}{' '}
-            {/* Display error globally */}
+            {showPasswordRequirements && (
+              <div
+                className={`text-sm mt-1 ${
+                  error ? 'text-red-500' : 'text-gray-500'
+                }`}
+              >
+                {error?.message ||
+                  'Password must be at least 6 characters long.'}
+              </div>
+            )}
           </div>
         )}
       />
     );
   }
+
   // Default input
   return (
     <Controller
@@ -196,8 +203,7 @@ export function FormInput({
           />
           {error && (
             <div className="text-red-500 text-sm mt-1">{error.message}</div>
-          )}{' '}
-          {/* Display error globally */}
+          )}
         </div>
       )}
     />

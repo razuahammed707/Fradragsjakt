@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import CompanyLogo from '@/components/CompanyLogo';
 import { useTranslation } from '@/lib/TranslationProvider';
-import { cn } from '@/lib/utils';
+
 import { MultiSelectFormInput } from '@/components/MultiSelectFormInput';
 
 type FormData = {
@@ -132,14 +132,11 @@ export default function SignUp() {
               placeholder={translate('page.signup.password')}
               required
             />
-            <small
-              className={cn(
-                'text-left text-gray-500',
-                error && 'text-red-500 shadow-sm font-medium'
-              )}
-            >
-              {error ? error : 'Password must be at least 6 characters long.'}
-            </small>
+            {error && (
+              <small className="text-red-500 shadow-sm font-medium">
+                {error}
+              </small>
+            )}
           </div>
 
           <Button

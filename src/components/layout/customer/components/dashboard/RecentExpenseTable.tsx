@@ -37,7 +37,7 @@ const RecentExpenseTable = () => {
   console.log({ expensesResponse });
 
   return (
-    <div className="col-span-7  p-6 rounded-2xl bg-white">
+    <div className="col-span-7 p-6 rounded-2xl bg-white">
       <div>
         <h4 className="text-sm text-[#101010] font-semibold">
           Recent Expenses Overview
@@ -47,17 +47,16 @@ const RecentExpenseTable = () => {
       <SharedDataTable
         columns={YearlyExpenseTableColumns()}
         data={expensesResponse?.data || []}
-        className={cn(
-          'max-h-[312px] border mt-6 ',
-          isWithinDashboard && ' mb-2'
-        )}
+        className={cn('max-h-[312px] border mt-6', isWithinDashboard && 'mb-2')}
       />
-      <Link
-        href={`/${session?.user?.role}/expenses`}
-        className="flex justify-center font-medium text-sm text-[#5B52F9]"
-      >
-        View more ...
-      </Link>
+      {(expensesResponse?.data?.length ?? 0) > 0 && (
+        <Link
+          href={`/${session?.user?.role}/expenses`}
+          className="flex justify-center font-medium text-sm text-[#5B52F9]"
+        >
+          View more ...
+        </Link>
+      )}
     </div>
   );
 };
