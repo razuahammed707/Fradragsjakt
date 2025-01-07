@@ -1,5 +1,5 @@
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
 import { useForm } from 'react-hook-form';
@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
+import { Loader2 } from 'lucide-react';
 
 type RuleFormData = {
   description_contains: string;
@@ -37,6 +38,7 @@ function CreateRuleModalContent({
   });
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
+  const [loading, setLoading] = useState(false);
 
   const categoryForValue = watch('rule_for');
 
@@ -48,6 +50,7 @@ function CreateRuleModalContent({
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
       toast.success(translate('toast.ruleCreatedSuccess'));
+      setLoading(false);
       if (modalClose) {
         modalClose(false);
       }
@@ -55,12 +58,14 @@ function CreateRuleModalContent({
     },
     onError: (error) => {
       toast.error(error.message);
+      setLoading(false);
     },
   });
 
   const ruleUpdateMutation = trpc.rules.updateRule.useMutation({
     onSuccess: () => {
       toast.success(translate('toast.ruleUpdatedSuccess'));
+      setLoading(false);
       if (modalClose) {
         modalClose(false);
       }
@@ -68,18 +73,18 @@ function CreateRuleModalContent({
     },
     onError: (error) => {
       toast.error(error.message);
+      setLoading(false);
     },
   });
 
   const onSubmit = (data: RuleFormData) => {
+    setLoading(true);
     if (origin && updateRulePayload) {
       ruleUpdateMutation.mutate({ _id: updateRulePayload?._id, ...data });
     } else {
       ruleMutation.mutate(data);
     }
   };
-
-  const isLoading = ruleMutation.isLoading || ruleUpdateMutation.isLoading;
 
   return (
     <div>
@@ -163,15 +168,12 @@ function CreateRuleModalContent({
           <Button
             type="submit"
             className="w-full text-white"
-            disabled={!formState.isValid || isLoading}
+            disabled={!formState.isValid || loading}
           >
-            {isLoading ? (
-              <span className="loader"></span>
-            ) : !origin ? (
-              translate('componentsRuleModal.rule.create')
-            ) : (
-              translate('componentsRuleModal.rule.update')
-            )}
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {!origin
+              ? translate('componentsRuleModal.rule.create')
+              : translate('componentsRuleModal.rule.update')}
           </Button>
           <Button
             type="button"
