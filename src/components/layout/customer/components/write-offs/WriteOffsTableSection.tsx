@@ -57,9 +57,7 @@ export default function WriteOffsTableSection() {
             isWithinDashboard && 'text-sm font-semibold'
           )}
         >
-          {isWithinDashboard
-            ? 'Write-offs overview '
-            : translate('page.writeoffoverview.title')}
+          {isWithinDashboard ? 'Write-offs overview ' : 'Write-Offs Overview'}
         </h2>
         <div className={cn('flex gap-2', isWithinDashboard && 'hidden')}>
           <SearchInput
