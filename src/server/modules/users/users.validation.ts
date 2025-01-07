@@ -15,6 +15,7 @@ const userSchema = z.object({
   provider: z.enum(['credentials', 'google']).optional(),
   role: z.enum(['admin', 'auditor', 'customer']).optional(),
   image: z.string().optional(),
+  profile: z.array(z.string()).optional(),
   questionnaires: z
     .array(
       z.object({
@@ -25,8 +26,24 @@ const userSchema = z.object({
     .optional(),
   isVerified: z.boolean().optional(),
 });
+const updateUserPasswordSchema = z.object({
+  oldPassword: z.string(),
+  newPassword: z.string().min(6, 'Password must be at least 6 characters long'),
+});
+const updateUserPersonalInfoSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  profile: z.array(z.string()),
+});
+const updateUserAvatarSchema = z.object({
+  image: z.string(),
+});
 export const userValidation = {
   userSchema,
   userQuestionnaireSchema,
   answerSchema,
+  updateUserPasswordSchema,
+  updateUserPersonalInfoSchema,
+  updateUserAvatarSchema,
 };

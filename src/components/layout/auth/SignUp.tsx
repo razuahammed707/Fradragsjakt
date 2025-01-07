@@ -104,15 +104,6 @@ export default function SignUp() {
 
           <MultiSelectFormInput
             name="profile"
-            options={[
-              { label: 'Married', value: 'married' },
-              { label: 'Dependents', value: 'dependents' },
-              { label: 'Freelancer', value: 'freelancer' },
-              { label: 'Employee', value: 'employee' },
-              { label: 'Business Owner', value: 'business owner' },
-              { label: 'Student', value: 'student' },
-              { label: 'Sole Proprietorship', value: 'sole proprietorship' },
-            ]}
             placeholder="Choose Profile..."
             control={control}
             customClassName=""
