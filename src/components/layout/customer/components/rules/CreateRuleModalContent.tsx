@@ -169,7 +169,7 @@ function CreateRuleModalContent({
           <Button
             type="button"
             className="w-full bg-[#F0EFFE] text-[#FF4444] hover:bg-[#F0EFFE] mt-3"
-            onClick={() => modalClose && modalClose(false)} // Close modal on discard
+            onClick={() => modalClose && modalClose(false)}
           >
             {translate('componentsRuleModal.rule.discard')}
           </Button>

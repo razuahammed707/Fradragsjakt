@@ -8,6 +8,7 @@ import { userValidation } from './users.validation';
 import { z } from 'zod';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import { ApiError } from '@/lib/exceptions';
+import bcrypt from 'bcrypt';
 
 type Answer = z.infer<typeof userValidation.answerSchema>;
 type QuestionnaireItem = z.infer<typeof userValidation.userQuestionnaireSchema>;
@@ -46,7 +47,25 @@ export const userRouter = router({
       throw new ApiError(httpStatus.NOT_FOUND, message);
     }
   }),
+  updateUserAvatar: protectedProcedure
+    .input(userValidation.updateUserAvatarSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { image } = input;
+      const sessionUser = ctx.user as JwtPayload;
+      if (!sessionUser?.email) {
+        throw new Error('You must be logged in to update your avatar.');
+      }
 
+      const user = await User.findOne({ email: sessionUser.email });
+      if (!user) {
+        throw new Error('User not found.');
+      }
+
+      user.image = image;
+      await user.save();
+
+      return user;
+    }),
   updateUser: protectedProcedure
     .input(userValidation.userSchema)
     .mutation(async ({ ctx, input }) => {
@@ -124,7 +143,53 @@ export const userRouter = router({
 
       return updatedUser;
     }),
+  updateUserPersonalInfo: protectedProcedure
+    .input(userValidation.updateUserPersonalInfoSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { firstName, lastName, profile } = input;
+      const sessionUser = ctx.user as JwtPayload;
+      if (!sessionUser?.email) {
+        throw new Error(
+          'You must be logged in to update your personal information.'
+        );
+      }
 
+      const user = await User.findOne({ email: sessionUser.email });
+      if (!user) {
+        throw new Error('User not found.');
+      }
+
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.profile = profile;
+      await user.save();
+
+      return user;
+    }),
+  updateUserPassword: protectedProcedure
+    .input(userValidation.updateUserPasswordSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { oldPassword, newPassword } = input;
+      const sessionUser = ctx.user as JwtPayload;
+      if (!sessionUser?.email) {
+        throw new Error('You must be logged in to update your password.');
+      }
+
+      const user = await User.findOne({ email: sessionUser.email });
+      if (!user) {
+        throw new Error('User not found.');
+      }
+
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        throw new Error('Current password you provided is incorrect!');
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+      await user.save();
+      return { message: 'Password updated successfully.' };
+    }),
   updateUserQuestionnaires: protectedProcedure
     .input(userValidation.userQuestionnaireSchema)
     .mutation(async ({ ctx, input }) => {

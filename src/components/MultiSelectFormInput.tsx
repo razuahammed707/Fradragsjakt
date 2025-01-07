@@ -19,6 +19,15 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
+const defaultOptions = [
+  { label: 'Married', value: 'married' },
+  { label: 'Dependents', value: 'dependents' },
+  { label: 'Freelancer', value: 'freelancer' },
+  { label: 'Employee', value: 'employee' },
+  { label: 'Business Owner', value: 'business owner' },
+  { label: 'Student', value: 'student' },
+  { label: 'Sole Proprietorship', value: 'sole proprietorship' },
+];
 type Option = {
   value: string;
   label: string;
@@ -26,20 +35,22 @@ type Option = {
 
 export interface MultiSelectFormInputProps {
   name: string;
-  options: Option[];
+  options?: Option[];
   placeholder?: string;
   control: Control<any>;
   customClassName?: string;
   errorMessage?: string;
+  defaultValue?: string[];
 }
 
 export function MultiSelectFormInput({
   name,
-  options,
+  options = defaultOptions,
   placeholder = 'Select options...',
   control,
   customClassName,
   errorMessage,
+  defaultValue = [],
 }: MultiSelectFormInputProps) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLButtonElement>(null);
@@ -58,8 +69,8 @@ export function MultiSelectFormInput({
     <Controller
       name={name}
       control={control}
-      defaultValue={[]}
-      render={({ field: { value, onChange } }) => (
+      defaultValue={defaultValue}
+      render={({ field: { value = [], onChange } }) => (
         <div>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -71,11 +82,11 @@ export function MultiSelectFormInput({
                 className={`w-full px-2 justify-between ${customClassName}`}
               >
                 <div className="flex gap-2 justify-start flex-wrap">
-                  {value?.length ? (
+                  {value.length > 0 ? (
                     <>
-                      {value.slice(0, 2).map((val: string, i: number) => (
+                      {value.slice(0, 2).map((val: string) => (
                         <span
-                          key={i}
+                          key={val}
                           className="px-1 flex items-center gap-1 rounded-md border bg-slate-200 text-[10px] font-medium"
                         >
                           {
@@ -136,7 +147,7 @@ export function MultiSelectFormInput({
                 </CommandList>
               </Command>
               {value.length > 0 && (
-                <div className=" p-2">
+                <div className="p-2">
                   <Button
                     variant="outline"
                     size="sm"

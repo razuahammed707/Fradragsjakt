@@ -30,7 +30,8 @@ export interface FormInputProps {
   defaultValue?: string | number;
   rows?: number;
   errorMessage?: string;
-  showPasswordRequirements?: boolean; // New prop to control password requirements visibility
+  showPasswordRequirements?: boolean;
+  disabled?: boolean; // New prop to disable the input
 }
 
 export function FormInput({
@@ -44,7 +45,8 @@ export function FormInput({
   defaultValue = '',
   rows,
   errorMessage,
-  showPasswordRequirements = true, // Default to true to maintain existing behavior
+  showPasswordRequirements = true,
+  disabled = false, // Default value for disabled
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -58,7 +60,11 @@ export function FormInput({
         defaultValue={defaultValue}
         render={({ field }) => (
           <div>
-            <Select value={field.value} onValueChange={field.onChange}>
+            <Select
+              value={field.value}
+              onValueChange={field.onChange}
+              disabled={disabled} // Apply disabled prop
+            >
               <SelectTrigger
                 className={`w-full data-[placeholder]:text-muted-foreground ${customClassName}`}
               >
@@ -99,6 +105,7 @@ export function FormInput({
               rows={rows}
               className={`w-full resize-y ${customClassName}`}
               required={required}
+              disabled={disabled} // Apply disabled prop
             />
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
@@ -126,6 +133,7 @@ export function FormInput({
               placeholder={placeholder}
               className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
               required={required}
+              disabled={disabled} // Apply disabled prop
             />
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
@@ -136,6 +144,7 @@ export function FormInput({
     );
   }
 
+  // Password input
   if (type === 'password') {
     return (
       <Controller
@@ -160,11 +169,13 @@ export function FormInput({
                 placeholder={placeholder}
                 className="w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md"
                 required={required}
+                disabled={disabled} // Apply disabled prop
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600"
+                disabled={disabled} // Disable button if input is disabled
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -200,6 +211,7 @@ export function FormInput({
             placeholder={placeholder}
             className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
             required={required}
+            disabled={disabled} // Apply disabled prop
           />
           {error && (
             <div className="text-red-500 text-sm mt-1">{error.message}</div>
