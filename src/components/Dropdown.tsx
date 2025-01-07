@@ -8,15 +8,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from './ui/button';
-import Avatar from '../../public/images/user_avatar.png';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { LogOut, Settings, Info } from 'lucide-react';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
+import DefaultAvatar from '../../public/images/user_avatar.png';
+import { trpc } from '@/utils/trpc';
 
 function ProfileDropdown({ role }: { role: string }) {
   const { data: session } = useSession();
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
+
   const logOut = () => {
     localStorage.clear();
     localStorage.removeItem('persist:root');
@@ -28,7 +31,7 @@ function ProfileDropdown({ role }: { role: string }) {
       <DropdownMenuTrigger asChild>
         <Button size="icon" className="rounded-full">
           <Image
-            src={Avatar}
+            src={user?.image || DefaultAvatar}
             height={38}
             width={38}
             alt="User avatar"
