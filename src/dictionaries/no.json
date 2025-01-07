@@ -161,13 +161,13 @@
           "apply_rule": "Bruk regel",
           "show_write_offs": "Vis avskrivninger",
           "add_expense": "Legg til utgift",
-          "upload_statements": "Last opp kontoutdrag"
+          "upload_statements": "Last opp kontoutskrift"
         }
       },
       "income_buttons": {
         "text": {
           "add_income": "Legg til inntekt",
-          "upload_statements": "Last opp inntektsoppgaver"
+          "upload_statements": "Last opp kontoutskrift"
         }
       },
       "category_buttons": {
@@ -202,7 +202,7 @@
       },
       "uploaded_receipt": "Lastet opp kvittering",
       "upload": "Dra en fil eller klikk for å bla gjennom",
-      "uploadTitle": "Last opp utgiftsrapport"
+      "uploadTitle": "Last opp kontoutskriften din"
     }
   },
   "componentsRuleModal": {

@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import ErrorImg from '../../public/ErrorFace.svg';
+import NewErrorImg from '../../public/NewErrorImage.svg';
 
 interface ErrorProps {
   error: Error;
@@ -23,13 +23,14 @@ const Error: React.FC<ErrorProps> = ({ error, reset }) => {
         <h2 className="text-2xl font-bold text-black mb-4 justify-items-center">
           {' '}
           <Image
-            src={ErrorImg}
-            width={160}
-            height={160}
+            src={NewErrorImg}
+            width={236}
+            height={211}
             alt="Picture of the error"
           />
           {error.message}
         </h2>
+
         <p className="text-gray-600 mb-6 text-sm">
           Please try again later or contact support if the problem persists.
         </p>
@@ -42,8 +43,11 @@ const Error: React.FC<ErrorProps> = ({ error, reset }) => {
           >
             Try again
           </Button>
-          <Link href="/">
-            <Button className="text-white" variant={'purple'}>
+          <Link href="/" className="w-full">
+            <Button
+              className="px-6 py-3 text-white rounded-md font-semibold transition duration-300 ease-in-out w-full"
+              variant={'purple'}
+            >
               Return to Home
             </Button>
           </Link>

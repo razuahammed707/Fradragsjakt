@@ -38,7 +38,12 @@ export default function SharedReportDownloader({
   const { data: user } = trpc.users.getUserByEmail.useQuery();
   const { isAuditor } = useUserInfo();
   const isGreaterThan1600: boolean = useMediaQuery('(min-width: 1601px)');
+
+  const isDisabled = !body || body.length === 0 || total === 0;
+
   const generatePDFWithImage = async () => {
+    if (isDisabled) return;
+
     const doc = new jsPDF();
 
     try {
@@ -76,25 +81,21 @@ export default function SharedReportDownloader({
       doc.setFontSize(8);
       doc.setTextColor('#627A97');
       doc.text(`Tax saved from ${origin} `, center, 26, { align: 'center' });
-
-      doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.setTextColor('#5B52F9');
-      doc.text('REPORT', center, 21, { align: 'center' });
     } catch (error) {
       console.error('Error adding image:', error);
     }
+
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(10);
     doc.setTextColor('black');
     doc.text(
-      `${user.firstName == user.lastName ? user.firstName : user.firstName + user.lastName}`,
+      `${user?.firstName === user?.lastName ? user?.firstName : `${user?.firstName} ${user?.lastName}`}`,
       15,
       56
     );
     doc.setFont('Helvetica', 'normal');
     doc.setTextColor('gray');
-    doc.text(user?.email, 15, 60);
+    doc.text(user?.email || '', 15, 60);
 
     const determineTableData = (bodyItems: BodyItem[]) => {
       if (bodyItems[0]?.totalItemByCategory !== undefined) {
@@ -116,6 +117,7 @@ export default function SharedReportDownloader({
         ]),
       };
     };
+
     const { columns, rows } = determineTableData(body || []);
     autoTable(doc, {
       startY: 73,
@@ -125,7 +127,6 @@ export default function SharedReportDownloader({
         textColor: '#2a363e',
       },
       body: rows,
-
       styles: {
         cellPadding: 3,
       },
@@ -160,24 +161,29 @@ export default function SharedReportDownloader({
 
   return !origin.includes('write off') ? (
     <Badge
-      onClick={generatePDFWithImage}
-      className="bg-[#F0EFFE] px-1 h-6 hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium"
+      onClick={!isDisabled ? generatePDFWithImage : undefined}
+      className={cn(
+        'bg-[#F0EFFE] px-1 h-6 hover:text-white rounded-[5px] text-xs text-[#627A97] font-medium',
+        isDisabled && 'opacity-50 cursor-not-allowed'
+      )}
     >
       <Download size={16} className="mr-2" /> Report
     </Badge>
   ) : (
     <Button
-      onClick={generatePDFWithImage}
+      onClick={!isDisabled ? generatePDFWithImage : undefined}
+      disabled={isDisabled}
       className={cn(
-        'btn  btn-primary text-white',
+        'btn btn-primary text-white',
         fullWidth && 'w-full',
-        !isAuditor && !isGreaterThan1600 && 'text-xs px-3'
+        !isAuditor && !isGreaterThan1600 && 'text-xs px-3',
+        isDisabled && 'opacity-50 cursor-not-allowed'
       )}
     >
       <Download
         size={!isAuditor && !isGreaterThan1600 ? 14 : 16}
         className="mr-2"
-      />{' '}
+      />
       Report
     </Button>
   );

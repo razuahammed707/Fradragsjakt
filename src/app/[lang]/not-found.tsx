@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import ErrorImg from '../../../public/Error.svg';
+import NotFoundImage from '../../../public/NotFound.svg';
 
 const NotFound: React.FC = () => {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="flex py-8 flex-col justify-end gap-[24px] items-center rounded-lg w-[290px]">
-        <Image src={ErrorImg} alt="Error Image" width={210} height={110} />
-        <h1>Oops, page is not found!</h1>
+        <Image src={NotFoundImage} alt="Not found" width={238} height={187} />
+        <h1 className="font-semibold">Oops, page is not found!</h1>
         <h3 className="text-gray-500 text-sm">
           This link might be broken or corrupted.
         </h3>

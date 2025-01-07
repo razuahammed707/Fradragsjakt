@@ -125,6 +125,7 @@ export function SharedDataTable<TData, TValue>({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24">
                   <NoResultsPlaceholder
+                    className="text-black font-semibold"
                     message={translate('page.modal.no_data')}
                   />
                 </TableCell>

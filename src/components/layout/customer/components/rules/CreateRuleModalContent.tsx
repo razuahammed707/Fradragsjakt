@@ -1,13 +1,14 @@
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
 import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
-import { useTranslation } from '@/lib/TranslationProvider'; // Import translation hook
+import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
+import { Loader2 } from 'lucide-react';
 
 type RuleFormData = {
   description_contains: string;
@@ -31,12 +32,13 @@ function CreateRuleModalContent({
   updateRulePayload,
   origin,
 }: ExpenseRuleContentProps) {
-  // Use the translation hook
-  const { handleSubmit, control, watch } = useForm<RuleFormData>({
-    defaultValues: { expense_type: 'business' }, // Optional default value
+  const { handleSubmit, control, watch, formState } = useForm<RuleFormData>({
+    defaultValues: { expense_type: 'business' },
+    mode: 'onChange',
   });
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
+  const [loading, setLoading] = useState(false);
 
   const categoryForValue = watch('rule_for');
 
@@ -44,33 +46,39 @@ function CreateRuleModalContent({
     category_for: categoryForValue || updateRulePayload?.rule_for,
   };
   const { manipulatedCategories } = useManipulatedCategories(query);
+
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
-      toast.success(translate('toast.ruleCreatedSuccess')); // Use translation here
+      toast.success(translate('toast.ruleCreatedSuccess'));
+      setLoading(false);
       if (modalClose) {
         modalClose(false);
       }
-      utils.rules.getRules.invalidate(); // Invalidate and refetch getRules query
+      utils.rules.getRules.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
+      setLoading(false);
     },
   });
 
   const ruleUpdateMutation = trpc.rules.updateRule.useMutation({
     onSuccess: () => {
-      toast.success(translate('toast.ruleUpdatedSuccess')); // Use translation here
+      toast.success(translate('toast.ruleUpdatedSuccess'));
+      setLoading(false);
       if (modalClose) {
         modalClose(false);
       }
-      utils.rules.getRules.invalidate(); // Invalidate and refetch getRules query
+      utils.rules.getRules.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
+      setLoading(false);
     },
   });
 
   const onSubmit = (data: RuleFormData) => {
+    setLoading(true);
     if (origin && updateRulePayload) {
       ruleUpdateMutation.mutate({ _id: updateRulePayload?._id, ...data });
     } else {
@@ -82,8 +90,7 @@ function CreateRuleModalContent({
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
         {translate('componentsRuleModal.rule.if')}
-      </h1>{' '}
-      {/* Translate 'IF' */}
+      </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label htmlFor="description_contains">
@@ -103,8 +110,7 @@ function CreateRuleModalContent({
         </div>
         <h1 className="font-medium text-lg text-black mb-4">
           {translate('componentsRuleModal.rule.then')}
-        </h1>{' '}
-        {/* Translate 'Then' */}
+        </h1>
         <div>
           <Label>Rule For</Label>
           <FormInput
@@ -113,7 +119,7 @@ function CreateRuleModalContent({
             customClassName="w-full mt-2"
             type="select"
             control={control}
-            placeholder={`Select rule for`}
+            placeholder="Select rule for"
             options={[
               { title: 'Expense', value: 'expense' },
               { title: 'Income', value: 'income' },
@@ -122,9 +128,7 @@ function CreateRuleModalContent({
           />
         </div>
         <div>
-          <Label htmlFor="expense_type">
-            {translate('componentsRuleModal.rule.expenseType')}
-          </Label>
+          <Label htmlFor="expense_type">Type</Label>
           <FormInput
             name="expense_type"
             customClassName="w-full mt-2"
@@ -134,7 +138,7 @@ function CreateRuleModalContent({
             placeholder={translate('componentsRuleModal.rule.selectType')}
             options={[
               {
-                title: translate('componentsRuleModal.rule.business'),
+                title: 'Deductible',
                 value: 'business',
               },
               {
@@ -161,7 +165,12 @@ function CreateRuleModalContent({
           />
         </div>
         <div className="py-3">
-          <Button type="submit" className="w-full text-white">
+          <Button
+            type="submit"
+            className="w-full text-white"
+            disabled={!formState.isValid || loading}
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {!origin
               ? translate('componentsRuleModal.rule.create')
               : translate('componentsRuleModal.rule.update')}
@@ -169,7 +178,7 @@ function CreateRuleModalContent({
           <Button
             type="button"
             className="w-full bg-[#F0EFFE] text-[#FF4444] hover:bg-[#F0EFFE] mt-3"
-            onClick={() => modalClose && modalClose(false)} // Close modal on discard
+            onClick={() => modalClose && modalClose(false)}
           >
             {translate('componentsRuleModal.rule.discard')}
           </Button>
