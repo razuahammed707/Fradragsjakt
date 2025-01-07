@@ -50,7 +50,7 @@
       "error_message": "Failed to register. Please try again."
     },
     "modal": {
-      "no_data": "Could not find anything"
+      "no_data": "Oops, No data found!"
     },
     "pagination": {
       "next": "Next",
