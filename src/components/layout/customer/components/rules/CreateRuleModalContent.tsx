@@ -175,13 +175,13 @@ function CreateRuleModalContent({
               ? translate('componentsRuleModal.rule.create')
               : translate('componentsRuleModal.rule.update')}
           </Button>
-          <Button
+          {/* <Button
             type="button"
             className="w-full bg-[#F0EFFE] text-[#FF4444] hover:bg-[#F0EFFE] mt-3"
             onClick={() => modalClose && modalClose(false)}
           >
             {translate('componentsRuleModal.rule.discard')}
-          </Button>
+          </Button> */}
         </div>
       </form>
     </div>
