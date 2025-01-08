@@ -52,7 +52,7 @@ export const auditorRouter = router({
             data: {
               invited_by: sessionUser?.name,
               message: message,
-              token: `${process.env.CLIENT_URL}?token=${token}&role=auditor`,
+              token: `${process.env.CLIENT_URL}/verify?token=${token}&role=auditor`,
             },
           },
           AUDITOR_VERIFY_EMAIL_TEMPLATE
