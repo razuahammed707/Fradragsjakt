@@ -180,7 +180,7 @@
   "componentsExpenseModal": {
     "expense": {
       "heading": {
-        "add_expense": "Manually add expense",
+        "add_expense": "Manually Add Expense",
         "update_expense": "Update Expense"
       },
       "label": {
@@ -281,7 +281,7 @@
   "componentsIncomeModal": {
     "income": {
       "heading": {
-        "add_income": "Manually add income",
+        "add_income": "Manually add Income",
         "update_income": "Update Income"
       },
       "label": {
@@ -291,8 +291,8 @@
         "category": "Category"
       },
       "button": {
-        "add": "Add",
-        "update": "Update",
+        "add": "Add Income",
+        "update": "Update Income",
         "income": "Income"
       },
       "toast": {

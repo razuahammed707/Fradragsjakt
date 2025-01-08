@@ -33,7 +33,7 @@ export function ContentForeignIncome({
   const {
     handleSubmit,
     control,
-    formState: { isDirty, isValid },
+    formState: { isDirty },
   } = useForm();
 
   const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
@@ -98,7 +98,7 @@ export function ContentForeignIncome({
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Norway tax rate on this income"
             customClassName="w-full"
-            type="number"
+            maxLength={2}
             control={control}
             defaultValue={getDefaultValue(
               'Have income or wealth in another country than Norway and pay tax in the other country',
@@ -170,10 +170,7 @@ export function ContentForeignIncome({
             </AccordionItem>
           ))}
         </Accordion>
-        <Button
-          disabled={!isDirty || !isValid}
-          className="text-white w-full mt-4"
-        >
+        <Button disabled={!isDirty} className="text-white w-full mt-4">
           {translate('contentForeignIncome.doneButton')}
         </Button>
       </form>

@@ -21,7 +21,7 @@ type Option = {
 
 export interface FormInputProps {
   name: string;
-  type: 'text' | 'email' | 'password' | 'select' | 'number' | 'textarea';
+  type?: 'text' | 'email' | 'password' | 'select' | 'number' | 'textarea';
   placeholder?: string;
   options?: Option[];
   control?: Control<any>;
@@ -31,7 +31,8 @@ export interface FormInputProps {
   rows?: number;
   errorMessage?: string;
   showPasswordRequirements?: boolean;
-  disabled?: boolean; // New prop to disable the input
+  disabled?: boolean;
+  maxLength?: number;
 }
 
 export function FormInput({
@@ -40,13 +41,14 @@ export function FormInput({
   type = 'text',
   options = [],
   control,
-  required = false,
+  required,
   customClassName,
   defaultValue = '',
   rows,
   errorMessage,
-  showPasswordRequirements = true,
-  disabled = false, // Default value for disabled
+  showPasswordRequirements,
+  disabled,
+  maxLength,
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -133,7 +135,7 @@ export function FormInput({
               placeholder={placeholder}
               className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
               required={required}
-              disabled={disabled} // Apply disabled prop
+              disabled={disabled}
             />
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
@@ -201,7 +203,15 @@ export function FormInput({
     <Controller
       name={name}
       control={control}
-      rules={{ required }}
+      rules={{
+        required,
+        ...(maxLength && {
+          maxLength: {
+            value: maxLength,
+            message: `Value cannot exceed ${maxLength} digits.`,
+          },
+        }),
+      }}
       defaultValue={defaultValue}
       render={({ field, fieldState: { error } }) => (
         <div>
@@ -213,8 +223,14 @@ export function FormInput({
             required={required}
             disabled={disabled} // Apply disabled prop
           />
-          {error && (
-            <div className="text-red-500 text-sm mt-1">{error.message}</div>
+          {maxLength && (
+            <div
+              className={`text-sm mt-1 ${
+                error ? 'text-red-500' : 'text-gray-500'
+              }`}
+            >
+              {error?.message || `Value cannot exceed ${maxLength} digits.`}
+            </div>
           )}
         </div>
       )}

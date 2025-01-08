@@ -121,6 +121,7 @@ export default function SignUp() {
               control={control}
               type="password"
               placeholder={translate('page.signup.password')}
+              showPasswordRequirements
               required
             />
             {error && (

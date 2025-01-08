@@ -9,12 +9,14 @@ import { MultiSelectFormInput } from '@/components/MultiSelectFormInput';
 import { Badge } from '@/components/ui/badge';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 
 interface PersonalInfoData {
   firstName: string;
   lastName: string;
   email: string;
   profile: string[];
+  role: string;
 }
 
 interface PersonalInfoFormProps {
@@ -37,7 +39,7 @@ const FormField = ({
   if (!showLabel && !editMode) return null;
 
   return (
-    <div>
+    <div className="w-[50%]">
       <Label>{label}</Label>
       <div className="mt-1">{children}</div>
     </div>
@@ -133,6 +135,13 @@ export function PersonalInfoForm({ userData }: PersonalInfoFormProps) {
               <FormInput disabled name="email" control={control} type="email" />
             ) : (
               renderValue(userData?.email)
+            )}
+          </FormField>
+          <FormField label="Role" editMode={editMode}>
+            {editMode ? (
+              <FormInput disabled name="role" control={control} type="text" />
+            ) : (
+              renderValue(transformToUppercase(userData?.role))
             )}
           </FormField>
 
