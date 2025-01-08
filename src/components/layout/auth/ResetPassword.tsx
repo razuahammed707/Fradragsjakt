@@ -108,6 +108,7 @@ const ResetPassword = () => {
               control={control}
               type="password"
               placeholder="Create new password"
+              showPasswordRequirements
               required
             />
             <ul className="mt-2 text-xs text-gray-600 list-disc pl-5"></ul>
@@ -122,7 +123,6 @@ const ResetPassword = () => {
               type="password"
               placeholder="Confirm new password"
               required
-              showPasswordRequirements={false}
             />
           </div>
 
