@@ -86,7 +86,7 @@ export function PersonalInfoForm({ userData }: PersonalInfoFormProps) {
   };
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Personal Information</CardTitle>
         <Button

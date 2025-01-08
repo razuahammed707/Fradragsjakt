@@ -40,9 +40,9 @@ export function PasswordForm() {
   };
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Password</CardTitle>
+        <CardTitle>Change Password</CardTitle>
         <Button
           variant="ghost"
           size="sm"

@@ -125,7 +125,7 @@ export function AvatarForm({ userImage }: { userImage?: string }) {
   const showSaveButton = editMode && preview !== '';
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Profile Picture</CardTitle>
         <Button
