@@ -88,6 +88,7 @@ export default function UpdateAuditorModal({
             placeholder="Create a password"
             type="password"
             required
+            showPasswordRequirements
             customClassName="mt-1"
           />
           <small className="text-left text-gray-500">
