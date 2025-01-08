@@ -32,7 +32,7 @@ export type FormData = {
   income_type: 'unknown' | 'personal' | 'business';
   category: string;
   deduction_status: string;
-  amount: number;
+  amount: string;
   receipt: {
     link: string;
     mimeType: string;
@@ -62,11 +62,14 @@ function IncomeAddContent({
   payload,
 }: IncomeAddContentProps) {
   const { translate } = useTranslation();
-  const { handleSubmit, control, reset } = useForm<FormData>();
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { isValid },
+  } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
   const [fileLink, setFileLink] = useState<File | null>(null);
-  console.log({ fileLink });
-
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<UploadedImageType | null>(
     null
@@ -177,12 +180,14 @@ function IncomeAddContent({
   }, [fileLink]);
 
   const onSubmit = (data: FormData) => {
+    const mofifiedAmount = Number(data?.amount?.replace(/\s+/g, '') || 0);
+
     setLoading(true);
     if (origin) {
       updateMutation.mutate({
         id: payload?._id,
         ...data,
-        amount: Number(data.amount),
+        amount: mofifiedAmount,
         receipt: {
           link: uploadedImage?.link || '',
           mimeType: uploadedImage?.mimeType || '',
@@ -191,7 +196,7 @@ function IncomeAddContent({
     } else
       createMutation.mutate({
         ...data,
-        amount: Number(data.amount),
+        amount: mofifiedAmount,
         receipt: {
           link: uploadedImage?.link || '',
           mimeType: uploadedImage?.mimeType || '',
@@ -295,7 +300,7 @@ function IncomeAddContent({
         )}
         <div className="py-3">
           <Button
-            disabled={loading || isUploading}
+            disabled={!isValid || loading || isUploading}
             type="submit"
             className="w-full text-white"
           >

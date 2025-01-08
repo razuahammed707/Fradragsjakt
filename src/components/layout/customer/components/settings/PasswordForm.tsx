@@ -7,7 +7,6 @@ import { FormInput } from '@/components/FormInput';
 import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
-import { useSession } from 'next-auth/react';
 
 interface PasswordData {
   oldPassword: string;
@@ -15,11 +14,8 @@ interface PasswordData {
 }
 
 export function PasswordForm() {
-  const { data: session } = useSession();
-  console.log({ session });
-
   const [editMode, setEditMode] = useState(false);
-  const { control, handleSubmit, reset } = useForm<PasswordData>();
+  const { control, handleSubmit, reset, watch } = useForm<PasswordData>();
   const utils = trpc.useUtils();
 
   const updatePasswordMutation = trpc.users.updateUserPassword.useMutation({
@@ -39,10 +35,17 @@ export function PasswordForm() {
     updatePasswordMutation.mutate(data);
   };
 
+  // Watch the input fields
+  const oldPassword = watch('oldPassword');
+  const newPassword = watch('newPassword');
+
+  const isSubmitDisabled =
+    !oldPassword || !newPassword || updatePasswordMutation.isLoading;
+
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Password</CardTitle>
+        <CardTitle>Change Password</CardTitle>
         <Button
           variant="ghost"
           size="sm"
@@ -56,7 +59,7 @@ export function PasswordForm() {
       <CardContent>
         {editMode ? (
           <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
-            <div>
+            <div className="w-[50%]">
               <Label>Current Password</Label>
               <FormInput
                 name="oldPassword"
@@ -64,9 +67,10 @@ export function PasswordForm() {
                 type="password"
                 customClassName="mt-1"
                 disabled={updatePasswordMutation.isLoading}
+                required
               />
             </div>
-            <div>
+            <div className="w-[50%]">
               <Label>New Password</Label>
               <FormInput
                 name="newPassword"
@@ -74,13 +78,15 @@ export function PasswordForm() {
                 type="password"
                 customClassName="mt-1"
                 disabled={updatePasswordMutation.isLoading}
+                showPasswordRequirements
+                required
               />
             </div>
             <div className="flex justify-end">
               <Button
                 className="text-white"
                 type="submit"
-                disabled={updatePasswordMutation.isLoading}
+                disabled={isSubmitDisabled}
               >
                 {updatePasswordMutation.isLoading && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

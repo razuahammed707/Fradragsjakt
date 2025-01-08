@@ -41,7 +41,7 @@ export function ContentHealthFamily({
     handleSubmit,
     control,
     setValue,
-    formState: { isDirty, isValid },
+    formState: { isDirty },
   } = useForm();
 
   const getDefaultValue = (accordionItemId: string, fieldName: string) => {
@@ -70,9 +70,9 @@ export function ContentHealthFamily({
           <FormInput
             name="Have children aged 11 years or younger.How many children do you have under the age of 12?"
             customClassName="w-full"
-            type="number"
             control={control}
             placeholder="2"
+            maxLength={2}
             defaultValue={getDefaultValue(
               'Have children aged 11 years or younger',
               'How many children do you have under the age of 12?'
@@ -280,7 +280,7 @@ export function ContentHealthFamily({
           </Accordion>
         </div>
         <Button
-          disabled={!isDirty || !isValid}
+          disabled={!isDirty}
           type="submit"
           className="text-white w-full mt-4"
         >

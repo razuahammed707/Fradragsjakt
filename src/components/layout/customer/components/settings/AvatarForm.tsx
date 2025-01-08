@@ -19,6 +19,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Loader2, Pencil } from 'lucide-react';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 
 const FALLBACK_AVATAR = 'https://github.com/shadcn.png';
 
@@ -42,8 +43,16 @@ const convertFileToBase64 = (file: File): Promise<string> => {
     reader.onerror = reject;
   });
 };
+interface AvatarFormProps {
+  userData: {
+    image: string;
+    role: string;
+    firstName: string;
+    lastName: string;
+  };
+}
 
-export function AvatarForm({ userImage }: { userImage?: string }) {
+export function AvatarForm({ userData }: AvatarFormProps) {
   const [editMode, setEditMode] = useState(false);
   const [preview, setPreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
@@ -103,7 +112,6 @@ export function AvatarForm({ userImage }: { userImage?: string }) {
         setPreview(previewUrl);
         form.setValue('avatar', event.target.files as FileList);
 
-        // Cleanup previous preview URL
         return () => URL.revokeObjectURL(previewUrl);
       }
     },
@@ -121,11 +129,11 @@ export function AvatarForm({ userImage }: { userImage?: string }) {
     }
   };
 
-  const displayedImage = preview || userImage || FALLBACK_AVATAR;
+  const displayedImage = preview || userData?.image || FALLBACK_AVATAR;
   const showSaveButton = editMode && preview !== '';
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Profile Picture</CardTitle>
         <Button
@@ -145,6 +153,19 @@ export function AvatarForm({ userImage }: { userImage?: string }) {
               <AvatarFallback>PP</AvatarFallback>
             </Avatar>
           </div>
+
+          {!editMode && (
+            <div className="flex flex-col space-y-1">
+              <p className="text-lg font-medium text-gray-900">
+                {transformToUppercase(userData?.firstName)}{' '}
+                {transformToUppercase(userData?.lastName)}
+              </p>
+              <p className="text-sm text-gray-500">
+                {transformToUppercase(userData?.role)}
+              </p>
+            </div>
+          )}
+
           {editMode && (
             <Form {...form}>
               <FormField
@@ -167,6 +188,7 @@ export function AvatarForm({ userImage }: { userImage?: string }) {
             </Form>
           )}
         </div>
+
         {showSaveButton && (
           <div className="flex justify-end">
             <Button
