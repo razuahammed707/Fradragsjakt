@@ -91,9 +91,6 @@ export default function UpdateAuditorModal({
             showPasswordRequirements
             customClassName="mt-1"
           />
-          <small className="text-left text-gray-500">
-            Password must be at least 6 characters long
-          </small>
         </div>
 
         <div className="w-full">
