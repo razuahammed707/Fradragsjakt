@@ -105,7 +105,11 @@ export const IncomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
         </Button>
       ),
       cell: ({ row }) => (
-        <span>{transformToUppercase(row.getValue('income_type'))}</span>
+        <span>
+          {row.getValue('income_type') === 'business'
+            ? 'Deductible'
+            : transformToUppercase(row.getValue('income_type'))}
+        </span>
       ),
     },
     {

@@ -344,17 +344,25 @@ export const expenseRouter = router({
     .mutation(async ({ ctx, input: statements }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-
-        // Process each statement only once, creating both expense and income
         const results = await Promise.all(
           statements.map(async (statement) => {
-            const [expense, income] = await Promise.all([
-              ExpenseHelpers.createExpenseFromBulkInput(
-                statement,
-                loggedUser.id
-              ),
-              IncomeHelpers.createIncomeFromBulkInput(statement, loggedUser.id),
-            ]);
+            console.log('Processing statement:', statement);
+
+            const expense =
+              statement.withdrawal > 0
+                ? await ExpenseHelpers.createExpenseFromBulkInput(
+                    statement,
+                    loggedUser.id
+                  )
+                : null;
+
+            const income =
+              statement.deposit > 0
+                ? await IncomeHelpers.createIncomeFromBulkInput(
+                    statement,
+                    loggedUser.id
+                  )
+                : null;
 
             return {
               expense,
@@ -362,10 +370,18 @@ export const expenseRouter = router({
             };
           })
         );
-
-        // Separate the results for the response
-        const createdExpenses = results.map((r) => r.expense);
-        const createdIncomes = results.map((r) => r.income);
+        const createdExpenses = results
+          .map((r) => r.expense)
+          .filter((e) => e !== null);
+        const createdIncomes = results
+          .map((r) => r.income)
+          .filter((i) => i !== null);
+        console.log(
+          'Total Processed',
+          createdExpenses.length + createdIncomes.length,
+          createdExpenses.length,
+          createdIncomes.length
+        );
 
         return {
           status: 201,
@@ -381,6 +397,7 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+
   updateBulkExpense: protectedProcedure
     .input(expenseValidation.updateBulkExpenseSchema)
 
@@ -388,8 +405,6 @@ export const expenseRouter = router({
       try {
         const loggedUser = ctx.user as JwtPayload;
         const { expenses } = input;
-
-        // Update all specified expenses for the logged-in user
         const updatedExpenses = await Promise.all(
           expenses.map(async (expense) => {
             return await ExpenseModel.findByIdAndUpdate(
