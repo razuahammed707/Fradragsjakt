@@ -26,7 +26,12 @@ export default function UpdateAuditorModal({
 }: UpdateAuditorModalProps) {
   const [open, setOpen] = useState(true);
 
-  const { handleSubmit, control, reset } = useForm<AuditorFormData>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { isDirty },
+  } = useForm<AuditorFormData>({
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -96,7 +101,7 @@ export default function UpdateAuditorModal({
         <div className="w-full">
           <Button
             className="w-full h-11 text-white"
-            disabled={isLoading}
+            disabled={isLoading || !isDirty}
             type="submit"
           >
             {isLoading ? (
