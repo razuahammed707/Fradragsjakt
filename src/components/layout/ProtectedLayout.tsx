@@ -35,7 +35,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }
 
   return (
-    <div className="h-screen fixed w-full">
+    <div className="h-screen w-full max-w-[1920px] mx-auto">
       <div>
         <Topbar role={session?.user?.role || loggedUser?.role || ''} />
         <div

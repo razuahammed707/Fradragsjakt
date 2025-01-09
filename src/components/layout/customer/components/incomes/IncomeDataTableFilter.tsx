@@ -112,7 +112,7 @@ export default function IncomeDataTableFilter({
             className="px-1 h-9 cursor-pointer hover:bg-gray-400 text-sm  font-normal bg-gray-300 flex items-center gap-1"
             onClick={() => handleBadgeClick(item)}
           >
-            {transformToUppercase(item)}
+            {transformToUppercase(item === 'business' ? 'Deductible' : item)}
             <X className="h-3 w-3" />
           </Badge>
         ))}

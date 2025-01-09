@@ -32,7 +32,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
   const {
     handleSubmit,
     control,
-    formState: { isDirty, isValid },
+    formState: { isDirty },
   } = useForm();
 
   const getDefaultValue = (accordionItemTitle: string, fieldName: string) => {
@@ -125,7 +125,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
           <FormInput
             name="Have taken out a joint loan with someone.Your ownership share"
             customClassName="w-full"
-            type="number"
+            maxLength={2}
             control={control}
             placeholder="50 %"
             defaultValue={getDefaultValue(
@@ -249,7 +249,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
           </Accordion>
         </div>
         <Button
-          disabled={!isDirty || !isValid}
+          disabled={!isDirty}
           type="submit"
           className="text-white w-full mt-4"
         >

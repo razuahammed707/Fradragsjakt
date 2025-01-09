@@ -51,9 +51,12 @@ export default function SignUp() {
 
   const mutation = trpc.auth.signup.useMutation({
     onSuccess: () => {
-      toast.success('Verification email sent.', {
-        duration: 4000,
-      });
+      toast.success(
+        'Email verification link has been sent successfully. Please check your email.',
+        {
+          duration: 4000,
+        }
+      );
       reset();
       setLoading(false);
     },
@@ -121,6 +124,7 @@ export default function SignUp() {
               control={control}
               type="password"
               placeholder={translate('page.signup.password')}
+              showPasswordRequirements
               required
             />
             {error && (

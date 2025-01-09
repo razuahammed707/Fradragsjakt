@@ -114,7 +114,7 @@ export default function Login() {
               {translate('page.login.password')}
             </label>
             <Input
-              type={showPassword ? 'text' : 'password'} // Toggle password visibility
+              type={showPassword ? 'text' : 'password'}
               id="password"
               placeholder={translate('page.login.password')}
               value={password}

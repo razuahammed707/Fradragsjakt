@@ -26,6 +26,28 @@ function ProfileDropdown({ role }: { role: string }) {
     signOut({ callbackUrl: '/login' });
   };
 
+  const dropdownItems = [
+    {
+      label: 'Settings',
+      href: `/${role}/settings`,
+      icon: <Settings className="ml-auto text-gray-500" />,
+    },
+    { label: 'My profile' },
+    {
+      label: 'About',
+      icon: <Info className="ml-auto text-gray-600" />,
+    },
+    {
+      label: 'Language',
+      extra: <span className="ml-auto text-gray-400">English</span>,
+    },
+    {
+      label: 'Sign out',
+      onClick: logOut,
+      icon: <LogOut className="ml-auto text-gray-600" />,
+    },
+  ];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -41,7 +63,7 @@ function ProfileDropdown({ role }: { role: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[213px]">
-        <DropdownMenuLabel className="text-Black font-bold p-2">
+        <DropdownMenuLabel className="text-black font-bold p-2">
           {transformToUppercase(
             session?.user?.firstName + ' ' + session?.user?.lastName
           )}
@@ -50,33 +72,27 @@ function ProfileDropdown({ role }: { role: string }) {
           {transformToUppercase(session?.user?.role)}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex items-center text-gray-600 font-medium p-2">
-          <Link href={`/${role}/settings`} className="flex items-center w-full">
-            Settings
-            <Settings className="ml-auto text-gray-500" />
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex items-center text-gray-600 font-medium p-2">
-          My profile
-        </DropdownMenuItem>
-        <DropdownMenuItem className="flex items-center text-gray-600 font-medium p-2">
-          About
-          <Info className="ml-auto text-gray-600" />
-        </DropdownMenuItem>
-        <DropdownMenuItem className="flex items-center text-gray-600 font-medium p-2">
-          <span className="flex-1">Language</span>
-          <span className="ml-auto text-gray-400">English</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="flex items-center text-gray-600 font-medium p-2"
-          onClick={logOut}
-        >
-          Sign out
-          <LogOut className="ml-auto text-gray-600" />
-        </DropdownMenuItem>
+        {dropdownItems.map((item, index) => (
+          <React.Fragment key={index}>
+            <DropdownMenuItem
+              className="flex items-center text-gray-600 font-medium p-2 cursor-pointer"
+              onClick={item.onClick}
+            >
+              {item.href ? (
+                <Link href={item.href} className="flex items-center w-full">
+                  {item.label}
+                  {item.icon}
+                </Link>
+              ) : (
+                <>
+                  <span className="flex-1">{item.label}</span>
+                  {item.extra || item.icon}
+                </>
+              )}
+            </DropdownMenuItem>
+            {index === 0 && <DropdownMenuSeparator />}
+          </React.Fragment>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
