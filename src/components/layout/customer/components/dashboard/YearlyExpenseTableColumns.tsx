@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
 import formatDate from '@/utils/helpers/formatDate';
+import ExpenseDetailsModal from '../expenses/ExpenseDetailsModal';
+import ExpenseUpdateModal from '../expenses/ExpenseUpdateModal';
+import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
+import useUserInfo from '@/hooks/use-user-info';
 
 export type Expense = {
   _id: string;
@@ -18,6 +22,8 @@ export type Expense = {
 };
 
 export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
+  const { isAuditor } = useUserInfo();
+
   return [
     {
       accessorKey: 'transaction_date',
@@ -91,6 +97,25 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
           </div>
         ); // Center aligned
       },
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => (
+        <div className="flex items-center space-x-1">
+          <div className={`my-2`}>
+            <ExpenseDetailsModal payload={row.original} />
+          </div>
+          {!isAuditor && (
+            <>
+              <ExpenseUpdateModal payload={row.original} />
+              <SharedDeleteActionCell
+                itemOrigin="expense"
+                itemId={row.original._id as string}
+              />
+            </>
+          )}
+        </div>
+      ),
     },
   ];
 };
