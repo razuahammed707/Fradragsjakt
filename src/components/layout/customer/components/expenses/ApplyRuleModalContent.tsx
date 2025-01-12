@@ -140,7 +140,7 @@ function ApplyRuleModalContent({
   return (
     <div className="space-y-8">
       <h1 className="font-medium text-xl text-[#000] mt-6 mb-8">
-        {translate('applyRuleModal.title')}
+        {translate('applyRuleModal.title_for_expense')}
       </h1>
       <div className="flex flex-wrap gap-2">
         {expensesWithRules.map((expenseRule) => (
