@@ -238,7 +238,8 @@
     }
   },
   "applyRuleModal": {
-    "title": "Rules that can be applied to the following expenses",
+    "title_for_expense": "Rules that can be applied to the following expenses",
+    "title_for_income": "Rules that can be applied to the following incomes",
     "button": {
       "apply": "Apply Rule"
     },

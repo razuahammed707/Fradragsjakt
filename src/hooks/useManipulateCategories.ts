@@ -16,6 +16,7 @@ export const useManipulatedCategories = (query: Query) => {
       keepPreviousData: true,
     }
   );
+  console.log({ categories });
 
   const manipulatedCategories = categories?.data
     ? categories.data.map((category) => ({

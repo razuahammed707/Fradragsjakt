@@ -19,6 +19,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
   const { translate } = useTranslation();
 
@@ -37,9 +38,7 @@ export default function Login() {
 
       if (result?.error) {
         console.log('result.error', result);
-        toast.error('Invalid email or password. Please try again.', {
-          duration: 3000,
-        });
+        setError('Invalid email or password');
         setIsSubmitting(false);
       }
     } catch (error) {
@@ -94,7 +93,7 @@ export default function Login() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="sr-only">
               {translate('page.login.email')}
@@ -109,7 +108,7 @@ export default function Login() {
               required
             />
           </div>
-          <div className="relative">
+          <div className="relative mt-6">
             <label htmlFor="password" className="sr-only">
               {translate('page.login.password')}
             </label>
@@ -124,7 +123,7 @@ export default function Login() {
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+              onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
               {showPassword ? (
@@ -134,10 +133,16 @@ export default function Login() {
               )}
             </button>
           </div>
+          {error && (
+            <div className={`text-sm w-full text-left  mt-1  text-red-500 `}>
+              {error}!
+            </div>
+          )}
+
           <Button
             disabled={isSubmitting}
             type="submit"
-            className="w-full text-white"
+            className="w-full text-white mt-6"
           >
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {translate('page.login.sign_in')}
