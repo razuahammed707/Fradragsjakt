@@ -72,7 +72,7 @@ export const {
           token.firstName = retrievedUser.firstName || user?.name;
           token.lastName = retrievedUser.lastName;
           token.role = retrievedUser.role || 'customer';
-          token.hasAnswers = retrievedUser.questionnaires?.length > 0;
+          token.hasAnswers = retrievedUser.isStepperSkippedOrCompleted;
         }
       }
       return token;
