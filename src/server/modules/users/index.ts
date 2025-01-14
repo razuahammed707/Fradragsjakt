@@ -67,7 +67,7 @@ export const userRouter = router({
       return user;
     }),
   updateUser: protectedProcedure
-    .input(userValidation.userSchema)
+    .input(userValidation.updateUserSchema)
     .mutation(async ({ ctx, input }) => {
       const { questionnaires = [] } = input;
 
@@ -133,7 +133,11 @@ export const userRouter = router({
 
       const updatedUser = await User.findOneAndUpdate(
         { email: sessionUser.email },
-        { questionnaires: finalQuestionnaires },
+        {
+          questionnaires: finalQuestionnaires,
+          isStepperSkippedOrCompleted: true,
+        },
+
         { new: true }
       );
 

@@ -6,11 +6,7 @@ export const metadata = {
   description: 'Login to Skattepluss, it is easy and secure',
 };
 const LoginPage = () => {
-  return (
-    <>
-      <Login />
-    </>
-  );
+  return <Login />;
 };
 
 export default LoginPage;
