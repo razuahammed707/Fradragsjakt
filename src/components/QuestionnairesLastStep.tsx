@@ -46,7 +46,7 @@ const QuestionnairesLastStep = () => {
           />
 
           <h2 className="text-lg font-semibold text-[#000]">
-            Statement uploaded successfully!
+            Statement processed successfully.
           </h2>
 
           <p className="text-xs text-[#000] max-w-[328px]">

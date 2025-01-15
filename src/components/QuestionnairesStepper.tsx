@@ -159,14 +159,14 @@ export default function QuestionnairesStepper({
                 ? step?.question
                 : !isPopulatedStatements
                   ? 'Choose to add statements'
-                  : 'Continue by completing'}
+                  : "Success! You're All Set"}
             </h2>
             <p className="text-gray-600 text-center text-[var(--500,#71717A)] font-inter text-[12px] font-medium leading-normal">
               {currentStepIndex < questionnaires.length
                 ? 'This information allows Skattepluss to suggest tax savings. Select all that apply.'
                 : !isPopulatedStatements
                   ? 'This info allows you to have better transaction fast and automated.'
-                  : 'This will redirect you to dashboard page'}
+                  : 'Your setup is complete.'}
             </p>
           </div>
         </div>
@@ -260,7 +260,7 @@ export default function QuestionnairesStepper({
                 disabled={!isPopulatedStatements}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {!isWriteOff ? 'Complete' : 'Update'}
+                {!isWriteOff ? 'Continue to dashboard' : 'Update'}
               </Button>
             </>
           )}
