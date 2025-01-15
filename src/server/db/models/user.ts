@@ -37,6 +37,10 @@ const UserSchema: Schema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    isStepperSkippedOrCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   { timestamps: true }

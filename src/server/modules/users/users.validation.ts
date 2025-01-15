@@ -26,6 +26,16 @@ const userSchema = z.object({
     .optional(),
   isVerified: z.boolean().optional(),
 });
+const updateUserSchema = z.object({
+  questionnaires: z
+    .array(
+      z.object({
+        question: z.string(),
+        answers: z.array(z.string()),
+      })
+    )
+    .optional(),
+});
 const updateUserPasswordSchema = z.object({
   oldPassword: z.string(),
   newPassword: z.string().min(6, 'Password must be at least 6 characters long'),
@@ -41,6 +51,7 @@ const updateUserAvatarSchema = z.object({
 });
 export const userValidation = {
   userSchema,
+  updateUserSchema,
   userQuestionnaireSchema,
   answerSchema,
   updateUserPasswordSchema,

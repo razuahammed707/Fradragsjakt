@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -15,14 +15,18 @@ import {
 import { mapToExpenseData, parseFileData } from '@/utils/helpers/dataMappers';
 import toast from 'react-hot-toast';
 import { findBestMatch, targetColumns } from '@/utils/helpers/columnMatcher';
+import useIsUrlHoldsOnboard from '@/hooks/use-is-url-holds-onboard';
 
 interface StatementUploadContentProps {
-  setModalContent: React.Dispatch<React.SetStateAction<{ key: string }>>;
+  setModalContent: Dispatch<SetStateAction<{ key: string }>>;
+  setModalOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
-const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
+const StatementUploadContent: FC<StatementUploadContentProps> = ({
   setModalContent,
+  setModalOpen,
 }) => {
+  const isOnboard = useIsUrlHoldsOnboard();
   const [loading, setLoading] = useState(false);
   const [fileLink, setFileLink] = useState<File | null>(null);
   const [fileData, setFileData] = useState<FileRowData[]>([]);
@@ -48,7 +52,6 @@ const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
         fileType === 'csv'
           ? await processCsvFile(file)
           : await processExcelFile(file);
-      console.log({ rawData });
 
       const { fileData: parsedData, headers: parsedHeaders } =
         parseFileData(rawData);
@@ -69,7 +72,15 @@ const StatementUploadContent: React.FC<StatementUploadContentProps> = ({
       utils.expenses.getExpenses.invalidate();
       utils.incomes.getIncomes.invalidate();
       reset();
-      setModalContent({ key: 'confirmation' });
+
+      if (!isOnboard) {
+        setModalContent({ key: 'confirmation' });
+      } else {
+        toast.success('Statements populated successfully!');
+        if (setModalOpen) {
+          setModalOpen(false);
+        }
+      }
       setLoading(false);
     },
     onError: (error) => {
