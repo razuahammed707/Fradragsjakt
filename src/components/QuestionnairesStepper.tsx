@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useAppDispatch } from '@/redux/hooks';
 import {
@@ -13,6 +13,9 @@ import {
   showModal,
 } from '@/redux/slices/questionnaire';
 import { SelectedAnswer } from './layout/auth/Onboard';
+import QuestionnairesLastStep from './QuestionnairesLastStep';
+import useIsPopulatedStatements from '@/hooks/use-is-populated-statements';
+import useFindWhichUrl from '@/hooks/use-find-which-url';
 
 type QuestionnairesStepperProps = {
   currentStepIndex: number;
@@ -23,14 +26,13 @@ export default function QuestionnairesStepper({
   currentStepIndex,
   setCurrentStepIndex,
 }: QuestionnairesStepperProps) {
+  const isPopulatedStatements = useIsPopulatedStatements();
+  const { isWriteOff } = useFindWhichUrl();
   const { data: user } = useSession();
   const utils = trpc.useUtils();
   const { data: loggedUser } = trpc.users.getUserByEmail.useQuery();
-
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const pathname = usePathname();
-
   const [loading, setLoading] = useState(false);
 
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswer[]>(
@@ -66,7 +68,7 @@ export default function QuestionnairesStepper({
       {
         onSuccess: () => {
           toast.success(
-            pathname.split('/').pop() !== 'write-offs'
+            !isWriteOff
               ? 'Congrats! you have successfully onboarded'
               : 'You have successfully updated your answers'
           );
@@ -74,8 +76,7 @@ export default function QuestionnairesStepper({
           utils.users.getUserByEmail.invalidate();
           dispatch(filterAndUpdateQuestionnaires(selectedAnswers));
           dispatch(showModal(false));
-          if (pathname.split('/').pop() !== 'write-offs')
-            router.push(`/${loggedUser?.role}/dashboard`);
+          if (!isWriteOff) router.push(`/${loggedUser?.role}/dashboard`);
         },
         onError: (error) => {
           console.error('Failed to update questionnaires:', error);
@@ -114,7 +115,7 @@ export default function QuestionnairesStepper({
   const goToPreviousStep = () => setCurrentStepIndex((prev) => prev - 1);
 
   const handleSkip = () => {
-    if (pathname.split('/').pop() !== 'write-offs') {
+    if (!isWriteOff) {
       setSelectedAnswers((prev) =>
         prev.filter((item) => item.question !== step?.question)
       );
@@ -132,8 +133,7 @@ export default function QuestionnairesStepper({
       <div
         className={cn(
           'flex flex-col justify-between w-[560px] h-[485px] ',
-          pathname.split('/').pop() !== 'write-offs' &&
-            'border border-[#E4E4E7] p-6 rounded-lg shadow-md'
+          !isWriteOff && 'border border-[#E4E4E7] p-6 rounded-lg shadow-md'
         )}
       >
         <div className="text-center space-y-6">
@@ -155,78 +155,114 @@ export default function QuestionnairesStepper({
             )}
 
             <h2 className="text-[var(--700,#18181B)] font-inter text-[20px] md:text-[24px] font-bold leading-normal">
-              {step?.question}
+              {currentStepIndex < questionnaires.length
+                ? step?.question
+                : !isPopulatedStatements
+                  ? 'Choose to add statements'
+                  : 'Continue by completing'}
             </h2>
             <p className="text-gray-600 text-center text-[var(--500,#71717A)] font-inter text-[12px] font-medium leading-normal">
-              This information allows Skattepluss to suggest tax savings. Select
-              all that apply.
+              {currentStepIndex < questionnaires.length
+                ? 'This information allows Skattepluss to suggest tax savings. Select all that apply.'
+                : !isPopulatedStatements
+                  ? 'This info allows you to have better transaction fast and automated.'
+                  : 'This will redirect you to dashboard page'}
             </p>
           </div>
         </div>
         <div className="space-y-2 w-full flex flex-col max-h-[297px] overflow-y-auto [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-[#5B52F9] [&::-webkit-scrollbar-thumb]:rounded-full">
-          {step?.answers?.map((answer, i) => (
-            <label
-              key={i}
-              onClick={() => handleAnswerClick(answer, step?.question)}
-              className={cn(
-                'cursor-pointer text-center transition-colors p-4 rounded-[6px] border',
-                selectedAnswers
-                  .find((item) => item.question === step?.question)
-                  ?.answers.includes(answer)
-                  ? 'border-[var(--violet,#5B52F9)] bg-[var(--violet-2,#F0EFFE)]'
-                  : 'border-[var(--grey,#E4E4E7)] bg-white hover:bg-gray-100'
-              )}
-            >
-              <span
+          {currentStepIndex < questionnaires.length ? (
+            step?.answers?.map((answer, i) => (
+              <label
+                key={i}
+                onClick={() => handleAnswerClick(answer, step?.question)}
                 className={cn(
-                  'self-stretch text-center font-inter text-sm font-normal leading-[150%]',
+                  'cursor-pointer text-center transition-colors p-4 rounded-[6px] border',
                   selectedAnswers
                     .find((item) => item.question === step?.question)
                     ?.answers.includes(answer)
-                    ? 'text-[var(--violet,#5B52F9)]'
-                    : 'text-black'
+                    ? 'border-[var(--violet,#5B52F9)] bg-[var(--violet-2,#F0EFFE)]'
+                    : 'border-[var(--grey,#E4E4E7)] bg-white hover:bg-gray-100'
                 )}
               >
-                {answer}
-              </span>
-            </label>
-          ))}
+                <span
+                  className={cn(
+                    'self-stretch text-center font-inter text-sm font-normal leading-[150%]',
+                    selectedAnswers
+                      .find((item) => item.question === step?.question)
+                      ?.answers.includes(answer)
+                      ? 'text-[var(--violet,#5B52F9)]'
+                      : 'text-black'
+                  )}
+                >
+                  {answer}
+                </span>
+              </label>
+            ))
+          ) : (
+            <QuestionnairesLastStep />
+          )}
         </div>
         <div
           className={`flex ${currentStepIndex > 0 && 'space-x-2'} w-full justify-between`}
         >
-          {currentStepIndex < questionnaires.length - 1 ? (
+          {currentStepIndex < questionnaires.length ? (
             <div className="flex space-x-2 w-full">
-              <Button
-                type="button"
-                className="w-full"
-                variant="white"
-                onClick={handleSkip}
-              >
-                Skip
-              </Button>
-              <Button
-                className="w-full"
-                type="button"
-                variant="purple"
-                onClick={goToNextStep}
-                disabled={!hasSelectedAnswers}
-              >
-                Next
-              </Button>
+              {isWriteOff && currentStepIndex === 6 ? (
+                <Button
+                  type="button"
+                  variant="purple"
+                  onClick={handleComplete}
+                  className="w-full"
+                >
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {!isWriteOff ? 'Complete' : 'Update'}
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    variant="white"
+                    onClick={handleSkip}
+                  >
+                    Skip
+                  </Button>
+                  <Button
+                    className="w-full"
+                    type="button"
+                    variant="purple"
+                    onClick={goToNextStep}
+                    disabled={!hasSelectedAnswers}
+                  >
+                    Next
+                  </Button>
+                </>
+              )}
             </div>
           ) : (
-            <Button
-              type="button"
-              variant="purple"
-              onClick={handleComplete}
-              className="w-full"
-            >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {pathname.split('/').pop() !== 'write-offs'
-                ? 'Complete'
-                : 'Update'}
-            </Button>
+            <>
+              {currentStepIndex === 7 && !isPopulatedStatements && (
+                <Button
+                  type="button"
+                  className="w-full"
+                  variant="white"
+                  onClick={handleComplete}
+                >
+                  Skip
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="purple"
+                onClick={handleComplete}
+                className="w-full"
+                disabled={!isPopulatedStatements}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {!isWriteOff ? 'Complete' : 'Update'}
+              </Button>
+            </>
           )}
         </div>
       </div>

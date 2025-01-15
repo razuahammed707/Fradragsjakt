@@ -14,8 +14,11 @@ import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import RecentExpenseTable from './RecentExpenseTable';
+import UploadingStatementsWarning from './UploadingStatementsWarning';
+import useIsPopulatedStatements from '@/hooks/use-is-populated-statements';
 
 const DashboardSummarySection = () => {
+  const isStatementsPopulated = useIsPopulatedStatements();
   const [showPersonal, setShowPersonal] = useState<'personal' | 'business'>(
     'business'
   );
@@ -63,6 +66,7 @@ const DashboardSummarySection = () => {
     : 0;
   return (
     <div>
+      {!isStatementsPopulated && <UploadingStatementsWarning />}
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-5">
           <div>

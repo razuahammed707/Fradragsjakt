@@ -108,7 +108,6 @@ function ExpenseOverviewHeading({
     debouncedSetSearchTerm(e.target.value);
   };
 
-  console.log('expensesWithMatchedRules', expensesWithMatchedRules);
   return (
     <>
       <div className="flex justify-between">

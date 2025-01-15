@@ -20,6 +20,7 @@ export default function Onboard() {
   const { data: session, status } = useSession();
   const hasToasted = useRef(false);
   const { currentStepIndex, setCurrentStepIndex } = useQuestionnaireState();
+  console.log('currentStepIndex', currentStepIndex);
 
   const { data: user } = trpc.users.getUserByEmail.useQuery(undefined, {
     enabled: status === 'authenticated',
@@ -55,7 +56,7 @@ export default function Onboard() {
     <div className="min-h-screen">
       <div className="py-4 px-12">
         <span className="text-sm text-[#71717A] font-medium">
-          Step {currentStepIndex + 1}/{questionnaires.length}
+          Step {currentStepIndex + 1}/{questionnaires.length + 1}
         </span>
       </div>
       <div className="flex h-[calc(100vh-64px)] justify-center items-center">
