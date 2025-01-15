@@ -1,4 +1,6 @@
-export function numberFormatter(input: number | null | undefined | string) {
+export function formatNumberWithTwoDecimals(
+  input: number | null | undefined | string
+) {
   if (input === null || input === undefined || input === '') {
     return '';
   }
@@ -13,7 +15,7 @@ export function numberFormatter(input: number | null | undefined | string) {
 
   const parts = normalizedInput.split(',');
   const integerPart = parts[0].replace(/[^\d]/g, '');
-  const decimalPart = parts[1]?.replace(/[^\d]/g, '');
+  const decimalPart = parts[1]?.replace(/[^\d]/g, '').slice(0, 2);
 
   if (!integerPart && !decimalPart) {
     return '';
