@@ -8,6 +8,7 @@ declare module 'next-auth' {
     firstName: string;
     lastName: string;
     hasAnswers: boolean;
+    isSawInstructions: boolean;
     audit_for?: string;
     customer_email?: string;
   }

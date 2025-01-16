@@ -35,6 +35,7 @@ const updateUserSchema = z.object({
       })
     )
     .optional(),
+  isSawInstructions: z.boolean().optional(),
 });
 const updateUserPasswordSchema = z.object({
   oldPassword: z.string(),

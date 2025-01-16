@@ -9,7 +9,7 @@ import useIsPopulatedStatements from '@/hooks/use-is-populated-statements';
 import { cn } from '@/lib/utils';
 
 const UploadingStatementsWarning = () => {
-  const isStatementsPopulated = useIsPopulatedStatements();
+  const { isStatementsPopulated, isLoading } = useIsPopulatedStatements();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ key: '' });
@@ -36,7 +36,7 @@ const UploadingStatementsWarning = () => {
       <div
         className={cn(
           'bg-[#FFE2E2] text-[#50647C] text-md rounded-xl mb-2 px-4 py-2 justify-between items-center flex',
-          isStatementsPopulated && 'hidden'
+          (isStatementsPopulated || isLoading) && 'hidden'
         )}
       >
         Connect with bank or Upload bank statements to start managing your

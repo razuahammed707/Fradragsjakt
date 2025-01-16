@@ -41,6 +41,10 @@ const UserSchema: Schema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    isSawInstructions: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   { timestamps: true }
