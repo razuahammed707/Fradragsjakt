@@ -50,9 +50,8 @@ const ConfirmationModalContent = ({
           >
             incomes
           </Link>{' '}
-          from the file and added them as well. Click the incomes or expense
-          link to visit the expense or income page and check the added expenses
-          or incomes.
+          from the file and added them as well. Visit incomes or expenses page
+          and check the added expenses or incomes.
         </p>
       ) : (
         <p className="text-sm text-gray-600">

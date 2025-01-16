@@ -5,8 +5,11 @@ import { IoMdAdd } from 'react-icons/io';
 import SharedModal from '@/components/SharedModal';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
+import useIsPopulatedStatements from '@/hooks/use-is-populated-statements';
+import { cn } from '@/lib/utils';
 
 const UploadingStatementsWarning = () => {
+  const isStatementsPopulated = useIsPopulatedStatements();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ key: '' });
@@ -30,7 +33,12 @@ const UploadingStatementsWarning = () => {
 
   return (
     <>
-      <div className="bg-[#FFE2E2] text-[#50647C] text-md rounded-xl mb-2 px-4 py-2 justify-between items-center flex">
+      <div
+        className={cn(
+          'bg-[#FFE2E2] text-[#50647C] text-md rounded-xl mb-2 px-4 py-2 justify-between items-center flex',
+          isStatementsPopulated && 'hidden'
+        )}
+      >
         Connect with bank or Upload bank statements to start managing your
         expenses, income, write-offs !
         <div className="space-x-4 flex items-center">
@@ -57,7 +65,10 @@ const UploadingStatementsWarning = () => {
       <SharedModal
         open={isModalOpen}
         onOpenChange={setModalOpen}
-        customClassName="max-w-[650px]"
+        customClassName={cn(
+          'max-w-[650px]',
+          modalContent.key === 'confirmation' && 'max-w-[500px]'
+        )}
       >
         <div className="bg-white">{renderModalContent()}</div>
       </SharedModal>

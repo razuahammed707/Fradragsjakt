@@ -13,6 +13,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Eye, EyeOff } from 'lucide-react';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
+import { sanitizeNumberInput } from '@/utils/helpers/sanitizeNumberInput';
 
 type Option = {
   title: string;
@@ -32,7 +33,7 @@ export interface FormInputProps {
   errorMessage?: string;
   showPasswordRequirements?: boolean;
   disabled?: boolean;
-  maxLength?: number;
+  maxValue?: boolean;
 }
 
 export function FormInput({
@@ -48,7 +49,7 @@ export function FormInput({
   errorMessage,
   showPasswordRequirements,
   disabled,
-  maxLength,
+  maxValue,
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -118,27 +119,40 @@ export function FormInput({
     );
   }
 
-  // Number input
   if (type === 'number') {
     return (
       <Controller
         name={name}
         control={control}
-        rules={{ required }}
-        defaultValue={numberFormatter(defaultValue as number)}
-        render={({ field }) => (
+        rules={{
+          required,
+          ...(maxValue && {
+            validate: (value) => {
+              const numericValue = sanitizeNumberInput(value);
+              return numericValue <= 100 || `Value cannot exceed 100`;
+            },
+          }),
+        }}
+        defaultValue={defaultValue}
+        render={({ field, fieldState: { error } }) => (
           <div>
             <Input
               {...field}
               type="text"
-              value={numberFormatter(field.value as number)}
+              value={numberFormatter(field.value)}
               placeholder={placeholder}
               className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
               required={required}
               disabled={disabled}
             />
-            {errorMessage && (
-              <div className="text-red-500 text-sm">{errorMessage}</div>
+            {maxValue && (
+              <div
+                className={`text-sm mt-1 ${
+                  error ? 'text-red-500' : 'text-gray-500'
+                }`}
+              >
+                {error?.message || `Value cannot exceed 100`}
+              </div>
             )}
           </div>
         )}
@@ -205,10 +219,10 @@ export function FormInput({
       control={control}
       rules={{
         required,
-        ...(maxLength && {
-          maxLength: {
-            value: maxLength,
-            message: `Value cannot exceed ${maxLength} digits.`,
+        ...(maxValue && {
+          maxValue: {
+            value: maxValue,
+            message: `Value cannot exceed ${maxValue} digits.`,
           },
         }),
       }}
@@ -223,13 +237,13 @@ export function FormInput({
             required={required}
             disabled={disabled} // Apply disabled prop
           />
-          {maxLength && (
+          {maxValue && (
             <div
               className={`text-sm mt-1 ${
                 error ? 'text-red-500' : 'text-gray-500'
               }`}
             >
-              {error?.message || `Value cannot exceed ${maxLength} digits.`}
+              {error?.message || `Value cannot exceed ${maxValue} digits.`}
             </div>
           )}
         </div>

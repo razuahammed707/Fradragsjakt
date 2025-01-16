@@ -2,9 +2,16 @@ import { QuestionnaireItem, SubAnswer } from '@/redux/slices/questionnaire';
 import { IQuestionnaire } from '@/server/db/interfaces/user';
 
 const safeParseNumber = (value: string): number => {
-  if (value === '') return 0;
+  if (value.trim() === '') return 0;
 
-  const parsedNum = parseFloat(value?.replace(/,/g, ''));
+  let normalizedValue = value.replace(/\s+/g, '');
+
+  if (normalizedValue.includes(',')) {
+    normalizedValue = normalizedValue.replace(',', '.');
+  }
+
+  const parsedNum = parseFloat(normalizedValue);
+
   return isNaN(parsedNum) ? 0 : parsedNum;
 };
 
@@ -74,7 +81,6 @@ const workAndEducationExpenseCalculator = (
     )
     ? 3850
     : 0;
-  console.log('initialAmount', initialAmount);
 
   return workAndEducationPayload.answers.reduce((total, answer) => {
     const [key, value] = Object.entries(answer)[0];
@@ -117,7 +123,6 @@ const workAndEducationExpenseCalculator = (
         const deductionOnSeperateRoom =
           (extractExpense('Room Area') / extractExpense('Home Area')) *
             extractExpense('Operating Cost') || 0;
-        console.log({ deductionOnSeperateRoom });
 
         return total + deductionOnSeperateRoom;
 
@@ -300,6 +305,12 @@ const foreignIncomeExpenseCalculator = (
 
   const foreignTaxAmount = extractValue('Foreign tax amount');
   const norwayTaxRate = extractValue('Norway tax rate on this income');
+  console.log(
+    'hola',
+    foreignTaxAmount,
+    norwayTaxRate,
+    foreignTaxAmount * (norwayTaxRate / 100)
+  );
 
   return foreignTaxAmount * (norwayTaxRate / 100);
 };

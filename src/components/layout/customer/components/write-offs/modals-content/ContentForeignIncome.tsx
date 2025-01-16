@@ -71,7 +71,6 @@ export function ContentForeignIncome({
               'Have income or wealth in another country than Norway and pay tax in the other country',
               'Foreign income'
             )}
-            required
           />
           <p className="text-black pt-3 pb-1">
             {translate(
@@ -98,7 +97,8 @@ export function ContentForeignIncome({
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Norway tax rate on this income"
             customClassName="w-full"
-            maxLength={2}
+            maxValue
+            type="number"
             control={control}
             defaultValue={getDefaultValue(
               'Have income or wealth in another country than Norway and pay tax in the other country',
@@ -137,7 +137,11 @@ export function ContentForeignIncome({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
+    console.log({ formData });
+
     const payload = transformFormDataToPayload(question, formData);
+    console.log({ payload });
+
     updateQuestionnaires.mutate(payload);
     appDispatch(showModal(false));
   };

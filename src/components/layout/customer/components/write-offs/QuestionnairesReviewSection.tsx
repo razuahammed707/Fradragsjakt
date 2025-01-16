@@ -26,13 +26,13 @@ import EditResponseModalContent from './modals-content/EditResponseModalContent'
 import { cn } from '@/lib/utils';
 import { ContentHousing } from './modals-content/ContentHousing';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import SharedReportDownloader from '@/components/SharedReportDownloader';
 import ViewResponseModalContent from './modals-content/ViewResponseModalContent';
 import useUserInfo from '@/hooks/use-user-info';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import useIsWithinDashboard from '@/hooks/is-within-dashboard';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
 const modalContentMap: Record<
   string,
@@ -85,7 +85,6 @@ const QuestionnairesReviewSection = () => {
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
   } = savingExpenseCalculator(user?.questionnaires);
-  console.log({ workAndEducationExpenseAmount });
 
   const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
 
@@ -253,7 +252,9 @@ const QuestionnairesReviewSection = () => {
                   </p>
                 </div>
                 {question.amount !== 0 && (
-                  <p>NOK {numberFormatter(question?.amount || 0)}</p>
+                  <p>
+                    NOK {formatNumberWithTwoDecimals(question?.amount || 0)}
+                  </p>
                 )}
               </div>
             ))}
@@ -263,7 +264,7 @@ const QuestionnairesReviewSection = () => {
             <div className="flex justify-between items-center">
               <p>Savings from questions</p>
               <p className="font-medium">
-                NOK {numberFormatter(personalTotal)}
+                NOK {formatNumberWithTwoDecimals(personalTotal)}
               </p>
             </div>
           </div>
