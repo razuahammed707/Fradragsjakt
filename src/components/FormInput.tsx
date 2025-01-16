@@ -34,6 +34,7 @@ export interface FormInputProps {
   showPasswordRequirements?: boolean;
   disabled?: boolean;
   maxValue?: boolean;
+  noFraction?: boolean;
 }
 
 export function FormInput({
@@ -50,6 +51,7 @@ export function FormInput({
   showPasswordRequirements,
   disabled,
   maxValue,
+  noFraction,
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -66,7 +68,7 @@ export function FormInput({
             <Select
               value={field.value}
               onValueChange={field.onChange}
-              disabled={disabled} // Apply disabled prop
+              disabled={disabled}
             >
               <SelectTrigger
                 className={`w-full data-[placeholder]:text-muted-foreground ${customClassName}`}
@@ -92,7 +94,6 @@ export function FormInput({
     );
   }
 
-  // Textarea input
   if (type === 'textarea') {
     return (
       <Controller
@@ -108,7 +109,7 @@ export function FormInput({
               rows={rows}
               className={`w-full resize-y ${customClassName}`}
               required={required}
-              disabled={disabled} // Apply disabled prop
+              disabled={disabled}
             />
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
@@ -126,12 +127,19 @@ export function FormInput({
         control={control}
         rules={{
           required,
-          ...(maxValue && {
-            validate: (value) => {
-              const numericValue = sanitizeNumberInput(value);
-              return numericValue <= 100 || `Value cannot exceed 100`;
-            },
-          }),
+          validate: (value) => {
+            const numericValue = sanitizeNumberInput(value);
+
+            if (noFraction && !Number.isInteger(numericValue)) {
+              return 'Value must be a whole number';
+            }
+
+            if (maxValue && numericValue > 100) {
+              return `Value cannot exceed 100`;
+            }
+
+            return true;
+          },
         }}
         defaultValue={defaultValue}
         render={({ field, fieldState: { error } }) => (
@@ -145,13 +153,19 @@ export function FormInput({
               required={required}
               disabled={disabled}
             />
-            {maxValue && (
+
+            {(error || maxValue || noFraction) && (
               <div
                 className={`text-sm mt-1 ${
                   error ? 'text-red-500' : 'text-gray-500'
                 }`}
               >
-                {error?.message || `Value cannot exceed 100`}
+                {error?.message ||
+                  (noFraction &&
+                    maxValue &&
+                    'Value must be a whole number & can not exceed 100') ||
+                  (noFraction && 'Value must be a whole number') ||
+                  (maxValue && `Value cannot exceed 100`)}
               </div>
             )}
           </div>

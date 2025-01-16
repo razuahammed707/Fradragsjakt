@@ -125,7 +125,8 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
           <FormInput
             name="Have taken out a joint loan with someone.Your ownership share"
             customClassName="w-full"
-            maxLength={2}
+            type="number"
+            maxValue
             control={control}
             placeholder="50 %"
             defaultValue={getDefaultValue(

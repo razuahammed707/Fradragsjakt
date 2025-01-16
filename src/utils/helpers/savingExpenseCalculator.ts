@@ -300,9 +300,6 @@ const foreignIncomeExpenseCalculator = (
       )?.[field] || ''
     ) || 0;
 
-  const foreignIncome = extractValue('Foreign income');
-  if (foreignIncome === 0) return 0;
-
   const foreignTaxAmount = extractValue('Foreign tax amount');
   const norwayTaxRate = extractValue('Norway tax rate on this income');
   console.log(
