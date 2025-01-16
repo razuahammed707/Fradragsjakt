@@ -69,7 +69,7 @@ export const userRouter = router({
   updateUser: protectedProcedure
     .input(userValidation.updateUserSchema)
     .mutation(async ({ ctx, input }) => {
-      const { questionnaires = [] } = input;
+      const { questionnaires = [], isSawInstructions = false } = input;
 
       const sessionUser = ctx.user as JwtPayload;
       if (!sessionUser || !sessionUser?.email) {
@@ -136,6 +136,7 @@ export const userRouter = router({
         {
           questionnaires: finalQuestionnaires,
           isStepperSkippedOrCompleted: true,
+          isSawInstructions,
         },
 
         { new: true }

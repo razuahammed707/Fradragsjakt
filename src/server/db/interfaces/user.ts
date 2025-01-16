@@ -15,4 +15,5 @@ export interface IUser extends Document {
   questionnaires: IQuestionnaire[];
   isVerified: boolean;
   isStepperSkippedOrCompleted: boolean;
+  isSawInstructions: boolean;
 }

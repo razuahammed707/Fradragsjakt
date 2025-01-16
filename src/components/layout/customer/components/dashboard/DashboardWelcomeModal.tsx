@@ -17,12 +17,22 @@ import ExpenseImg from '../../../../../../public/images/dashboard/welcome-modal/
 import RulesImg from '../../../../../../public/images/dashboard/welcome-modal/rules-page.png';
 import CategoryImg from '../../../../../../public/images/dashboard/welcome-modal/category-page.png';
 import WriteOffImg from '../../../../../../public/images/dashboard/welcome-modal/write-off-page.png';
+import { trpc } from '@/utils/trpc';
 
 const DashboardWelcomeModal = () => {
+  const { data: loggedUser, isLoading } = trpc.users.getUserByEmail.useQuery();
+
   const [isModalOpen, setModalOpen] = useState(true);
   const [api, setApi] = useState<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
-
+  React.useEffect(() => {
+    if (isLoading) {
+      setModalOpen(false);
+    }
+    if (loggedUser?.isSawInstructions) {
+      setModalOpen(!loggedUser?.isSawInstructions);
+    }
+  }, [loggedUser, isLoading]);
   React.useEffect(() => {
     if (!api) return;
 
@@ -76,7 +86,12 @@ const DashboardWelcomeModal = () => {
       ),
     },
   ];
+  const updateUserMutation = trpc.users.updateUser.useMutation();
 
+  const handleGetStartedClick = () => {
+    updateUserMutation.mutate({ isSawInstructions: true });
+    setModalOpen(false);
+  };
   return (
     <>
       <SharedModal
@@ -98,10 +113,7 @@ const DashboardWelcomeModal = () => {
                 </p>
               </div>
               <div>
-                <Button
-                  onClick={() => setModalOpen(false)}
-                  className="text-white"
-                >
+                <Button onClick={handleGetStartedClick} className="text-white">
                   Let&apos;s Get Started
                 </Button>
               </div>

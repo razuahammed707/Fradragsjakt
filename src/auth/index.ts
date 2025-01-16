@@ -73,6 +73,7 @@ export const {
           token.lastName = retrievedUser.lastName;
           token.role = retrievedUser.role || 'customer';
           token.hasAnswers = retrievedUser.isStepperSkippedOrCompleted;
+          token.isSawInstructions = retrievedUser.isSawInstructions;
         }
       }
       return token;
@@ -87,6 +88,10 @@ export const {
           firstName: token.firstName || token.name || '',
           lastName: token.lastName || '',
           hasAnswers: token.hasAnswers || false,
+          isSawInstructions:
+            typeof token.isSawInstructions === 'boolean'
+              ? token.isSawInstructions
+              : false,
           audit_for: token.audit_for || '',
           customer_email: token.customer_email || '',
         },
