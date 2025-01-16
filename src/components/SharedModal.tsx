@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import React from 'react';
@@ -22,7 +23,10 @@ const SharedModal: React.FC<ModalProps> = ({
       <Dialog.Overlay className="fixed z-40 inset-0 bg-black bg-opacity-50" />
 
       <Dialog.Content
-        className={`fixed top-1/2 left-1/2 w-[90vw] z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg ${customClassName || 'max-w-md'}`}
+        className={cn(
+          `fixed top-1/2 left-1/2 w-[90vw] z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg max-w-md`,
+          customClassName
+        )}
       >
         <Dialog.Title className="sr-only">Dialog Title</Dialog.Title>
         <Dialog.Description className="sr-only">

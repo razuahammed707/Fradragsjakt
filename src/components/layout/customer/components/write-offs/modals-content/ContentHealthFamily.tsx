@@ -71,8 +71,10 @@ export function ContentHealthFamily({
             name="Have children aged 11 years or younger.How many children do you have under the age of 12?"
             customClassName="w-full"
             control={control}
-            placeholder="2"
-            maxLength={2}
+            type="number"
+            placeholder=" "
+            maxValue
+            noFraction
             defaultValue={getDefaultValue(
               'Have children aged 11 years or younger',
               'How many children do you have under the age of 12?'
