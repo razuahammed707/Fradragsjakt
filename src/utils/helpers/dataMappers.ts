@@ -11,7 +11,6 @@ interface ParsedFileResult {
   headers: Column[];
 }
 export const parseFileData = (data: string[][]): ParsedFileResult => {
-  // Create headers from all columns, not skipping the first one
   const headers: Column[] = data[0].map((header, index) => ({
     title: header,
     dataIndex: `column_${index}`,
@@ -25,7 +24,6 @@ export const parseFileData = (data: string[][]): ParsedFileResult => {
       const cleanedRow = [];
       let tempValue = '';
 
-      // Process all columns, including the first one
       for (let i = 0; i < row.length; i++) {
         const cell = row[i].trim();
 

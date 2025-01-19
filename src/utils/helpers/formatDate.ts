@@ -13,9 +13,6 @@ const formatDate = (isoDate: string): string => {
 };
 
 try {
-  const formattedDate = formatDate('2024-11-10T06:28:08.799Z');
-  console.log(formattedDate);
-
   formatDate('invalid-date');
 } catch (error: unknown) {
   if (error instanceof Error) {

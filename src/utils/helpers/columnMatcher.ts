@@ -25,16 +25,13 @@ export const findBestMatch = (
   columnTitle: string,
   headers: Column[]
 ): string | undefined => {
-  // Convert to lowercase for case-insensitive matching
   const targetTitle = columnTitle.toLowerCase();
 
-  // First try exact match
   const exactMatch = headers.find(
     (header) => header.title.toLowerCase() === targetTitle
   );
   if (exactMatch) return exactMatch.title;
 
-  // Then try partial match
   const partialMatch = headers.find((header) => {
     const headerLower = header.title.toLowerCase();
     return (
@@ -43,7 +40,6 @@ export const findBestMatch = (
   });
   if (partialMatch) return partialMatch.title;
 
-  // Common variations for date
   if (targetTitle === 'date') {
     const dateVariations = headers.find((header) => {
       const headerLower = header.title.toLowerCase();
@@ -52,13 +48,12 @@ export const findBestMatch = (
         headerLower.includes('time') ||
         headerLower.includes('when') ||
         headerLower.includes('posted') ||
-        headerLower.includes('transaction')
+        headerLower.includes('dato')
       );
     });
     if (dateVariations) return dateVariations.title;
   }
 
-  // Common variations for description
   if (targetTitle === 'description') {
     const descVariations = headers.find((header) => {
       const headerLower = header.title.toLowerCase();
@@ -68,13 +63,13 @@ export const findBestMatch = (
         headerLower.includes('details') ||
         headerLower.includes('transaction') ||
         headerLower.includes('particulars') ||
-        headerLower.includes('remarks')
+        headerLower.includes('remarks') ||
+        headerLower.includes('forklaring')
       );
     });
     if (descVariations) return descVariations.title;
   }
 
-  // Common variations for withdrawal
   if (targetTitle === 'withdrawal') {
     const withdrawalVariations = headers.find((header) => {
       const headerLower = header.title.toLowerCase();
@@ -83,21 +78,22 @@ export const findBestMatch = (
         headerLower.includes('debit') ||
         headerLower.includes('out') ||
         headerLower.includes('spent') ||
+        headerLower.includes('rentedato') ||
         (headerLower.includes('amount') && headerLower.includes('dr'))
       );
     });
     if (withdrawalVariations) return withdrawalVariations.title;
   }
 
-  // Common variations for deposit
   if (targetTitle === 'deposit') {
     const depositVariations = headers.find((header) => {
       const headerLower = header.title.toLowerCase();
+
       return (
         headerLower.includes('deposit') ||
         headerLower.includes('credit') ||
-        headerLower.includes('in') ||
         headerLower.includes('received') ||
+        headerLower.includes('ut fra konto') ||
         (headerLower.includes('amount') && headerLower.includes('cr'))
       );
     });

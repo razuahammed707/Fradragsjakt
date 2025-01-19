@@ -1,8 +1,6 @@
 import React from 'react';
 
 const CompanyLogo = ({ color = 'white', width = '140', height = '18' }) => {
-  console.log({ color, width, height });
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

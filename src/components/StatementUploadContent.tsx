@@ -11,6 +11,7 @@ import { Column, FileRowData, FormData } from '@/types/upload-statements';
 import {
   processCsvFile,
   processExcelFile,
+  processTxtFile,
 } from '@/utils/helpers/fileProcessors';
 import { mapToExpenseData, parseFileData } from '@/utils/helpers/dataMappers';
 import toast from 'react-hot-toast';
@@ -48,20 +49,38 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
     try {
       setLoading(true);
       const fileType = file.name.split('.').pop()?.toLowerCase();
-      const rawData =
-        fileType === 'csv'
-          ? await processCsvFile(file)
-          : await processExcelFile(file);
+      let rawData;
+
+      switch (fileType) {
+        case 'csv':
+          rawData = await processCsvFile(file);
+          break;
+        case 'txt':
+          rawData = await processTxtFile(file);
+          console.log({ rawData });
+          break;
+        case 'xlsx':
+        case 'xls':
+          rawData = await processExcelFile(file);
+          break;
+        default:
+          throw new Error('Unsupported file type');
+      }
+      console.log({ rawData });
 
       const { fileData: parsedData, headers: parsedHeaders } =
         parseFileData(rawData);
+
+      if (parsedHeaders.length < 2) {
+        throw new Error('File must contain at least 2 columns of data');
+      }
 
       setHeaders(parsedHeaders);
       setFileData(parsedData);
       setFileLink(file);
       setIsFileProcessed(true);
     } catch (error: any) {
-      toast.error('Error processing file');
+      toast.error(error.message || 'Error processing file');
     } finally {
       setLoading(false);
     }

@@ -19,7 +19,6 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
   const { data: session } = useSession();
   const isGreaterThan1600: boolean = useMediaQuery('(min-width: 1601px)');
 
-  console.log('session from topbar', session);
   return (
     <header
       className={cn(
