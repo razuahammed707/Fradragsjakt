@@ -346,8 +346,6 @@ export const expenseRouter = router({
         const loggedUser = ctx.user as JwtPayload;
         const results = await Promise.all(
           statements.map(async (statement) => {
-            console.log('Processing statement:', statement);
-
             const expense =
               statement.withdrawal > 0
                 ? await ExpenseHelpers.createExpenseFromBulkInput(

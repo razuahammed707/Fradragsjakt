@@ -14,8 +14,8 @@ import {
 } from '@/redux/slices/questionnaire';
 import { SelectedAnswer } from './layout/auth/Onboard';
 import QuestionnairesLastStep from './QuestionnairesLastStep';
-import useIsPopulatedStatements from '@/hooks/use-is-populated-statements';
 import useFindWhichUrl from '@/hooks/use-find-which-url';
+import useIsStatementsPopulated from '@/hooks/use-is-populated-statements';
 
 type QuestionnairesStepperProps = {
   currentStepIndex: number;
@@ -26,7 +26,9 @@ export default function QuestionnairesStepper({
   currentStepIndex,
   setCurrentStepIndex,
 }: QuestionnairesStepperProps) {
-  const isPopulatedStatements = useIsPopulatedStatements();
+  const { isStatementsPopulated } = useIsStatementsPopulated();
+  console.log({ isStatementsPopulated });
+
   const { isWriteOff } = useFindWhichUrl();
   const { data: user } = useSession();
   const utils = trpc.useUtils();
@@ -157,14 +159,14 @@ export default function QuestionnairesStepper({
             <h2 className="text-[var(--700,#18181B)] font-inter text-[20px] md:text-[24px] font-bold leading-normal">
               {currentStepIndex < questionnaires.length
                 ? step?.question
-                : !isPopulatedStatements
+                : !isStatementsPopulated
                   ? 'Choose to add statements'
                   : "Success! You're All Set"}
             </h2>
             <p className="text-gray-600 text-center text-[var(--500,#71717A)] font-inter text-[12px] font-medium leading-normal">
               {currentStepIndex < questionnaires.length
                 ? 'This information allows Skattepluss to suggest tax savings. Select all that apply.'
-                : !isPopulatedStatements
+                : !isStatementsPopulated
                   ? 'This info allows you to have better transaction fast and automated.'
                   : 'Your setup is complete.'}
             </p>
@@ -242,7 +244,7 @@ export default function QuestionnairesStepper({
             </div>
           ) : (
             <>
-              {currentStepIndex === 7 && !isPopulatedStatements && (
+              {currentStepIndex === 7 && !isStatementsPopulated && (
                 <Button
                   type="button"
                   className="w-full"
@@ -257,7 +259,7 @@ export default function QuestionnairesStepper({
                 variant="purple"
                 onClick={handleComplete}
                 className="w-full"
-                disabled={!isPopulatedStatements}
+                disabled={!isStatementsPopulated}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {!isWriteOff ? 'Continue to dashboard' : 'Update'}

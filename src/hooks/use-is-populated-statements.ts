@@ -1,6 +1,6 @@
 import { trpc } from '@/utils/trpc';
 
-const useIsPopulatedStatements = () => {
+const useIsStatementsPopulated = () => {
   const { data: incomesResponse, isLoading: isIncomeLoading } =
     trpc.incomes.getIncomes.useQuery({
       page: 1,
@@ -25,4 +25,4 @@ const useIsPopulatedStatements = () => {
   };
 };
 
-export default useIsPopulatedStatements;
+export default useIsStatementsPopulated;
