@@ -46,7 +46,7 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
             Drag and drop your file here, or click below to upload.
           </p>
           <p className="text-xs text-gray-500">
-            Only CSV and XLSX files are allowed
+            The maximum file size allowed is 10MB.
           </p>
           {fileLink && (
             <p className="text-xs text-gray-700 mt-1">
