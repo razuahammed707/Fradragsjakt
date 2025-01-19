@@ -180,14 +180,17 @@ function IncomeAddContent({
   }, [fileLink]);
 
   const onSubmit = (data: FormData) => {
-    const mofifiedAmount = Number(data?.amount?.replace(/\s+/g, '') || 0);
+    const modifiedAmount =
+      typeof data?.amount === 'number'
+        ? data.amount
+        : Number(data?.amount?.replace(/\s+/g, '').replace(',', '.') || 0);
 
     setLoading(true);
     if (origin) {
       updateMutation.mutate({
         id: payload?._id,
         ...data,
-        amount: mofifiedAmount,
+        amount: modifiedAmount,
         receipt: {
           link: uploadedImage?.link || '',
           mimeType: uploadedImage?.mimeType || '',
@@ -196,7 +199,7 @@ function IncomeAddContent({
     } else
       createMutation.mutate({
         ...data,
-        amount: mofifiedAmount,
+        amount: modifiedAmount,
         receipt: {
           link: uploadedImage?.link || '',
           mimeType: uploadedImage?.mimeType || '',

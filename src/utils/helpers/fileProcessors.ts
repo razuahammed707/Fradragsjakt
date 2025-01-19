@@ -83,13 +83,51 @@ export const processCsvFile = (file: File): Promise<string[][]> => {
     reader.onload = (e) => {
       try {
         const text = e.target?.result as string;
-        const data = text.split('\n').map((line) => line.split(','));
+
+        const firstLine = text.split('\n')[0];
+        const delimiter = firstLine.includes(';') ? ';' : ',';
+
+        const data = text
+          .split('\n')
+          .map((line) =>
+            line
+              .split(delimiter)
+              .map((value) => value.trim().replace(/^"|"$/g, ''))
+          );
+
         resolve(data);
       } catch (error) {
         reject(error);
       }
     };
     reader.onerror = (error) => reject(error);
+    reader.readAsText(file);
+  });
+};
+
+export const processTxtFile = (file: File): Promise<string[][]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+
+        const data = text
+          .split('\n')
+          .map((line) =>
+            line
+              .trim()
+              .split(/\s+/)
+              .filter((cell) => cell.length > 0)
+          )
+          .filter((row) => row.length > 0);
+        resolve(data);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = (error) => reject(error);
+
     reader.readAsText(file);
   });
 };

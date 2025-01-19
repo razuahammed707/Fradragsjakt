@@ -21,11 +21,11 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
           return;
         }
         const fileType = file.name.split('.').pop()?.toLowerCase();
-        if (['csv', 'xlsx', 'xls'].includes(fileType || '')) {
+        if (['csv', 'xlsx', 'xls', 'txt'].includes(fileType || '')) {
           onFileProcessed(file);
           return;
         }
-        toast.error('Only CSV and Excel files are allowed!');
+        toast.error('Only CSV, Excel, and TXT files are allowed!');
       }
     },
     [onFileProcessed]
@@ -39,6 +39,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         '.xlsx',
       ],
       'application/vnd.ms-excel': ['.xls'],
+      'text/plain': ['.txt'],
     },
   });
 

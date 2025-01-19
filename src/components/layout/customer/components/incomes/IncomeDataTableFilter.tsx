@@ -56,8 +56,6 @@ export default function IncomeDataTableFilter({
     }));
   }, [categoryData]);
 
-  console.log('category data', categoryData);
-
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
