@@ -44,12 +44,11 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
   return (
     <div
+      className="rounded-lg mb-5 mt-2 bg-[#FAFAFA] p-5 border-dashed border-2 border-[#D8D8D8]"
       {...getRootProps()}
-      className={`rounded-lg mb-5 mt-2 bg-[#FAFAFA] p-5 border-dashed border-2 border-[#D8D8D8] flex flex-col items-center justify-center ${
-        isDragActive ? 'bg-gray-100' : ''
-      }`}
     >
       <DragAndDropFile
+        type="spreadsheet"
         fileLink={null}
         loading={loading}
         getInputProps={getInputProps}
