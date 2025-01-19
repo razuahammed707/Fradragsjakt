@@ -14,22 +14,34 @@ type DragAndDropFileProps = {
 const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
   loading,
   getInputProps,
-
   fileLink,
 }) => {
+  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
+  const inputProps = getInputProps();
+
   return (
     <div className="flex flex-col items-center justify-center">
-      <input hidden {...getInputProps()} />
+      <input
+        {...inputProps}
+        onClick={(e) => {
+          e.stopPropagation();
+          inputProps.onClick?.(e);
+        }}
+      />
       {loading ? (
         <Loader2 size={40} className="animate-spin text-primary" />
       ) : (
         <>
-          <Image
-            src={NewUpload} // Replace with the correct path
-            alt="Upload icon"
-            width={40}
-            height={40}
-          />
+          <Image src={NewUpload} alt="Upload icon" width={40} height={40} />
           <p className="mt-2 text-sm text-gray-600 pb-5">
             Drag and drop your file here, or click below to upload.
           </p>
@@ -41,7 +53,12 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
               Selected file: {fileLink.name}
             </p>
           )}
-          <Button variant="purple" className="mt-4">
+          <Button
+            variant="purple"
+            className="mt-4"
+            onClick={handleButtonClick}
+            type="button"
+          >
             Browse File
           </Button>
         </>
