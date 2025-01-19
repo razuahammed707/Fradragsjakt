@@ -5,11 +5,11 @@ import uploadStatementSVG from '../../public/upload-a-statement.svg';
 import SharedModal from '../components/SharedModal';
 import StatementUploadContent from '../components/StatementUploadContent';
 import ConfirmationModalContent from './ConfirmationModalContent';
-import useIsPopulatedStatements from '@/hooks/use-is-populated-statements';
 import Success from '../../public/Success.svg';
+import useIsStatementsPopulated from '@/hooks/use-is-populated-statements';
 
 const QuestionnairesLastStep = () => {
-  const isPopulatedStatements = useIsPopulatedStatements();
+  const { isStatementsPopulated } = useIsStatementsPopulated();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ key: '' });
 
@@ -35,7 +35,7 @@ const QuestionnairesLastStep = () => {
 
   return (
     <div>
-      {isPopulatedStatements ? (
+      {isStatementsPopulated ? (
         <div className="flex flex-col items-center space-y-4">
           <Image
             src={Success}

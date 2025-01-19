@@ -5,11 +5,11 @@ import { IoMdAdd } from 'react-icons/io';
 import SharedModal from '@/components/SharedModal';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
-import useIsPopulatedStatements from '@/hooks/use-is-populated-statements';
 import { cn } from '@/lib/utils';
+import useIsStatementsPopulated from '@/hooks/use-is-populated-statements';
 
 const UploadingStatementsWarning = () => {
-  const { isStatementsPopulated, isLoading } = useIsPopulatedStatements();
+  const { isStatementsPopulated, isLoading } = useIsStatementsPopulated();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ key: '' });
