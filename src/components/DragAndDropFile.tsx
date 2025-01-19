@@ -1,53 +1,67 @@
-import { Loader2 } from 'lucide-react';
 import React from 'react';
-import UploadIcon from '../../public/upload.png';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { useTranslation } from '@/lib/TranslationProvider';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import NewUpload from '../../public/NewUpload.svg';
 
 type DragAndDropFileProps = {
   loading: boolean;
   getInputProps: () => React.InputHTMLAttributes<HTMLInputElement>;
   isDragActive: boolean;
   fileLink?: File | null;
-  setFileLink?: React.Dispatch<React.SetStateAction<File | null>>;
-  type?: string;
 };
 
 const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
-  type,
   loading,
   getInputProps,
-  isDragActive,
+  fileLink,
 }) => {
-  const { translate } = useTranslation();
+  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
+  const inputProps = getInputProps();
+
   return (
-    <div>
-      <input hidden accept=".csv, text/csv" {...getInputProps()} />
-      {isDragActive ? (
-        <p className="text-[#71717A] p-6">Drop the CSV file here ...</p>
+    <div className="flex flex-col items-center justify-center">
+      <input
+        {...inputProps}
+        onClick={(e) => {
+          e.stopPropagation();
+          inputProps.onClick?.(e);
+        }}
+      />
+      {loading ? (
+        <Loader2 size={40} className="animate-spin text-primary" />
       ) : (
-        <div className="flex flex-col space-y-5 justify-center items-center">
-          {loading ? (
-            <Loader2 size={40} className="animate-spin text-primary  " />
-          ) : (
-            <Image src={UploadIcon} alt="upload icon" />
-          )}
-          <div className="text-center">
-            <p className="text-[#71717A]">
-              {translate('componentsExpenseModal.expense.upload')}
+        <>
+          <Image src={NewUpload} alt="Upload icon" width={40} height={40} />
+          <p className="mt-2 text-sm text-gray-600 pb-5">
+            Drag and drop your file here, or click below to upload.
+          </p>
+          <p className="text-xs text-gray-500">
+            The maximum file size allowed is 10MB.
+          </p>
+          {fileLink && (
+            <p className="text-xs text-gray-700 mt-1">
+              Selected file: {fileLink.name}
             </p>
-            {type === 'csv' ? (
-              <p className={cn('text-[#71717A] text-sm')}>
-                Only CSV files are allowed with maximum 2MB of file size{' '}
-              </p>
-            ) : (
-              <p className={cn('text-[#71717A] text-sm')}>
-                The maximum file size allowed is 10MB.{' '}
-              </p>
-            )}
-          </div>
-        </div>
+          )}
+          <Button
+            variant="purple"
+            className="mt-4"
+            onClick={handleButtonClick}
+            type="button"
+          >
+            Browse File
+          </Button>
+        </>
       )}
     </div>
   );

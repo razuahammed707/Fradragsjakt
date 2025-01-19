@@ -44,7 +44,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
   return (
     <div
-      className="rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]"
+      className="rounded-lg mb-5 mt-2 bg-[#FAFAFA] p-5 border-dashed border-2 border-[#D8D8D8]"
       {...getRootProps()}
     >
       <DragAndDropFile
