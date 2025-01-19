@@ -18,6 +18,7 @@ import ExpenseImg from '../../../../../../public/images/dashboard/welcome-modal/
 import RulesImg from '../../../../../../public/images/dashboard/welcome-modal/rules-page.png';
 import CategoryImg from '../../../../../../public/images/dashboard/welcome-modal/category-page.png';
 import WriteOffImg from '../../../../../../public/images/dashboard/welcome-modal/write-off-page.png';
+import WelcomeImg from '../../../../../../public/images/dashboard/welcome-modal/welcoming-greet.png';
 import { trpc } from '@/utils/trpc';
 
 const FEATURES = [
@@ -102,7 +103,7 @@ const DashboardWelcomeModal = () => {
     image,
   }: (typeof FEATURES)[number]) => (
     <CarouselItem className="basis-[269px]">
-      <div className="h-[393px] bg-gray-50 flex flex-col justify-between rounded-[18px]">
+      <div className="h-[393px] bg-gray-50 flex flex-col justify-between rounded-[18px] overflow-hidden">
         <div className="p-[18px]">
           <h3 className="text-[21px] text-[#18181B] font-bold mb-[10px]">
             {title}
@@ -129,20 +130,29 @@ const DashboardWelcomeModal = () => {
     >
       <Card className="shadow-none overflow-hidden">
         <CardContent className="flex p-0">
-          <div className="px-6 pt-[51px] flex flex-col justify-between pb-6 w-[323px] h-[546px]">
-            <div>
-              <h2 className="text-[#18181B] text-[26px] font-bold mb-3">
+          <div className="px-6 py-12 flex flex-col justify-between  w-[323px] h-[546px]">
+            <Image
+              src={WelcomeImg}
+              height={285}
+              width={225}
+              alt="Welcoming Greet"
+            />
+            <div className="space-y-4">
+              <h2 className="text-[#18181B] text-[22px] font-bold ">
                 Welcome aboard!
               </h2>
-              <p className="text-[15px] text-[#3E3E3E]">
-                Let’s take a quick look at our features, so you know how to
-                manage your incomes, expenses, creation of rules, categories,
-                and write-offs effortlessly.
+              <p className="text-[13px] text-[#3E3E3E]">
+                Lets take a quick look at our features , So you know how to
+                manage your incomes , expenses , creation of rules, categories
+                and write offs effortlessly.
               </p>
+              <Button
+                onClick={handleGetStartedClick}
+                className="text-white text-xs font-medium py-3 w-[190px]"
+              >
+                Let&apos;s Get Started
+              </Button>
             </div>
-            <Button onClick={handleGetStartedClick} className="text-white">
-              Let&apos;s Get Started
-            </Button>
           </div>
 
           <Carousel
@@ -165,7 +175,7 @@ const DashboardWelcomeModal = () => {
             </CarouselContent>
 
             {canScrollPrev && (
-              <CarouselPrevious className="left-6 hover:bg-primary hover:text-primary-foreground rounded-r-[20px] bg-[rgba(0,16,75,0.58)] h-[37px] w-[40px] text-white" />
+              <CarouselPrevious className="left-6 hover:bg-primary hover:text-primary-foreground rounded-l-[20px] bg-[rgba(0,16,75,0.58)] h-[37px] w-[40px] text-white" />
             )}
             <CarouselNext className="right-0 hover:bg-primary hover:text-primary-foreground rounded-r-[20px] bg-[rgba(0,16,75,0.58)] h-[37px] w-[40px] text-white" />
           </Carousel>
