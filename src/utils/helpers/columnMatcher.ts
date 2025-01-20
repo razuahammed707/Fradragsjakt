@@ -78,7 +78,7 @@ export const findBestMatch = (
         headerLower.includes('debit') ||
         headerLower.includes('out') ||
         headerLower.includes('spent') ||
-        headerLower.includes('rentedato') ||
+        headerLower.includes('ut fra konto') ||
         (headerLower.includes('amount') && headerLower.includes('dr'))
       );
     });
@@ -93,7 +93,7 @@ export const findBestMatch = (
         headerLower.includes('deposit') ||
         headerLower.includes('credit') ||
         headerLower.includes('received') ||
-        headerLower.includes('ut fra konto') ||
+        headerLower.includes('inn på konto') ||
         (headerLower.includes('amount') && headerLower.includes('cr'))
       );
     });

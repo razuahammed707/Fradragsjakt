@@ -35,12 +35,12 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
   }
 
   return (
-    <div className="h-screen w-full max-w-[1920px] mx-auto">
-      <div>
-        <Topbar role={session?.user?.role || loggedUser?.role || ''} />
+    <div className="h-screen w-full ">
+      <Topbar role={session?.user?.role || loggedUser?.role || ''} />
+      <div className="bg-[#EEF0F4] w-full">
         <div
           className={cn(
-            'grid bg-[#EEF0F4]  h-[calc(100vh-60px)] gap-8 w-full md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr]  px-8 ',
+            'grid h-[calc(100vh-60px)] gap-8 max-w-[1920px] mx-auto md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr]  px-8 ',
             isGreaterThan1600 && 'px-[128px]'
           )}
         >

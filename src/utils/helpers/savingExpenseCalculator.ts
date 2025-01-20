@@ -302,12 +302,6 @@ const foreignIncomeExpenseCalculator = (
 
   const foreignTaxAmount = extractValue('Foreign tax amount');
   const norwayTaxRate = extractValue('Norway tax rate on this income');
-  console.log(
-    'hola',
-    foreignTaxAmount,
-    norwayTaxRate,
-    foreignTaxAmount * (norwayTaxRate / 100)
-  );
 
   return foreignTaxAmount * (norwayTaxRate / 100);
 };

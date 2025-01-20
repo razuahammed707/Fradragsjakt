@@ -31,7 +31,7 @@ export const parseFileData = (data: string[][]): ParsedFileResult => {
           tempValue = cell;
         } else if (!cell.startsWith('"') && cell.endsWith('"') && tempValue) {
           tempValue += `,${cell}`;
-          cleanedRow.push(tempValue.replace(/["',]/g, ''));
+          cleanedRow.push(tempValue.replace(/["']/g, ''));
           tempValue = '';
         } else if (tempValue) {
           tempValue += `,${cell}`;
