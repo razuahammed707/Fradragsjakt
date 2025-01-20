@@ -22,7 +22,7 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
 
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) {
-      fileInput.click();
+      (fileInput as HTMLInputElement).click();
     }
   };
 

@@ -269,7 +269,6 @@ function ExpenseAddContent({
             className="h-full w-full flex items-center justify-center"
           >
             <DragAndDropFile
-              setFileLink={setFileLink}
               fileLink={fileLink}
               loading={isUploading}
               getInputProps={getInputProps}

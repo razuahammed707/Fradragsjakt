@@ -49,7 +49,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       {...getRootProps()}
     >
       <DragAndDropFile
-        type="spreadsheet"
         fileLink={null}
         loading={loading}
         getInputProps={getInputProps}

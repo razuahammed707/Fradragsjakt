@@ -11,7 +11,6 @@ import { Column, FileRowData, FormData } from '@/types/upload-statements';
 import {
   processCsvFile,
   processExcelFile,
-  processTxtFile,
 } from '@/utils/helpers/fileProcessors';
 import { mapToExpenseData, parseFileData } from '@/utils/helpers/dataMappers';
 import toast from 'react-hot-toast';
@@ -53,12 +52,10 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
 
       switch (fileType) {
         case 'csv':
+        case 'txt':
           rawData = await processCsvFile(file);
           break;
-        case 'txt':
-          rawData = await processTxtFile(file);
-          console.log({ rawData });
-          break;
+
         case 'xlsx':
         case 'xls':
           rawData = await processExcelFile(file);
@@ -70,6 +67,7 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
 
       const { fileData: parsedData, headers: parsedHeaders } =
         parseFileData(rawData);
+      console.log({ parsedData });
 
       if (parsedHeaders.length < 2) {
         throw new Error('File must contain at least 2 columns of data');
