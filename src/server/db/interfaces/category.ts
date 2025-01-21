@@ -3,6 +3,7 @@ import { Document, Types } from 'mongoose';
 export enum CategoryFor {
   EXPENSE = 'expense',
   INCOME = 'income',
+  COMMON = 'common',
 }
 
 export interface ICategory extends Document {

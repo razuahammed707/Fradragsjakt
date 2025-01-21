@@ -155,6 +155,7 @@ export default function CategoryAddModal({
                     options={[
                       { title: 'Expense', value: 'expense' },
                       { title: 'Income', value: 'income' },
+                      { title: 'Common', value: 'common' },
                     ]}
                     required
                   />
