@@ -601,7 +601,6 @@ export const transactions = [
 ];
 
 export const categories = [
-  // { label: 'Supplies', amount: 0, image: '/Supplies.svg' },
   { label: 'Rent', amount: 0, image: ClothingImg },
   { label: 'Utilities', amount: 0, image: TravelImg },
   { label: 'Office Supplies', amount: 0, image: TransportImg },

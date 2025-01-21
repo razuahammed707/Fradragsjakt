@@ -27,6 +27,11 @@ export const parseFileData = (data: string[][]): ParsedFileResult => {
       for (let i = 0; i < row.length; i++) {
         const cell = row[i].trim();
 
+        if (i === 1) {
+          cleanedRow.push(cell);
+          continue;
+        }
+
         if (cell.startsWith('"') && !cell.endsWith('"')) {
           tempValue = cell;
         } else if (!cell.startsWith('"') && cell.endsWith('"') && tempValue) {
@@ -53,6 +58,7 @@ export const parseFileData = (data: string[][]): ParsedFileResult => {
       return Object.keys(processedRow).length > 1 ? processedRow : null;
     })
     .filter((row): row is FileRowData => row !== null);
+
   return {
     fileData: parsedData,
     headers: headers,
@@ -92,7 +98,6 @@ export const mapToExpenseData = (
         );
 
         if (!isNaN(parsedWithdrawal) || !isNaN(parsedDeposit)) {
-          // Try parsing the date with multiple formats
           const parsedDate = moment(
             date,
             [

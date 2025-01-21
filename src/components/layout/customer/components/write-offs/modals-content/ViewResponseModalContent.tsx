@@ -2,11 +2,11 @@
 'use client';
 
 import { Separator } from '@/components/ui/separator';
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { savingExpenseCalculator } from '@/utils/helpers/savingExpenseCalculator';
 import SadImg from '../../../../../../../public/sad.svg';
 import { trpc } from '@/utils/trpc';
 import Image from 'next/image';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
 type ExpenseAmounts = {
   workAndEducationExpenseAmount: number;
@@ -105,7 +105,7 @@ const ViewResponseModalContent = () => {
                 <p>
                   NOK{' '}
                   {SECTION_TO_EXPENSE_MAP[section.question]
-                    ? numberFormatter(
+                    ? formatNumberWithTwoDecimals(
                         expenseAmounts[SECTION_TO_EXPENSE_MAP[section.question]]
                       )
                     : 0}
