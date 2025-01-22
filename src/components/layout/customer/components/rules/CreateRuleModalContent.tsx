@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -9,12 +9,15 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
+import { getSubQuestions } from '@/utils/helpers/getQuestionAnswers';
 
 type RuleFormData = {
   description_contains: string;
   expense_type: 'business' | 'personal';
   category: string;
   rule_for: 'expense' | 'income';
+  sub_question: string;
+  subCategory: string;
 };
 
 type CategoryType = { title: string; value: string };
@@ -39,13 +42,24 @@ function CreateRuleModalContent({
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
   const [loading, setLoading] = useState(false);
+  const [subQuestionOptions, setSubQuestionOptions] = useState<string[]>([]);
 
   const categoryForValue = watch('rule_for');
+  const selectedCategory = watch('category');
 
   const query = {
     category_for: categoryForValue || updateRulePayload?.rule_for,
   };
   const { manipulatedCategories } = useManipulatedCategories(query);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      const subQuestions = getSubQuestions(selectedCategory);
+      setSubQuestionOptions(subQuestions);
+    } else {
+      setSubQuestionOptions([]);
+    }
+  }, [selectedCategory]);
 
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
@@ -91,7 +105,7 @@ function CreateRuleModalContent({
       <h1 className="font-medium text-lg text-black mb-4">
         {translate('componentsRuleModal.rule.if')}
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         <div>
           <Label htmlFor="description_contains">
             {translate('componentsRuleModal.rule.descriptionContains')}
@@ -164,6 +178,35 @@ function CreateRuleModalContent({
             control={control}
             placeholder={translate('componentsRuleModal.rule.selectCategory')}
             defaultValue={updateRulePayload?.category_title}
+            options={categoryForValue ? manipulatedCategories : []}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor="sub_question">Sub Question</Label>
+          <FormInput
+            name="sub_question"
+            customClassName="w-full mt-2"
+            type="select"
+            control={control}
+            placeholder="Select Question"
+            defaultValue={updateRulePayload?.sub_question}
+            options={subQuestionOptions.map((answer) => ({
+              title: answer,
+              value: answer,
+            }))}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor="sub_category">Sub Category</Label>
+          <FormInput
+            name="sub_category"
+            customClassName="w-full mt-2"
+            type="select"
+            control={control}
+            placeholder="Select sub-category"
+            defaultValue={updateRulePayload?.sub_category}
             options={manipulatedCategories}
             required
           />

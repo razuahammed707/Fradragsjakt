@@ -23,6 +23,14 @@ const RuleSchema: Schema = new Schema<IRule>(
       ref: 'category',
       required: true,
     },
+    sub_question: {
+      type: String,
+      required: true,
+    },
+    sub_category: {
+      type: String,
+      required: true,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'user',

@@ -15,5 +15,8 @@ export interface IRule extends Document {
   rule_for: RuleFor;
   category_title: string;
   category: Types.ObjectId | string;
+  sub_question?: string;
+  sub_category?: string;
+
   user: Types.ObjectId;
 }
