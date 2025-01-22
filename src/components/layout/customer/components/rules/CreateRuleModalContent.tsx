@@ -99,6 +99,7 @@ function CreateRuleModalContent({
           <FormInput
             type="text"
             name="description_contains"
+            id="description_contains"
             placeholder={translate(
               'componentsRuleModal.rule.descriptionContains'
             )}
@@ -112,9 +113,10 @@ function CreateRuleModalContent({
           {translate('componentsRuleModal.rule.then')}
         </h1>
         <div>
-          <Label>Rule For</Label>
+          <Label htmlFor="rule_for">Rule For</Label>
           <FormInput
             name="rule_for"
+            id="rule_for"
             defaultValue={updateRulePayload?.rule_for}
             customClassName="w-full mt-2"
             type="select"
@@ -131,6 +133,7 @@ function CreateRuleModalContent({
           <Label htmlFor="expense_type">Type</Label>
           <FormInput
             name="expense_type"
+            id="expense_type"
             customClassName="w-full mt-2"
             type="select"
             control={control}
@@ -155,6 +158,7 @@ function CreateRuleModalContent({
           </Label>
           <FormInput
             name="category"
+            id="category"
             customClassName="w-full mt-2"
             type="select"
             control={control}
@@ -175,13 +179,6 @@ function CreateRuleModalContent({
               ? translate('componentsRuleModal.rule.create')
               : translate('componentsRuleModal.rule.update')}
           </Button>
-          {/* <Button
-            type="button"
-            className="w-full bg-[#F0EFFE] text-[#FF4444] hover:bg-[#F0EFFE] mt-3"
-            onClick={() => modalClose && modalClose(false)}
-          >
-            {translate('componentsRuleModal.rule.discard')}
-          </Button> */}
         </div>
       </form>
     </div>
