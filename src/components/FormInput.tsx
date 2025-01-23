@@ -75,9 +75,9 @@ export function FormInput({
               >
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="overflow-y-auto ">
                 <SelectGroup>
-                  {options.map((option, i) => (
+                  {options?.map((option, i) => (
                     <SelectItem key={i} value={option.value}>
                       {option.title}
                     </SelectItem>

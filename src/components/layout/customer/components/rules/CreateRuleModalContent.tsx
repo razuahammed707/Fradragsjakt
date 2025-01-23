@@ -9,6 +9,7 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type RuleFormData = {
   description_contains: string;
@@ -153,16 +154,18 @@ function CreateRuleModalContent({
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
           </Label>
-          <FormInput
-            name="category"
-            customClassName="w-full mt-2"
-            type="select"
-            control={control}
-            placeholder={translate('componentsRuleModal.rule.selectCategory')}
-            defaultValue={updateRulePayload?.category_title}
-            options={manipulatedCategories}
-            required
-          />
+          <ScrollArea className=" w-full rounded-md">
+            <FormInput
+              name="category"
+              customClassName="w-full mt-2"
+              type="select"
+              control={control}
+              placeholder={translate('componentsRuleModal.rule.selectCategory')}
+              defaultValue={updateRulePayload?.category_title}
+              options={manipulatedCategories}
+              required
+            />
+          </ScrollArea>
         </div>
         <div className="py-3">
           <Button
