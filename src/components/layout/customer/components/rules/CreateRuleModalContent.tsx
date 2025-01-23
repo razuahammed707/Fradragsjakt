@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -9,7 +9,7 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
-import { getSubQuestions } from '@/utils/helpers/getSubQuestions';
+import { extended_questionnaires } from '@/lib/questionnaires';
 
 type RuleFormData = {
   description_contains: string;
@@ -17,7 +17,7 @@ type RuleFormData = {
   category: string;
   rule_for: 'expense' | 'income';
   sub_question: string;
-  subCategory: string;
+  sub_category: string;
 };
 
 type CategoryType = { title: string; value: string };
@@ -36,22 +36,33 @@ function CreateRuleModalContent({
   origin,
 }: ExpenseRuleContentProps) {
   const { handleSubmit, control, watch, formState } = useForm<RuleFormData>({
-    defaultValues: { expense_type: 'business' },
+    defaultValues: {
+      expense_type: 'business',
+      rule_for: updateRulePayload?.rule_for || 'expense',
+      category: updateRulePayload?.category_title || '',
+      sub_question: updateRulePayload?.sub_question || '',
+      sub_category: updateRulePayload?.sub_category || '',
+    },
     mode: 'onChange',
   });
+
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
   const [loading, setLoading] = useState(false);
-  const [subQuestionOptions, setSubQuestionOptions] = useState<string[]>([]);
+  const [subQuestionOptions, setSubQuestionOptions] = useState<
+    { answer: string; category: string[] }[]
+  >([]);
 
   const categoryForValue = watch('rule_for');
   const selectedCategory = watch('category');
+  const selectedSubQuestion = watch('sub_question');
 
   const query = {
     category_for: categoryForValue || updateRulePayload?.rule_for,
   };
   const { manipulatedCategories } = useManipulatedCategories(query);
 
+  // Fetch sub-questions based on the selected category and rule_for
   useEffect(() => {
     if (selectedCategory && categoryForValue) {
       const subQuestions = getSubQuestions(selectedCategory, categoryForValue);
@@ -61,6 +72,21 @@ function CreateRuleModalContent({
     }
   }, [selectedCategory, categoryForValue]);
 
+  // Filter sub-category options based on the selected sub-question
+  const subCategoryOptions = useMemo(() => {
+    if (!selectedSubQuestion) return [];
+
+    const selectedQuestion = subQuestionOptions.find(
+      (q) => q.answer === selectedSubQuestion
+    );
+    if (!selectedQuestion) return [];
+
+    return manipulatedCategories.filter((cat) =>
+      selectedQuestion.category.includes(cat.title)
+    );
+  }, [selectedSubQuestion, subQuestionOptions, manipulatedCategories]);
+
+  // Check if the selected category has sub-questions
   const hasSubQuestions = (
     category: string,
     ruleFor: 'expense' | 'income' | 'common'
@@ -69,6 +95,7 @@ function CreateRuleModalContent({
     return subQuestions.length > 0;
   };
 
+  // Mutation for creating a new rule
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
       toast.success(translate('toast.ruleCreatedSuccess'));
@@ -84,6 +111,7 @@ function CreateRuleModalContent({
     },
   });
 
+  // Mutation for updating an existing rule
   const ruleUpdateMutation = trpc.rules.updateRule.useMutation({
     onSuccess: () => {
       toast.success(translate('toast.ruleUpdatedSuccess'));
@@ -99,6 +127,7 @@ function CreateRuleModalContent({
     },
   });
 
+  // Handle form submission
   const onSubmit = (data: RuleFormData) => {
     setLoading(true);
     if (origin && updateRulePayload) {
@@ -108,12 +137,31 @@ function CreateRuleModalContent({
     }
   };
 
+  // Helper function to get sub-questions for a category
+  const getSubQuestions = (
+    category: string,
+    ruleFor: 'expense' | 'income' | 'common'
+  ): { answer: string; category: string[] }[] => {
+    const categoryData = extended_questionnaires.find(
+      (q) => q.question === category
+    );
+    if (!categoryData) return [];
+
+    return categoryData.answers
+      .filter((answer) => answer.type === ruleFor || answer.type === 'common')
+      .map((answer) => ({
+        answer: answer.answer,
+        category: answer.category,
+      }));
+  };
+
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
         {translate('componentsRuleModal.rule.if')}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+        {/* Description Contains Field */}
         <div>
           <Label htmlFor="description_contains">
             {translate('componentsRuleModal.rule.descriptionContains')}
@@ -131,6 +179,8 @@ function CreateRuleModalContent({
             required
           />
         </div>
+
+        {/* Rule For Field */}
         <h1 className="font-medium text-lg text-black mb-4">
           {translate('componentsRuleModal.rule.then')}
         </h1>
@@ -151,6 +201,8 @@ function CreateRuleModalContent({
             required
           />
         </div>
+
+        {/* Expense Type Field */}
         <div>
           <Label htmlFor="expense_type">Type</Label>
           <FormInput
@@ -174,6 +226,8 @@ function CreateRuleModalContent({
             required
           />
         </div>
+
+        {/* Category Field */}
         <div>
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
@@ -190,6 +244,8 @@ function CreateRuleModalContent({
             required
           />
         </div>
+
+        {/* Sub-Question and Sub-Category Fields */}
         {selectedCategory &&
           hasSubQuestions(selectedCategory, categoryForValue) && (
             <>
@@ -205,27 +261,33 @@ function CreateRuleModalContent({
                   control={control}
                   placeholder="Select Question"
                   defaultValue={updateRulePayload?.sub_question}
-                  options={subQuestionOptions.map((answer) => ({
-                    title: answer,
-                    value: answer,
+                  options={subQuestionOptions.map((q) => ({
+                    title: q.answer,
+                    value: q.answer,
                   }))}
                 />
               </div>
-              <div>
-                <Label htmlFor="sub_category">Sub Category</Label>
-                <FormInput
-                  name="sub_category"
-                  customClassName="w-full mt-2"
-                  type="select"
-                  control={control}
-                  placeholder="Select sub-category"
-                  defaultValue={updateRulePayload?.sub_category}
-                  options={manipulatedCategories}
-                />
-              </div>
+              {selectedSubQuestion && (
+                <div>
+                  <Label htmlFor="sub_category">Sub Category</Label>
+                  <FormInput
+                    name="sub_category"
+                    customClassName="w-full mt-2"
+                    type="select"
+                    control={control}
+                    placeholder="Select sub-category"
+                    defaultValue={updateRulePayload?.sub_category}
+                    options={subCategoryOptions.map((cat) => ({
+                      title: cat.title,
+                      value: cat.value,
+                    }))}
+                  />
+                </div>
+              )}
             </>
           )}
 
+        {/* Submit Button */}
         <div className="py-3">
           <Button
             type="submit"

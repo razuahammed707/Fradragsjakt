@@ -78,7 +78,11 @@ export function FormInput({
               >
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
-              <SelectContent className="overflow-y-auto">
+              <SelectContent
+                className="max-h-[300px] overflow-y-auto"
+                position="popper" // Add this to control positioning
+                side="top" // Open dropdown above the field if there's no space below
+              >
                 <SelectGroup>
                   {options.map((option, i) => (
                     <SelectItem key={i} value={option.value}>
