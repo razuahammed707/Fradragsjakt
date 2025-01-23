@@ -9,7 +9,7 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
-import { getSubQuestions } from '@/utils/helpers/getQuestionAnswers';
+import { getSubQuestions } from '@/utils/helpers/getSubQuestions';
 
 type RuleFormData = {
   description_contains: string;
@@ -53,13 +53,21 @@ function CreateRuleModalContent({
   const { manipulatedCategories } = useManipulatedCategories(query);
 
   useEffect(() => {
-    if (selectedCategory) {
-      const subQuestions = getSubQuestions(selectedCategory);
+    if (selectedCategory && categoryForValue) {
+      const subQuestions = getSubQuestions(selectedCategory, categoryForValue);
       setSubQuestionOptions(subQuestions);
     } else {
       setSubQuestionOptions([]);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, categoryForValue]);
+
+  const hasSubQuestions = (
+    category: string,
+    ruleFor: 'expense' | 'income' | 'common'
+  ): boolean => {
+    const subQuestions = getSubQuestions(category, ruleFor);
+    return subQuestions.length > 0;
+  };
 
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
@@ -182,35 +190,42 @@ function CreateRuleModalContent({
             required
           />
         </div>
-        <div>
-          <Label htmlFor="sub_question">Sub Question</Label>
-          <FormInput
-            name="sub_question"
-            customClassName="w-full mt-2"
-            type="select"
-            control={control}
-            placeholder="Select Question"
-            defaultValue={updateRulePayload?.sub_question}
-            options={subQuestionOptions.map((answer) => ({
-              title: answer,
-              value: answer,
-            }))}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="sub_category">Sub Category</Label>
-          <FormInput
-            name="sub_category"
-            customClassName="w-full mt-2"
-            type="select"
-            control={control}
-            placeholder="Select sub-category"
-            defaultValue={updateRulePayload?.sub_category}
-            options={manipulatedCategories}
-            required
-          />
-        </div>
+        {selectedCategory &&
+          hasSubQuestions(selectedCategory, categoryForValue) && (
+            <>
+              <h1 className="font-medium text-lg text-black mb-4">
+                Possible dependants
+              </h1>
+              <div>
+                <Label htmlFor="sub_question">Sub Question</Label>
+                <FormInput
+                  name="sub_question"
+                  customClassName="w-full mt-2"
+                  type="select"
+                  control={control}
+                  placeholder="Select Question"
+                  defaultValue={updateRulePayload?.sub_question}
+                  options={subQuestionOptions.map((answer) => ({
+                    title: answer,
+                    value: answer,
+                  }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="sub_category">Sub Category</Label>
+                <FormInput
+                  name="sub_category"
+                  customClassName="w-full mt-2"
+                  type="select"
+                  control={control}
+                  placeholder="Select sub-category"
+                  defaultValue={updateRulePayload?.sub_category}
+                  options={manipulatedCategories}
+                />
+              </div>
+            </>
+          )}
+
         <div className="py-3">
           <Button
             type="submit"

@@ -77,3 +77,113 @@ export const questionnaires = [
     icon: frame6,
   },
 ];
+
+export const extended_questionnaires = [
+  {
+    question: 'Health and Family',
+    answers: [
+      { answer: 'Have children aged 11 years or younger', type: 'common' },
+      {
+        answer: 'I have children aged 12 or older with special care needs',
+        type: 'common',
+      },
+      { answer: 'I am a single parent', type: 'common' },
+    ],
+    icon: frame,
+  },
+  {
+    question: 'Bank and Loans',
+    answers: [
+      { answer: 'Have a loan', type: 'expense' },
+      { answer: 'Have refinanced a loan in the last year', type: 'expense' },
+      { answer: 'Have taken out a joint loan with someone', type: 'expense' },
+      { answer: 'Have young people’s housing savings (BSU)', type: 'income' },
+      { answer: 'I have sold shares or securities at a loss', type: 'income' },
+    ],
+    icon: frame1,
+  },
+  {
+    question: 'Work and Education',
+    answers: [
+      { answer: 'Moved for a new job', type: 'expense' },
+      { answer: 'I work as a fisherman', type: 'income' },
+      { answer: 'I work as a seafarer', type: 'income' },
+      { answer: 'I went to school last year', type: 'expense' },
+      { answer: 'I am a foreign employee', type: 'income' },
+      {
+        answer:
+          'The return distance between home and work is more than 37 kilometres',
+        type: 'expense',
+      },
+      {
+        answer:
+          'Have expenses for road toll or ferry when travelling between your home and workplace',
+        type: 'expense',
+      },
+      {
+        answer: 'I stay away from home overnight because of work',
+        type: 'expense',
+      },
+      { answer: 'Member of Trade Union', type: 'expense' },
+      { answer: 'living in Norway only in a part of a year', type: 'income' },
+      { answer: 'Disputation of a PhD', type: 'income' },
+      {
+        answer:
+          'Have a separate room in your house used only as your home office',
+        type: 'expense',
+      },
+    ],
+    icon: frame2,
+  },
+  {
+    question: 'Housing and Property',
+    answers: [
+      {
+        answer:
+          'Housing in a housing association housing company or jointly owned property',
+        type: 'expense',
+      },
+      {
+        answer: 'I have rented out a residential property or a holiday home',
+        type: 'income',
+      },
+      {
+        answer: 'Sold a residential property or holiday home profit or loss',
+        type: 'income',
+      },
+    ],
+    icon: frame3,
+  },
+  {
+    question: 'Gifts or Donations',
+    answers: [{ answer: 'Gifts to voluntary organisations', type: 'expense' }],
+    icon: frame4,
+  },
+  {
+    question: 'Hobby, Odd Jobs, and Extra Incomes',
+    answers: [
+      { answer: 'I have a sole proprietorship', type: 'income' },
+      {
+        answer:
+          'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',
+        type: 'income',
+      },
+      {
+        answer: 'I have received salary from odd jobs and services',
+        type: 'income',
+      },
+    ],
+    icon: frame5,
+  },
+  {
+    question: 'Foreign Income',
+    answers: [
+      {
+        answer:
+          'Have income or wealth in another country than Norway and pay tax in the other country',
+        type: 'income',
+      },
+    ],
+    icon: frame6,
+  },
+];
