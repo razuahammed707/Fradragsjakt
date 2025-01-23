@@ -211,7 +211,7 @@ function CreateRuleModalContent({
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
           </Label>
-          <FormInput
+          <ScrollArea className=" w-full rounded-md"><FormInput
             name="category"
             id="category"
             customClassName="w-full mt-2"
@@ -221,7 +221,9 @@ function CreateRuleModalContent({
             defaultValue={updateRulePayload?.category_title}
             options={categoryForValue ? manipulatedCategories : []}
             required
-          />
+          /></ScrollArea>
+
+          
         </div>
 
         {selectedCategory &&
