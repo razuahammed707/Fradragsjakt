@@ -12,20 +12,35 @@ export const useManipulatedCategories = (query: Query) => {
       limit: 50,
     },
     {
-      enabled: !!query?.category_for, // Only fetch if category_for is provided
+      enabled: !!query?.category_for,
       keepPreviousData: true,
     }
   );
 
-  const manipulatedCategories = categories?.data
-    ? categories.data.map((category) => ({
-        title: category.title,
-        value: category.title,
-      }))
-    : [];
+  const { data: commonCategories } = trpc.categories.getCategories.useQuery(
+    {
+      category_for: 'common',
+      page: 1,
+      limit: 50,
+    },
+    {
+      enabled: true,
+      keepPreviousData: true,
+    }
+  );
+
+  const mergedCategories = [
+    ...(categories?.data || []),
+    ...(commonCategories?.data || []),
+  ];
+
+  const manipulatedCategories = mergedCategories.map((category) => ({
+    title: category.title,
+    value: category.title,
+  }));
 
   return {
     manipulatedCategories,
-    categories,
+    categories: mergedCategories,
   };
 };

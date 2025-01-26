@@ -328,6 +328,13 @@ export const expense_categories = [
   {
     id: 29,
     imageSrc: MoreImg,
+    category: 'Gifts or Donations',
+    totalItemByCategory: 0,
+    amount: 0,
+  },
+  {
+    id: 30,
+    imageSrc: MoreImg,
     category: 'Others',
     totalItemByCategory: 0,
     amount: 0,
@@ -488,6 +495,13 @@ export const income_categories = [
     totalItemByCategory: 0,
     amount: 0,
   },
+  {
+    id: 23,
+    imageSrc: MoreImg,
+    category: 'Foreign Income',
+    totalItemByCategory: 0,
+    amount: 0,
+  },
 ];
 
 export const expenseWriteOffs = [
@@ -567,41 +581,8 @@ export const summaryWriteOffs = [
     amount: '$2,086',
   },
 ];
-export const transactions = [
-  {
-    description: 'Uber One Sydney AU Aus',
-    category: 'Transport',
-    type: 'Business',
-    amount: 100.55,
-  },
-  {
-    description: 'foodpanda.com Dhaka BGD card',
-    category: 'Meals',
-    type: "Don't know",
-    amount: 30.65,
-  },
-  {
-    description: 'International Transaction Fee',
-    category: 'Travel',
-    type: 'Personal',
-    amount: 30.65,
-  },
-  {
-    description: 'Uber One Sydney AU Aus',
-    category: 'Transport',
-    type: 'Personal',
-    amount: 30.65,
-  },
-  {
-    description: 'BFC Dhaka BGD',
-    category: 'Meals',
-    type: 'Business',
-    amount: 30.65,
-  },
-];
 
 export const categories = [
-  // { label: 'Supplies', amount: 0, image: '/Supplies.svg' },
   { label: 'Rent', amount: 0, image: ClothingImg },
   { label: 'Utilities', amount: 0, image: TravelImg },
   { label: 'Office Supplies', amount: 0, image: TransportImg },

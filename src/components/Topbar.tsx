@@ -20,7 +20,7 @@ const Topbar: React.FC<TopbarProps> = ({ role }) => {
   const isGreaterThan1600: boolean = useMediaQuery('(min-width: 1601px)');
 
   return (
-    <header className="bg-[#00104B]">
+    <header className="bg-[#00104B]" inert>
       <div
         className={cn(
           'flex max-w-[1920px] mx-auto justify-between h-14 items-center  lg:h-[60px] px-8',

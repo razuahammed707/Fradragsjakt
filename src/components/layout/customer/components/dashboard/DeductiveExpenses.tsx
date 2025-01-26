@@ -2,9 +2,9 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import CircularProgressChart from './CircularProgressChart';
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import { trpc } from '@/utils/trpc';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
 const DeductiveExpenses = ({
   businessData,
@@ -34,7 +34,7 @@ const DeductiveExpenses = ({
             </h4>
           </div>
           <p className="text-[28px] text-[#00104B] font-bold">
-            NOK {numberFormatter(totalDeductibleAmount) || 0}
+            NOK {formatNumberWithTwoDecimals(totalDeductibleAmount) || 0}
           </p>
         </div>
 

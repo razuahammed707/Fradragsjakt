@@ -1,11 +1,11 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { trpc } from '@/utils/trpc';
 import Link from 'next/link';
 import React from 'react';
 import { NoResultsPlaceholder } from '../../../../NoResultsPlaceholder';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
 const MonthlyOverview = () => {
   const { data: expenses } =
@@ -44,7 +44,7 @@ const MonthlyOverview = () => {
                       </p>
                     </div>
                     <p className="text-xs font-medium mb-4">
-                      NOK {numberFormatter(Number(amount.toFixed()))}
+                      NOK {formatNumberWithTwoDecimals(amount)}
                     </p>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 import Image, { StaticImageData } from 'next/image';
 import React from 'react';
 
@@ -21,7 +21,7 @@ const IncomeType: React.FC<IncomeProps> = ({
       <div>
         <h3 className="text-black text-s font-semibold">
           {'NOK '}
-          {numberFormatter(amount)}
+          {formatNumberWithTwoDecimals(amount)}
         </h3>
         <p className="text-[#71717A] text-xs font-semibold">
           {type} ({quantity})

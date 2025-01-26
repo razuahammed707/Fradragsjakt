@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { expense_categories } from '@/utils/dummy';
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
 export default function WriteOffsTopSection({
   categoryWiseExpenses,
@@ -40,7 +40,7 @@ export default function WriteOffsTopSection({
       <div className="col-span-4 p-6 bg-white flex flex-col justify-between rounded-2xl">
         <h3 className="text-xl text-[#101010] font-semibold">Write-Offs</h3>
         <p className="text-[32px] text-[#00104B] font-bold">
-          NOK {numberFormatter(manipulateExpenseTypeTotal || 0)}
+          NOK {formatNumberWithTwoDecimals(manipulateExpenseTypeTotal)}
         </p>
       </div>
       <div className="col-span-8">

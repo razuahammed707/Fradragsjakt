@@ -35,6 +35,7 @@ export interface FormInputProps {
   disabled?: boolean;
   maxValue?: boolean;
   noFraction?: boolean;
+  id?: string; // Add id prop
 }
 
 export function FormInput({
@@ -52,6 +53,7 @@ export function FormInput({
   disabled,
   maxValue,
   noFraction,
+  id = name, // Default to `name` if no `id` is provided
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -71,11 +73,16 @@ export function FormInput({
               disabled={disabled}
             >
               <SelectTrigger
+                id={id}
                 className={`w-full data-[placeholder]:text-muted-foreground ${customClassName}`}
               >
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
-              <SelectContent className="overflow-y-auto ">
+              <SelectContent
+                className="max-h-[300px] overflow-y-auto"
+                position="popper" // Add this to control positioning
+                side="top" // Open dropdown above the field if there's no space below
+              >
                 <SelectGroup>
                   {options?.map((option, i) => (
                     <SelectItem key={i} value={option.value}>
@@ -93,7 +100,7 @@ export function FormInput({
       />
     );
   }
-
+  // Textarea input
   if (type === 'textarea') {
     return (
       <Controller
@@ -105,9 +112,10 @@ export function FormInput({
           <div>
             <Textarea
               {...field}
+              id={id} // Add id
               placeholder={placeholder}
               rows={rows}
-              className={`w-full resize-y ${customClassName}`}
+              className={`w-full resize-y max-h-[200px] overflow-y-auto ${customClassName}`}
               required={required}
               disabled={disabled}
             />
@@ -120,6 +128,7 @@ export function FormInput({
     );
   }
 
+  // Number input
   if (type === 'number') {
     return (
       <Controller
@@ -146,6 +155,7 @@ export function FormInput({
           <div>
             <Input
               {...field}
+              id={id} // Add id
               type="text"
               value={numberFormatter(field.value)}
               placeholder={placeholder}
@@ -195,17 +205,18 @@ export function FormInput({
             <div className={`relative w-full ${customClassName}`}>
               <Input
                 {...field}
+                id={id} // Add id
                 type={showPassword ? 'text' : 'password'}
                 placeholder={placeholder}
                 className="w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md"
                 required={required}
-                disabled={disabled} // Apply disabled prop
+                disabled={disabled}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600"
-                disabled={disabled} // Disable button if input is disabled
+                disabled={disabled}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -226,7 +237,7 @@ export function FormInput({
     );
   }
 
-  // Default input
+  // Default input (text, email, etc.)
   return (
     <Controller
       name={name}
@@ -245,11 +256,12 @@ export function FormInput({
         <div>
           <Input
             {...field}
+            id={id} // Add id
             type={type}
             placeholder={placeholder}
             className={`w-full p-2 border border-gray-300 text-sm placeholder:text-muted-foreground rounded-md ${customClassName}`}
             required={required}
-            disabled={disabled} // Apply disabled prop
+            disabled={disabled}
           />
           {maxValue && (
             <div

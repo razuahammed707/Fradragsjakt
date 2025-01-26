@@ -11,6 +11,7 @@ const ruleSchema = z.object({
   category: z.string({
     required_error: 'Category is required',
   }),
+  sub_category: z.string().optional(),
 });
 const updateRuleSchema = z.object({
   _id: z.string().min(1, 'Rule ID is required'),

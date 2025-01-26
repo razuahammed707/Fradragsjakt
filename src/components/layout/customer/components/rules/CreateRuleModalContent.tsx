@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -9,13 +9,14 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { extended_questionnaires } from '@/lib/questionnaires';
 
 type RuleFormData = {
   description_contains: string;
   expense_type: 'business' | 'personal';
   category: string;
   rule_for: 'expense' | 'income';
+  sub_category: string;
 };
 
 type CategoryType = { title: string; value: string };
@@ -33,20 +34,51 @@ function CreateRuleModalContent({
   updateRulePayload,
   origin,
 }: ExpenseRuleContentProps) {
-  const { handleSubmit, control, watch, formState } = useForm<RuleFormData>({
-    defaultValues: { expense_type: 'business' },
-    mode: 'onChange',
-  });
+  const { handleSubmit, control, watch, formState, reset } =
+    useForm<RuleFormData>({
+      defaultValues: {
+        expense_type: 'business',
+        rule_for: updateRulePayload?.rule_for || 'expense',
+        category: updateRulePayload?.category_title || '',
+        sub_category: updateRulePayload?.sub_category || '', // Renamed from sub_question
+      },
+      mode: 'onChange',
+    });
+
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
   const [loading, setLoading] = useState(false);
+  const [subCategoryOptions, setSubCategoryOptions] = useState<
+    { answer: string; category: string[] }[]
+  >([]);
 
   const categoryForValue = watch('rule_for');
+  const selectedCategory = watch('category');
 
   const query = {
     category_for: categoryForValue || updateRulePayload?.rule_for,
   };
   const { manipulatedCategories } = useManipulatedCategories(query);
+
+  useEffect(() => {
+    if (selectedCategory && categoryForValue) {
+      const subCategories = getSubCategories(
+        selectedCategory,
+        categoryForValue
+      );
+      setSubCategoryOptions(subCategories);
+    } else {
+      setSubCategoryOptions([]);
+    }
+  }, [selectedCategory, categoryForValue]);
+
+  const hasSubCategories = (
+    category: string,
+    ruleFor: 'expense' | 'income' | 'common'
+  ): boolean => {
+    const subCategories = getSubCategories(category, ruleFor);
+    return subCategories.length > 0;
+  };
 
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
@@ -56,6 +88,7 @@ function CreateRuleModalContent({
         modalClose(false);
       }
       utils.rules.getRules.invalidate();
+      reset();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -71,6 +104,7 @@ function CreateRuleModalContent({
         modalClose(false);
       }
       utils.rules.getRules.invalidate();
+      reset();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -87,12 +121,29 @@ function CreateRuleModalContent({
     }
   };
 
+  const getSubCategories = (
+    category: string,
+    ruleFor: 'expense' | 'income' | 'common'
+  ): { answer: string; category: string[] }[] => {
+    const categoryData = extended_questionnaires.find(
+      (q) => q.question === category
+    );
+    if (!categoryData) return [];
+
+    return categoryData.answers
+      .filter((answer) => answer.type === ruleFor || answer.type === 'common')
+      .map((answer) => ({
+        answer: answer.answer,
+        category: answer.category,
+      }));
+  };
+
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
         {translate('componentsRuleModal.rule.if')}
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         <div>
           <Label htmlFor="description_contains">
             {translate('componentsRuleModal.rule.descriptionContains')}
@@ -100,6 +151,7 @@ function CreateRuleModalContent({
           <FormInput
             type="text"
             name="description_contains"
+            id="description_contains"
             placeholder={translate(
               'componentsRuleModal.rule.descriptionContains'
             )}
@@ -109,13 +161,15 @@ function CreateRuleModalContent({
             required
           />
         </div>
+
         <h1 className="font-medium text-lg text-black mb-4">
           {translate('componentsRuleModal.rule.then')}
         </h1>
         <div>
-          <Label>Rule For</Label>
+          <Label htmlFor="rule_for">Rule For</Label>
           <FormInput
             name="rule_for"
+            id="rule_for"
             defaultValue={updateRulePayload?.rule_for}
             customClassName="w-full mt-2"
             type="select"
@@ -128,10 +182,12 @@ function CreateRuleModalContent({
             required
           />
         </div>
+
         <div>
           <Label htmlFor="expense_type">Type</Label>
           <FormInput
             name="expense_type"
+            id="expense_type"
             customClassName="w-full mt-2"
             type="select"
             control={control}
@@ -150,23 +206,43 @@ function CreateRuleModalContent({
             required
           />
         </div>
+
         <div>
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
           </Label>
-          <ScrollArea className=" w-full rounded-md">
-            <FormInput
-              name="category"
-              customClassName="w-full mt-2"
-              type="select"
-              control={control}
-              placeholder={translate('componentsRuleModal.rule.selectCategory')}
-              defaultValue={updateRulePayload?.category_title}
-              options={manipulatedCategories}
-              required
-            />
-          </ScrollArea>
+          <FormInput
+            name="category"
+            id="category"
+            customClassName="w-full mt-2"
+            type="select"
+            control={control}
+            placeholder={translate('componentsRuleModal.rule.selectCategory')}
+            defaultValue={updateRulePayload?.category_title}
+            options={categoryForValue ? manipulatedCategories : []}
+            required
+          />
         </div>
+
+        {selectedCategory &&
+          hasSubCategories(selectedCategory, categoryForValue) && (
+            <div>
+              <Label htmlFor="sub_category">Sub Category</Label>
+              <FormInput
+                name="sub_category"
+                customClassName="w-full mt-2"
+                type="select"
+                control={control}
+                placeholder="Select sub-category"
+                defaultValue={updateRulePayload?.sub_category}
+                options={subCategoryOptions.map((q) => ({
+                  title: q.answer,
+                  value: q.answer,
+                }))}
+              />
+            </div>
+          )}
+
         <div className="py-3">
           <Button
             type="submit"
@@ -178,13 +254,6 @@ function CreateRuleModalContent({
               ? translate('componentsRuleModal.rule.create')
               : translate('componentsRuleModal.rule.update')}
           </Button>
-          {/* <Button
-            type="button"
-            className="w-full bg-[#F0EFFE] text-[#FF4444] hover:bg-[#F0EFFE] mt-3"
-            onClick={() => modalClose && modalClose(false)}
-          >
-            {translate('componentsRuleModal.rule.discard')}
-          </Button> */}
         </div>
       </form>
     </div>

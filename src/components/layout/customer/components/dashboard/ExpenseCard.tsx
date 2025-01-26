@@ -1,5 +1,4 @@
 import { Card, CardTitle } from '@/components/ui/card';
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import Image, { StaticImageData } from 'next/image';
 import React from 'react';
 import Icon1 from '../../../../../../public/images/dashboard/expense-card/icon1.svg';
@@ -8,6 +7,7 @@ import Icon3 from '../../../../../../public/images/dashboard/expense-card/icon3.
 import Icon4 from '../../../../../../public/images/dashboard/expense-card/icon4.svg';
 import Icon5 from '../../../../../../public/images/dashboard/expense-card/icon5.svg';
 import Icon6 from '../../../../../../public/images/dashboard/expense-card/icon6.svg';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
 export const expenses = (personalAmount: number) => {
   return [
@@ -40,7 +40,7 @@ const ExpenseCard = ({ expense, index }: ExpenseCardProps) => {
           {expense?.title}
         </CardTitle>
         <p className="text-[20px] text-[#00104B] font-bold">
-          NOK {numberFormatter(expense?.amount)}{' '}
+          NOK {formatNumberWithTwoDecimals(expense?.amount)}{' '}
           {/* <span className="text-xs text-[#00B386] text-bold">+55%</span> */}
         </p>
       </div>

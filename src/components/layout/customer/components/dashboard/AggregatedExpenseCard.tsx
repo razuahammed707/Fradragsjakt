@@ -4,11 +4,11 @@ import ArrowUp from '../../../../../../public/images/dashboard/arrow_up.svg';
 import Image from 'next/image';
 import SharedTooltip from '@/components/SharedTooltip';
 import { Separator } from '@/components/ui/separator';
-import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { cn } from '@/lib/utils';
 import { trpc } from '@/utils/trpc';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
 import SharedReportDownloader from '@/components/SharedReportDownloader';
+import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
 export interface caregoryItem {
   title: string;
@@ -52,7 +52,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
         <div>
           <h2 className="text-[13px] font-semibold text-[#627A97]">{title}</h2>
           <p className="text-2xl font-bold text-[#00104B]">
-            NOK {numberFormatter(total)}
+            NOK {formatNumberWithTwoDecimals(total)}
           </p>
         </div>
         {origin === 'personal' ? (
@@ -91,8 +91,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                   largestItem?.total_amount >= 0 && 'text-[#00104B]'
                 )}
               >
-                NOK{' '}
-                {numberFormatter(Number(largestItem?.total_amount?.toFixed(2)))}{' '}
+                NOK {formatNumberWithTwoDecimals(largestItem?.total_amount)}{' '}
               </p>
             </div>
           </div>
@@ -117,7 +116,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                             total_amount >= 0 && 'text-[#00104B]'
                           )}
                         >
-                          NOK {numberFormatter(Number(total_amount.toFixed(2)))}{' '}
+                          NOK {formatNumberWithTwoDecimals(total_amount)}{' '}
                         </p>
                       </div>
                     </div>
@@ -142,9 +141,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                           <div className="flex justify-between ">
                             <p className="text-xs font-bold text-[#00104B]">
                               NOK{' '}
-                              {amount
-                                ? numberFormatter(Number(amount?.toFixed(2)))
-                                : 0}
+                              {amount ? formatNumberWithTwoDecimals(amount) : 0}
                             </p>
 
                             {[
@@ -180,7 +177,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                         largestItem?.total_amount >= 0 && 'text-[#00104B]'
                       )}
                     >
-                      NOK {numberFormatter(Number(total_amount?.toFixed(2)))}{' '}
+                      NOK {formatNumberWithTwoDecimals(total_amount)}{' '}
                     </p>
                   </div>
                 </div>
