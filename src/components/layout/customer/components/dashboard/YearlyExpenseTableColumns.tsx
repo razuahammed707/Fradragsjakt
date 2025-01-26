@@ -43,7 +43,7 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
       accessorKey: 'description',
       header: 'Expense description',
       cell: ({ row }) => (
-        <div className="w-[220px]">{row.getValue('description')}</div>
+        <div className="w-[150px]">{row.getValue('description')}</div>
       ), // Center aligned
       size: 100, // Adjust column size
       minSize: 100,
@@ -57,7 +57,7 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Expense type
-          <Image src={ArrowUpDown} alt="sort icon" className="ml-2" />
+          <Image src={ArrowUpDown} alt="sort icon" className="ml-1" />
         </Button>
       ),
       cell: ({ row }) => (
@@ -72,7 +72,7 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Category
-          <Image src={ArrowUpDown} alt="sort icon" className="ml-2" />
+          <Image src={ArrowUpDown} alt="sort icon" className="ml-1" />
         </Button>
       ),
       cell: ({ row }) => <div className="pl-4">{row.getValue('category')}</div>, // Center aligned
