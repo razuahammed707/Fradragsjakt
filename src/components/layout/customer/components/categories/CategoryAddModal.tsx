@@ -50,7 +50,6 @@ export default function CategoryAddModal({
     },
   });
 
-  // Now TypeScript knows these are type-safe
   const categoryForValue = watch('category_for');
   const categoryTitleValue = watch('title');
   const categoryMapValue = watch('reference_category');

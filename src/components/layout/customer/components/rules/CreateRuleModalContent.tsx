@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -16,7 +16,6 @@ type RuleFormData = {
   expense_type: 'business' | 'personal';
   category: string;
   rule_for: 'expense' | 'income';
-  sub_question: string;
   sub_category: string;
 };
 
@@ -35,67 +34,52 @@ function CreateRuleModalContent({
   updateRulePayload,
   origin,
 }: ExpenseRuleContentProps) {
-  const { handleSubmit, control, watch, formState } = useForm<RuleFormData>({
-    defaultValues: {
-      expense_type: 'business',
-      rule_for: updateRulePayload?.rule_for || 'expense',
-      category: updateRulePayload?.category_title || '',
-      sub_question: updateRulePayload?.sub_question || '',
-      sub_category: updateRulePayload?.sub_category || '',
-    },
-    mode: 'onChange',
-  });
+  const { handleSubmit, control, watch, formState, reset } =
+    useForm<RuleFormData>({
+      defaultValues: {
+        expense_type: 'business',
+        rule_for: updateRulePayload?.rule_for || 'expense',
+        category: updateRulePayload?.category_title || '',
+        sub_category: updateRulePayload?.sub_category || '', // Renamed from sub_question
+      },
+      mode: 'onChange',
+    });
 
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
   const [loading, setLoading] = useState(false);
-  const [subQuestionOptions, setSubQuestionOptions] = useState<
+  const [subCategoryOptions, setSubCategoryOptions] = useState<
     { answer: string; category: string[] }[]
   >([]);
 
   const categoryForValue = watch('rule_for');
   const selectedCategory = watch('category');
-  const selectedSubQuestion = watch('sub_question');
 
   const query = {
     category_for: categoryForValue || updateRulePayload?.rule_for,
   };
   const { manipulatedCategories } = useManipulatedCategories(query);
 
-  // Fetch sub-questions based on the selected category and rule_for
   useEffect(() => {
     if (selectedCategory && categoryForValue) {
-      const subQuestions = getSubQuestions(selectedCategory, categoryForValue);
-      setSubQuestionOptions(subQuestions);
+      const subCategories = getSubCategories(
+        selectedCategory,
+        categoryForValue
+      );
+      setSubCategoryOptions(subCategories);
     } else {
-      setSubQuestionOptions([]);
+      setSubCategoryOptions([]);
     }
   }, [selectedCategory, categoryForValue]);
 
-  // Filter sub-category options based on the selected sub-question
-  const subCategoryOptions = useMemo(() => {
-    if (!selectedSubQuestion) return [];
-
-    const selectedQuestion = subQuestionOptions.find(
-      (q) => q.answer === selectedSubQuestion
-    );
-    if (!selectedQuestion) return [];
-
-    return manipulatedCategories.filter((cat) =>
-      selectedQuestion.category.includes(cat.title)
-    );
-  }, [selectedSubQuestion, subQuestionOptions, manipulatedCategories]);
-
-  // Check if the selected category has sub-questions
-  const hasSubQuestions = (
+  const hasSubCategories = (
     category: string,
     ruleFor: 'expense' | 'income' | 'common'
   ): boolean => {
-    const subQuestions = getSubQuestions(category, ruleFor);
-    return subQuestions.length > 0;
+    const subCategories = getSubCategories(category, ruleFor);
+    return subCategories.length > 0;
   };
 
-  // Mutation for creating a new rule
   const ruleMutation = trpc.rules.createRule.useMutation({
     onSuccess: () => {
       toast.success(translate('toast.ruleCreatedSuccess'));
@@ -104,6 +88,7 @@ function CreateRuleModalContent({
         modalClose(false);
       }
       utils.rules.getRules.invalidate();
+      reset();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -111,7 +96,6 @@ function CreateRuleModalContent({
     },
   });
 
-  // Mutation for updating an existing rule
   const ruleUpdateMutation = trpc.rules.updateRule.useMutation({
     onSuccess: () => {
       toast.success(translate('toast.ruleUpdatedSuccess'));
@@ -120,6 +104,7 @@ function CreateRuleModalContent({
         modalClose(false);
       }
       utils.rules.getRules.invalidate();
+      reset();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -127,7 +112,6 @@ function CreateRuleModalContent({
     },
   });
 
-  // Handle form submission
   const onSubmit = (data: RuleFormData) => {
     setLoading(true);
     if (origin && updateRulePayload) {
@@ -137,8 +121,7 @@ function CreateRuleModalContent({
     }
   };
 
-  // Helper function to get sub-questions for a category
-  const getSubQuestions = (
+  const getSubCategories = (
     category: string,
     ruleFor: 'expense' | 'income' | 'common'
   ): { answer: string; category: string[] }[] => {
@@ -161,7 +144,6 @@ function CreateRuleModalContent({
         {translate('componentsRuleModal.rule.if')}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-        {/* Description Contains Field */}
         <div>
           <Label htmlFor="description_contains">
             {translate('componentsRuleModal.rule.descriptionContains')}
@@ -180,7 +162,6 @@ function CreateRuleModalContent({
           />
         </div>
 
-        {/* Rule For Field */}
         <h1 className="font-medium text-lg text-black mb-4">
           {translate('componentsRuleModal.rule.then')}
         </h1>
@@ -202,7 +183,6 @@ function CreateRuleModalContent({
           />
         </div>
 
-        {/* Expense Type Field */}
         <div>
           <Label htmlFor="expense_type">Type</Label>
           <FormInput
@@ -227,7 +207,6 @@ function CreateRuleModalContent({
           />
         </div>
 
-        {/* Category Field */}
         <div>
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
@@ -245,49 +224,25 @@ function CreateRuleModalContent({
           />
         </div>
 
-        {/* Sub-Question and Sub-Category Fields */}
         {selectedCategory &&
-          hasSubQuestions(selectedCategory, categoryForValue) && (
-            <>
-              <h1 className="font-medium text-lg text-black mb-4">
-                Possible dependants
-              </h1>
-              <div>
-                <Label htmlFor="sub_question">Sub Question</Label>
-                <FormInput
-                  name="sub_question"
-                  customClassName="w-full mt-2"
-                  type="select"
-                  control={control}
-                  placeholder="Select Question"
-                  defaultValue={updateRulePayload?.sub_question}
-                  options={subQuestionOptions.map((q) => ({
-                    title: q.answer,
-                    value: q.answer,
-                  }))}
-                />
-              </div>
-              {selectedSubQuestion && (
-                <div>
-                  <Label htmlFor="sub_category">Sub Category</Label>
-                  <FormInput
-                    name="sub_category"
-                    customClassName="w-full mt-2"
-                    type="select"
-                    control={control}
-                    placeholder="Select sub-category"
-                    defaultValue={updateRulePayload?.sub_category}
-                    options={subCategoryOptions.map((cat) => ({
-                      title: cat.title,
-                      value: cat.value,
-                    }))}
-                  />
-                </div>
-              )}
-            </>
+          hasSubCategories(selectedCategory, categoryForValue) && (
+            <div>
+              <Label htmlFor="sub_category">Sub Category</Label>
+              <FormInput
+                name="sub_category"
+                customClassName="w-full mt-2"
+                type="select"
+                control={control}
+                placeholder="Select sub-category"
+                defaultValue={updateRulePayload?.sub_category}
+                options={subCategoryOptions.map((q) => ({
+                  title: q.answer,
+                  value: q.answer,
+                }))}
+              />
+            </div>
           )}
 
-        {/* Submit Button */}
         <div className="py-3">
           <Button
             type="submit"
