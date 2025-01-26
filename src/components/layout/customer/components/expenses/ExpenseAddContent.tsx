@@ -220,6 +220,7 @@ function ExpenseAddContent({
                   ? 'Enter description'
                   : 'Enter amount (NOK)'
               }
+              disabled={field === 'amount' && origin === 'expense update'}
               control={control}
               customClassName="w-full mt-2"
               required
