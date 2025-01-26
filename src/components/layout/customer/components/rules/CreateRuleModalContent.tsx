@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
+import { SelectFormInput } from '@/components/SelectFormInput';
 import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
@@ -19,14 +20,10 @@ type RuleFormData = {
   sub_category: string;
 };
 
-type CategoryType = { title: string; value: string };
-
 type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
-  categories?: CategoryType[];
   updateRulePayload?: UpdateRuleProps;
   origin: string | undefined;
-  rule_for?: 'expense' | 'income';
 };
 
 function CreateRuleModalContent({
@@ -40,7 +37,7 @@ function CreateRuleModalContent({
         expense_type: 'business',
         rule_for: updateRulePayload?.rule_for || 'expense',
         category: updateRulePayload?.category_title || '',
-        sub_category: updateRulePayload?.sub_category || '', // Renamed from sub_question
+        sub_category: updateRulePayload?.sub_category || '',
       },
       mode: 'onChange',
     });
@@ -165,12 +162,12 @@ function CreateRuleModalContent({
         <h1 className="font-medium text-lg text-black mb-4">
           {translate('componentsRuleModal.rule.then')}
         </h1>
+
         <div>
           <Label htmlFor="rule_for">Rule For</Label>
           <FormInput
             name="rule_for"
             id="rule_for"
-            defaultValue={updateRulePayload?.rule_for}
             customClassName="w-full mt-2"
             type="select"
             control={control}
@@ -191,13 +188,9 @@ function CreateRuleModalContent({
             customClassName="w-full mt-2"
             type="select"
             control={control}
-            defaultValue={updateRulePayload?.expense_type}
             placeholder={translate('componentsRuleModal.rule.selectType')}
             options={[
-              {
-                title: 'Deductible',
-                value: 'business',
-              },
+              { title: 'Deductible', value: 'business' },
               {
                 title: translate('componentsRuleModal.rule.personal'),
                 value: 'personal',
@@ -211,16 +204,14 @@ function CreateRuleModalContent({
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
           </Label>
-          <FormInput
+          <SelectFormInput
             name="category"
-            id="category"
-            customClassName="w-full mt-2"
-            type="select"
             control={control}
+            customClassName="w-full mt-2"
             placeholder={translate('componentsRuleModal.rule.selectCategory')}
             defaultValue={updateRulePayload?.category_title}
             options={categoryForValue ? manipulatedCategories : []}
-            required
+            errorMessage={formState.errors.category?.message}
           />
         </div>
 
@@ -228,17 +219,17 @@ function CreateRuleModalContent({
           hasSubCategories(selectedCategory, categoryForValue) && (
             <div>
               <Label htmlFor="sub_category">Sub Category</Label>
-              <FormInput
+              <SelectFormInput
                 name="sub_category"
-                customClassName="w-full mt-2"
-                type="select"
                 control={control}
+                customClassName="w-full mt-2"
                 placeholder="Select sub-category"
                 defaultValue={updateRulePayload?.sub_category}
                 options={subCategoryOptions.map((q) => ({
                   title: q.answer,
                   value: q.answer,
                 }))}
+                errorMessage={formState.errors.sub_category?.message}
               />
             </div>
           )}

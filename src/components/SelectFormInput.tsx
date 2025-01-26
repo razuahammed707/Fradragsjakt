@@ -81,7 +81,7 @@ export function SelectFormInput({
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
               <Command>
                 <CommandInput placeholder="Search options..." className="h-9" />
-                <CommandList>
+                <CommandList className="max-h-[200px] overflow-y-auto">
                   <CommandEmpty>No options found.</CommandEmpty>
                   <CommandGroup>
                     {options.map((option) => (
@@ -90,7 +90,7 @@ export function SelectFormInput({
                         value={option.value}
                         onSelect={(currentValue) => {
                           onChange(currentValue);
-                          setOpen(false); // Close the popover only after selecting an option
+                          setOpen(false); // Close the popover after selection
                         }}
                       >
                         {option.title}
