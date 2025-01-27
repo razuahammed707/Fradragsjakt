@@ -9,6 +9,7 @@ export enum IncomeType {
 export interface IIncome extends Document {
   description: string;
   category: string;
+  sub_category: string;
   income_type: IncomeType;
   amount: number;
   transaction_date?: Date;

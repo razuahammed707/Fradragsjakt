@@ -13,6 +13,10 @@ const IncomeSchema = new Schema<IIncome>(
       required: true,
       trim: true,
     },
+    sub_category: {
+      type: String,
+      trim: true,
+    },
     income_type: {
       type: String,
       enum: Object.values(IncomeType),
