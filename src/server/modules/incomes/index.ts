@@ -206,7 +206,6 @@ export const IncomeRouter = router({
           rule_for: 'income',
         });
 
-        // Use Promise.all to ensure all async operations complete
         const incomesWithRules = await IncomeHelpers.getIncomesWithRules(
           rules,
           loggedUser
@@ -364,4 +363,60 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  getQuestionnairePrefilledValue: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const loggedUser = ctx.user as JwtPayload;
+
+      const validCategories = [
+        'Health and Family',
+        'Bank and Loans',
+        'Work and Education',
+        'Housing and Property',
+        'Gifts or Donations',
+        'Hobby, Odd Jobs, and Extra Incomes',
+      ];
+
+      const subCategoryValues = await IncomeModel.aggregate([
+        {
+          $match: {
+            user: new mongoose.Types.ObjectId(String(loggedUser?.id)),
+            category: { $in: validCategories },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              category: '$category',
+              sub_category: '$sub_category',
+            },
+            value: { $sum: '$amount' },
+          },
+        },
+      ]);
+
+      const prefilledValues = subCategoryValues.reduce(
+        (acc, item) => {
+          const category = item._id.category;
+          const subCategory = item._id.sub_category;
+
+          if (!acc[category]) {
+            acc[category] = {};
+          }
+
+          acc[category][subCategory] = item.value;
+          return acc;
+        },
+        {} as Record<string, Record<string, number>>
+      );
+
+      return {
+        status: 200,
+        message: 'Income questionnaire prefilled values fetched successfully',
+        data: prefilledValues,
+      } as ApiResponse<typeof prefilledValues>;
+    } catch (error: unknown) {
+      const { message } = errorHandler(error);
+      throw new ApiError(httpStatus.NOT_FOUND, message);
+    }
+  }),
 });

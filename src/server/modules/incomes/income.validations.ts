@@ -34,6 +34,7 @@ const createBulkIncomeSchema = z.array(
 const incomeUpdatePayloadSchema = z.object({
   rule: z.string(),
   category: z.string(),
+  sub_category: z.string().optional(),
   income_type: z.string(),
 });
 

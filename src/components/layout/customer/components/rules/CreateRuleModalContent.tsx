@@ -233,6 +233,7 @@ function CreateRuleModalContent({
                   value: q.answer,
                 }))}
                 errorMessage={formState.errors.sub_category?.message}
+                required
               />
             </div>
           )}

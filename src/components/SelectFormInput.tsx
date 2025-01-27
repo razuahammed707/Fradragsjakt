@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
 import { Controller, Control } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -42,6 +42,7 @@ interface SelectFormInputProps {
   customClassName?: string;
   errorMessage?: string;
   defaultValue?: string;
+  required?: boolean;
 }
 
 export function SelectFormInput({
@@ -52,6 +53,7 @@ export function SelectFormInput({
   customClassName,
   errorMessage,
   defaultValue = '',
+  required = false,
 }: SelectFormInputProps) {
   const [open, setOpen] = useState(false);
 
@@ -60,6 +62,7 @@ export function SelectFormInput({
       name={name}
       control={control}
       defaultValue={defaultValue}
+      rules={{ required: required }}
       render={({ field: { value, onChange } }) => (
         <div>
           <Popover open={open} onOpenChange={setOpen}>
@@ -68,14 +71,28 @@ export function SelectFormInput({
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className={cn('w-full justify-between', customClassName)}
-              >
-                {value ? (
-                  options.find((option) => option.value === value)?.title
-                ) : (
-                  <span className="text-muted-foreground">{placeholder}</span>
+                className={cn(
+                  'w-full justify-between relative pr-12 ps-3',
+                  customClassName
                 )}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              >
+                <span className="truncate text-black font-normal">
+                  {value ? (
+                    options.find((option) => option.value === value)?.title
+                  ) : (
+                    <span className="text-muted-foreground">{placeholder}</span>
+                  )}
+                </span>
+                {value && (
+                  <X
+                    className="absolute rounded-full bg-gray-400 right-8 h-3 w-3 shrink-0 opacity-50 hover:opacity-100 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onChange('');
+                    }}
+                  />
+                )}
+                <ChevronsUpDown className="absolute right-4 h-3 w-3 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
@@ -90,7 +107,7 @@ export function SelectFormInput({
                         value={option.value}
                         onSelect={(currentValue) => {
                           onChange(currentValue);
-                          setOpen(false); // Close the popover after selection
+                          setOpen(false);
                         }}
                       >
                         {option.title}

@@ -199,6 +199,8 @@ export const userRouter = router({
     .input(userValidation.userQuestionnaireSchema)
     .mutation(async ({ ctx, input }) => {
       const { question, answers } = input;
+      console.log({ question });
+
       const sessionUser = ctx.user as JwtPayload;
       if (!sessionUser?.email) {
         throw new Error('You must be logged in to update questionnaires.');
@@ -237,7 +239,7 @@ export const userRouter = router({
             const existingFieldMap = mergedMap.get(key)!;
             fields.forEach((field) => {
               const [fieldKey, fieldValue] = Object.entries(field)[0];
-              existingFieldMap.set(fieldKey, fieldValue); // Overwrite if field exists or add new
+              existingFieldMap.set(fieldKey, fieldValue);
             });
           }
         });

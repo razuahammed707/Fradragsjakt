@@ -147,6 +147,7 @@ const getIncomesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
                   rule: rule._id,
                   category: rule.category_title,
                   income_type: rule.expense_type,
+                  sub_category: rule?.sub_category,
                 },
                 incomes,
               }

@@ -75,6 +75,10 @@ const QuestionnairesReviewSection = () => {
 
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
+  const { data: expensesResponse } =
+    trpc.incomes.getQuestionnairePrefilledValue.useQuery();
+
+  console.log({ expensesResponse });
 
   const {
     workAndEducationExpenseAmount,
