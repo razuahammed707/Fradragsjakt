@@ -8,6 +8,7 @@ import React, {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
+import { SelectFormInput } from '@/components/SelectFormInput'; // Import the SelectFormInput
 import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
@@ -31,7 +32,7 @@ type UploadedImageType = {
 export type FormData = {
   description: string;
   expense_type: 'unknown' | 'personal' | 'business';
-  category: string;
+  category: string; // Ensure this is a string
   deduction_status: string;
   amount: string;
   receipt: {
@@ -220,49 +221,50 @@ function ExpenseAddContent({
                   ? 'Enter description'
                   : 'Enter amount (NOK)'
               }
+              disabled={field === 'amount' && origin === 'expense update'}
               control={control}
               customClassName="w-full mt-2"
               required
             />
           </div>
         ))}
-        {[
-          {
-            name: 'expense_type',
-            label: translate(
-              'componentsExpenseModal.expense.label.expense_type'
-            ),
-            defaultValue: payload?.expense_type,
-            options: [
+        <div>
+          <Label htmlFor="expense_type">
+            {translate('componentsExpenseModal.expense.label.expense_type')}
+          </Label>
+          <FormInput
+            name="expense_type"
+            defaultValue={payload?.expense_type}
+            customClassName="w-full mt-2"
+            type="select"
+            control={control}
+            placeholder="Select expense type"
+            options={[
               { title: 'Deductible', value: 'business' },
               { title: 'Personal', value: 'personal' },
               { title: 'Unknown', value: 'unknown' },
-            ],
-          },
-          {
-            name: 'category',
-            label: translate(
+            ]}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor="category">
+            {translate(
               'componentsExpenseModal.expense.label.category',
               'category'
-            ),
-            defaultValue: payload?.category,
-            options: manipulatedCategories,
-          },
-        ].map(({ name, label, options, defaultValue }) => (
-          <div key={name}>
-            <Label htmlFor={name}>{label}</Label>
-            <FormInput
-              name={name}
-              defaultValue={defaultValue}
-              customClassName="w-full mt-2"
-              type="select"
-              control={control}
-              placeholder={`Select ${label.toLowerCase()}`}
-              options={options}
-              required
-            />
-          </div>
-        ))}
+            )}
+          </Label>
+          <SelectFormInput
+            name="category"
+            control={control}
+            placeholder="Select category"
+            options={manipulatedCategories.map((category) => ({
+              title: category.title,
+              value: category.value,
+            }))}
+            defaultValue={payload?.category || ''}
+          />
+        </div>
         <div className="rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]">
           <div
             {...getRootProps()}
