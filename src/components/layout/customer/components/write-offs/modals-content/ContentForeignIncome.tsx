@@ -16,9 +16,9 @@ import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionna
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useTranslation } from '@/lib/TranslationProvider';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { CardDescription } from '@/components/ui/card';
 
 type ContentForeignIncomeProps = {
   questionnaire?: Questionnaire;
@@ -27,7 +27,6 @@ type ContentForeignIncomeProps = {
 export function ContentForeignIncome({
   questionnaire,
 }: ContentForeignIncomeProps) {
-  const { translate } = useTranslation();
   const utils = trpc.useUtils();
 
   const {
@@ -53,14 +52,15 @@ export function ContentForeignIncome({
         'Have income or wealth in another country than Norway and pay tax in the other country',
       content: (
         <>
-          {translate(
-            'contentForeignIncome.accordionItems.item1.content.description'
-          )}
-          <p className="text-black pt-3 pb-1">
-            {translate(
-              'contentForeignIncome.accordionItems.item1.content.fields.foreignIncome'
-            )}
-          </p>
+          You must declare all your foreign income and wealth in the Norwegian
+          tax return. This applies regardless of whether you’ve paid tax abroad
+          or the income/wealth is tax free in the country in question.
+          <br />{' '}
+          <CardDescription className=" pt-2 text-xs text-gray-500 font-medium">
+            In Norway, there is no threshold or minimum when it comes to
+            declaring foreign income and wealth in your tax return. <br />
+          </CardDescription>
+          <p className="text-black pt-3 pb-1">Foreign income</p>
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign income"
             customClassName="w-full"
@@ -72,11 +72,7 @@ export function ContentForeignIncome({
               'Foreign income'
             )}
           />
-          <p className="text-black pt-3 pb-1">
-            {translate(
-              'contentForeignIncome.accordionItems.item1.content.fields.foreignTaxAmount'
-            )}
-          </p>
+          <p className="text-black pt-3 pb-1">Foreign tax amount</p>
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Foreign tax amount"
             customClassName="w-full"
@@ -89,11 +85,7 @@ export function ContentForeignIncome({
             placeholder="NOK 200"
             required
           />
-          <p className="text-black pt-3 pb-1">
-            {translate(
-              'contentForeignIncome.accordionItems.item1.content.fields.norwayTaxRate'
-            )}
-          </p>
+          <p className="text-black pt-3 pb-1">Norway tax rate on this income</p>
           <FormInput
             name="Have income or wealth in another country than Norway and pay tax in the other country.Norway tax rate on this income"
             customClassName="w-full"
@@ -134,6 +126,7 @@ export function ContentForeignIncome({
       toast.error(error.message || 'User questionnaires updation failed!');
     },
   });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
@@ -148,9 +141,7 @@ export function ContentForeignIncome({
 
   return (
     <div className=" ">
-      <p className="text-xs text-gray-500">
-        {translate('contentForeignIncome.reviewQuestionnaire')}
-      </p>
+      <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Accordion
           type="single"
@@ -175,7 +166,7 @@ export function ContentForeignIncome({
           ))}
         </Accordion>
         <Button disabled={!isDirty} className="text-white w-full mt-4">
-          {translate('contentForeignIncome.doneButton')}
+          Done
         </Button>
       </form>
     </div>
