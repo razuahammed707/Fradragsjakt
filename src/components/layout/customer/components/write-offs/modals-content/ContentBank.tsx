@@ -14,18 +14,17 @@ import { showModal } from '@/redux/slices/questionnaire';
 import { AccordionItemData, Questionnaire } from '@/types/questionnaire';
 import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionnaireModalQuestion';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
-import { useTranslation } from '@/lib/TranslationProvider';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { CardDescription } from '@/components/ui/card';
 
 type ContentBankProps = {
   questionnaire?: Questionnaire;
 };
 
 export function ContentBank({ questionnaire }: ContentBankProps) {
-  const { translate } = useTranslation();
   const appDispatch = useAppDispatch();
   const utils = trpc.useUtils();
 
@@ -50,12 +49,14 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have a loan?',
       content: (
         <>
-          {translate('contentBank.accordionItems.item1.description')}
-          <p className="text-black pt-[12px] pb-[6px]">
-            {translate(
-              'contentBank.accordionItems.item1.fields.totalInterestPaid'
-            )}
-          </p>
+          The deduction rate for loan interest is 22% of the interest paid in
+          the tax year.
+          <CardDescription className="pt-2 text-xs text-gray-500 font-medium">
+            <br />
+            There is <strong>no minimum threshold</strong> for claiming this
+            deduction.
+          </CardDescription>
+          <p className="text-black pt-[12px] pb-[6px]">Total interest paid</p>
           <FormInput
             name="Have a loan.Total interest paid"
             customClassName="w-full"
@@ -73,12 +74,13 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have refinanced a loan in the last year?',
       content: (
         <>
-          {translate('contentBank.accordionItems.item2.description')}
-          <p className="text-black pt-[12px] pb-[6px]">
-            {translate(
-              'contentBank.accordionItems.item2.fields.refinancingCost'
-            )}
-          </p>
+          Refinancing costs, such as fees and charges, are deductible alongside
+          interest. The same 22% rate applies.
+          <CardDescription className="pt-2 text-xs text-gray-500 font-medium">
+            <br />
+            <strong>No minimum threshold</strong> applies.
+          </CardDescription>
+          <p className="text-black pt-[12px] pb-[6px]">Refinancing cost</p>
           <FormInput
             name="Have refinanced a loan in the last year.Refinancing cost"
             customClassName="w-full"
@@ -99,12 +101,14 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have taken out a joint loan with someone?',
       content: (
         <>
-          {translate('contentBank.accordionItems.item3.description')}
-          <p className="text-black pt-[12px] pb-[6px]">
-            {translate(
-              'contentBank.accordionItems.item3.fields.interestAmount'
-            )}
-          </p>
+          Ensure the ownership percentage is documented, typically in the loan
+          agreement.
+          <CardDescription className="pt-2 text-xs text-gray-500 font-medium">
+            <br />
+            <strong>No specific minimum threshold</strong>, but accurate
+            ownership documentation is required.
+          </CardDescription>
+          <p className="text-black pt-[12px] pb-[6px]">Interest amount</p>
           <FormInput
             name="Have taken out a joint loan with someone.Interest amount"
             customClassName="w-full"
@@ -117,11 +121,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
             )}
             required
           />
-          <p className="text-black pt-[12px] pb-[6px]">
-            {translate(
-              'contentBank.accordionItems.item3.fields.yourOwnershipShare'
-            )}
-          </p>
+          <p className="text-black pt-[12px] pb-[6px]">Your ownership share</p>
           <FormInput
             name="Have taken out a joint loan with someone.Your ownership share"
             customClassName="w-full"
@@ -143,11 +143,11 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'Have young people’s housing savings (BSU)',
       content: (
         <>
-          {translate('contentBank.accordionItems.item4.description')}
+          Young people’s housing savings (BSU) is for people under 34 years of
+          age. You can save up to NOK 27,500 per year. Then you get a tax
+          deduction of NOK 2,750 (10 percent).
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate(
-              'contentBank.accordionItems.item4.fields.thisYearsSavings'
-            )}
+            This year&apos;s savings
           </p>
           <FormInput
             name="Have young people’s housing savings (BSU).This years savings"
@@ -169,10 +169,13 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       title: 'I have sold shares or securities at a loss',
       content: (
         <>
-          {translate('contentBank.accordionItems.item5.description')}
-          <p className="text-black pt-[12px] pb-[6px]">
-            {translate('contentBank.accordionItems.item5.fields.totalLoss')}
-          </p>
+          Gains and losses on shares are taxable for the amount that exceeds the
+          deductible risk-free return. Losses on sale of shares are deductible.
+          <CardDescription className="pt-2 text-xs text-gray-500 font-medium">
+            <br />
+            <strong>No minimum loss threshold</strong> applies.
+          </CardDescription>
+          <p className="text-black pt-[12px] pb-[6px]">Total loss</p>
           <FormInput
             name="I have sold shares or securities at a loss.Total loss"
             customClassName="w-full"
@@ -202,6 +205,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
   const handleValueChange = (value: string) => {
     setOpenItem((prevOpen) => (prevOpen === value ? null : value));
   };
+
   const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
     onSuccess: () => {
       utils.users.getUserByEmail.invalidate();
@@ -210,6 +214,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
       toast.error(error.message || 'User questionnaires updation failed!');
     },
   });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
@@ -220,9 +225,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
 
   return (
     <div>
-      <p className="text-xs text-gray-500">
-        {translate('contentBank.reviewQuestionnaire')}
-      </p>
+      <p className="text-xs text-gray-500">Review Questionnaire</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="max-h-[350px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
           <Accordion
@@ -254,7 +257,7 @@ export function ContentBank({ questionnaire }: ContentBankProps) {
           type="submit"
           className="text-white w-full mt-4"
         >
-          {translate('contentBank.doneButton')}
+          Done
         </Button>
       </form>
     </div>
