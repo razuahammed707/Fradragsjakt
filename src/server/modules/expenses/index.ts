@@ -312,33 +312,7 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  // createBulkExpenses: protectedProcedure
-  //   .input(expenseValidation.createBulkExpenseSchema)
-  //   .mutation(async ({ ctx, input: expenses }) => {
-  //     try {
-  //       const loggedUser = ctx.user as JwtPayload;
 
-  //       console.log('expenses payload', expenses);
-
-  //       const createdExpenses = await Promise.all(
-  //         expenses.map(async (singleExpense) => {
-  //           return await ExpenseHelpers.createExpenseFromBulkInput(
-  //             singleExpense,
-  //             loggedUser.id
-  //           );
-  //         })
-  //       );
-
-  //       return {
-  //         status: 201,
-  //         message: 'Expenses created successfully',
-  //         data: createdExpenses,
-  //       } as ApiResponse<typeof createdExpenses>;
-  //     } catch (error: unknown) {
-  //       const { message } = errorHandler(error);
-  //       throw new ApiError(httpStatus.NOT_FOUND, message);
-  //     }
-  //   }),
   populateStatement: protectedProcedure
     .input(expenseValidation.populateStatementSchema)
     .mutation(async ({ ctx, input: statements }) => {
@@ -476,57 +450,37 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  getQuestionnairePrefilledValue: protectedProcedure.query(async ({ ctx }) => {
+  getQuestionnairePrefilledValues: protectedProcedure.query(async ({ ctx }) => {
     try {
       const loggedUser = ctx.user as JwtPayload;
 
-      const validCategories = [
-        'Health and Family',
-        'Bank and Loans',
-        'Work and Education',
-        'Housing and Property',
-        'Gifts or Donations',
-        'Hobby, Odd Jobs, and Extra Incomes',
-      ];
-
-      const subCategoryValues = await ExpenseModel.aggregate([
-        {
-          $match: {
-            user: new mongoose.Types.ObjectId(String(loggedUser?.id)),
-            category: { $in: validCategories },
-          },
-        },
-        {
-          $group: {
-            _id: {
-              category: '$category',
-              sub_category: '$sub_category',
-            },
-            value: { $sum: '$amount' },
-          },
-        },
+      const [incomeValues, expenseValues] = await Promise.all([
+        IncomeHelpers.getQuestionnairePrefilledValues(loggedUser.id),
+        ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id),
       ]);
 
-      const prefilledValues = subCategoryValues.reduce(
-        (acc, item) => {
-          const category = item._id.category;
-          const subCategory = item._id.sub_category;
+      type PrefilledValues = {
+        [category: string]: {
+          [subCategory: string]: number;
+        };
+      };
 
-          if (!acc[category]) {
-            acc[category] = {};
-          }
-
-          acc[category][subCategory] = item.value;
-          return acc;
-        },
-        {} as Record<string, Record<string, number>>
-      );
+      const combinedValues = Object.keys({
+        ...incomeValues,
+        ...expenseValues,
+      }).reduce<PrefilledValues>((acc, category) => {
+        acc[category] = {
+          ...(expenseValues[category] || {}),
+          ...(incomeValues[category] || {}),
+        };
+        return acc;
+      }, {});
 
       return {
         status: 200,
         message: 'Questionnaire prefilled values fetched successfully',
-        data: prefilledValues,
-      } as ApiResponse<typeof prefilledValues>;
+        data: combinedValues,
+      } as ApiResponse<PrefilledValues>;
     } catch (error: unknown) {
       const { message } = errorHandler(error);
       throw new ApiError(httpStatus.NOT_FOUND, message);

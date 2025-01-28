@@ -3,7 +3,7 @@
 
 import { View } from 'lucide-react';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '@/lib/TranslationProvider';
 import QuestionedAvatar from '../../../../../../public/images/dashboard/avatar-with-question.svg';
 import MarkIcon from '../../../../../../public/images/dashboard/mark.svg';
@@ -75,10 +75,35 @@ const QuestionnairesReviewSection = () => {
 
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-  const { data: expensesResponse } =
-    trpc.incomes.getQuestionnairePrefilledValue.useQuery();
+  const { data: prefilledValues } =
+    trpc.expenses.getQuestionnairePrefilledValues.useQuery();
 
-  console.log({ expensesResponse });
+  const updateQuestionnaires = trpc.users.updateBulkQuestionnaires.useMutation({
+    onSuccess: () => {
+      utils.users.getUserByEmail.invalidate();
+    },
+  });
+
+  const utils = trpc.useContext();
+  const updateRef = useRef(false);
+
+  useEffect(() => {
+    if (prefilledValues?.data && !isAuditor && !updateRef.current) {
+      updateRef.current = true;
+      const questionnairesArray = Array.isArray(prefilledValues.data)
+        ? prefilledValues.data
+        : Object.entries(prefilledValues.data).map(([category, answers]) => ({
+            question: category,
+            answers: Object.entries(answers).map(([subCategory, value]) => ({
+              [subCategory]: [{ value: value.toString() }],
+            })),
+          }));
+
+      updateQuestionnaires.mutate({
+        questionnaires: questionnairesArray,
+      });
+    }
+  }, [prefilledValues, isAuditor, updateQuestionnaires, utils]);
 
   const {
     workAndEducationExpenseAmount,

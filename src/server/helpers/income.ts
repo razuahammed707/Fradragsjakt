@@ -615,6 +615,75 @@ const updateIncomeRecord = async (input: IIncomeUpdate, userId: string) => {
   }
 };
 
+async function getQuestionnairePrefilledValues(userId: string) {
+  try {
+    const validCategories = [
+      'Health and Family',
+      'Bank and Loans',
+      'Work and Education',
+      'Housing and Property',
+      'Gifts or Donations',
+      'Hobby, Odd Jobs, and Extra Incomes',
+    ];
+
+    const subCategoryValues = await IncomeModel.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(String(userId)),
+          category: { $in: validCategories },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            category: '$category',
+            sub_category: '$sub_category',
+          },
+          value: { $sum: '$amount' },
+        },
+      },
+    ]);
+
+    // Transform into array of questionnaires matching userQuestionnaireSchema
+    const questionnaires = validCategories
+      .map((category) => {
+        const categoryValues = subCategoryValues.filter(
+          (item) => item._id.category === category
+        );
+
+        if (categoryValues.length === 0) return null;
+
+        const answers = categoryValues.map((item) => {
+          const answer: Record<string, Record<string, string>[]> = {};
+          answer[item._id.sub_category] = [
+            {
+              value: item.value.toString(),
+            },
+          ];
+          return answer;
+        });
+
+        return {
+          question: category,
+          answers,
+        };
+      })
+      .filter(
+        (
+          q
+        ): q is {
+          question: string;
+          answers: Record<string, Record<string, string>[]>[];
+        } => q !== null
+      );
+
+    return questionnaires;
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+}
+
 export const IncomeHelpers = {
   updateIncomeRecord,
   createIncomeRecord,
@@ -626,4 +695,5 @@ export const IncomeHelpers = {
   getTotalUniqueincomeCategories,
   getBusinessAndPersonalIncomeAnalytics,
   getBusinessAndPersonalIncomeAnalyticsYearly,
+  getQuestionnairePrefilledValues,
 };
