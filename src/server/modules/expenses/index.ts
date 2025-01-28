@@ -459,28 +459,11 @@ export const expenseRouter = router({
         ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id),
       ]);
 
-      type PrefilledValues = {
-        [category: string]: {
-          [subCategory: string]: number;
-        };
-      };
-
-      const combinedValues = Object.keys({
-        ...incomeValues,
-        ...expenseValues,
-      }).reduce<PrefilledValues>((acc, category) => {
-        acc[category] = {
-          ...(expenseValues[category] || {}),
-          ...(incomeValues[category] || {}),
-        };
-        return acc;
-      }, {});
-
       return {
         status: 200,
         message: 'Questionnaire prefilled values fetched successfully',
-        data: combinedValues,
-      } as ApiResponse<PrefilledValues>;
+        data: [...incomeValues, ...expenseValues],
+      } as ApiResponse<any>;
     } catch (error: unknown) {
       const { message } = errorHandler(error);
       throw new ApiError(httpStatus.NOT_FOUND, message);

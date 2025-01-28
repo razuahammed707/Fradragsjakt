@@ -34,7 +34,6 @@ const RecentExpenseTable = () => {
       keepPreviousData: true,
     }
   ) as { data?: RecentExpenseTableItems };
-  console.log({ expensesResponse });
 
   return (
     <div className="col-span-7 p-6 rounded-2xl bg-white">

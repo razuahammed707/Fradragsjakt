@@ -728,38 +728,23 @@ async function getQuestionnairePrefilledValues(userId: string) {
       },
     ]);
 
-    // Transform into array of questionnaires matching userQuestionnaireSchema
+    // Transform into array of questionnaires matching the schema
     const questionnaires = validCategories
       .map((category) => {
         const categoryValues = subCategoryValues.filter(
           (item) => item._id.category === category
         );
 
-        if (categoryValues.length === 0) return null;
-
-        const answers = categoryValues.map((item) => {
-          const answer: Record<string, Record<string, string>[]> = {};
-          answer[item._id.sub_category] = [
-            {
-              value: item.value.toString(),
-            },
-          ];
-          return answer;
-        });
-
         return {
           question: category,
-          answers,
+          answers: categoryValues.map((item) => ({
+            [item._id.sub_category]: [
+              { 'Documented care expenses': item.value.toString() },
+            ],
+          })),
         };
       })
-      .filter(
-        (
-          q
-        ): q is {
-          question: string;
-          answers: Record<string, Record<string, string>[]>[];
-        } => q !== null
-      );
+      .filter((q) => q.answers.length > 0);
 
     return questionnaires;
   } catch (error) {
