@@ -17,16 +17,15 @@ import { matchQuestionnaireModalQuestion } from '@/utils/helpers/matchQuestionna
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useTranslation } from '@/lib/TranslationProvider';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
+import { CardDescription } from '@/components/ui/card';
 
 type ContentWorkProps = {
   questionnaire?: Questionnaire;
 };
 
 export function ContentWork({ questionnaire }: ContentWorkProps) {
-  const { translate } = useTranslation();
   const utils = trpc.useUtils();
   const {
     handleSubmit,
@@ -44,6 +43,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return answers.find((field: any) => field[fieldName])?.[fieldName] || '';
   };
+
   const accordionData: AccordionItemData[] = [
     {
       id: 'item-1',
@@ -51,10 +51,18 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
         'The return distance between home and work is more than 37 kilometres',
       content: (
         <>
-          {translate('contentwork.home_to_work_comprehension')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.number_of_workdays')}
+          <p>
+            Understanding the distance between your home and workplace is
+            important for calculating travel expenses.
           </p>
+          <CardDescription className="text-xs text-gray-500 font-medium">
+            <br />
+            The distance between your home and workplace is essential for
+            calculating travel expenses and determining eligibility for commuter
+            deductions.
+          </CardDescription>
+
+          <p className="text-black pt-3 pb-1">Number of Workdays</p>
           <FormInput
             name="The return distance between home and work is more than 37 kilometres.Number of Workdays"
             customClassName="w-full"
@@ -67,9 +75,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             )}
             required
           />
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.distance')}
-          </p>
+          <p className="text-black pt-3 pb-1">Distance</p>
           <FormInput
             name="The return distance between home and work is more than 37 kilometres.Distance"
             customClassName="w-full"
@@ -91,10 +97,17 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
         'Have expenses for road toll or ferry when travelling between your home and workplace',
       content: (
         <>
-          {translate('contentwork.road_toll_expenses')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.documented_expenses')}
+          <p>
+            If you have expenses for road tolls or ferries, please provide the
+            details below.
           </p>
+          <CardDescription className="text-xs text-gray-500 font-medium">
+            <br />
+            you may claim deductions if these costs exceed NOK 3,300 annually,
+            up to a maximum of NOK 82,050 after deductions.
+          </CardDescription>
+
+          <p className="text-black pt-3 pb-1">Documented Expenses</p>
           <FormInput
             name="Have expenses for road toll or ferry when travelling between your home and workplace.Documented Expenses"
             customClassName="w-full"
@@ -108,7 +121,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('contentwork.upload_verification_document')}
+            Upload verification document
           </p>
           <FormReceiptInput
             name="Have expenses for road toll or ferry when travelling between your home and workplace.Upload verification document"
@@ -127,10 +140,17 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I Stay away from home overnight because of work',
       content: (
         <>
-          {translate('contentwork.stay_away_over_night')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.meals_accommodation_cost')}
+          <p>
+            If you stay away from home overnight due to work, please provide the
+            details below.
           </p>
+          <CardDescription className="text-xs text-gray-500 font-medium">
+            <br />
+            you may claim deductions for meals (up to NOK 400/day) and lodging
+            (actual cost if reasonable).
+          </CardDescription>
+
+          <p className="text-black pt-3 pb-1">Meals and accommodation cost</p>
           <FormInput
             name="I Stay away from home overnight because of work.Meals and accommodation cost"
             customClassName="w-full"
@@ -151,10 +171,14 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'Moved for a new job',
       content: (
         <>
-          {translate('contentwork.moved_for_new_job')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.documented_expenses')}
-          </p>
+          <p>If you moved for a new job, please provide the details below.</p>
+          <CardDescription className="text-xs text-gray-500 font-medium">
+            <br />
+            Relocation costs are covered within the standard deduction (46% of
+            income, max NOK 104,450, min NOK 4,000).
+          </CardDescription>
+
+          <p className="text-black pt-3 pb-1">Documented expenses</p>
           <FormInput
             name="Moved for a new job.Documented expenses"
             customClassName="w-full"
@@ -168,7 +192,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('contentwork.upload_verification_document')}
+            Upload verification document
           </p>
           <FormReceiptInput
             name="Moved for a new job.Upload verification document"
@@ -187,10 +211,14 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I work as a fisherman',
       content: (
         <>
-          {translate('contentwork.work_as_fisherman')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.fishing_income')}
-          </p>
+          <p>If you work as a fisherman, please provide the details below.</p>
+          <CardDescription className="text-xs text-gray-500 font-medium">
+            <br />
+            Fishermen can claim up to 30% tax deduction (max NOK 154,000) if
+            working over 130 days/year; income below NOK 10,000 is tax-free.
+          </CardDescription>
+
+          <p className="text-black pt-3 pb-1">Fishing Income</p>
           <FormInput
             name="I work as a fisherman.Fishing Income"
             customClassName="w-full"
@@ -211,10 +239,14 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I work as a seafarer',
       content: (
         <>
-          {translate('contentwork.work_as_seafarer')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.seafarer_income')}
-          </p>
+          <p>If you work as a seafarer, please provide the details below.</p>
+
+          <CardDescription className="text-xs text-gray-500 font-medium">
+            <br />
+            Seafarers can claim up to 30% tax deduction (max NOK 83,000) if
+            working onboard for at least 130 days/year.
+          </CardDescription>
+          <p className="text-black pt-3 pb-1">Seafarer Income</p>
           <FormInput
             name="I work as a seafarer.Seafarer Income"
             customClassName="w-full"
@@ -235,9 +267,17 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I went to school last year',
       content: (
         <>
-          {translate('contentwork.went_to_school_last_year')}
+          <p>
+            If you went to school last year, please provide the details below.
+          </p>
+          <CardDescription className="text-xs text-gray-500 font-medium">
+            <br />
+            If you went to school last year, you may be eligible for educational
+            expense deductions, with no specific upper or lower limit.
+          </CardDescription>
+
           <p className="text-black pt-3 pb-1">
-            {translate('contentwork.documented_education_expenses')}
+            Documented Education Expenses (if job-related)
           </p>
           <FormInput
             name="I went to school last year.Documented Education Expenses (if job-related)"
@@ -252,7 +292,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('contentwork.upload_verification_document')}
+            Upload verification document
           </p>
           <FormReceiptInput
             name="I went to school last year.Upload verification document"
@@ -271,10 +311,14 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'I am a foreign employee',
       content: (
         <>
-          {translate('contentwork.foreign_employee')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.taxable_income')}
+          <p>
+            If you are a foreign employee, please provide the details below.
           </p>
+          <CardDescription className=" text-xs text-gray-500 font-medium">
+            <br />
+            No specific upper or lower limit.
+          </CardDescription>
+          <p className="text-black pt-3 pb-1">Taxable Income</p>
           <FormInput
             name="I am a foreign employee.Taxable Income"
             customClassName="w-full"
@@ -296,8 +340,8 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       content: (
         <>
           <div className="space-y-3">
-            <p>{translate('contentwork.trade_union_deduction')}</p>
-            <p>{translate('contentwork.maximum_deduction')}</p>
+            <p>Trade Union Deduction</p>
+            <p>Maximum Deduction: NOK 3,850</p>
           </div>
         </>
       ),
@@ -307,19 +351,23 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'Living in Norway only in part of a year',
       content: (
         <>
-          {translate('contentwork.living_in_norway')}
+          <p>
+            If you lived in Norway only part of the year, please provide the
+            details below.
+          </p>
+
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('contentwork.spent_183_days_in_norway')}
+            Have you spent more than 183 days in Norway?
           </p>
           <FormInput
             name="living in Norway only in a part of a year.Have you spent more than 183 days in Norway"
             customClassName="w-full"
             type="select"
             control={control}
-            placeholder={translate('contentwork.yes')}
+            placeholder="Yes"
             options={[
-              { title: translate('contentwork.yes'), value: 'yes' },
-              { title: translate('contentwork.no'), value: 'no' },
+              { title: 'Yes', value: 'yes' },
+              { title: 'No', value: 'no' },
             ]}
             defaultValue={getDefaultValue(
               'living in Norway only in a part of a year',
@@ -335,9 +383,13 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'Disputation of a PhD',
       content: (
         <>
-          {translate('contentwork.disputation_phd')}
+          <p>If you have disputation of a PhD, Obsolete</p>
+          <CardDescription className=" text-xs text-gray-500 font-medium">
+            <br />
+            No specific upper or lower limit.
+          </CardDescription>
           <p className="text-black pt-3 pb-1">
-            {translate('contentwork.documented_costs_for_thesis')}
+            Documented Costs for Thesis Printing, Travel, and Defense Ceremony
           </p>
           <FormInput
             name="Disputation of a PhD.Documented Costs for Thesis Printing Travel and Defense Ceremony"
@@ -352,7 +404,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
             required
           />
           <p className="text-black pt-[12px] pb-[6px]">
-            {translate('contentwork.upload_verification_document')}
+            Upload verification document
           </p>
           <FormReceiptInput
             name="Disputation of a PhD.Upload verification document"
@@ -371,10 +423,15 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       title: 'Have a separate room in your house used only as your home office',
       content: (
         <>
-          {translate('contentwork.separate_room_home_office')}
-          <p className="text-black pt-3 pb-1">
-            {translate('contentwork.home_area')}
+          <p>
+            If you have a separate room used as a home office, please provide
+            the details below.
           </p>
+          <CardDescription className=" text-xs text-gray-500 font-medium">
+            <br />
+            No specific upper or lower limit.
+          </CardDescription>
+          <p className="text-black pt-3 pb-1">Home Area</p>
           <FormInput
             name="Have a separate room in your house used only as your home office.Home Area"
             customClassName="w-full"
@@ -432,6 +489,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
   const handleValueChange = (value: string) => {
     setOpenItem((prevOpen) => (prevOpen === value ? null : value));
   };
+
   const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
     onSuccess: () => {
       utils.users.getUserByEmail.invalidate();
@@ -440,7 +498,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
       toast.error(error.message || 'User questionnaires updation failed!');
     },
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
@@ -475,7 +533,7 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
                 )}
               </AccordionItem>
             ))}
-          </Accordion>{' '}
+          </Accordion>
         </div>
         <Button
           disabled={!isDirty || !isValid}
