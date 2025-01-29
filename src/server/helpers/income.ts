@@ -8,6 +8,7 @@ import { errorHandler } from '../middlewares/error-handler';
 import { IRule } from '../db/interfaces/rules';
 import { JwtPayload } from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { QuestionKeysMap } from '@/utils/constants/QuestionKeys';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
@@ -618,11 +619,9 @@ const updateIncomeRecord = async (input: IIncomeUpdate, userId: string) => {
 async function getQuestionnairePrefilledValues(userId: string) {
   try {
     const validCategories = [
-      'Health and Family',
       'Bank and Loans',
       'Work and Education',
       'Housing and Property',
-      'Gifts or Donations',
       'Hobby, Odd Jobs, and Extra Incomes',
     ];
 
@@ -631,6 +630,7 @@ async function getQuestionnairePrefilledValues(userId: string) {
         $match: {
           user: new mongoose.Types.ObjectId(String(userId)),
           category: { $in: validCategories },
+          income_type: IncomeType.business,
         },
       },
       {
@@ -652,11 +652,16 @@ async function getQuestionnairePrefilledValues(userId: string) {
 
         return {
           question: category,
-          answers: categoryValues.map((item) => ({
-            [item._id.sub_category]: [
-              { 'Documented care expense': item.value.toString() },
-            ],
-          })),
+          answers: categoryValues.map((item) => {
+            const mappedKey = QuestionKeysMap[item._id.sub_category];
+            return {
+              [item._id.sub_category]: [
+                {
+                  [mappedKey]: item.value.toString(),
+                },
+              ],
+            };
+          }),
         };
       })
       .filter((q) => q.answers.length > 0);

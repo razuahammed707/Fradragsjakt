@@ -84,13 +84,11 @@ export const extended_questionnaires = [
     answers: [
       {
         answer: 'Have children aged 11 years or younger',
-        type: 'common',
-        category: ['Child Care', 'Child Benefit'],
+        type: 'expense',
       },
       {
         answer: 'I have children aged 12 or older with special care needs',
-        type: 'common',
-        category: ['Child Care', 'Child Benefit'],
+        type: 'expense',
       },
     ],
   },
@@ -99,23 +97,15 @@ export const extended_questionnaires = [
     answers: [
       {
         answer: 'Have a loan',
-        type: 'expense',
-        category: ['Interest'],
+        type: 'common',
       },
       {
         answer: 'Have refinanced a loan in the last year',
-        type: 'expense',
-        category: ['Interest'],
+        type: 'common',
       },
       {
         answer: 'Have taken out a joint loan with someone',
-        type: 'expense',
-        category: ['Interest'],
-      },
-      {
-        answer: 'Have young people’s housing savings (BSU)',
-        type: 'income',
-        category: ['Savings'],
+        type: 'common',
       },
     ],
   },
@@ -125,63 +115,35 @@ export const extended_questionnaires = [
       {
         answer: 'Moved for a new job',
         type: 'expense',
-        category: ['Relocation Expenses'],
       },
       {
         answer: 'I work as a fisherman',
         type: 'income',
-        category: ['Salary/Wages'],
       },
       {
         answer: 'I work as a seafarer',
         type: 'income',
-        category: ['Salary/Wages'],
       },
       {
         answer: 'I went to school last year',
         type: 'expense',
-        category: ['Training and Certification'],
-      },
-      {
-        answer: 'I am a foreign employee',
-        type: 'income',
-        category: ['Salary/Wages'],
-      },
-      {
-        answer:
-          'The return distance between home and work is more than 37 kilometres',
-        type: 'expense',
-        category: ['Fuel'],
       },
       {
         answer:
           'Have expenses for road toll or ferry when travelling between your home and workplace',
         type: 'expense',
-        category: ['Parking and Tolls'],
       },
       {
         answer: 'I stay away from home overnight because of work',
         type: 'expense',
-        category: ['Business Travel Expenses'],
       },
-      {
-        answer: 'Member of Trade Union',
-        type: 'expense',
-        category: ['Professional Memberships'],
-      },
-      {
-        answer: 'Disputation of a PhD',
-        type: 'expense',
-        category: ['Training Programs'],
-      },
+
       {
         answer:
           'Have a separate room in your house used only as your home office',
         type: 'expense',
-        category: ['Rent'],
       },
     ],
-    icon: frame2,
   },
   {
     question: 'Housing and Property',
@@ -190,20 +152,16 @@ export const extended_questionnaires = [
         answer:
           'Housing in a housing association housing company or jointly owned property',
         type: 'expense',
-        category: ['Rent'],
       },
       {
         answer: 'I have rented out a residential property or a holiday home',
         type: 'income',
-        category: ['Rental Income'],
       },
       {
         answer: 'Sold a residential property or holiday home profit or loss',
         type: 'income',
-        category: ['Capital Gains'],
       },
     ],
-    icon: frame3,
   },
   {
     question: 'Gifts or Donations',
@@ -211,42 +169,25 @@ export const extended_questionnaires = [
       {
         answer: 'Gifts to voluntary organisations',
         type: 'expense',
-        category: ['Donations'],
       },
     ],
-    icon: frame4,
   },
   {
     question: 'Hobby, Odd Jobs, and Extra Incomes',
     answers: [
       {
         answer: 'I have a sole proprietorship',
-        type: 'income',
-        category: ['Business Profits'],
+        type: 'common',
       },
       {
         answer:
           'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',
-        type: 'income',
-        category: ['Side Hustle Income'],
+        type: 'common',
       },
       {
         answer: 'I have received salary from odd jobs and services',
         type: 'income',
-        category: ['Freelance Earnings'],
       },
     ],
-  },
-  {
-    question: 'Foreign Income',
-    answers: [
-      {
-        answer:
-          'Have income or wealth in another country than Norway and pay tax in the other country',
-        type: 'common',
-        category: ['Salary/Wages', 'Tax Expenses'],
-      },
-    ],
-    icon: frame6,
   },
 ];

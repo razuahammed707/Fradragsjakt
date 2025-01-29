@@ -9,8 +9,15 @@ const userQuestionnaireSchema = z.object({
 });
 
 // Schema for bulk update
-const userBulkQuestionnaireSchema = z.object({
-  questionnaires: z.array(userQuestionnaireSchema),
+export const userBulkQuestionnaireSchema = z.object({
+  questionnaires: z.array(
+    z.object({
+      question: z.string(),
+      answers: z.array(
+        z.record(z.string(), z.array(z.record(z.string(), z.string())))
+      ),
+    })
+  ),
 });
 
 const userSchema = z.object({
