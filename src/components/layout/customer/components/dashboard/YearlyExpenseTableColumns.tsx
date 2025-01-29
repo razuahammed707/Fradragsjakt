@@ -100,6 +100,7 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
     },
     {
       id: 'actions',
+      header: () => <div className="text-left">Action</div>,
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
           <div className={`my-2`}>
