@@ -13,6 +13,10 @@ const ExpenseSchema = new Schema<IExpense>(
       required: true,
       trim: true,
     },
+    sub_category: {
+      type: String,
+      trim: true,
+    },
     expense_type: {
       type: String,
       enum: Object.values(ExpenseType),
@@ -42,7 +46,6 @@ const ExpenseSchema = new Schema<IExpense>(
     rule: {
       type: Schema.Types.ObjectId,
       ref: 'rule',
-      //required: true,
     },
   },
   {

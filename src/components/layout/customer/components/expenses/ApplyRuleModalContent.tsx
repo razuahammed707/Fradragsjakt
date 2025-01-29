@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableColumns';
 import SharedPagination from '@/components/SharedPagination';
-import { useTranslation } from '@/lib/TranslationProvider'; // Translation hook
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type CategoryType = { title: string; value: string };
 
@@ -54,6 +54,8 @@ function ApplyRuleModalContent({
   expenses: { expensesWithRules },
   setModalOpen,
 }: ExpenseRuleContentProps) {
+  console.log({ expensesWithRules });
+
   const { translate } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [selectedRule, setSelectedRule] = useState<string>(
@@ -112,6 +114,8 @@ function ApplyRuleModalContent({
   const handleApplyRule = () => {
     setLoading(true);
     if (selectedRuleData?.expensePayload) {
+      console.log({ selectedRuleData });
+
       const expenses =
         tableData
           ?.filter((expense) => !deletedExpenseIds.includes(expense._id))

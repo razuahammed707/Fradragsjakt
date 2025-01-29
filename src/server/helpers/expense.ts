@@ -170,6 +170,7 @@ const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
                   rule: rule._id,
                   category: rule.category_title,
                   expense_type: rule.expense_type,
+                  sub_category: rule?.sub_category,
                 },
                 expenses,
               }
@@ -698,6 +699,60 @@ const updateExpenseRecord = async (input: IExpenseUpdate, userId: string) => {
   }
 };
 
+async function getQuestionnairePrefilledValues(userId: string) {
+  try {
+    const validCategories = [
+      'Health and Family',
+      'Bank and Loans',
+      'Work and Education',
+      'Housing and Property',
+      'Gifts or Donations',
+      'Hobby, Odd Jobs, and Extra Incomes',
+    ];
+
+    const subCategoryValues = await ExpenseModel.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(String(userId)),
+          category: { $in: validCategories },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            category: '$category',
+            sub_category: '$sub_category',
+          },
+          value: { $sum: '$amount' },
+        },
+      },
+    ]);
+
+    // Transform into array of questionnaires matching the schema
+    const questionnaires = validCategories
+      .map((category) => {
+        const categoryValues = subCategoryValues.filter(
+          (item) => item._id.category === category
+        );
+
+        return {
+          question: category,
+          answers: categoryValues.map((item) => ({
+            [item._id.sub_category]: [
+              { 'Documented care expenses': item.value.toString() },
+            ],
+          })),
+        };
+      })
+      .filter((q) => q.answers.length > 0);
+
+    return questionnaires;
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.NOT_FOUND, message);
+  }
+}
+
 export const ExpenseHelpers = {
   updateExpenseRecord,
   createExpenseRecord,
@@ -710,4 +765,5 @@ export const ExpenseHelpers = {
   getTotalUniqueExpenseCategories,
   getBusinessAndPersonalExpenseAnalytics,
   getBusinessAndPersonalExpenseAnalyticsYearly,
+  getQuestionnairePrefilledValues,
 };

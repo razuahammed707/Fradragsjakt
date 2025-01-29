@@ -206,7 +206,6 @@ export const IncomeRouter = router({
           rule_for: 'income',
         });
 
-        // Use Promise.all to ensure all async operations complete
         const incomesWithRules = await IncomeHelpers.getIncomesWithRules(
           rules,
           loggedUser
@@ -255,31 +254,7 @@ export const IncomeRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  // createBulkIncomes: protectedProcedure
-  //   .input(IncomeValidations.createBulkIncomeSchema)
-  //   .mutation(async ({ ctx, input: incomes }) => {
-  //     try {
-  //       const loggedUser = ctx.user as JwtPayload;
 
-  //       const createdIncomes = await Promise.all(
-  //         incomes.map(async (singleIncome) => {
-  //           return await IncomeHelpers.createIncomeFromBulkInput(
-  //             singleIncome,
-  //             loggedUser.id
-  //           );
-  //         })
-  //       );
-
-  //       return {
-  //         status: 201,
-  //         message: 'Incomes created successfully',
-  //         data: createdIncomes,
-  //       } as ApiResponse<typeof createdIncomes>;
-  //     } catch (error: unknown) {
-  //       const { message } = errorHandler(error);
-  //       throw new ApiError(httpStatus.NOT_FOUND, message);
-  //     }
-  //   }),
   updateBulkIncome: protectedProcedure
     .input(IncomeValidations.updateBulkIncomeSchema)
 
@@ -290,7 +265,6 @@ export const IncomeRouter = router({
 
         console.log('incomes from bulk', incomes);
 
-        // Update all specified incomes for the logged-in user
         const updatedincomes = await Promise.all(
           incomes.map(async (income) => {
             return await IncomeModel.findByIdAndUpdate(

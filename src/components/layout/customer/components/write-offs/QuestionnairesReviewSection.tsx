@@ -3,7 +3,7 @@
 
 import { View } from 'lucide-react';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '@/lib/TranslationProvider';
 import QuestionedAvatar from '../../../../../../public/images/dashboard/avatar-with-question.svg';
 import MarkIcon from '../../../../../../public/images/dashboard/mark.svg';
@@ -33,6 +33,7 @@ import useUserInfo from '@/hooks/use-user-info';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import useIsWithinDashboard from '@/hooks/is-within-dashboard';
 import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
+import toast from 'react-hot-toast';
 
 const modalContentMap: Record<
   string,
@@ -75,6 +76,33 @@ const QuestionnairesReviewSection = () => {
 
   const { isModalOpen } = useAppSelector(questionnaireSelector);
   const { data: user } = trpc.users.getUserByEmail.useQuery();
+  const { data: prefilledValues } =
+    trpc.expenses.getQuestionnairePrefilledValues.useQuery();
+
+  const updateRef = useRef(false);
+  const utils = trpc.useUtils();
+
+  const updateQuestionnaires = trpc.users.updateBulkQuestionnaires.useMutation({
+    onSuccess: (data) => {
+      console.log('Update successful, new questionnaires:', data);
+      utils.users.getUserByEmail.invalidate();
+      toast.success('Questionnaires updated successfully');
+    },
+    onError: (error) => {
+      console.error('Update failed:', error);
+      updateRef.current = false;
+      toast.error('Failed to update questionnaires');
+    },
+  });
+
+  useEffect(() => {
+    if (prefilledValues?.data && !updateRef.current) {
+      updateRef.current = true;
+      updateQuestionnaires.mutate({
+        questionnaires: prefilledValues.data,
+      });
+    }
+  }, [prefilledValues?.data]);
 
   const {
     workAndEducationExpenseAmount,

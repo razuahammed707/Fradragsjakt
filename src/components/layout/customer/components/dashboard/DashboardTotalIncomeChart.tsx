@@ -41,9 +41,6 @@ const DashboardTotalIncomeChart = ({
   const totalIncome = Number(
     (businessTotal + personalTotal + unknownTotal).toFixed(2)
   );
-
-  console.log('income analytics', incomeAnalytics);
-
   return (
     <Card className="col-span-6 py-6 px-[21px] border border-[#EEF0F4] shadow-none rounded-2xl mt-2">
       <CardContent className="p-0 relative">

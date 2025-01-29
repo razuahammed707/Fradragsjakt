@@ -7,8 +7,6 @@ export const matchQuestionnaireModalQuestion = ({
   questionnaire: string[] | { [key: string]: string }[];
   accordionData: AccordionItemData[];
 }) => {
-  console.log({ questionnaire });
-
   const matchedAccordionData = Array.isArray(questionnaire)
     ? questionnaire
         .flatMap((item) => {

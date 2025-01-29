@@ -7,6 +7,12 @@ const userQuestionnaireSchema = z.object({
   question: z.string(),
   answers: z.array(answerSchema),
 });
+
+// Schema for bulk update
+const userBulkQuestionnaireSchema = z.object({
+  questionnaires: z.array(userQuestionnaireSchema),
+});
+
 const userSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
@@ -54,6 +60,7 @@ export const userValidation = {
   userSchema,
   updateUserSchema,
   userQuestionnaireSchema,
+  userBulkQuestionnaireSchema,
   answerSchema,
   updateUserPasswordSchema,
   updateUserPersonalInfoSchema,

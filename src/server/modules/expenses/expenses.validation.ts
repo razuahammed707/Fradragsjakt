@@ -36,6 +36,7 @@ const expenseUpdatePayloadSchema = z.object({
   rule: z.string(),
   category: z.string(),
   expense_type: z.string(),
+  sub_category: z.string().optional(),
 });
 // Schema for the expense update payload
 const populateStatementSchema = z.array(

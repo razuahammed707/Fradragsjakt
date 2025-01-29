@@ -9,6 +9,8 @@ import { z } from 'zod';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import { ApiError } from '@/lib/exceptions';
 import bcrypt from 'bcrypt';
+import { ApiResponse } from '@/server/db/types';
+import { UserHelpers } from '@/server/helpers/user';
 
 type Answer = z.infer<typeof userValidation.answerSchema>;
 type QuestionnaireItem = z.infer<typeof userValidation.userQuestionnaireSchema>;
@@ -199,6 +201,8 @@ export const userRouter = router({
     .input(userValidation.userQuestionnaireSchema)
     .mutation(async ({ ctx, input }) => {
       const { question, answers } = input;
+      console.log({ question });
+
       const sessionUser = ctx.user as JwtPayload;
       if (!sessionUser?.email) {
         throw new Error('You must be logged in to update questionnaires.');
@@ -237,7 +241,7 @@ export const userRouter = router({
             const existingFieldMap = mergedMap.get(key)!;
             fields.forEach((field) => {
               const [fieldKey, fieldValue] = Object.entries(field)[0];
-              existingFieldMap.set(fieldKey, fieldValue); // Overwrite if field exists or add new
+              existingFieldMap.set(fieldKey, fieldValue);
             });
           }
         });
@@ -276,5 +280,28 @@ export const userRouter = router({
       }
 
       return updatedUser;
+    }),
+  updateBulkQuestionnaires: protectedProcedure
+    .input(userValidation.userBulkQuestionnaireSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+        const { questionnaires } = input;
+
+        const updatedQuestionnaires =
+          await UserHelpers.updateBulkQuestionnaires(
+            loggedUser.id,
+            questionnaires
+          );
+
+        return {
+          status: 200,
+          message: 'Questionnaires updated successfully',
+          data: updatedQuestionnaires,
+        } as ApiResponse<typeof updatedQuestionnaires>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
     }),
 });

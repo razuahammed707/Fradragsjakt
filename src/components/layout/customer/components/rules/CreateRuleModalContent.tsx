@@ -11,6 +11,7 @@ import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
 import { extended_questionnaires } from '@/lib/questionnaires';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type RuleFormData = {
   description_contains: string;
@@ -204,15 +205,17 @@ function CreateRuleModalContent({
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
           </Label>
-          <SelectFormInput
-            name="category"
-            control={control}
-            customClassName="w-full mt-2"
-            placeholder={translate('componentsRuleModal.rule.selectCategory')}
-            defaultValue={updateRulePayload?.category_title}
-            options={categoryForValue ? manipulatedCategories : []}
-            errorMessage={formState.errors.category?.message}
-          />
+          <ScrollArea className="w-full rounded-md">
+            <SelectFormInput
+              name="category"
+              control={control}
+              customClassName="w-full mt-2"
+              placeholder={translate('componentsRuleModal.rule.selectCategory')}
+              defaultValue={updateRulePayload?.category_title}
+              options={categoryForValue ? manipulatedCategories : []}
+              errorMessage={formState.errors.category?.message}
+            />
+          </ScrollArea>
         </div>
 
         {selectedCategory &&
@@ -230,6 +233,7 @@ function CreateRuleModalContent({
                   value: q.answer,
                 }))}
                 errorMessage={formState.errors.sub_category?.message}
+                required
               />
             </div>
           )}

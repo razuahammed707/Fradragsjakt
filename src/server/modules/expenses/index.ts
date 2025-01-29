@@ -312,33 +312,7 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  // createBulkExpenses: protectedProcedure
-  //   .input(expenseValidation.createBulkExpenseSchema)
-  //   .mutation(async ({ ctx, input: expenses }) => {
-  //     try {
-  //       const loggedUser = ctx.user as JwtPayload;
 
-  //       console.log('expenses payload', expenses);
-
-  //       const createdExpenses = await Promise.all(
-  //         expenses.map(async (singleExpense) => {
-  //           return await ExpenseHelpers.createExpenseFromBulkInput(
-  //             singleExpense,
-  //             loggedUser.id
-  //           );
-  //         })
-  //       );
-
-  //       return {
-  //         status: 201,
-  //         message: 'Expenses created successfully',
-  //         data: createdExpenses,
-  //       } as ApiResponse<typeof createdExpenses>;
-  //     } catch (error: unknown) {
-  //       const { message } = errorHandler(error);
-  //       throw new ApiError(httpStatus.NOT_FOUND, message);
-  //     }
-  //   }),
   populateStatement: protectedProcedure
     .input(expenseValidation.populateStatementSchema)
     .mutation(async ({ ctx, input: statements }) => {
@@ -476,4 +450,23 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  getQuestionnairePrefilledValues: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      const loggedUser = ctx.user as JwtPayload;
+
+      const [incomeValues, expenseValues] = await Promise.all([
+        IncomeHelpers.getQuestionnairePrefilledValues(loggedUser.id),
+        ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id),
+      ]);
+
+      return {
+        status: 200,
+        message: 'Questionnaire prefilled values fetched successfully',
+        data: [...incomeValues, ...expenseValues],
+      } as ApiResponse<any>;
+    } catch (error: unknown) {
+      const { message } = errorHandler(error);
+      throw new ApiError(httpStatus.NOT_FOUND, message);
+    }
+  }),
 });
