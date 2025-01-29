@@ -90,13 +90,9 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
       utils.incomes.getIncomes.invalidate();
       reset();
 
-      if (!isOnboard) {
-        setModalContent({ key: 'confirmation' });
-      } else {
-        toast.success('Statements populated successfully!');
-        if (setModalOpen) {
-          setModalOpen(false);
-        }
+      toast.success('Statements populated successfully!');
+      if (setModalOpen) {
+        setModalOpen(false);
       }
       setLoading(false);
     },

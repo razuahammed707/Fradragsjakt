@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
-import { IoMdAdd } from 'react-icons/io';
+import { IoMdAdd, IoMdTrash } from 'react-icons/io';
 import SharedModal from '../../../../SharedModal';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
@@ -16,21 +16,28 @@ import IncomeDataTableFilter from './IncomeDataTableFilter';
 import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
-import ConfirmationModalContent from '@/components/ConfirmationModalContent';
+import DeleteConfirmationContent from '@/components/DeleteConfirmationContent';
 
 type IncomeOverviewToolsProps = {
   setSearchTerm: (value: string) => void;
   setFilterString: (value: string) => void;
+  selectedRows?: any[];
+  onSelectionChange?: (rows: any[]) => void;
 };
 
 function IncomeOverviewTools({
   setSearchTerm,
   setFilterString,
+  selectedRows = [],
+  onSelectionChange,
 }: IncomeOverviewToolsProps) {
   const { isAuditor } = useUserInfo();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState<{ key: string }>({
+  const [modalContent, setModalContent] = useState<{
+    key: string;
+    itemIds?: string[];
+  }>({
     key: '',
   });
   const { data: incomesWithMatchedRules } =
@@ -47,9 +54,17 @@ function IncomeOverviewTools({
     category_for: 'income',
   });
 
-  const handleButtonClick = (key: string) => {
-    setModalContent({ key });
+  const handleButtonClick = (key: string, itemIds?: string[]) => {
+    setModalContent({ key, itemIds });
     setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setModalContent({ key: '' });
+    if (selectedRows.length > 0) {
+      onSelectionChange?.([]);
+    }
   };
 
   const renderContent = () => {
@@ -70,10 +85,25 @@ function IncomeOverviewTools({
       );
     }
     if (modalContent.key === 'confirmation') {
-      return <ConfirmationModalContent setModalOpen={setModalOpen} />;
+      return (
+        <DeleteConfirmationContent
+          itemOrigin="income"
+          itemIds={modalContent.itemIds}
+          setModalOpen={setModalOpen}
+          onDeleteComplete={() => {
+            onSelectionChange?.([]);
+            handleModalClose();
+          }}
+        />
+      );
     }
     if (modalContent.key === 'uploadStatements') {
-      return <StatementUploadContent setModalContent={setModalContent} />;
+      return (
+        <StatementUploadContent
+          setModalContent={setModalContent}
+          setModalOpen={setModalOpen}
+        />
+      );
     }
     return <></>;
   };
@@ -120,22 +150,42 @@ function IncomeOverviewTools({
           />
         ) : (
           <div className="flex gap-2">
-            <Button
-              variant="purple"
-              onClick={() => handleButtonClick('addIncome')}
-            >
-              <IoMdAdd className="font-bold mr-2" />{' '}
-              {translate('components.buttons.income_buttons.text.add_income')}
-            </Button>
-            <Button
-              variant="purple"
-              onClick={() => handleButtonClick('uploadStatements')}
-            >
-              <IoMdAdd className="font-bold mr-2" />{' '}
-              {translate(
-                'components.buttons.income_buttons.text.upload_statements'
-              )}
-            </Button>
+            {selectedRows.length > 0 ? (
+              <Button
+                variant="destructive"
+                onClick={() =>
+                  handleButtonClick(
+                    'confirmation',
+                    selectedRows.map((row) => row._id)
+                  )
+                }
+                className="bg-red-600 hover:bg-red-700"
+              >
+                <IoMdTrash className="font-bold mr-2" />
+                Delete ({selectedRows.length})
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="purple"
+                  onClick={() => handleButtonClick('addIncome')}
+                >
+                  <IoMdAdd className="font-bold mr-2" />{' '}
+                  {translate(
+                    'components.buttons.income_buttons.text.add_income'
+                  )}
+                </Button>
+                <Button
+                  variant="purple"
+                  onClick={() => handleButtonClick('uploadStatements')}
+                >
+                  <IoMdAdd className="font-bold mr-2" />{' '}
+                  {translate(
+                    'components.buttons.income_buttons.text.upload_statements'
+                  )}
+                </Button>
+              </>
+            )}
           </div>
         )}
         <div className="flex space-x-2">
@@ -156,7 +206,7 @@ function IncomeOverviewTools({
         <div className="bg-white absolute z-50">
           <SharedModal
             open={isModalOpen}
-            onOpenChange={setModalOpen}
+            onOpenChange={handleModalClose}
             customClassName={cn(
               modalContent.key !== 'confirmation' && 'max-w-[650px]'
             )}

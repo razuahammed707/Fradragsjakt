@@ -19,6 +19,7 @@ function ExpenseOverviewSection({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -45,12 +46,15 @@ function ExpenseOverviewSection({
       <ExpenseOverviewHeading
         setSearchTerm={setSearchTerm}
         setFilterString={setFilterString}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
       />
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
           columns={ExpenseDataTableColumns()}
           data={expensesResponse?.data || []}
+          onSelectionChange={setSelectedRows}
         />
         <SharedPagination
           currentPage={currentPage}

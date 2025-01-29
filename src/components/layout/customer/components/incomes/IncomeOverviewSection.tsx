@@ -19,7 +19,7 @@ function IncomeOverviewSection({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
 
   const { data: incomesResponse, isLoading } = trpc.incomes.getIncomes.useQuery(
     {
@@ -45,12 +45,15 @@ function IncomeOverviewSection({
       <IncomeOverviewTools
         setSearchTerm={setSearchTerm}
         setFilterString={setFilterString}
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
       />
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
           columns={IncomeDataTableColumns()}
           data={incomesResponse?.data || []}
+          onSelectionChange={setSelectedRows}
         />
         <SharedPagination
           currentPage={currentPage}

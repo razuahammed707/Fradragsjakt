@@ -6,16 +6,21 @@ import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 
 interface IDeleteProps {
-  itemId: string;
+  itemId?: string;
+  itemIds?: string[]; // Add this for multiple items
   itemOrigin: string;
   setModalOpen: (open: boolean) => void;
+  onDeleteComplete?: () => void; // Add this callback
 }
 
 function DeleteConfirmationContent({
   itemId,
+  itemIds = [],
   itemOrigin,
   setModalOpen,
+  onDeleteComplete, // Add this prop
 }: IDeleteProps) {
+  const utils = trpc.useUtils();
   const deleteRuleMutation = trpc.rules.deleteRule.useMutation();
   const deleteExpenseMutation = trpc.expenses.deleteExpense.useMutation();
   const deleteIncomeMutation = trpc.incomes.deleteIncome.useMutation();
@@ -55,20 +60,32 @@ function DeleteConfirmationContent({
     }
   };
 
-  const utils = trpc.useUtils();
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const mutation = getMutation();
-    mutation.mutate(
-      { _id: itemId },
-      {
-        onSuccess: () => {
-          toast.success(`Deleted ${itemOrigin} row successfully`);
-          invalidateQuery();
-          setModalOpen(false);
-        },
+
+    try {
+      if (itemIds.length > 0) {
+        // Handle multiple deletions
+        for (const id of itemIds) {
+          await mutation.mutateAsync({ _id: id });
+        }
+        toast.success(
+          `Deleted ${itemIds.length} ${itemOrigin} rows successfully`
+        );
+      } else if (itemId) {
+        // Handle single deletion
+        await mutation.mutateAsync({ _id: itemId });
+        toast.success(`Deleted ${itemOrigin} row successfully`);
       }
-    );
+
+      invalidateQuery();
+      setModalOpen(false);
+      onDeleteComplete?.(); // Call the callback after successful deletion
+    } catch {
+      toast.error(`Failed to delete ${itemOrigin}`);
+    }
   };
+
   return (
     <div className="bg-white w-full mt-5">
       <div className="flex flex-col items-center">
@@ -76,7 +93,11 @@ function DeleteConfirmationContent({
           className="w-12 h-12 mb-3 text-[#FF6347]" // Tomato color
           onClick={() => setModalOpen(false)}
         />
-        <p className="text-l">{`Do you really want to delete the ${itemOrigin}?`}</p>
+        <p className="text-l">
+          {itemIds.length > 0
+            ? `Do you really want to delete ${itemIds.length} ${itemOrigin}s?`
+            : `Do you really want to delete the ${itemOrigin}?`}
+        </p>
       </div>
       <div className="mt-5 flex justify-center">
         <Button
