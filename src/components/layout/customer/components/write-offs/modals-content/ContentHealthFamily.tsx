@@ -225,7 +225,6 @@ export function ContentHealthFamily({
   const onSubmit = (formData: any) => {
     const question = questionnaire?.question || '';
     const payload = transformFormDataToPayload(question, formData);
-    console.log({ payload });
 
     updateQuestionnaires.mutate(payload);
     appDispatch(showModal(false));

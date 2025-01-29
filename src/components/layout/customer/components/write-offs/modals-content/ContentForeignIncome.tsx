@@ -133,7 +133,6 @@ export function ContentForeignIncome({
     console.log({ formData });
 
     const payload = transformFormDataToPayload(question, formData);
-    console.log({ payload });
 
     updateQuestionnaires.mutate(payload);
     appDispatch(showModal(false));

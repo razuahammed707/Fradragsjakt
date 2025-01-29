@@ -459,11 +459,34 @@ export const expenseRouter = router({
         ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id),
       ]);
 
+      // Merge questionnaires by category
+      const categoryMap = new Map<string, any[]>();
+
+      // Process both income and expense values
+      [...incomeValues, ...expenseValues].forEach((item) => {
+        const category = item.question;
+
+        if (!categoryMap.has(category)) {
+          categoryMap.set(category, item.answers);
+        } else {
+          const existingAnswers = categoryMap.get(category);
+          categoryMap.set(category, [...existingAnswers!, ...item.answers]);
+        }
+      });
+
+      // Convert map to final format
+      const mergedQuestionnaires = Array.from(categoryMap.entries())
+        .map(([category, answers]) => ({
+          question: category,
+          answers,
+        }))
+        .filter((q) => q.answers.length > 0);
+
       return {
         status: 200,
         message: 'Questionnaire prefilled values fetched successfully',
-        data: [...incomeValues, ...expenseValues],
-      } as ApiResponse<any>;
+        data: mergedQuestionnaires,
+      } as ApiResponse<typeof mergedQuestionnaires>;
     } catch (error: unknown) {
       const { message } = errorHandler(error);
       throw new ApiError(httpStatus.NOT_FOUND, message);
