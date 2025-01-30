@@ -22,7 +22,7 @@ const updateRuleSchema = z.object({
 });
 
 const deleteRuleSchema = z.object({
-  _id: z.string().min(1, 'Rule ID is required'),
+  _id: z.string().array().or(z.string()),
 });
 
 export const ruleValidation = {

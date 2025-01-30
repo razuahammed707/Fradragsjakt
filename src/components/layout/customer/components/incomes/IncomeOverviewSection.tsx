@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import SharedPagination from '@/components/SharedPagination';
 import { SharedDataTable } from '@/components/SharedDataTable';
+import { IncomeDataTableColumns } from './incomeDataTableColumns';
 import { trpc } from '@/utils/trpc';
 import IncomeOverviewTools from './IncomeOverviewTools';
-import { IncomeDataTableColumns } from './incomeDataTableColumns';
 
 type IFilterProps = {
   filterString: string;
@@ -19,7 +19,8 @@ function IncomeOverviewSection({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [resetSelection, setResetSelection] = useState(false);
 
   const { data: incomesResponse, isLoading } = trpc.incomes.getIncomes.useQuery(
     {
@@ -40,17 +41,27 @@ function IncomeOverviewSection({
     setPageLimit(page);
   };
 
+  const handleSelectionReset = () => {
+    setResetSelection(true);
+    setTimeout(() => setResetSelection(false), 100);
+  };
+
   return (
     <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
       <IncomeOverviewTools
         setSearchTerm={setSearchTerm}
         setFilterString={setFilterString}
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        onDeleteComplete={handleSelectionReset}
       />
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
           columns={IncomeDataTableColumns()}
           data={incomesResponse?.data || []}
+          onSelectionChange={setSelectedIds}
+          resetRowSelection={resetSelection}
         />
         <SharedPagination
           currentPage={currentPage}

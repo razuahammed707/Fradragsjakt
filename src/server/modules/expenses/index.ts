@@ -407,12 +407,32 @@ export const expenseRouter = router({
   deleteExpense: protectedProcedure
     .input(
       z.object({
-        _id: z.string(),
+        _id: z.string().array().or(z.string()),
       })
     )
     .mutation(async ({ ctx, input: { _id } }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
+
+        if (Array.isArray(_id)) {
+          const result = await ExpenseModel.deleteMany({
+            _id: { $in: _id },
+            user: loggedUser.id,
+          });
+
+          if (result.deletedCount === 0) {
+            throw new ApiError(
+              httpStatus.NOT_FOUND,
+              'No expenses were found or accessible'
+            );
+          }
+
+          return {
+            status: 200,
+            message: `Successfully deleted ${result.deletedCount} expenses`,
+            data: { deletedCount: result.deletedCount },
+          } as ApiResponse<{ deletedCount: number }>;
+        }
 
         const expense = await ExpenseHelpers.deleteExpenseRecord(
           _id,
