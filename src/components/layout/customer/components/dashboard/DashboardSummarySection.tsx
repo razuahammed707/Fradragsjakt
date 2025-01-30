@@ -31,7 +31,7 @@ const DashboardSummarySection = () => {
     });
   const { categories } = useManipulatedCategories({ category_for: 'expense' });
 
-  const referenceCategories = categories?.data?.filter(
+  const referenceCategories = categories?.filter(
     (category: { title: string; reference_category: string }) =>
       category.reference_category
   );
