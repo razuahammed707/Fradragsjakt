@@ -11,7 +11,7 @@ const categorySchema = z.object({
   }),
 });
 const deleteCategorySchema = z.object({
-  _id: z.string().min(1, 'Category ID is required'),
+  _id: z.string().array().or(z.string()),
 });
 const updateCategorySchema = z.object({
   id: z.string().min(1, 'Category ID is required'),

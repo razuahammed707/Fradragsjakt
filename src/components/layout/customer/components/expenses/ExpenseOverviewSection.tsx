@@ -19,6 +19,8 @@ function ExpenseOverviewSection({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [resetSelection, setResetSelection] = useState(false);
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -40,17 +42,27 @@ function ExpenseOverviewSection({
     setPageLimit(page);
   };
 
+  const handleSelectionReset = () => {
+    setResetSelection(true);
+    setTimeout(() => setResetSelection(false), 100);
+  };
+
   return (
     <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
       <ExpenseOverviewHeading
         setSearchTerm={setSearchTerm}
         setFilterString={setFilterString}
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        onDeleteComplete={handleSelectionReset}
       />
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
           columns={ExpenseDataTableColumns()}
           data={expensesResponse?.data || []}
+          onSelectionChange={setSelectedIds}
+          resetRowSelection={resetSelection}
         />
         <SharedPagination
           currentPage={currentPage}

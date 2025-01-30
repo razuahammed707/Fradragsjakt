@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
-import { IoMdAdd } from 'react-icons/io';
+import { IoMdAdd, IoMdTrash } from 'react-icons/io';
 import Image from 'next/image';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
@@ -20,22 +20,32 @@ import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
+import DeleteConfirmationContent from '@/components/DeleteConfirmationContent';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
   setFilterString: (value: string) => void;
+  selectedIds: string[];
+  onSelectionChange: (ids: string[]) => void;
+  onDeleteComplete?: () => void;
 };
 
 function ExpenseOverviewHeading({
   setSearchTerm,
   setFilterString,
+  selectedIds = [],
+  onSelectionChange,
+  onDeleteComplete,
 }: ExpenseOverviewSectionProps) {
   const { isAuditor } = useUserInfo();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const { data: user } = useSession();
-  const [modalContent, setModalContent] = useState<{ key: string }>({
+  const [modalContent, setModalContent] = useState<{
+    key: string;
+    itemIds?: string[];
+  }>({
     key: '',
   });
 
@@ -69,9 +79,21 @@ function ExpenseOverviewHeading({
     },
   ];
 
-  const handleButtonClick = (key: string) => {
-    setModalContent({ key });
+  const handleButtonClick = (key: string, itemIds?: string[]) => {
+    if (key === 'deleteRows') {
+      setModalContent({ key, itemIds });
+    } else {
+      setModalContent({ key });
+    }
     setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setModalContent({ key: '' });
+    if (selectedIds.length > 0) {
+      onSelectionChange?.([]);
+    }
   };
 
   const renderContent = () => {
@@ -93,6 +115,20 @@ function ExpenseOverviewHeading({
     }
     if (modalContent.key === 'confirmation') {
       return <ConfirmationModalContent setModalOpen={setModalOpen} />;
+    }
+    if (modalContent.key === 'deleteRows') {
+      return (
+        <DeleteConfirmationContent
+          itemOrigin="expense"
+          setModalOpen={setModalOpen}
+          itemIds={modalContent.itemIds}
+          onDeleteComplete={() => {
+            onSelectionChange?.([]);
+            handleModalClose();
+            onDeleteComplete?.();
+          }}
+        />
+      );
     }
     if (modalContent.key === 'uploadStatements') {
       return <StatementUploadContent setModalContent={setModalContent} />;
@@ -158,6 +194,19 @@ function ExpenseOverviewHeading({
                 'components.buttons.expense_buttons.text.upload_statements'
               )}
             </Button>
+            {selectedIds.length > 0 && (
+              <Button
+                onClick={() => handleButtonClick('deleteRows', selectedIds)}
+                className="text-[#FF6347] text-xl hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
+              >
+                <IoMdTrash
+                  color="#FF6347"
+                  size={32}
+                  className="hover:text-[#D94F33]"
+                />
+                ({selectedIds.length})
+              </Button>
+            )}
           </div>
         )}
         <div className="flex space-x-2">

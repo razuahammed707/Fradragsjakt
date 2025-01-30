@@ -33,6 +33,8 @@ interface DataTableProps<TData, TValue> {
   filterPlaceholder?: string;
   className?: string;
   loading?: boolean;
+  onSelectionChange?: (selectedRows: string[]) => void;
+  resetRowSelection?: boolean;
 }
 
 export function SharedDataTable<TData, TValue>({
@@ -40,6 +42,8 @@ export function SharedDataTable<TData, TValue>({
   data,
   className,
   loading,
+  onSelectionChange,
+  resetRowSelection,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -68,6 +72,19 @@ export function SharedDataTable<TData, TValue>({
       rowSelection,
     },
   });
+
+  React.useEffect(() => {
+    const selectedRows = table
+      .getSelectedRowModel()
+      .rows.map((row) => (row.original as any)._id);
+    onSelectionChange?.(selectedRows);
+  }, [rowSelection, table, onSelectionChange]);
+
+  React.useEffect(() => {
+    if (resetRowSelection) {
+      setRowSelection({});
+    }
+  }, [resetRowSelection]);
 
   return (
     <div>

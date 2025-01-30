@@ -3,8 +3,8 @@
 import React, { useCallback, useState } from 'react';
 import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
-import { IoMdAdd } from 'react-icons/io';
-import SharedModal from '../../../../SharedModal';
+import { IoMdAdd, IoMdTrash } from 'react-icons/io';
+import SharedModal from '@/components/SharedModal';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
 import RuleIcon from '../../../../../../public/images/expenses/rule.png';
@@ -17,20 +17,30 @@ import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
+import DeleteConfirmationContent from '@/components/DeleteConfirmationContent';
 
 type IncomeOverviewToolsProps = {
   setSearchTerm: (value: string) => void;
   setFilterString: (value: string) => void;
+  selectedIds: string[];
+  onSelectionChange: (ids: string[]) => void;
+  onDeleteComplete?: () => void;
 };
 
 function IncomeOverviewTools({
   setSearchTerm,
   setFilterString,
+  selectedIds = [],
+  onSelectionChange,
+  onDeleteComplete,
 }: IncomeOverviewToolsProps) {
   const { isAuditor } = useUserInfo();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState<{ key: string }>({
+  const [modalContent, setModalContent] = useState<{
+    key: string;
+    itemIds?: string[];
+  }>({
     key: '',
   });
   const { data: incomesWithMatchedRules } =
@@ -47,9 +57,21 @@ function IncomeOverviewTools({
     category_for: 'income',
   });
 
-  const handleButtonClick = (key: string) => {
-    setModalContent({ key });
+  const handleButtonClick = (key: string, itemIds?: string[]) => {
+    if (key === 'deleteRows') {
+      setModalContent({ key, itemIds });
+    } else {
+      setModalContent({ key });
+    }
     setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setModalContent({ key: '' });
+    if (selectedIds.length > 0) {
+      onSelectionChange?.([]);
+    }
   };
 
   const renderContent = () => {
@@ -75,7 +97,21 @@ function IncomeOverviewTools({
     if (modalContent.key === 'uploadStatements') {
       return <StatementUploadContent setModalContent={setModalContent} />;
     }
-    return <></>;
+    if (modalContent.key === 'deleteRows') {
+      return (
+        <DeleteConfirmationContent
+          itemOrigin="income"
+          setModalOpen={setModalOpen}
+          itemIds={modalContent.itemIds}
+          onDeleteComplete={() => {
+            onSelectionChange?.([]);
+            handleModalClose();
+            onDeleteComplete?.();
+          }}
+        />
+      );
+    }
+    return null;
   };
 
   const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm), [
@@ -127,6 +163,7 @@ function IncomeOverviewTools({
               <IoMdAdd className="font-bold mr-2" />{' '}
               {translate('components.buttons.income_buttons.text.add_income')}
             </Button>
+
             <Button
               variant="purple"
               onClick={() => handleButtonClick('uploadStatements')}
@@ -136,6 +173,19 @@ function IncomeOverviewTools({
                 'components.buttons.income_buttons.text.upload_statements'
               )}
             </Button>
+            {selectedIds.length > 0 && (
+              <Button
+                onClick={() => handleButtonClick('deleteRows', selectedIds)}
+                className="text-[#FF6347] text-xl hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
+              >
+                <IoMdTrash
+                  color="#FF6347"
+                  size={32}
+                  className="hover:text-[#D94F33]"
+                />
+                ({selectedIds.length})
+              </Button>
+            )}
           </div>
         )}
         <div className="flex space-x-2">
