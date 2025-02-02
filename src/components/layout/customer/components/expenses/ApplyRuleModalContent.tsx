@@ -54,21 +54,23 @@ function ApplyRuleModalContent({
   expenses: { expensesWithRules },
   setModalOpen,
 }: ExpenseRuleContentProps) {
-  console.log({ expensesWithRules });
-
   const { translate } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [selectedRule, setSelectedRule] = useState<string>(
-    expensesWithRules[0]?.rule || ''
-  );
+  const [selectedRule, setSelectedRule] = useState<string>(() => {
+    // Initialize with 'All' if there are multiple rules, otherwise use the first rule
+    return expensesWithRules.length > 1
+      ? 'All'
+      : expensesWithRules[0]?.rule || '';
+  });
   const [tableData, setTableData] = useState<ExpenseType[]>([]);
   const [deletedExpenseIds, setDeletedExpenseIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
 
-  const selectedRuleData = expensesWithRules.find(
-    (exp) => exp.rule === selectedRule
-  );
+  const selectedRuleData =
+    selectedRule === 'All'
+      ? null
+      : expensesWithRules.find((exp) => exp.rule === selectedRule);
 
   const utils = trpc.useUtils();
 
@@ -113,16 +115,33 @@ function ApplyRuleModalContent({
 
   const handleApplyRule = () => {
     setLoading(true);
-    if (selectedRuleData?.expensePayload) {
-      console.log({ selectedRuleData });
 
-      const expenses =
-        tableData
-          ?.filter((expense) => !deletedExpenseIds.includes(expense._id))
+    if (selectedRule === 'All') {
+      // Apply rule to all expenses
+      const expenses = expensesWithRules.flatMap((exp) =>
+        exp.expenses
+          .filter((expense) => !deletedExpenseIds.includes(expense._id))
           .map((expense) => ({
             _id: expense._id,
-            expenseUpdatePayload: selectedRuleData.expensePayload,
-          })) || [];
+            expenseUpdatePayload: exp.expensePayload,
+          }))
+      );
+
+      if (expenses.length === 0) {
+        toast.error(translate('applyRuleModal.toast.noExpenses'));
+        setLoading(false);
+        return;
+      }
+
+      mutation.mutate({ expenses });
+    } else if (selectedRuleData?.expensePayload) {
+      // Apply rule to selected rule's expenses
+      const expenses = tableData
+        .filter((expense) => !deletedExpenseIds.includes(expense._id))
+        .map((expense) => ({
+          _id: expense._id,
+          expenseUpdatePayload: selectedRuleData.expensePayload,
+        }));
 
       if (expenses.length === 0) {
         toast.error(translate('applyRuleModal.toast.noExpenses'));
@@ -135,11 +154,16 @@ function ApplyRuleModalContent({
   };
 
   useEffect(() => {
-    if (selectedRuleData?.expenses) {
+    if (selectedRule === 'All') {
+      // Combine all expenses for the "All" case
+      const allExpenses = expensesWithRules.flatMap((exp) => exp.expenses);
+      setTableData(allExpenses);
+    } else if (selectedRuleData?.expenses) {
+      // Use the selected rule's expenses
       setTableData(selectedRuleData.expenses);
-      setCurrentPage(1);
     }
-  }, [selectedRuleData]);
+    setCurrentPage(1);
+  }, [selectedRule, selectedRuleData, expensesWithRules]);
 
   return (
     <div className="space-y-8">
@@ -147,6 +171,22 @@ function ApplyRuleModalContent({
         {translate('applyRuleModal.title_for_expense')}
       </h1>
       <div className="flex flex-wrap gap-2">
+        {expensesWithRules.length > 1 && (
+          <Badge
+            key="All"
+            className={`rounded-[28px] py-1 cursor-pointer ${
+              selectedRule === 'All'
+                ? 'bg-[#5B52F9] text-white'
+                : 'bg-[#EEF0F4] text-[#5B52F9]'
+            }`}
+            onClick={() => handleRuleClick('All')}
+          >
+            All{' '}
+            <span className="ms-1">
+              ({expensesWithRules.flatMap((exp) => exp.expenses).length})
+            </span>
+          </Badge>
+        )}
         {expensesWithRules.map((expenseRule) => (
           <Badge
             key={expenseRule.rule}
