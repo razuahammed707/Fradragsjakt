@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import { ApplyRuleModalContentTableColumns } from './ApplyRuleModalContentTableColumns';
 import SharedPagination from '@/components/SharedPagination';
-import { useTranslation } from '@/lib/TranslationProvider'; // Translation hook
+import { useTranslation } from '@/lib/TranslationProvider';
 
 type CategoryType = { title: string; value: string };
 
@@ -54,19 +54,21 @@ function ApplyRuleModalContent({
   incomes: { incomesWithRules },
   setModalOpen,
 }: IncomeRuleContentProps) {
-  const { translate } = useTranslation(); // Translation hook
+  const { translate } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [selectedRule, setSelectedRule] = useState<string>(
-    incomesWithRules[0]?.rule || ''
+  // Initialize with 'All' if there are multiple rules
+  const [selectedRule, setSelectedRule] = useState<string>(() =>
+    incomesWithRules.length > 1 ? 'All' : incomesWithRules[0]?.rule || ''
   );
   const [tableData, setTableData] = useState<IncomeType[]>([]);
   const [deletedIncomeIds, setDeletedIncomeIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
 
-  const selectedRuleData = incomesWithRules.find(
-    (exp) => exp.rule === selectedRule
-  );
+  const selectedRuleData =
+    selectedRule === 'All'
+      ? null
+      : incomesWithRules.find((inc) => inc.rule === selectedRule);
 
   const utils = trpc.useUtils();
 
@@ -95,7 +97,6 @@ function ApplyRuleModalContent({
       utils.incomes.getIncomes.invalidate();
       utils.incomes.getCategoryAndIncomeTypeWiseIncomes.invalidate();
       utils.incomes.getUnknownIncomesWithMatchedRules.invalidate();
-
       toast.success('Incomes updated successfully');
       setLoading(false);
       setModalOpen(false);
@@ -105,28 +106,43 @@ function ApplyRuleModalContent({
     },
   });
 
-  const handleDelete = (IncomeId: string) => {
-    setDeletedIncomeIds((prev) => [...prev, IncomeId]);
-    setTableData((prev) => prev.filter((Income) => Income._id !== IncomeId));
+  const handleDelete = (incomeId: string) => {
+    setDeletedIncomeIds((prev) => [...prev, incomeId]);
+    setTableData((prev) => prev.filter((income) => income._id !== incomeId));
   };
 
   const handleApplyRule = () => {
     setLoading(true);
-    console.log(
-      'incomes before applying rule',
-      selectedRuleData?.incomePayload
-    );
-    if (selectedRuleData?.incomePayload) {
-      const incomes =
-        tableData
-          ?.filter((income) => !deletedIncomeIds.includes(income._id))
+
+    if (selectedRule === 'All') {
+      // Apply rule to all incomes
+      const incomes = incomesWithRules.flatMap((inc) =>
+        inc.incomes
+          .filter((income) => !deletedIncomeIds.includes(income._id))
           .map((income) => ({
             _id: income._id,
-            incomeUpdatePayload: selectedRuleData.incomePayload,
-          })) || [];
+            incomeUpdatePayload: inc.incomePayload,
+          }))
+      );
 
       if (incomes.length === 0) {
-        toast.error(translate('applyRuleModal.toast.noincomes'));
+        toast.error(translate('applyRuleModal.toast.noIncomes'));
+        setLoading(false);
+        return;
+      }
+
+      mutation.mutate({ incomes });
+    } else if (selectedRuleData?.incomePayload) {
+      // Apply rule to selected rule's incomes
+      const incomes = tableData
+        .filter((income) => !deletedIncomeIds.includes(income._id))
+        .map((income) => ({
+          _id: income._id,
+          incomeUpdatePayload: selectedRuleData.incomePayload,
+        }));
+
+      if (incomes.length === 0) {
+        toast.error(translate('applyRuleModal.toast.noIncomes'));
         setLoading(false);
         return;
       }
@@ -136,13 +152,16 @@ function ApplyRuleModalContent({
   };
 
   useEffect(() => {
-    if (selectedRuleData?.incomes) {
+    if (selectedRule === 'All') {
+      // Combine all incomes for the "All" case
+      const allIncomes = incomesWithRules.flatMap((inc) => inc.incomes);
+      setTableData(allIncomes);
+    } else if (selectedRuleData?.incomes) {
+      // Use the selected rule's incomes
       setTableData(selectedRuleData.incomes);
-      setCurrentPage(1);
     }
-  }, [selectedRuleData]);
-
-  console.log('income table data', tableData);
+    setCurrentPage(1);
+  }, [selectedRule, selectedRuleData, incomesWithRules]);
 
   return (
     <div className="space-y-8">
@@ -150,6 +169,22 @@ function ApplyRuleModalContent({
         {translate('applyRuleModal.title_for_income')}
       </h1>
       <div className="flex flex-wrap gap-2">
+        {incomesWithRules.length > 1 && (
+          <Badge
+            key="All"
+            className={`rounded-[28px] py-1 cursor-pointer ${
+              selectedRule === 'All'
+                ? 'bg-[#5B52F9] text-white'
+                : 'bg-[#EEF0F4] text-[#5B52F9]'
+            }`}
+            onClick={() => handleRuleClick('All')}
+          >
+            All{' '}
+            <span className="ms-1">
+              ({incomesWithRules.flatMap((inc) => inc.incomes).length})
+            </span>
+          </Badge>
+        )}
         {incomesWithRules.map((incomeRule) => (
           <Badge
             key={incomeRule.rule}
