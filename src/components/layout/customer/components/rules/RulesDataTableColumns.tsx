@@ -49,7 +49,7 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
         </div>
       ),
     },
-    {
+    /* {
       accessorKey: 'rule_for',
       header: ({ column }) => (
         <Button
@@ -66,7 +66,7 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
           {transformToUppercase(row.getValue('rule_for'))}
         </div>
       ),
-    },
+    }, */
     {
       accessorKey: 'category_title',
       header: ({ column }) => (

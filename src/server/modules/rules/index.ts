@@ -117,6 +117,7 @@ export const rulesRouter = router({
           user: sessionUser?.id,
           category: category?._id,
           category_title: category?.title,
+          rule_for: 'expense',
         });
 
         return {

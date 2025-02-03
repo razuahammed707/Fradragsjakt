@@ -20,7 +20,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PayloadType } from './ExpenseUpdateModal';
 import { useTranslation } from '@/lib/TranslationProvider';
-import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 
 type UploadedImageType = {
   link: string;

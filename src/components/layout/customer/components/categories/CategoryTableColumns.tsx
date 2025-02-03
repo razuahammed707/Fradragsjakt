@@ -7,7 +7,7 @@ import ArrowUpDown from '../../../../../../public/sort.png';
 import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
 import CategoryAddModal from './CategoryAddModal';
 import { useTranslation } from '@/lib/TranslationProvider';
-import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
+//import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import useUserInfo from '@/hooks/use-user-info';
 
 export type Category = {
@@ -54,15 +54,14 @@ export const CategoryTableColumns = (): ColumnDef<Category>[] => {
         <div className="text-left pl-4">{row.getValue('title')}</div>
       ),
     },
-    {
+    /* {
       accessorKey: 'category_for',
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {/* {translate('page.CategoryDataTableColumns.category', 'Category')} */}
-          <>Category For</>
+           <>Category For</>
           <Image src={ArrowUpDown} alt="sort icon" className="ml-2" />
         </Button>
       ),
@@ -71,7 +70,7 @@ export const CategoryTableColumns = (): ColumnDef<Category>[] => {
           {transformToUppercase(row.getValue('category_for'))}
         </div>
       ),
-    },
+    }, */
     {
       accessorKey: 'created_by',
       header: translate(

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import SharedModal from '@/components/SharedModal';
 import { Edit2 } from 'lucide-react';
 import ExpenseAddContent from './ExpenseAddContent';
-import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 
 export type PayloadType = {
   amount: number;

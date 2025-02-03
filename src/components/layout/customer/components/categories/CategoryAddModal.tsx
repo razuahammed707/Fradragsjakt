@@ -12,16 +12,14 @@ import { DialogTitle } from '@radix-ui/react-dialog';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/lib/TranslationProvider';
-import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 
-// Define the possible values for category_for
 type CategoryFor = 'expense' | 'income';
 
-// Define the form data interface
 interface FormData {
   title: string;
   category_for: CategoryFor;
-  reference_category: string; // Changed to string for single selection
+  reference_category: string;
 }
 
 type UpdateCategoryPayload = {
@@ -49,17 +47,15 @@ export default function CategoryAddModal({
     defaultValues: {
       title: category?.title || '',
       category_for: category?.category_for || undefined,
-      reference_category: category?.reference_category || '', // Single value default
+      reference_category: category?.reference_category || '',
     },
   });
 
-  // Watched values
   const categoryForValue = watch('category_for');
   const categoryTitleValue = watch('title');
   const categoryMapValue = watch('reference_category');
 
-  const query = { category_for: categoryForValue || category?.category_for };
-  const { manipulatedCategories } = useManipulatedCategories(query);
+  const { mainCategories } = useManipulatedCategories();
 
   const mutation = trpc.categories.createCategory.useMutation({
     onSuccess: () => {
@@ -95,7 +91,7 @@ export default function CategoryAddModal({
     setLoading(true);
     const payload = {
       ...data,
-      reference_category: data.reference_category, // Single value submission
+      reference_category: data.reference_category,
     };
     if (origin && category) {
       updateMutation.mutate({ id: category._id, ...payload });
@@ -150,7 +146,7 @@ export default function CategoryAddModal({
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <Label className="block mb-2 text-[#101010] text-xs font-medium">
                   Category For
                 </Label>
@@ -167,7 +163,7 @@ export default function CategoryAddModal({
                   ]}
                   required
                 />
-              </div>
+              </div> */}
 
               <div>
                 <Label className="block mb-2 text-[#101010] text-xs font-medium">
@@ -177,7 +173,7 @@ export default function CategoryAddModal({
                   name="reference_category"
                   control={control}
                   placeholder="Select a category..."
-                  options={manipulatedCategories.map((category) => ({
+                  options={mainCategories.map((category) => ({
                     title: category.title,
                     value: category.value,
                   }))}

@@ -13,7 +13,7 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import Image from 'next/image';
 import IncomeAddContent from './IncomeAddContent';
 import IncomeDataTableFilter from './IncomeDataTableFilter';
-import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';

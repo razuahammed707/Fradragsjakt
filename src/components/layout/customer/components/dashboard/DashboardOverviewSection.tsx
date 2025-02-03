@@ -9,7 +9,7 @@ import {
 } from '@/utils/helpers/primaryCategoriesWithFormula';
 import { trpc } from '@/utils/trpc';
 import { predefinedCategories } from '@/utils/dummy';
-import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
 
 const DashboardOverviewSection = () => {
