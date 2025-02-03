@@ -43,6 +43,7 @@ interface SelectFormInputProps {
   errorMessage?: string;
   defaultValue?: string;
   required?: boolean;
+  searchEnabled?: boolean;
 }
 
 export function SelectFormInput({
@@ -54,6 +55,7 @@ export function SelectFormInput({
   errorMessage,
   defaultValue = '',
   required = false,
+  searchEnabled = false,
 }: SelectFormInputProps) {
   const [open, setOpen] = useState(false);
 
@@ -97,7 +99,12 @@ export function SelectFormInput({
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
               <Command>
-                <CommandInput placeholder="Search options..." className="h-9" />
+                {searchEnabled && (
+                  <CommandInput
+                    placeholder="Search options..."
+                    className="h-9"
+                  />
+                )}
                 <CommandList className="max-h-[200px] overflow-y-auto">
                   <CommandEmpty>No options found.</CommandEmpty>
                   <CommandGroup>

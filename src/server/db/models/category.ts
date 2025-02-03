@@ -16,7 +16,6 @@ const CategorySchema: Schema = new Schema<ICategory>(
     category_for: {
       type: String,
       enum: Object.values(CategoryFor),
-      required: true,
     },
     creator_id: { type: Schema.Types.ObjectId, ref: 'user', required: true },
   },

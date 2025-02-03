@@ -34,7 +34,6 @@ export const categoryRouter = router({
           ],
         };
 
-        // If a search term is provided, add a condition to match fields
         if (searchTerm) {
           query.title = { $regex: searchTerm, $options: 'i' };
         }
@@ -151,7 +150,7 @@ export const categoryRouter = router({
     .input(categoryValidation.categorySchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const { title, reference_category, ...rest } = input;
+        const { title, reference_category } = input;
 
         const sessionUser = ctx.user as JwtPayload;
 
@@ -169,7 +168,7 @@ export const categoryRouter = router({
         }
 
         const category = new Category({
-          ...rest,
+          category_for: 'common',
           title: transformedTitle,
           creator_id: sessionUser.id,
           reference_category,

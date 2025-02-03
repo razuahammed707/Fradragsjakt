@@ -12,7 +12,7 @@ const RuleSchema: Schema = new Schema<IRule>(
     rule_for: {
       type: String,
       enum: Object.values(RuleFor),
-      required: true,
+      //required: true,
     },
     category_title: {
       type: String,
@@ -24,6 +24,9 @@ const RuleSchema: Schema = new Schema<IRule>(
       required: true,
     },
     sub_category: {
+      type: String,
+    },
+    tag_category: {
       type: String,
     },
     user: {

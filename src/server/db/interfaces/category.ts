@@ -10,6 +10,6 @@ export interface ICategory extends Document {
   title: string;
   created_by: string;
   reference_category?: string;
-  category_for: CategoryFor;
+  category_for?: CategoryFor;
   creator_id: Types.ObjectId;
 }

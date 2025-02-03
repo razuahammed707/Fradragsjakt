@@ -10,7 +10,7 @@ import {
 } from '@/utils/helpers/primaryCategoriesWithFormula';
 import { predefinedCategories } from '@/utils/dummy';
 import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonalDeductions';
-import { useManipulatedCategories } from '@/hooks/useManipulateCategories';
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
 import RecentExpenseTable from './RecentExpenseTable';
 import UploadingStatementsWarning from './UploadingStatementsWarning';
