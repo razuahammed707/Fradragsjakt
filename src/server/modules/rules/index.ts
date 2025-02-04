@@ -9,6 +9,7 @@ import CategoryModel from '@/server/db/models/category';
 import httpStatus from 'http-status';
 import { ApiError, AuthError } from '@/lib/exceptions';
 import { errorHandler } from '@/server/middlewares/error-handler';
+import { RuleHelpers } from '@/server/helpers/rule';
 
 export const rulesRouter = router({
   getRules: protectedProcedure
@@ -130,6 +131,33 @@ export const rulesRouter = router({
         throw new ApiError(httpStatus.BAD_REQUEST, message);
       }
     }),
+
+  createAndApplyRule: protectedProcedure
+    .input(ruleValidation.ruleSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const sessionUser = ctx.user as JwtPayload;
+        RuleHelpers.validateUser(sessionUser);
+
+        await RuleHelpers.checkExistingRule(sessionUser.id, input);
+        const category = await RuleHelpers.findCategory(input.category);
+        const newRule = await RuleHelpers.createNewRule(
+          input,
+          sessionUser.id,
+          category
+        );
+        const updateResults = await RuleHelpers.updateTransactions(
+          sessionUser.id,
+          newRule,
+          input
+        );
+
+        return RuleHelpers.createSuccessResponse(newRule, updateResults);
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.BAD_REQUEST, message);
+      }
+    }),
   updateRule: protectedProcedure
     .input(ruleValidation.updateRuleSchema)
     .mutation(async ({ ctx, input }) => {
@@ -143,13 +171,9 @@ export const rulesRouter = router({
 
         const categoryQuery = {
           title: input.category,
-          // creator_id: sessionUser.id,
         };
 
         const category = await CategoryModel.findOne(categoryQuery);
-
-        console.log('update rule payload from backend', input);
-        console.log('category find during rule update', category);
 
         const updateRule = await RuleModel.findByIdAndUpdate(
           { _id },
@@ -166,6 +190,34 @@ export const rulesRouter = router({
           status: 200,
           category: updateRule,
         };
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
+  updateAndApplyRule: protectedProcedure
+    .input(ruleValidation.updateRuleSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const { _id, ...restPayload } = input;
+        const sessionUser = ctx.user as JwtPayload;
+
+        await RuleHelpers.validateUser(sessionUser);
+
+        const category = await RuleHelpers.findCategory(input?.category || '');
+        const updatedRule = await RuleHelpers.updateExistingRule(
+          _id,
+          restPayload,
+          category
+        );
+        const result = await RuleHelpers.findByRuleAndUpdateTransactions(
+          _id,
+          sessionUser.id,
+          restPayload,
+          category
+        );
+
+        return RuleHelpers.updateSuccessResponse(updatedRule, result);
       } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);

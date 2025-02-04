@@ -16,19 +16,16 @@ import { QuestionKeysMap } from '@/utils/constants/QuestionKeys';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
-    // Step 1: Normalize both the input description and stored rules to handle special characters
     const normalizedDescription = description
       .toLowerCase()
-      .normalize('NFKD') // Decompose combined characters
-      .replace(/[^\w\s]/g, ''); // Remove special characters but keep spaces
+      .normalize('NFKD')
+      .replace(/[^\w\s]/g, '');
 
-    // Step 2: Query the database to find rules, then filter in memory for exact substring match
     const rules = await RuleModel.find({
       user: userId,
       rule_for: 'expense',
     });
 
-    // Step 3: Find the first matching rule by checking if normalized rule text is contained in description
     const matchingRule = rules.find((rule) => {
       const normalizedRule = rule.description_contains
         .toLowerCase()
@@ -47,7 +44,6 @@ async function findMatchingRule(description: string, userId: string) {
 
 async function createExpenseRecord(input: IExpense, userId: string) {
   try {
-    // Upsert category
     const category = await CategoryModel.findOneAndUpdate(
       {
         title: input.category,
@@ -62,7 +58,6 @@ async function createExpenseRecord(input: IExpense, userId: string) {
       { upsert: true, new: true }
     );
 
-    // Upsert rule
     const updatedRule = await RuleModel.findOneAndUpdate(
       {
         description_contains: input.description,
@@ -73,12 +68,13 @@ async function createExpenseRecord(input: IExpense, userId: string) {
           expense_type: input.expense_type,
           category_title: input.category,
           category: category?._id,
+          sub_category: input.sub_category,
+          tag_category: input.tag_category,
         },
       },
       { upsert: true, new: true }
     );
 
-    // Create the expense record with updated or default rule and category information
     return await ExpenseModel.create({
       ...input,
       user: userId,
@@ -553,7 +549,6 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
   }
 };
 
-// Helper function to ensure data covers 12 months
 const ensureTwelveMonthsCoverage = (
   analytics: ExpenseAnalytics[],
   monthArray: string[]
@@ -565,7 +560,6 @@ const ensureTwelveMonthsCoverage = (
   );
 };
 
-// Helper function to ensure 7 days of data with zero values for missing days
 const ensureSevenDaysCoverage = (
   analytics: ExpenseAnalytics[],
   dateArray: string[]

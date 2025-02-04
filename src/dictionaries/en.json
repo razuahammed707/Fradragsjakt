@@ -216,8 +216,8 @@
       "personal": "Personal",
       "category": "Category",
       "selectCategory": "Select category",
-      "create": "Create",
-      "update": "Update",
+      "create": "Create and Apply",
+      "update": "Update and Apply",
       "discard": "Discard"
     }
   },

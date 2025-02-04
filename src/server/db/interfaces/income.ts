@@ -10,6 +10,7 @@ export interface IIncome extends Document {
   description: string;
   category: string;
   sub_category: string;
+  tag_category: string;
   income_type: IncomeType;
   amount: number;
   transaction_date?: Date;
@@ -24,6 +25,8 @@ export interface IIncomeUpdate extends Document {
   id: string;
   description: string;
   category: string;
+  sub_category: string;
+  tag_category: string;
   income_type: IncomeType;
   amount: number;
   transaction_date?: Date;

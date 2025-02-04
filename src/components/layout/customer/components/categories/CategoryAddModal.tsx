@@ -51,7 +51,7 @@ export default function CategoryAddModal({
     },
   });
 
-  const categoryForValue = watch('category_for');
+  //const categoryForValue = watch('category_for');
   const categoryTitleValue = watch('title');
   const categoryMapValue = watch('reference_category');
 
@@ -183,12 +183,7 @@ export default function CategoryAddModal({
               </div>
 
               <Button
-                disabled={
-                  loading ||
-                  !categoryForValue ||
-                  !categoryTitleValue ||
-                  !categoryMapValue
-                }
+                disabled={loading || !categoryTitleValue || !categoryMapValue}
                 type="submit"
                 className="w-full flex h-9 py-2 px-4 justify-center items-center gap-[10px] text-white text-sm font-medium"
               >

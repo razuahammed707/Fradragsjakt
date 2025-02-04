@@ -7,13 +7,12 @@ import { IoMdAdd, IoMdTrash } from 'react-icons/io';
 import SharedModal from '@/components/SharedModal';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
-import RuleIcon from '../../../../../../public/images/expenses/rule.png';
+//import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import { cn, debounce } from '@/lib/utils';
 import { useTranslation } from '@/lib/TranslationProvider';
-import Image from 'next/image';
+//import Image from 'next/image';
 import IncomeAddContent from './IncomeAddContent';
 import IncomeDataTableFilter from './IncomeDataTableFilter';
-import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
@@ -53,9 +52,6 @@ function IncomeOverviewTools({
         keepPreviousData: true,
       }
     ) as unknown as any;
-  const { manipulatedCategories } = useManipulatedCategories({
-    category_for: 'income',
-  });
 
   const handleButtonClick = (key: string, itemIds?: string[]) => {
     if (key === 'deleteRows') {
@@ -76,12 +72,7 @@ function IncomeOverviewTools({
 
   const renderContent = () => {
     if (modalContent.key === 'addIncome') {
-      return (
-        <IncomeAddContent
-          setModalOpen={setModalOpen}
-          categories={manipulatedCategories}
-        />
-      );
+      return <IncomeAddContent setModalOpen={setModalOpen} />;
     }
     if (modalContent.key === 'applyRule') {
       return (
@@ -176,11 +167,11 @@ function IncomeOverviewTools({
             {selectedIds.length > 0 && (
               <Button
                 onClick={() => handleButtonClick('deleteRows', selectedIds)}
-                className="text-[#FF6347] text-xl hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
+                className="text-[#FF6347]  hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
               >
                 <IoMdTrash
                   color="#FF6347"
-                  size={32}
+                  size={24}
                   className="hover:text-[#D94F33]"
                 />
                 ({selectedIds.length})
@@ -190,7 +181,7 @@ function IncomeOverviewTools({
         )}
         <div className="flex space-x-2">
           <IncomeDataTableFilter setFilterString={setFilterString} />
-          {!isAuditor && (
+          {/* {!isAuditor && (
             <Button
               disabled={
                 incomesWithMatchedRules?.data?.incomesWithRules?.length === 0
@@ -201,7 +192,7 @@ function IncomeOverviewTools({
               <Image src={RuleIcon} alt="button icon" className="mr-2" /> Apply
               Rule
             </Button>
-          )}
+          )} */}
         </div>
         <div className="bg-white absolute z-50">
           <SharedModal
@@ -211,7 +202,7 @@ function IncomeOverviewTools({
               modalContent.key !== 'confirmation' && 'max-w-[650px]'
             )}
           >
-            <div className="bg-white">{renderContent()}</div>
+            <div className="bg-white ma-">{renderContent()}</div>
           </SharedModal>
         </div>
       </div>

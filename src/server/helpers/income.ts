@@ -62,6 +62,8 @@ async function createIncomeRecord(input: IIncome, userId: string) {
       },
       {
         $setOnInsert: {
+          sub_category: input.sub_category,
+          tag_category: input.tag_category,
           income_type: input.income_type,
           category_title: input.category,
           category: category?._id,

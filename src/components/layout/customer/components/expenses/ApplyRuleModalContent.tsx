@@ -117,7 +117,6 @@ function ApplyRuleModalContent({
     setLoading(true);
 
     if (selectedRule === 'All') {
-      // Apply rule to all expenses
       const expenses = expensesWithRules.flatMap((exp) =>
         exp.expenses
           .filter((expense) => !deletedExpenseIds.includes(expense._id))
@@ -135,7 +134,6 @@ function ApplyRuleModalContent({
 
       mutation.mutate({ expenses });
     } else if (selectedRuleData?.expensePayload) {
-      // Apply rule to selected rule's expenses
       const expenses = tableData
         .filter((expense) => !deletedExpenseIds.includes(expense._id))
         .map((expense) => ({
@@ -155,11 +153,9 @@ function ApplyRuleModalContent({
 
   useEffect(() => {
     if (selectedRule === 'All') {
-      // Combine all expenses for the "All" case
       const allExpenses = expensesWithRules.flatMap((exp) => exp.expenses);
       setTableData(allExpenses);
     } else if (selectedRuleData?.expenses) {
-      // Use the selected rule's expenses
       setTableData(selectedRuleData.expenses);
     }
     setCurrentPage(1);

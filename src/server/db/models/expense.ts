@@ -17,6 +17,10 @@ const ExpenseSchema = new Schema<IExpense>(
       type: String,
       trim: true,
     },
+    tag_category: {
+      type: String,
+      trim: true,
+    },
     expense_type: {
       type: String,
       enum: Object.values(ExpenseType),

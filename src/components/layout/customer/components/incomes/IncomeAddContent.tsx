@@ -20,6 +20,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { PayloadType } from './IncomeUpdateModal';
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
+import { getSubCategories } from '@/utils/helpers/getSubCategories';
 
 type UploadedImageType = {
   link: string;
@@ -40,24 +42,13 @@ export type FormData = {
   };
 };
 
-const defaultCategories = [
-  { title: 'Transport', value: 'Transport' },
-  { title: 'Meals', value: 'Meals' },
-  { title: 'Gas', value: 'Gas' },
-  { title: 'Unknown', value: 'Unknown' },
-];
-
-type CategoryType = { title: string; value: string };
-
 interface IncomeAddContentProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
-  categories?: CategoryType[];
   payload?: PayloadType;
   origin?: string;
 }
 
 function IncomeAddContent({
-  categories = [],
   setModalOpen,
   origin,
   payload,
@@ -67,6 +58,7 @@ function IncomeAddContent({
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { isValid },
   } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
@@ -75,13 +67,14 @@ function IncomeAddContent({
   const [uploadedImage, setUploadedImage] = useState<UploadedImageType | null>(
     null
   );
+  const [subCategoryOptions, setSubCategoryOptions] = useState<
+    { answer: string }[]
+  >([]);
   const utils = trpc.useUtils();
 
-  const manipulatedCategories = Array.from(
-    new Map(
-      [...categories, ...defaultCategories].map((cat) => [cat.value, cat])
-    ).values()
-  );
+  const selectedCategory = watch('category');
+  //const query = { category_for: 'income' };
+  const { mainCategories, secondaryCategories } = useManipulatedCategories(); //query was used to call
 
   const createMutation = trpc.incomes.createIncome.useMutation({
     onSuccess: () => {
@@ -180,6 +173,14 @@ function IncomeAddContent({
     if (fileLink) handleFileUpload(fileLink);
   }, [fileLink]);
 
+  useEffect(() => {
+    if (selectedCategory) {
+      const subCategories = getSubCategories(selectedCategory);
+      setSubCategoryOptions(subCategories);
+    } else {
+      setSubCategoryOptions([]);
+    }
+  }, [selectedCategory]);
   const onSubmit = (data: FormData) => {
     const modifiedAmount =
       typeof data?.amount === 'number'
@@ -268,11 +269,37 @@ function IncomeAddContent({
             name="category"
             control={control}
             placeholder="Select category"
-            options={manipulatedCategories.map((category) => ({
+            options={mainCategories?.map((category) => ({
               title: category.title,
               value: category.value,
             }))}
             defaultValue={payload?.category || ''}
+          />
+        </div>
+        <div>
+          <Label htmlFor="sub_category">Sub Category</Label>
+          <SelectFormInput
+            name="sub_category"
+            control={control}
+            customClassName="w-full mt-2"
+            placeholder="Select sub-category"
+            defaultValue={payload?.sub_category}
+            options={subCategoryOptions.map((q) => ({
+              title: q.answer,
+              value: q.answer,
+            }))}
+          />
+        </div>
+        <div>
+          <Label htmlFor="sub_category">Category Tag</Label>
+          <SelectFormInput
+            name="tag_category"
+            control={control}
+            customClassName="w-full mt-2"
+            placeholder="Select as Tag"
+            defaultValue={payload?.tag_category}
+            options={secondaryCategories}
+            searchEnabled
           />
         </div>
         <div className="rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]">

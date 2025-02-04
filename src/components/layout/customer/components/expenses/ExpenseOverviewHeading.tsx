@@ -5,7 +5,7 @@ import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
 import { IoMdAdd, IoMdTrash } from 'react-icons/io';
 import Image from 'next/image';
-import RuleIcon from '../../../../../../public/images/expenses/rule.png';
+//import RuleIcon from '../../../../../../public/images/expenses/rule.png';
 import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
 import ExpenseAddContent from './ExpenseAddContent';
 import SharedModal from '../../../../SharedModal';
@@ -16,7 +16,6 @@ import { useSession } from 'next-auth/react';
 import { cn, debounce } from '@/lib/utils';
 import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
-import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
@@ -60,16 +59,13 @@ function ExpenseOverviewHeading({
         keepPreviousData: true,
       }
     ) as unknown as any;
-  const { manipulatedCategories } = useManipulatedCategories({
-    category_for: 'expense',
-  });
 
   const buttons = [
-    {
-      key: 'applyRule',
-      text: translate('components.buttons.expense_buttons.text.apply_rule'),
-      icon: RuleIcon,
-    },
+    // {
+    //   key: 'applyRule',
+    //   text: translate('components.buttons.expense_buttons.text.apply_rule'),
+    //   icon: RuleIcon,
+    // },
     {
       key: 'showWriteOffs',
       text: translate(
@@ -98,12 +94,7 @@ function ExpenseOverviewHeading({
 
   const renderContent = () => {
     if (modalContent.key === 'addExpense') {
-      return (
-        <ExpenseAddContent
-          setModalOpen={setModalOpen}
-          categories={manipulatedCategories}
-        />
-      );
+      return <ExpenseAddContent setModalOpen={setModalOpen} />;
     }
     if (modalContent.key === 'applyRule') {
       return (
@@ -197,11 +188,11 @@ function ExpenseOverviewHeading({
             {selectedIds.length > 0 && (
               <Button
                 onClick={() => handleButtonClick('deleteRows', selectedIds)}
-                className="text-[#FF6347] text-xl hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
+                className="text-[#FF6347] px-0 hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
               >
                 <IoMdTrash
                   color="#FF6347"
-                  size={32}
+                  size={24}
                   className="hover:text-[#D94F33]"
                 />
                 ({selectedIds.length})

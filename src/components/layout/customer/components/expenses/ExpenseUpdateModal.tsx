@@ -10,6 +10,8 @@ export type PayloadType = {
   category: string;
   description: string;
   expense_type: string;
+  sub_category: string;
+  tag_category: string;
   transaction_date?: string;
   createdAt?: string;
   receipt?: {
@@ -44,7 +46,7 @@ export default function ExpenseUpdateModal({
         <SharedModal
           open={isModalOpen}
           onOpenChange={setModalOpen}
-          customClassName="max-w-[500px]"
+          customClassName="max-w-[650px]"
         >
           <div className="bg-white">
             <ExpenseAddContent

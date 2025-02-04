@@ -37,11 +37,11 @@ export default function Onboard() {
     if (
       status === 'authenticated' &&
       session?.user?.role &&
-      user?.questionnaires?.length > 0
+      user?.isStepperSkippedOrCompleted
     ) {
       router.push(`/${session.user.role}/dashboard`);
     }
-  }, [status, session, router, user?.questionnaires]);
+  }, [status, session, router, user?.isStepperSkippedOrCompleted]);
 
   if (status !== 'authenticated') {
     return (
