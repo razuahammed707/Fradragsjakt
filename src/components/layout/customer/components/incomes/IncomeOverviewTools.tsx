@@ -202,7 +202,7 @@ function IncomeOverviewTools({
               modalContent.key !== 'confirmation' && 'max-w-[650px]'
             )}
           >
-            <div className="bg-white ma-">{renderContent()}</div>
+            <div className="bg-white">{renderContent()}</div>
           </SharedModal>
         </div>
       </div>

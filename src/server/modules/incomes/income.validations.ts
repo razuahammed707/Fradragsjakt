@@ -16,10 +16,12 @@ const createIncomeSchema = z.object({
   amount: z.number({
     required_error: 'Amount is required',
   }),
-  receipt: z.object({
-    link: z.string(),
-    mimeType: z.string(),
-  }),
+  receipt: z
+    .object({
+      link: z.string(),
+      mimeType: z.string(),
+    })
+    .optional(),
 });
 const createBulkIncomeSchema = z.array(
   z.object({
