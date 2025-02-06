@@ -17,6 +17,10 @@ const IncomeSchema = new Schema<IIncome>(
       type: String,
       trim: true,
     },
+    tag_category: {
+      type: String,
+      trim: true,
+    },
     income_type: {
       type: String,
       enum: Object.values(IncomeType),
@@ -41,7 +45,6 @@ const IncomeSchema = new Schema<IIncome>(
     rule: {
       type: Schema.Types.ObjectId,
       ref: 'rule',
-      //required: true,
     },
   },
   {

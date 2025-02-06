@@ -10,8 +10,8 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
-import { extended_questionnaires } from '@/lib/questionnaires';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { getSubCategories } from '@/utils/helpers/getSubCategories';
 
 type RuleFormData = {
   description_contains: string;
@@ -37,7 +37,7 @@ function CreateRuleModalContent({
     useForm<RuleFormData>({
       defaultValues: {
         expense_type: 'business',
-        rule_for: updateRulePayload?.rule_for || 'expense',
+        //rule_for: updateRulePayload?.rule_for || 'expense',
         category: updateRulePayload?.category_title || '',
         sub_category: updateRulePayload?.sub_category || '',
       },
@@ -64,14 +64,16 @@ function CreateRuleModalContent({
     }
   }, [selectedCategory]);
 
-  const ruleMutation = trpc.rules.createRule.useMutation({
-    onSuccess: () => {
-      toast.success(translate('toast.ruleCreatedSuccess'));
+  const ruleMutation = trpc.rules.createAndApplyRule.useMutation({
+    onSuccess: ({ message }) => {
+      toast.success(message || translate('toast.ruleCreatedSuccess'));
       setLoading(false);
       if (modalClose) {
         modalClose(false);
       }
       utils.rules.getRules.invalidate();
+      utils.expenses.getExpenses.invalidate();
+      utils.incomes.getIncomes.invalidate();
       reset();
     },
     onError: (error) => {
@@ -80,14 +82,16 @@ function CreateRuleModalContent({
     },
   });
 
-  const ruleUpdateMutation = trpc.rules.updateRule.useMutation({
-    onSuccess: () => {
-      toast.success(translate('toast.ruleUpdatedSuccess'));
+  const ruleUpdateMutation = trpc.rules.updateAndApplyRule.useMutation({
+    onSuccess: ({ message }) => {
+      toast.success(message || translate('toast.ruleUpdatedSuccess'));
       setLoading(false);
       if (modalClose) {
         modalClose(false);
       }
       utils.rules.getRules.invalidate();
+      utils.expenses.getExpenses.invalidate();
+      utils.incomes.getIncomes.invalidate();
       reset();
     },
     onError: (error) => {
@@ -103,17 +107,6 @@ function CreateRuleModalContent({
     } else {
       ruleMutation.mutate(data);
     }
-  };
-
-  const getSubCategories = (category: string): { answer: string }[] => {
-    const categoryData = extended_questionnaires.find(
-      (q) => q.question === category
-    );
-    if (!categoryData) return [];
-
-    return categoryData.answers.map((answer) => ({
-      answer: answer.answer,
-    }));
   };
 
   return (

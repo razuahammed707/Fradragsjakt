@@ -11,13 +11,17 @@ const createExpenseSchema = z.object({
   category: z.string({
     required_error: 'Category is required',
   }),
+  sub_category: z.string().optional(),
+  tag_category: z.string().optional(),
   amount: z.number({
     required_error: 'Amount is required',
   }),
-  receipt: z.object({
-    link: z.string(),
-    mimeType: z.string(),
-  }),
+  receipt: z
+    .object({
+      link: z.string(),
+      mimeType: z.string(),
+    })
+    .optional(),
 });
 const createBulkExpenseSchema = z.array(
   z.object({
@@ -31,14 +35,13 @@ const createBulkExpenseSchema = z.array(
   })
 );
 
-// Schema for the expense update payload
 const expenseUpdatePayloadSchema = z.object({
   rule: z.string(),
   category: z.string(),
   expense_type: z.string(),
   sub_category: z.string().optional(),
+  tag_category: z.string().optional(),
 });
-// Schema for the expense update payload
 const populateStatementSchema = z.array(
   z.object({
     description: z.string({
@@ -50,12 +53,11 @@ const populateStatementSchema = z.array(
   })
 );
 
-// Schema for the updateBulkExpense API input
 const updateBulkExpenseSchema = z.object({
   expenses: z.array(
     z.object({
-      expenseUpdatePayload: expenseUpdatePayloadSchema, // Assuming this schema is defined elsewhere
-      _id: z.string(), // The ID of the expense to be updated
+      expenseUpdatePayload: expenseUpdatePayloadSchema,
+      _id: z.string(),
     })
   ),
 });

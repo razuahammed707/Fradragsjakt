@@ -35,14 +35,11 @@ export const expenseRouter = router({
         const { page, limit, searchTerm, filterString } = input;
         const skip = (page - 1) * limit;
 
-        // Base query to filter expenses by user
         const query: Record<string, unknown> = { user: loggedUser?.id };
 
-        // Parse and add filters from filterString
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
 
-        // If a search term is provided, add a condition to match fields
         if (searchTerm) {
           query.$or = [
             { description: { $regex: searchTerm, $options: 'i' } },
@@ -93,7 +90,6 @@ export const expenseRouter = router({
           query.expense_type = ExpenseType.business;
         }
 
-        // Parse and add filters from filterString
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
 
@@ -131,7 +127,6 @@ export const expenseRouter = router({
           query.expense_type = ExpenseType.business;
         }
 
-        // Parse and add filters from filterString
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
 
@@ -168,7 +163,6 @@ export const expenseRouter = router({
           query.expense_type = ExpenseType.business;
         }
 
-        // Parse and add filters from filterString
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
 
@@ -261,13 +255,10 @@ export const expenseRouter = router({
           rule_for: 'expense',
         });
 
-        // Use Promise.all to ensure all async operations complete
         const expensesWithRules = await ExpenseHelpers.getExpensesWithRules(
           rules,
           loggedUser
         );
-
-        console.log('matched rules from expenses', expensesWithRules);
 
         const expensesWithAllRules = {
           expensesWithRules,
@@ -479,10 +470,8 @@ export const expenseRouter = router({
         ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id),
       ]);
 
-      // Merge questionnaires by category
       const categoryMap = new Map<string, any[]>();
 
-      // Process both income and expense values
       [...incomeValues, ...expenseValues].forEach((item) => {
         const category = item.question;
 
@@ -494,7 +483,6 @@ export const expenseRouter = router({
         }
       });
 
-      // Convert map to final format
       const mergedQuestionnaires = Array.from(categoryMap.entries())
         .map(([category, answers]) => ({
           question: category,

@@ -98,12 +98,11 @@ export function ContentDonation({
                 )}
                 required
               />
-              <Label className="text-black pt-[12px] pb-[6px] text-[12px] font-normal">
+              <Label className="text-black pt-[12px]  text-[12px] font-normal">
                 Upload verification document
               </Label>
               <FormReceiptInput
                 name="Gifts to voluntary organisations.Upload verification document"
-                control={control}
                 setValue={setValue}
                 defaultValue={getDefaultValue(
                   'Gifts to voluntary organisations',

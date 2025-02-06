@@ -44,7 +44,9 @@ export default function ExpenseDataTableFilter({
   setFilterString: (value: string) => void;
 }): JSX.Element {
   const { data: categoryData } = trpc.categories.getCategories.useQuery({
-    category_for: 'expense',
+    //category_for: 'expense',
+    page: 1,
+    limit: 1000,
   });
   const { translate } = useTranslation();
 

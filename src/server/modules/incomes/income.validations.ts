@@ -11,13 +11,17 @@ const createIncomeSchema = z.object({
   category: z.string({
     required_error: 'Category is required',
   }),
+  sub_category: z.string().optional(),
+  tag_category: z.string().optional(),
   amount: z.number({
     required_error: 'Amount is required',
   }),
-  receipt: z.object({
-    link: z.string(),
-    mimeType: z.string(),
-  }),
+  receipt: z
+    .object({
+      link: z.string(),
+      mimeType: z.string(),
+    })
+    .optional(),
 });
 const createBulkIncomeSchema = z.array(
   z.object({
@@ -35,6 +39,7 @@ const incomeUpdatePayloadSchema = z.object({
   rule: z.string(),
   category: z.string(),
   sub_category: z.string().optional(),
+  tag_category: z.string().optional(),
   income_type: z.string(),
 });
 

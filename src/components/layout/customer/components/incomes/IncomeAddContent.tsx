@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -13,25 +7,16 @@ import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
-import DragAndDropFile from '@/components/DragAndDropFile';
-import { useDropzone } from 'react-dropzone';
-import SharedTooltip from '@/components/SharedTooltip';
-import Link from 'next/link';
-import Image from 'next/image';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { PayloadType } from './IncomeUpdateModal';
-
-type UploadedImageType = {
-  link: string;
-  mimeType: string;
-  width?: number;
-  height?: number;
-};
+import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
+import { getSubCategories } from '@/utils/helpers/getSubCategories';
+import { FormReceiptInput } from '@/components/FormReceiptInput';
 
 export type FormData = {
   description: string;
   income_type: 'unknown' | 'personal' | 'business';
-  category: string; // Ensure this is a string
+  category: string;
   deduction_status: string;
   amount: string;
   receipt: {
@@ -40,24 +25,13 @@ export type FormData = {
   };
 };
 
-const defaultCategories = [
-  { title: 'Transport', value: 'Transport' },
-  { title: 'Meals', value: 'Meals' },
-  { title: 'Gas', value: 'Gas' },
-  { title: 'Unknown', value: 'Unknown' },
-];
-
-type CategoryType = { title: string; value: string };
-
 interface IncomeAddContentProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
-  categories?: CategoryType[];
   payload?: PayloadType;
   origin?: string;
 }
 
 function IncomeAddContent({
-  categories = [],
   setModalOpen,
   origin,
   payload,
@@ -67,21 +41,20 @@ function IncomeAddContent({
     handleSubmit,
     control,
     reset,
+    watch,
+    setValue,
     formState: { isValid },
   } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
-  const [fileLink, setFileLink] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState<UploadedImageType | null>(
-    null
-  );
+
+  const [subCategoryOptions, setSubCategoryOptions] = useState<
+    { answer: string }[]
+  >([]);
   const utils = trpc.useUtils();
 
-  const manipulatedCategories = Array.from(
-    new Map(
-      [...categories, ...defaultCategories].map((cat) => [cat.value, cat])
-    ).values()
-  );
+  const selectedCategory = watch('category');
+  //const query = { category_for: 'income' };
+  const { mainCategories, secondaryCategories } = useManipulatedCategories(); //query was used to call
 
   const createMutation = trpc.incomes.createIncome.useMutation({
     onSuccess: () => {
@@ -116,6 +89,8 @@ function IncomeAddContent({
       setLoading(false);
     },
     onError: (error) => {
+      console.log({ error });
+
       toast.error(
         error.message ||
           translate('componentsIncomeModal.income.toast.update_failure')
@@ -124,62 +99,14 @@ function IncomeAddContent({
     },
   });
 
-  const uploadMutation = trpc.upload.uploadFile.useMutation();
-
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-    });
-  };
-
-  const handleFileUpload = useCallback(
-    async (file: File | null) => {
-      if (!file) return;
-      setIsUploading(true);
-      try {
-        const base64File = await convertFileToBase64(file);
-        const result = await uploadMutation.mutateAsync({
-          base64File,
-          fileName: file.name,
-          fileType: file.type,
-          folder: 'files',
-        });
-        if (fileLink?.size) {
-          if (fileLink?.size > 2 * 1024 * 1024) {
-            toast.error('File size cannot exceed 10MB');
-            return;
-          }
-        }
-        setUploadedImage(result?.data);
-      } catch (error) {
-        console.error('Upload error:', error);
-      } finally {
-        setIsUploading(false);
-      }
-    },
-    [uploadMutation]
-  );
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    setFileLink(file);
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/*': [],
-      'application/pdf': [],
-    },
-  });
-
   useEffect(() => {
-    if (fileLink) handleFileUpload(fileLink);
-  }, [fileLink]);
-
+    if (selectedCategory) {
+      const subCategories = getSubCategories(selectedCategory);
+      setSubCategoryOptions(subCategories);
+    } else {
+      setSubCategoryOptions([]);
+    }
+  }, [selectedCategory]);
   const onSubmit = (data: FormData) => {
     const modifiedAmount =
       typeof data?.amount === 'number'
@@ -192,19 +119,11 @@ function IncomeAddContent({
         id: payload?._id,
         ...data,
         amount: modifiedAmount,
-        receipt: {
-          link: uploadedImage?.link || '',
-          mimeType: uploadedImage?.mimeType || '',
-        },
       });
     } else
       createMutation.mutate({
         ...data,
         amount: modifiedAmount,
-        receipt: {
-          link: uploadedImage?.link || '',
-          mimeType: uploadedImage?.mimeType || '',
-        },
       });
   };
 
@@ -216,106 +135,120 @@ function IncomeAddContent({
           : translate('componentsIncomeModal.income.heading.add_income')}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {['description', 'amount'].map((field) => (
-          <div key={field}>
-            <Label htmlFor={field}>
-              {field === 'description'
-                ? translate('componentsIncomeModal.income.label.description')
-                : translate('componentsIncomeModal.income.label.amount')}
+        <div className="max-h-[500px] space-y-1 overflow-y-auto pr-1 white-thumb">
+          {['description', 'amount'].map((field) => (
+            <div key={field}>
+              <Label htmlFor={field}>
+                {field === 'description'
+                  ? translate('componentsIncomeModal.income.label.description')
+                  : translate('componentsIncomeModal.income.label.amount')}
+              </Label>
+              <FormInput
+                type={field === 'amount' ? 'number' : 'text'}
+                name={field}
+                defaultValue={
+                  field === 'amount' ? payload?.amount : payload?.description
+                }
+                placeholder={
+                  field === 'description'
+                    ? 'Enter description'
+                    : 'Enter amount (NOK)'
+                }
+                disabled={field === 'amount' && origin === 'income update'}
+                control={control}
+                customClassName="w-full mt-2"
+                required
+              />
+            </div>
+          ))}
+          <div>
+            <Label htmlFor="income_type">
+              {translate('componentsIncomeModal.income.label.income_type')}
             </Label>
             <FormInput
-              type={field === 'amount' ? 'number' : 'text'}
-              name={field}
-              defaultValue={
-                field === 'amount' ? payload?.amount : payload?.description
-              }
-              placeholder={
-                field === 'description'
-                  ? 'Enter description'
-                  : 'Enter amount (NOK)'
-              }
-              disabled={field === 'amount' && origin === 'income update'}
-              control={control}
+              name="income_type"
+              defaultValue={payload?.income_type}
               customClassName="w-full mt-2"
+              type="select"
+              control={control}
+              placeholder="Select income type"
+              options={[
+                { title: 'Deductible', value: 'business' },
+                { title: 'Personal', value: 'personal' },
+                { title: 'Unknown', value: 'unknown' },
+              ]}
               required
             />
           </div>
-        ))}
-        <div>
-          <Label htmlFor="income_type">
-            {translate('componentsIncomeModal.income.label.income_type')}
-          </Label>
-          <FormInput
-            name="income_type"
-            defaultValue={payload?.income_type}
-            customClassName="w-full mt-2"
-            type="select"
-            control={control}
-            placeholder="Select income type"
-            options={[
-              { title: 'Deductible', value: 'business' },
-              { title: 'Personal', value: 'personal' },
-              { title: 'Unknown', value: 'unknown' },
-            ]}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="category">
-            {translate('componentsIncomeModal.income.label.category')}
-          </Label>
-          <SelectFormInput
-            name="category"
-            control={control}
-            placeholder="Select category"
-            options={manipulatedCategories.map((category) => ({
-              title: category.title,
-              value: category.value,
-            }))}
-            defaultValue={payload?.category || ''}
-          />
-        </div>
-        <div className="rounded-lg mb-5 mt-2 bg-[#F0EFFE] p-5 border-dashed border-2 border-[#5B52F9]">
-          <div
-            {...getRootProps()}
-            className="h-full w-full flex items-center justify-center"
-          >
-            <DragAndDropFile
-              fileLink={fileLink}
-              loading={isUploading}
-              getInputProps={getInputProps}
-              isDragActive={isDragActive}
+          <div>
+            <Label htmlFor="category">
+              {translate('componentsIncomeModal.income.label.category')}
+            </Label>
+            <SelectFormInput
+              name="category"
+              control={control}
+              placeholder="Select category"
+              customClassName="mt-2"
+              options={mainCategories?.map((category) => ({
+                title: category.title,
+                value: category.value,
+              }))}
+              defaultValue={payload?.category || ''}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="sub_category">Sub Category</Label>
+            <SelectFormInput
+              name="sub_category"
+              control={control}
+              customClassName="w-full mt-2"
+              placeholder="Select sub-category"
+              defaultValue={payload?.sub_category}
+              options={subCategoryOptions.map((q) => ({
+                title: q.answer,
+                value: q.answer,
+              }))}
+            />
+          </div>
+          <div>
+            <Label htmlFor="sub_category">Category Tag</Label>
+            <SelectFormInput
+              name="tag_category"
+              control={control}
+              customClassName="w-full mt-2"
+              placeholder="Select as Tag"
+              defaultValue={payload?.tag_category}
+              options={secondaryCategories}
+              searchEnabled
+            />
+          </div>
+          <div>
+            <Label htmlFor="sub_category">Reciept</Label>
+            <FormReceiptInput
+              name="receipt"
+              defaultValue={payload?.receipt?.link}
+              includeMimeType
+              setValue={(
+                name: string,
+                value: string | { link: string; mimeType: string }
+              ) => {
+                setValue(name as any, value as any);
+              }}
+              customClassName="mt-2"
             />
           </div>
         </div>
-        {uploadedImage && !uploadedImage.mimeType.includes('csv') && (
-          <SharedTooltip
-            visibleContent={
-              <Link href="/" className="underline font-medium text-blue-500">
-                {translate('componentsIncomeModal.income.uploaded_receipt')}
-              </Link>
-            }
-          >
-            <Image
-              alt="image"
-              src={uploadedImage.link}
-              width={uploadedImage.width ? uploadedImage.width / 3 : 100}
-              height={uploadedImage.height ? uploadedImage.height / 3 : 100}
-            />
-          </SharedTooltip>
-        )}
-        <div className="py-3">
-          <Button
-            disabled={!isValid || loading || isUploading}
-            type="submit"
-            className="w-full text-white"
-          >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {origin === 'income update'
-              ? translate('componentsIncomeModal.income.button.update')
-              : translate('componentsIncomeModal.income.button.add')}{' '}
-          </Button>
-        </div>
+        <Button
+          disabled={!isValid || loading}
+          type="submit"
+          className="w-full text-white"
+        >
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {origin === 'income update'
+            ? translate('componentsIncomeModal.income.button.update')
+            : translate('componentsIncomeModal.income.button.add')}{' '}
+        </Button>
       </form>
     </div>
   );

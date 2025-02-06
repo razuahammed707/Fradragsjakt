@@ -1,8 +1,6 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
-import Image from 'next/image';
+import { CloudUpload, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import NewUpload from '../../public/NewUpload.svg';
 
 type DragAndDropFileProps = {
   loading: boolean;
@@ -37,32 +35,27 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
           inputProps.onClick?.(e);
         }}
       />
+
       {loading ? (
         <Loader2 size={40} className="animate-spin text-primary" />
       ) : (
-        <>
-          <Image src={NewUpload} alt="Upload icon" width={40} height={40} />
-          <p className="mt-2 text-sm text-gray-600 pb-5">
-            Drag and drop your file here, or click below to upload.
-          </p>
-          <p className="text-xs text-gray-500">
-            The maximum file size allowed is 10MB.
-          </p>
-          {fileLink && (
-            <p className="text-xs text-gray-700 mt-1">
-              Selected file: {fileLink.name}
-            </p>
-          )}
-          <Button
-            variant="purple"
-            className="mt-4"
-            onClick={handleButtonClick}
-            type="button"
-          >
-            Browse File
-          </Button>
-        </>
+        <CloudUpload size={40} className="text-[#9C9CAA]" />
       )}
+      <p className="mt-2 text-gray-600">
+        Drag an xlsx, csv or txt file here, or click to browse.
+      </p>
+      <p className="text-sm text-gray-500">Maximum file size: 5MB</p>
+      {fileLink && (
+        <p className="text-xs text-gray-700">Selected file: {fileLink.name}</p>
+      )}
+      <Button
+        variant="purple"
+        className="mt-2 px-6"
+        onClick={handleButtonClick}
+        type="button"
+      >
+        Browse File
+      </Button>
     </div>
   );
 };

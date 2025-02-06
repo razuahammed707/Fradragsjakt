@@ -125,7 +125,6 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           </p>
           <FormReceiptInput
             name="Have expenses for road toll or ferry when travelling between your home and workplace.Upload verification document"
-            control={control}
             setValue={setValue}
             defaultValue={getDefaultValue(
               'Have expenses for road toll or ferry when travelling between your home and workplace',
@@ -196,7 +195,6 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           </p>
           <FormReceiptInput
             name="Moved for a new job.Upload verification document"
-            control={control}
             setValue={setValue}
             defaultValue={getDefaultValue(
               'Moved for a new job',
@@ -296,7 +294,6 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           </p>
           <FormReceiptInput
             name="I went to school last year.Upload verification document"
-            control={control}
             setValue={setValue}
             defaultValue={getDefaultValue(
               'I went to school last year',
@@ -408,7 +405,6 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           </p>
           <FormReceiptInput
             name="Disputation of a PhD.Upload verification document"
-            control={control}
             setValue={setValue}
             defaultValue={getDefaultValue(
               'Disputation of a PhD',

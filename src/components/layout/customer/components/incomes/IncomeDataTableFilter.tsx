@@ -44,7 +44,9 @@ export default function IncomeDataTableFilter({
   setFilterString: (value: string) => void;
 }): JSX.Element {
   const { data: categoryData } = trpc.categories.getCategories.useQuery({
-    category_for: 'income',
+    //category_for: 'income',
+    page: 1,
+    limit: 1000,
   });
   const { translate } = useTranslation();
 

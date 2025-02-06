@@ -16,8 +16,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (file) {
-        if (file.size > 10 * 1024 * 1024) {
-          toast.error('File size cannot exceed 10MB');
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error('File size cannot exceed 5MB');
           return;
         }
         const fileType = file.name.split('.').pop()?.toLowerCase();

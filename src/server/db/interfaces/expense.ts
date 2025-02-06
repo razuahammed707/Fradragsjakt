@@ -15,6 +15,7 @@ export interface IExpense extends Document {
   description: string;
   category: string;
   sub_category: string;
+  tag_category: string;
   expense_type: ExpenseType;
   amount: number;
   transaction_date?: Date;
@@ -30,6 +31,8 @@ export interface IExpenseUpdate extends Document {
   id: string;
   description: string;
   category: string;
+  sub_category: string;
+  tag_category: string;
   expense_type: ExpenseType;
   amount: number;
   transaction_date?: Date;
