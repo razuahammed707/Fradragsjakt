@@ -703,6 +703,7 @@ async function getQuestionnairePrefilledValues(userId: string) {
       'Housing and Property',
       'Gifts or Donations',
       'Hobby, Odd Jobs, and Extra Incomes',
+      'Foreign Income',
     ];
 
     const subCategoryValues = await ExpenseModel.aggregate([
@@ -711,6 +712,10 @@ async function getQuestionnairePrefilledValues(userId: string) {
           user: new mongoose.Types.ObjectId(String(userId)),
           category: { $in: validCategories },
           expense_type: ExpenseType.business,
+          sub_category: {
+            $exists: true,
+            $ne: '',
+          },
         },
       },
       {

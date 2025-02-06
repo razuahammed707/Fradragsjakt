@@ -470,25 +470,66 @@ export const expenseRouter = router({
         ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id),
       ]);
 
-      const categoryMap = new Map<string, any[]>();
+      const categoryMap = new Map<string, Map<string, any[]>>();
+      console.log('expense_', JSON.stringify(expenseValues));
 
       [...incomeValues, ...expenseValues].forEach((item) => {
         const category = item.question;
 
         if (!categoryMap.has(category)) {
-          categoryMap.set(category, item.answers);
-        } else {
-          const existingAnswers = categoryMap.get(category);
-          categoryMap.set(category, [...existingAnswers!, ...item.answers]);
+          categoryMap.set(category, new Map());
         }
+
+        const answerMap = categoryMap.get(category)!;
+
+        item.answers.forEach((answerObj) => {
+          const [key, values] = Object.entries(answerObj)[0]; // Extract key and values
+          if (!answerMap.has(key)) {
+            answerMap.set(key, []);
+          }
+
+          const existingValues = answerMap.get(key)!;
+
+          values.forEach((value) => {
+            const existingEntry = existingValues.find((v) =>
+              Object.keys(v).some((k) => k in value)
+            );
+
+            if (existingEntry) {
+              Object.entries(value).forEach(([subKey, subValue]) => {
+                const existingSubValue = existingEntry[subKey];
+
+                if (!isNaN(Number(subValue))) {
+                  // Keep it as a string while summing
+                  const sum =
+                    (parseFloat(existingSubValue) || 0) + parseFloat(subValue);
+                  existingEntry[subKey] = sum.toFixed(2); // Convert back to string with 2 decimal places
+                } else {
+                  if (!Array.isArray(existingEntry[subKey])) {
+                    existingEntry[subKey] = existingSubValue
+                      ? [existingSubValue]
+                      : [];
+                  }
+                  existingEntry[subKey].push(subValue);
+                }
+              });
+            } else {
+              existingValues.push({ ...value });
+            }
+          });
+        });
       });
 
-      const mergedQuestionnaires = Array.from(categoryMap.entries())
-        .map(([category, answers]) => ({
+      const mergedQuestionnaires = Array.from(categoryMap.entries()).map(
+        ([category, answersMap]) => ({
           question: category,
-          answers,
-        }))
-        .filter((q) => q.answers.length > 0);
+          answers: Array.from(answersMap.entries()).map(([key, values]) => ({
+            [key]: values,
+          })),
+        })
+      );
+
+      console.log(mergedQuestionnaires);
 
       return {
         status: 200,

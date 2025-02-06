@@ -621,10 +621,13 @@ const updateIncomeRecord = async (input: IIncomeUpdate, userId: string) => {
 async function getQuestionnairePrefilledValues(userId: string) {
   try {
     const validCategories = [
+      'Health and Family',
       'Bank and Loans',
       'Work and Education',
       'Housing and Property',
+      'Gifts or Donations',
       'Hobby, Odd Jobs, and Extra Incomes',
+      'Foreign Income',
     ];
 
     const subCategoryValues = await IncomeModel.aggregate([
@@ -633,6 +636,10 @@ async function getQuestionnairePrefilledValues(userId: string) {
           user: new mongoose.Types.ObjectId(String(userId)),
           category: { $in: validCategories },
           income_type: IncomeType.business,
+          sub_category: {
+            $exists: true,
+            $ne: '',
+          },
         },
       },
       {

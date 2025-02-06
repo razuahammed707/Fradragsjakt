@@ -196,7 +196,7 @@ export const extended_questionnaires = [
       {
         answer:
           'Have income or wealth in another country than Norway and pay tax in the other country',
-        type: 'commonF',
+        type: 'common',
       },
     ],
   },

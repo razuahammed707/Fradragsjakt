@@ -20,7 +20,6 @@ export default function Onboard() {
   const { data: session, status } = useSession();
   const hasToasted = useRef(false);
   const { currentStepIndex, setCurrentStepIndex } = useQuestionnaireState();
-  console.log('currentStepIndex', currentStepIndex);
 
   const { data: user } = trpc.users.getUserByEmail.useQuery(undefined, {
     enabled: status === 'authenticated',

@@ -62,11 +62,7 @@ export default function Login() {
           : `/${role}/dashboard`;
 
       if (role && targetRoute) {
-        const timer = setTimeout(() => {
-          router.replace(targetRoute);
-        }, 100);
-
-        return () => clearTimeout(timer);
+        router.replace(targetRoute);
       }
     }
   }, [session, status, router]);
