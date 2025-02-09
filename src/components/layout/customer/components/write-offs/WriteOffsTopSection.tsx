@@ -38,7 +38,9 @@ export default function WriteOffsTopSection({
   return (
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-4 p-6 bg-white flex flex-col justify-between rounded-2xl">
-        <h3 className="text-xl text-[#101010] font-semibold">Write-Offs</h3>
+        <h3 className="text-xl text-[#101010] font-semibold">
+          Deductible Expense
+        </h3>
         <p className="text-[32px] text-[#00104B] font-bold">
           NOK {formatNumberWithTwoDecimals(manipulateExpenseTypeTotal)}
         </p>

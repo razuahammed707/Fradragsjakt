@@ -21,6 +21,8 @@ export type ExpenseColumnProps = {
   createdAt?: string;
   description: string;
   category: string;
+  sub_category: string;
+  tag_category: string;
   expense_type: string;
   amount: number;
 };
