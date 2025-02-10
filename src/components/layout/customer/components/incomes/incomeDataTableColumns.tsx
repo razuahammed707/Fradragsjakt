@@ -21,6 +21,8 @@ export type IncomeColumnProps = {
   createdAt?: string;
   description: string;
   category: string;
+  sub_category: string;
+  tag_category: string;
   income_type: string;
   amount: number;
 };

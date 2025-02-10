@@ -6,6 +6,7 @@ import SharedPagination from '@/components/SharedPagination';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import { ExpenseDataTableColumns } from './ExpenseDataTableColumns';
 import { trpc } from '@/utils/trpc';
+import ExpenseUpdateModal, { PayloadType } from './ExpenseUpdateModal';
 
 type IFilterProps = {
   filterString: string;
@@ -21,6 +22,7 @@ function ExpenseOverviewSection({
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [resetSelection, setResetSelection] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<PayloadType | null>(null);
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -63,6 +65,7 @@ function ExpenseOverviewSection({
           data={expensesResponse?.data || []}
           onSelectionChange={setSelectedIds}
           resetRowSelection={resetSelection}
+          setSelectedRow={setSelectedRow}
         />
         <SharedPagination
           currentPage={currentPage}
@@ -72,6 +75,13 @@ function ExpenseOverviewSection({
           onPageLimitChange={handlePageLimitChange}
         />
       </div>
+      {selectedRow && (
+        <ExpenseUpdateModal
+          payload={selectedRow}
+          rowClickEnabled
+          onClose={() => setSelectedRow(null)}
+        />
+      )}
     </div>
   );
 }
