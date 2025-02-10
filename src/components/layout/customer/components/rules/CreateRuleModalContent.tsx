@@ -12,15 +12,17 @@ import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getSubCategories } from '@/utils/helpers/getSubCategories';
+import { RuleFormData, RuleFormSchema } from '@/types/rule-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-type RuleFormData = {
-  description_contains: string;
-  expense_type: 'business' | 'personal';
-  category: string;
-  //rule_for: 'expense' | 'income';
-  sub_category: string;
-  tag_category: string;
-};
+// type RuleFormData = {
+//   description_contains: string;
+//   expense_type: 'business' | 'personal';
+//   category: string;
+//   sub_category: string;
+//   tag_category: string;
+//   sub_category_dependant?: string; // New field for dependant input
+// };
 
 type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
@@ -28,21 +30,41 @@ type ExpenseRuleContentProps = {
   origin: string | undefined;
 };
 
+export const DependantKeys: Record<string, string> = {
+  'Have children aged 11 years or younger':
+    'How many children do you have under the age of 12?',
+  'I have children aged 12 or older with special care needs':
+    'Do you have children with needs for special care?',
+  'Have taken out a joint loan with someone': 'Your ownership share',
+  'Sold a residential property or holiday home profit or loss':
+    'Was the property your primary residence for at least 12 of the last 24 months',
+  'I have received salary from odd jobs and services':
+    'Received salary from odd jobs and services exceeding NOK 6000?',
+  'Have income or wealth in another country than Norway and pay tax in the other country':
+    'Norway tax rate on this income',
+};
+
 function CreateRuleModalContent({
   modalClose,
   updateRulePayload,
   origin,
 }: ExpenseRuleContentProps) {
-  const { handleSubmit, control, watch, formState, reset } =
-    useForm<RuleFormData>({
-      defaultValues: {
-        expense_type: 'business',
-        //rule_for: updateRulePayload?.rule_for || 'expense',
-        category: updateRulePayload?.category_title || '',
-        sub_category: updateRulePayload?.sub_category || '',
-      },
-      mode: 'onChange',
-    });
+  const {
+    handleSubmit,
+    control,
+    watch,
+    formState: { isValid },
+    reset,
+  } = useForm<RuleFormData>({
+    resolver: zodResolver(RuleFormSchema),
+    defaultValues: {
+      expense_type: 'business',
+      category: updateRulePayload?.category_title || '',
+      sub_category: updateRulePayload?.sub_category || '',
+      tag_category: updateRulePayload?.tag_category || '',
+    },
+    mode: 'onChange',
+  });
 
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
@@ -52,6 +74,7 @@ function CreateRuleModalContent({
   >([]);
 
   const selectedCategory = watch('category');
+  const selectedSubCategory = watch('sub_category');
 
   const { mainCategories, secondaryCategories } = useManipulatedCategories();
 
@@ -109,6 +132,9 @@ function CreateRuleModalContent({
     }
   };
 
+  const shouldShowDependantField =
+    selectedSubCategory && DependantKeys[selectedSubCategory];
+
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
@@ -135,22 +161,6 @@ function CreateRuleModalContent({
         <h1 className="font-medium text-lg text-black mb-4">
           {translate('componentsRuleModal.rule.then')}
         </h1>
-        {/*  <div>
-          <Label htmlFor="rule_for">Rule For</Label>
-          <FormInput
-            name="rule_for"
-            id="rule_for"
-            customClassName="w-full mt-2"
-            type="select"
-            control={control}
-            placeholder="Select rule for"
-            options={[
-              { title: 'Expense', value: 'expense' },
-              { title: 'Income', value: 'income' },
-            ]}
-            required
-          />
-        </div> */}
         <div>
           <Label htmlFor="expense_type">Type</Label>
           <FormInput
@@ -182,7 +192,7 @@ function CreateRuleModalContent({
               placeholder={translate('componentsRuleModal.rule.selectCategory')}
               defaultValue={updateRulePayload?.category_title}
               options={mainCategories}
-              errorMessage={formState.errors.category?.message}
+              required
             />
           </ScrollArea>
         </div>
@@ -201,6 +211,24 @@ function CreateRuleModalContent({
             }))}
           />
         </div>
+
+        {shouldShowDependantField && (
+          <div>
+            <Label htmlFor="sub_category_dependant">
+              {DependantKeys[selectedSubCategory]}
+            </Label>
+            <FormInput
+              type="text"
+              name="sub_category_dependant"
+              id="sub_category_dependant"
+              placeholder={DependantKeys[selectedSubCategory]}
+              control={control}
+              customClassName="w-full mt-2"
+              required
+            />
+          </div>
+        )}
+
         <div>
           <Label htmlFor="sub_category">Category Tag</Label>
           <SelectFormInput
@@ -217,7 +245,7 @@ function CreateRuleModalContent({
           <Button
             type="submit"
             className="w-full text-white"
-            disabled={!formState.isValid || loading}
+            disabled={!isValid || loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {!origin

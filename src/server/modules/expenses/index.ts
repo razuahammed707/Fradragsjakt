@@ -471,7 +471,6 @@ export const expenseRouter = router({
       ]);
 
       const categoryMap = new Map<string, Map<string, any[]>>();
-      console.log('expense_', JSON.stringify(expenseValues));
 
       [...incomeValues, ...expenseValues].forEach((item) => {
         const category = item.question;
@@ -528,8 +527,6 @@ export const expenseRouter = router({
           })),
         })
       );
-
-      console.log(mergedQuestionnaires);
 
       return {
         status: 200,

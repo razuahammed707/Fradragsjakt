@@ -162,7 +162,6 @@ export function ContentHealthFamily({
           </p>
           <FormReceiptInput
             name="I have children aged 12 or older with special care needs.Upload verification document"
-            control={control}
             setValue={setValue}
             defaultValue={getDefaultValue(
               'I have children aged 12 or older with special care needs',

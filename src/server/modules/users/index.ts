@@ -201,7 +201,6 @@ export const userRouter = router({
     .input(userValidation.userQuestionnaireSchema)
     .mutation(async ({ ctx, input }) => {
       const { question, answers } = input;
-      console.log({ question });
 
       const sessionUser = ctx.user as JwtPayload;
       if (!sessionUser?.email) {
