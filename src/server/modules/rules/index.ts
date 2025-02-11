@@ -227,7 +227,6 @@ export const rulesRouter = router({
     .input(ruleValidation.deleteRuleSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        console.log('delete rule input', input);
         const { _id } = input;
         const sessionUser = ctx.user as JwtPayload;
 
@@ -235,13 +234,21 @@ export const rulesRouter = router({
           throw new Error('Authentication required');
         }
 
-        const rule = await RuleModel.findByIdAndDelete(_id);
+        const deletedRule = await RuleModel.findByIdAndDelete(_id);
+
+        if (!deletedRule) {
+          throw new Error('Rule not found');
+        }
+
+        const updateResult =
+          await RuleHelpers.updateTransactionsOnRuleDeletion(_id);
 
         return {
           message: 'Rule deleted successfully',
           status: 200,
-          data: rule,
-        } as ApiResponse<typeof rule>;
+          data: deletedRule,
+          updateResult,
+        } as ApiResponse<typeof deletedRule>;
       } catch (error: unknown) {
         const { message } = errorHandler(error);
         throw new ApiError(httpStatus.NOT_FOUND, message);
@@ -249,10 +256,8 @@ export const rulesRouter = router({
     }),
   updateManyRule: protectedProcedure.query(async () => {
     try {
-      // Update all categories to set category_for to "expense"
       await RuleModel.updateMany({}, { $set: { rule_for: 'expense' } });
 
-      // Fetch the updated categories
       const categories = await RuleModel.find({});
 
       return {

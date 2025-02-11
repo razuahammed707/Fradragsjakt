@@ -79,7 +79,6 @@ const QuestionnairesReviewSection = () => {
 
   const { data: prefilledValues } =
     trpc.expenses.getQuestionnairePrefilledValues.useQuery();
-  console.log({ prefilledValues });
 
   const utils = trpc.useUtils();
 

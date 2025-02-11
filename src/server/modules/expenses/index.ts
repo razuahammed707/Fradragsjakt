@@ -465,15 +465,12 @@ export const expenseRouter = router({
     try {
       const loggedUser = ctx.user as JwtPayload;
 
-      const [incomeValues, expenseValues] = await Promise.all([
-        IncomeHelpers.getQuestionnairePrefilledValues(loggedUser.id),
-        ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id),
-      ]);
+      const expenseValues =
+        await ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id);
 
       const categoryMap = new Map<string, Map<string, any[]>>();
-      console.log('expense_', JSON.stringify(expenseValues));
 
-      [...incomeValues, ...expenseValues].forEach((item) => {
+      expenseValues.forEach((item) => {
         const category = item.question;
 
         if (!categoryMap.has(category)) {
@@ -483,7 +480,7 @@ export const expenseRouter = router({
         const answerMap = categoryMap.get(category)!;
 
         item.answers.forEach((answerObj) => {
-          const [key, values] = Object.entries(answerObj)[0]; // Extract key and values
+          const [key, values] = Object.entries(answerObj)[0];
           if (!answerMap.has(key)) {
             answerMap.set(key, []);
           }
@@ -500,10 +497,9 @@ export const expenseRouter = router({
                 const existingSubValue = existingEntry[subKey];
 
                 if (!isNaN(Number(subValue))) {
-                  // Keep it as a string while summing
                   const sum =
                     (parseFloat(existingSubValue) || 0) + parseFloat(subValue);
-                  existingEntry[subKey] = sum.toFixed(2); // Convert back to string with 2 decimal places
+                  existingEntry[subKey] = sum.toFixed(2);
                 } else {
                   if (!Array.isArray(existingEntry[subKey])) {
                     existingEntry[subKey] = existingSubValue
@@ -528,8 +524,6 @@ export const expenseRouter = router({
           })),
         })
       );
-
-      console.log(mergedQuestionnaires);
 
       return {
         status: 200,

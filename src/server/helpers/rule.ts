@@ -275,7 +275,42 @@ async function findByRuleAndUpdateTransactions(
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
   }
 }
+async function updateTransactionsOnRuleDeletion(ruleId: string | string[]) {
+  try {
+    const [expenseUpdates, incomeUpdates] = await Promise.all([
+      ExpenseModel.updateMany(
+        { rule: ruleId },
+        {
+          $set: {
+            category: 'unknown',
+            expense_type: 'unknown',
+            sub_category: '',
+            tag_category: '',
+          },
+        }
+      ),
+      IncomeModel.updateMany(
+        { rule: ruleId },
+        {
+          $set: {
+            category: 'unknown',
+            income_type: 'unknown',
+            sub_category: '',
+            tag_category: '',
+          },
+        }
+      ),
+    ]);
 
+    return {
+      expenses: { count: expenseUpdates.modifiedCount },
+      incomes: { count: incomeUpdates.modifiedCount },
+    };
+  } catch (error) {
+    const { message } = errorHandler(error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+  }
+}
 async function findExistingRule(ruleId: string, userId: string) {
   try {
     const rule = await RuleModel.findOne({
@@ -336,4 +371,5 @@ export const RuleHelpers = {
   findCategory,
   findByRuleAndUpdateTransactions,
   updateSuccessResponse,
+  updateTransactionsOnRuleDeletion,
 };
