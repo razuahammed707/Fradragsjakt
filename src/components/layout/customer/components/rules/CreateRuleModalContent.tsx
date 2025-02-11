@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { getSubCategories } from '@/utils/helpers/getSubCategories';
 import { RuleFormData, RuleFormSchema } from '@/types/rule-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 
 // type RuleFormData = {
 //   description_contains: string;
@@ -104,7 +105,14 @@ function CreateRuleModalContent({
       setLoading(false);
     },
   });
-
+  const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
+    onSuccess: () => {
+      utils.users.getUserByEmail.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'User questionnaires updation failed!');
+    },
+  });
   const ruleUpdateMutation = trpc.rules.updateAndApplyRule.useMutation({
     onSuccess: ({ message }) => {
       toast.success(message || translate('toast.ruleUpdatedSuccess'));
@@ -125,10 +133,35 @@ function CreateRuleModalContent({
 
   const onSubmit = (data: RuleFormData) => {
     setLoading(true);
+
+    if (data.sub_category && data.sub_category_dependant) {
+      const questionnaireFormData = {
+        [data.sub_category]: {
+          [DependantKeys[data.sub_category]]: data.sub_category_dependant,
+        },
+      };
+
+      const payload = transformFormDataToPayload(
+        data.category,
+        questionnaireFormData
+      );
+      console.log({ payload });
+
+      updateQuestionnaires.mutate(payload);
+    }
+
+    const ruleMutationData = {
+      ...data,
+      sub_category_dependant: undefined,
+    };
+
     if (origin && updateRulePayload) {
-      ruleUpdateMutation.mutate({ _id: updateRulePayload?._id, ...data });
+      ruleUpdateMutation.mutate({
+        _id: updateRulePayload?._id,
+        ...ruleMutationData,
+      });
     } else {
-      ruleMutation.mutate(data);
+      ruleMutation.mutate(ruleMutationData);
     }
   };
 
