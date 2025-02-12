@@ -34,8 +34,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
   origin = 'business',
 }) => {
   const { data: user } = trpc.users.getUserByEmail.useQuery();
-
+  const { data: expensesWithThreshold } =
+    trpc.expenses.getBusinessExpensesWithThreshold.useQuery();
   const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
+  console.log({ expensesWithThreshold });
 
   const largestItem = (items ? items : personalData)?.reduce((prev, current) =>
     current.total_amount > prev.total_amount ? current : prev
@@ -52,7 +54,10 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
         <div>
           <h2 className="text-[13px] font-semibold text-[#627A97]">{title}</h2>
           <p className="text-2xl font-bold text-[#00104B]">
-            NOK {formatNumberWithTwoDecimals(total)}
+            NOK{' '}
+            {formatNumberWithTwoDecimals(
+              expensesWithThreshold?.data?.totalAmount
+            )}
           </p>
         </div>
         {origin === 'personal' ? (
