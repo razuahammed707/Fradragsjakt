@@ -99,7 +99,6 @@ async function createExpenseFromBulkInput(
   userId: string
 ) {
   try {
-    // Check rule
     const rule = await findMatchingRule(input.description, userId);
 
     const expenseData = {
@@ -132,9 +131,8 @@ const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
     const expensesWithRules = (
       await Promise.all(
         rules.map(async (rule) => {
-          // Create pattern with word boundaries for exact matches
           const pattern = rule.description_contains
-            .split(/\s*,\s*/) // Split by comma with optional spaces
+            .split(/\s*,\s*/)
             .map((term) => `\\b${escapeRegExp(term.trim())}\\b`)
             .join('|');
 
@@ -144,14 +142,13 @@ const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
             category: 'unknown',
             description: {
               $regex: pattern,
-              $options: 'i', // case insensitive
+              $options: 'i',
             },
           })
             .sort({ createdAt: -1 })
             .select('amount description category expense_type')
             .lean();
 
-          // Debug logging
           if (process.env.NODE_ENV !== 'production') {
             console.log(`Rule pattern: ${pattern}`);
             console.log(
@@ -238,7 +235,46 @@ const getCategoryAndExpenseTypeAnalytics = async (
     throw new ApiError(httpStatus.NOT_FOUND, message);
   }
 };
+const TAG_CATEGORY_THRESHOLDS = new Map<string, number>([
+  ['Furniture and Equipment', 15000],
+  ['Computer Hardware', 15000],
+]);
 
+const getExpensesByTypeAndSubCategory = async (
+  query: Record<string, unknown>
+) => {
+  return await ExpenseModel.find(query).exec();
+};
+
+const aggregateTagCategoryAmounts = async (expenses: any[]) => {
+  const aggregation = expenses.reduce(
+    (acc, expense) => {
+      const { tag_category, amount } = expense;
+      if (!acc[tag_category]) {
+        acc[tag_category] = 0;
+      }
+      acc[tag_category] += amount;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  return aggregation;
+};
+
+const applyThreshold = (aggregatedAmounts: Record<string, number>) => {
+  let totalAmount = 0;
+
+  for (const [category, amount] of Object.entries(aggregatedAmounts)) {
+    if (TAG_CATEGORY_THRESHOLDS.has(category)) {
+      const threshold = TAG_CATEGORY_THRESHOLDS.get(category)!;
+      aggregatedAmounts[category] = Math.min(amount, threshold);
+    }
+    totalAmount += aggregatedAmounts[category];
+  }
+
+  return { aggregatedAmounts, totalAmount };
+};
 interface ExpenseAnalytics {
   date?: string;
   totalAmount: number;
@@ -256,12 +292,10 @@ const getBusinessAndPersonalExpenseAnalytics = async (
   query: Record<string, unknown>
 ): Promise<ExpenseAnalyticsResult[]> => {
   try {
-    // Get the current date and calculate the date for 7 days ago
     const today = new Date();
     const sevenDaysAgo = new Date(today);
     sevenDaysAgo.setDate(today.getDate() - 7);
 
-    // Generate an array of the last 7 days (including today)
     const dateArray: string[] = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
@@ -269,7 +303,6 @@ const getBusinessAndPersonalExpenseAnalytics = async (
       dateArray.push(date.toISOString().split('T')[0]);
     }
 
-    // Single aggregate query using $facet
     const result = await ExpenseModel.aggregate<ExpenseAnalyticsResult>([
       {
         $match: {
@@ -282,7 +315,6 @@ const getBusinessAndPersonalExpenseAnalytics = async (
       },
       {
         $facet: {
-          // Business Expense Analytics grouped by day
           businessExpenseAnalytics: [
             {
               $match: {
@@ -332,7 +364,6 @@ const getBusinessAndPersonalExpenseAnalytics = async (
               $limit: 7,
             },
           ],
-          // Personal Expense Analytics grouped by day
           personalExpenseAnalytics: [
             {
               $match: {
@@ -386,7 +417,6 @@ const getBusinessAndPersonalExpenseAnalytics = async (
       },
     ]);
 
-    // Ensure complete data for both business and personal expenses
     return result.map((analytics) => ({
       businessExpenseAnalytics: ensureSevenDaysCoverage(
         analytics.businessExpenseAnalytics,
@@ -407,12 +437,10 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
   query: Record<string, unknown>
 ): Promise<ExpenseAnalyticsResult[]> => {
   try {
-    // Get the current date and calculate the date for 12 months ago
     const today = new Date();
     const twelveMonthsAgo = new Date(today);
     twelveMonthsAgo.setMonth(today.getMonth() - 11);
 
-    // Generate an array of the last 12 months (e.g., '2024-01')
     const monthArray: string[] = [];
     for (let i = 0; i < 12; i++) {
       const date = new Date(today);
@@ -421,7 +449,6 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
       monthArray.push(yearMonth);
     }
 
-    // Single aggregate query using $facet
     const result = await ExpenseModel.aggregate<ExpenseAnalyticsResult>([
       {
         $match: {
@@ -434,7 +461,6 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
       },
       {
         $facet: {
-          // Business Expense Analytics grouped by month
           businessExpenseAnalytics: [
             {
               $match: {
@@ -445,7 +471,7 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
               $group: {
                 _id: {
                   $dateToString: {
-                    format: '%Y-%m', // Group by year and month
+                    format: '%Y-%m',
                     date: '$transaction_date',
                   },
                 },
@@ -481,7 +507,6 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
               },
             },
           ],
-          // Personal Expense Analytics grouped by month
           personalExpenseAnalytics: [
             {
               $match: {
@@ -492,7 +517,7 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
               $group: {
                 _id: {
                   $dateToString: {
-                    format: '%Y-%m', // Group by year and month
+                    format: '%Y-%m',
                     date: '$transaction_date',
                   },
                 },
@@ -532,7 +557,6 @@ const getBusinessAndPersonalExpenseAnalyticsYearly = async (
       },
     ]);
 
-    // Ensure complete data for both business and personal expenses
     return result.map((analytics) => ({
       businessExpenseAnalytics: ensureTwelveMonthsCoverage(
         analytics.businessExpenseAnalytics,
@@ -564,17 +588,13 @@ const ensureSevenDaysCoverage = (
   analytics: ExpenseAnalytics[],
   dateArray: string[]
 ): ExpenseAnalytics[] => {
-  // Create a map of existing analytics by date
   const analyticsMap = new Map(analytics.map((item) => [item.date, item]));
 
-  // Generate full 7-day analytics with zero values for missing days
   return dateArray.map((date) => {
-    // Get the day name
     const dayName = new Date(date).toLocaleDateString('en-US', {
       weekday: 'short',
     });
 
-    // Return existing analytics or create a zero-value entry
     return analyticsMap.get(date)
       ? {
           ...analyticsMap.get(date)!,
@@ -595,7 +615,6 @@ const getWriteOffSummary = async (
   searchQuery: Record<string, unknown>
 ) => {
   try {
-    // Single aggregate query using $facet
     return await ExpenseModel.aggregate([
       {
         $match: searchQuery,
@@ -630,7 +649,6 @@ const getWriteOffSummary = async (
 
 const getTotalUniqueExpenseCategories = async (loggedUser: JwtPayload) => {
   try {
-    // Single aggregate query using $facet
     return await ExpenseModel.aggregate([
       {
         $match: {
@@ -771,4 +789,7 @@ export const ExpenseHelpers = {
   getBusinessAndPersonalExpenseAnalytics,
   getBusinessAndPersonalExpenseAnalyticsYearly,
   getQuestionnairePrefilledValues,
+  applyThreshold,
+  getExpensesByTypeAndSubCategory,
+  aggregateTagCategoryAmounts,
 };

@@ -107,6 +107,41 @@ export const expenseRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
+  getBusinessExpensesWithThreshold: protectedProcedure.query(
+    async ({ ctx }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        const query = {
+          user: new mongoose.Types.ObjectId(loggedUser?.id),
+          expense_type: 'business',
+          sub_category: { $in: ['', null, undefined] },
+        };
+
+        const expenses =
+          await ExpenseHelpers.getExpensesByTypeAndSubCategory(query);
+
+        const aggregatedAmounts =
+          await ExpenseHelpers.aggregateTagCategoryAmounts(expenses);
+
+        const { aggregatedAmounts: finalAggregatedAmounts, totalAmount } =
+          ExpenseHelpers.applyThreshold(aggregatedAmounts);
+
+        return {
+          status: 200,
+          message:
+            'Expenses fetched and aggregated successfully with threshold applied',
+          data: {
+            aggregatedAmounts: finalAggregatedAmounts,
+            totalAmount,
+          },
+        };
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }
+  ),
   getBusinessAndPersonalExpenseAnalytics: protectedProcedure
     .input(
       z.object({

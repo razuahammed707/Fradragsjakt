@@ -287,7 +287,7 @@ const QuestionnairesReviewSection = () => {
           <Separator className="bg-[#E4E4E7] my-6" />
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <p>Savings from questions</p>
+              <p>Expected write offs</p>
               <p className="font-medium">
                 NOK {formatNumberWithTwoDecimals(personalTotal)}
               </p>

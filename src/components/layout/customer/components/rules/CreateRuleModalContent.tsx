@@ -145,8 +145,6 @@ function CreateRuleModalContent({
         data.category,
         questionnaireFormData
       );
-      console.log({ payload });
-
       updateQuestionnaires.mutate(payload);
     }
 

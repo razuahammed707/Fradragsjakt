@@ -6,12 +6,16 @@ import { manipulatePersonalDeductions } from '@/utils/helpers/manipulatePersonal
 import { trpc } from '@/utils/trpc';
 import { formatNumberWithTwoDecimals } from '@/utils/helpers/formatNumberWithTwoDecimals';
 
-const DeductiveExpenses = ({
-  businessData,
-}: {
-  businessData: { total_amount: number }[];
-}) => {
+const DeductiveExpenses = (
+  {
+    //businessData,
+  }: {
+    businessData: { total_amount: number }[];
+  }
+) => {
   const { data: user } = trpc.users.getUserByEmail.useQuery();
+  const { data: expensesWithThreshold } =
+    trpc.expenses.getBusinessExpensesWithThreshold.useQuery();
 
   const personalData = manipulatePersonalDeductions(user?.questionnaires);
 
@@ -19,11 +23,12 @@ const DeductiveExpenses = ({
     (sum, current) => sum + current.total_amount,
     0
   );
-  const businessTotal = businessData?.reduce(
+  /* const businessTotal = businessData?.reduce(
     (sum, current) => sum + current.total_amount,
     0
-  );
-  const totalDeductibleAmount = businessTotal + personalTotal || 0;
+  ); */
+  const totalDeductibleAmount =
+    personalTotal + (expensesWithThreshold?.data?.totalAmount || 0) || 0;
   return (
     <Card className="col-span-6 py-6 px-[21px] border border-[#EEF0F4] shadow-none rounded-2xl">
       <CardContent className="p-0">
@@ -50,7 +55,11 @@ const DeductiveExpenses = ({
             </div>
             <CircularProgressChart
               series={[
-                Math.round((businessTotal / totalDeductibleAmount) * 100) || 0,
+                Math.round(
+                  ((expensesWithThreshold?.data?.totalAmount || 0) /
+                    totalDeductibleAmount) *
+                    100
+                ) || 0,
               ]}
             />
           </div>
