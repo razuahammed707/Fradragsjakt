@@ -34,19 +34,43 @@ async function validateUser(user: JwtPayload | undefined): Promise<void> {
   }
 }
 
-async function checkExistingRule(userId: string, input: any): Promise<void> {
-  try {
-    const existingRule = await RuleModel.findOne({
-      user: userId,
-      description_contains: input.description_contains,
-      category_title: input.category,
-    });
+type RuleQuery = {
+  user: string;
+  _id?: { $ne: string };
+};
 
-    if (existingRule) {
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        'The rule is already created.'
-      );
+async function checkExistingRule(
+  userId: string,
+  input: any,
+  ruleIdToExclude?: string
+): Promise<void> {
+  try {
+    const query: RuleQuery = {
+      user: userId,
+    };
+
+    if (ruleIdToExclude) {
+      query._id = { $ne: ruleIdToExclude };
+    }
+
+    const existingRules = await RuleModel.find(query);
+
+    for (const rule of existingRules) {
+      const existingDescriptionContains = rule.description_contains;
+
+      if (input.description_contains.includes(existingDescriptionContains)) {
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          `The rule with "description_contains: ${existingDescriptionContains}" already exists!`
+        );
+      }
+
+      if (existingDescriptionContains.includes(input.description_contains)) {
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          `The rule with "description_contains: ${input.description_contains}" already exists!`
+        );
+      }
     }
   } catch (error) {
     const { message } = errorHandler(error);
