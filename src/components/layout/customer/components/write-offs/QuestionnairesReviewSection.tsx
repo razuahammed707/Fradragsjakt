@@ -92,8 +92,6 @@ const QuestionnairesReviewSection = () => {
   });
 
   useEffect(() => {
-    console.log('prefilledValues', prefilledValues?.data);
-
     if (prefilledValues?.data) {
       updateQuestionnaires.mutate({
         questionnaires: prefilledValues.data,

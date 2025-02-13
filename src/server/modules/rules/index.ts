@@ -203,7 +203,7 @@ export const rulesRouter = router({
         const sessionUser = ctx.user as JwtPayload;
 
         await RuleHelpers.validateUser(sessionUser);
-
+        await RuleHelpers.checkExistingRule(sessionUser.id, restPayload, _id);
         const category = await RuleHelpers.findCategory(input?.category || '');
         const updatedRule = await RuleHelpers.updateExistingRule(
           _id,

@@ -15,34 +15,13 @@ import { getSubCategories } from '@/utils/helpers/getSubCategories';
 import { RuleFormData, RuleFormSchema } from '@/types/rule-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
-
-// type RuleFormData = {
-//   description_contains: string;
-//   expense_type: 'business' | 'personal';
-//   category: string;
-//   sub_category: string;
-//   tag_category: string;
-//   sub_category_dependant?: string; // New field for dependant input
-// };
+import { getDefaultValue, getInputType } from '@/utils/helpers/getDefaultValue';
+import { DependantKeys } from '@/utils/constants/DependantKeys';
 
 type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
   updateRulePayload?: UpdateRuleProps;
   origin: string | undefined;
-};
-
-export const DependantKeys: Record<string, string> = {
-  'Have children aged 11 years or younger':
-    'How many children do you have under the age of 12?',
-  'I have children aged 12 or older with special care needs':
-    'Do you have children with needs for special care?',
-  'Have taken out a joint loan with someone': 'Your ownership share',
-  'Sold a residential property or holiday home profit or loss':
-    'Was the property your primary residence for at least 12 of the last 24 months',
-  'I have received salary from odd jobs and services':
-    'Received salary from odd jobs and services exceeding NOK 6000?',
-  'Have income or wealth in another country than Norway and pay tax in the other country':
-    'Norway tax rate on this income',
 };
 
 function CreateRuleModalContent({
@@ -69,6 +48,7 @@ function CreateRuleModalContent({
 
   const { translate } = useTranslation();
   const utils = trpc.useUtils();
+  const { data: user } = trpc.users.getUserByEmail.useQuery();
   const [loading, setLoading] = useState(false);
   const [subCategoryOptions, setSubCategoryOptions] = useState<
     { answer: string }[]
@@ -88,6 +68,11 @@ function CreateRuleModalContent({
     }
   }, [selectedCategory]);
 
+  const shouldShowDependantField =
+    selectedSubCategory !== '' && DependantKeys[selectedSubCategory || ''];
+  const dependantKey = DependantKeys[selectedSubCategory || ''];
+  const inputType = getInputType(dependantKey || '');
+
   const ruleMutation = trpc.rules.createAndApplyRule.useMutation({
     onSuccess: ({ message }) => {
       toast.success(message || translate('toast.ruleCreatedSuccess'));
@@ -105,6 +90,7 @@ function CreateRuleModalContent({
       setLoading(false);
     },
   });
+
   const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
     onSuccess: () => {
       utils.users.getUserByEmail.invalidate();
@@ -113,6 +99,7 @@ function CreateRuleModalContent({
       toast.error(error.message || 'User questionnaires updation failed!');
     },
   });
+
   const ruleUpdateMutation = trpc.rules.updateAndApplyRule.useMutation({
     onSuccess: ({ message }) => {
       toast.success(message || translate('toast.ruleUpdatedSuccess'));
@@ -163,8 +150,77 @@ function CreateRuleModalContent({
     }
   };
 
-  const shouldShowDependantField =
-    selectedSubCategory && DependantKeys[selectedSubCategory];
+  const renderDependantField = () => {
+    if (!shouldShowDependantField) return null;
+
+    return (
+      <div>
+        <Label htmlFor="sub_category_dependant">
+          {inputType === 'percentage'
+            ? `${DependantKeys[selectedSubCategory || '']} [in percentage]`
+            : DependantKeys[selectedSubCategory || '']}
+        </Label>
+        {inputType === 'number' && (
+          <FormInput
+            type="number"
+            name="sub_category_dependant"
+            id="sub_category_dependant"
+            placeholder={dependantKey}
+            control={control}
+            customClassName="w-full mt-2"
+            defaultValue={getDefaultValue(
+              user,
+              updateRulePayload?.category_title || '',
+              updateRulePayload?.sub_category || '',
+              dependantKey
+            )}
+            maxValue
+            noFraction
+            required
+          />
+        )}
+        {inputType === 'boolean' && (
+          <FormInput
+            type="select"
+            name="sub_category_dependant"
+            id="sub_category_dependant"
+            placeholder={dependantKey}
+            control={control}
+            customClassName="w-full mt-2"
+            defaultValue={getDefaultValue(
+              user,
+              updateRulePayload?.category_title || '',
+              updateRulePayload?.sub_category || '',
+              dependantKey
+            )}
+            options={[
+              { title: 'Yes', value: 'yes' },
+              { title: 'No', value: 'no' },
+            ]}
+            required
+          />
+        )}
+        {inputType === 'percentage' && (
+          <FormInput
+            type="number"
+            name="sub_category_dependant"
+            id="sub_category_dependant"
+            placeholder={`${dependantKey} (%)`}
+            control={control}
+            customClassName="w-full mt-2"
+            defaultValue={getDefaultValue(
+              user,
+              updateRulePayload?.category_title || '',
+              updateRulePayload?.sub_category || '',
+              dependantKey
+            )}
+            maxValue
+            required
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -243,22 +299,7 @@ function CreateRuleModalContent({
           />
         </div>
 
-        {shouldShowDependantField && (
-          <div>
-            <Label htmlFor="sub_category_dependant">
-              {DependantKeys[selectedSubCategory]}
-            </Label>
-            <FormInput
-              type="text"
-              name="sub_category_dependant"
-              id="sub_category_dependant"
-              placeholder={DependantKeys[selectedSubCategory]}
-              control={control}
-              customClassName="w-full mt-2"
-              required
-            />
-          </div>
-        )}
+        {renderDependantField()}
 
         <div>
           <Label htmlFor="sub_category">Category Tag</Label>

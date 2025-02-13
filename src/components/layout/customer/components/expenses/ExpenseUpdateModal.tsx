@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import SharedModal from '@/components/SharedModal';
 import { Edit2 } from 'lucide-react';
 import ExpenseAddContent from './ExpenseAddContent';
-import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { cn } from '@/lib/utils';
 
 export type PayloadType = {
@@ -38,9 +37,6 @@ export default function ExpenseUpdateModal({
     setModalOpen(true);
   };
 
-  const query = { category_for: 'expense' };
-  const { manipulatedCategories } = useManipulatedCategories(query);
-
   return (
     <>
       <Edit2
@@ -67,7 +63,6 @@ export default function ExpenseUpdateModal({
             <ExpenseAddContent
               origin="expense update"
               setModalOpen={setModalOpen}
-              categories={manipulatedCategories}
               payload={payload}
             />
           </div>

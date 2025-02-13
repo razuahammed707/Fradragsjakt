@@ -137,6 +137,7 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
     },
     {
       id: 'actions',
+      header: 'Actions',
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
           <div className={`my-2`}>

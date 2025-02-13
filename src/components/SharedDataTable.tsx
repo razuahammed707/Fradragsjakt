@@ -79,6 +79,7 @@ export function SharedDataTable<TData, TValue>({
   const handleRowClick = (row: any) => {
     if (setSelectedRow) {
       setSelectedRow(row.original as any);
+      console.log(row.original);
     }
   };
   React.useEffect(() => {
