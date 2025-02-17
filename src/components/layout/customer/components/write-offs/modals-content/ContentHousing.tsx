@@ -86,7 +86,6 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
           </p>
           <FormReceiptInput
             name="Housing in a housing association housing company or jointly owned property.Upload verification document"
-            control={control}
             setValue={setValue}
             defaultValue={getDefaultValue(
               'Housing in a housing association housing company or jointly owned property',

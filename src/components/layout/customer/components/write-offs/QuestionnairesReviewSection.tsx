@@ -97,7 +97,7 @@ const QuestionnairesReviewSection = () => {
         questionnaires: prefilledValues.data,
       });
     }
-  }, [!!prefilledValues?.data]);
+  }, [prefilledValues?.data]);
 
   const {
     workAndEducationExpenseAmount,

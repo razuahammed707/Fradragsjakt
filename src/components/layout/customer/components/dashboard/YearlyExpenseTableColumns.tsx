@@ -108,7 +108,7 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
           </div>
           {!isAuditor && (
             <>
-              <ExpenseUpdateModal payload={row.original} />
+              <ExpenseUpdateModal payload={row.original as unknown as any} />
               <SharedDeleteActionCell
                 itemOrigin="expense"
                 itemId={row.original._id as string}

@@ -142,7 +142,6 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
           </p>
           <FormReceiptInput
             name="Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale.Upload verification document"
-            control={control}
             setValue={setValue}
             defaultValue={getDefaultValue(
               'Sell goods or services blog/influencer practise e-sports (gaming) breed animals on a small scale',

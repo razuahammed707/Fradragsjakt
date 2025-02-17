@@ -320,6 +320,7 @@ export const savingExpenseCalculator = (
       foreignIncomeExpenseAmount: 0,
     };
   }
+  console.log('questionnaire form initial loading', questionnaires);
 
   const questionnaireMap = questionnaires.reduce<
     Record<string, QuestionnaireItem | null>

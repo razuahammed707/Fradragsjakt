@@ -144,7 +144,7 @@ export const IncomeDataTableColumns = (): ColumnDef<IncomeColumnProps>[] => {
           </div>
           {!isAuditor && (
             <>
-              <IncomeUpdateModal payload={row.original} />
+              <IncomeUpdateModal payload={row.original as unknown as any} />
               <SharedDeleteActionCell
                 itemOrigin="income"
                 itemId={row.original._id as string}

@@ -39,7 +39,7 @@ export default function IncomeDetailsModal({
           customClassName="max-w-[500px]"
         >
           <div className="bg-white">
-            <IncomeDetailsContent payload={payload} />
+            <IncomeDetailsContent payload={payload as unknown as any} />
           </div>
         </SharedModal>
       </div>
