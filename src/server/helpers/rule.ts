@@ -383,6 +383,15 @@ function updateSuccessResponse(
     },
   };
 }
+async function findMatchingRulesForBatch(
+  descriptions: string[],
+  userId: string
+) {
+  return await RuleModel.find({
+    description: { $in: descriptions },
+    user: userId,
+  });
+}
 
 export const RuleHelpers = {
   validateUser,
@@ -396,4 +405,5 @@ export const RuleHelpers = {
   findByRuleAndUpdateTransactions,
   updateSuccessResponse,
   updateTransactionsOnRuleDeletion,
+  findMatchingRulesForBatch,
 };

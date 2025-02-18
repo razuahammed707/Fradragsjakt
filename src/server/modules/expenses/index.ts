@@ -18,6 +18,10 @@ import RuleModel from '@/server/db/models/rules';
 import mongoose from 'mongoose';
 import { parseFilterString } from '@/utils/helpers/parseFilterString';
 import { IncomeHelpers } from '@/server/helpers/income';
+import { chunk } from 'lodash';
+import { RuleHelpers } from '@/server/helpers/rule';
+
+const CHUNK_SIZE = 50;
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -344,36 +348,60 @@ export const expenseRouter = router({
     .mutation(async ({ ctx, input: statements }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        const results = await Promise.all(
-          statements.map(async (statement) => {
-            const expense =
-              statement.withdrawal > 0
-                ? await ExpenseHelpers.createExpenseFromBulkInput(
-                    statement,
-                    loggedUser.id
-                  )
-                : null;
+        let createdExpenses: any[] = [];
+        let createdIncomes: any[] = [];
 
-            const income =
-              statement.deposit > 0
-                ? await IncomeHelpers.createIncomeFromBulkInput(
-                    statement,
-                    loggedUser.id
-                  )
-                : null;
+        const chunks = chunk(statements, CHUNK_SIZE);
 
-            return {
-              expense,
-              income,
-            };
-          })
-        );
-        const createdExpenses = results
-          .map((r) => r.expense)
-          .filter((e) => e !== null);
-        const createdIncomes = results
-          .map((r) => r.income)
-          .filter((i) => i !== null);
+        for (const statementsChunk of chunks) {
+          const results = await Promise.all(
+            statementsChunk.map(async (statement) => {
+              const descriptions = statementsChunk.map((s) => s.description);
+              const rules = await RuleHelpers.findMatchingRulesForBatch(
+                descriptions,
+                loggedUser.id
+              );
+
+              const matchingRule = rules.find(
+                (r) => r.description === statement.description
+              );
+
+              const expense =
+                statement.withdrawal > 0
+                  ? await ExpenseHelpers.createExpenseFromBulkInput(
+                      statement,
+                      loggedUser.id,
+                      matchingRule
+                    )
+                  : null;
+
+              const income =
+                statement.deposit > 0
+                  ? await IncomeHelpers.createIncomeFromBulkInput(
+                      statement,
+                      loggedUser.id,
+                      matchingRule
+                    )
+                  : null;
+
+              return {
+                expense,
+                income,
+              };
+            })
+          );
+
+          createdExpenses = [
+            ...createdExpenses,
+            ...results.map((r) => r.expense).filter((e) => e !== null),
+          ];
+
+          createdIncomes = [
+            ...createdIncomes,
+            ...results.map((r) => r.income).filter((i) => i !== null),
+          ];
+        }
+
         console.log(
           'Total Processed',
           createdExpenses.length + createdIncomes.length,
