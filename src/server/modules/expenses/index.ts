@@ -354,42 +354,45 @@ export const expenseRouter = router({
         const chunks = chunk(statements, CHUNK_SIZE);
 
         for (const statementsChunk of chunks) {
-          const results = await Promise.all(
-            statementsChunk.map(async (statement) => {
-              const descriptions = statementsChunk.map((s) => s.description);
-              const rules = await RuleHelpers.findMatchingRulesForBatch(
-                descriptions,
-                loggedUser.id
-              );
+          const results = [];
 
-              const matchingRule = rules.find(
-                (r) => r.description === statement.description
-              );
+          for (let i = 0; i < statementsChunk.length; i++) {
+            const statement = statementsChunk[i];
 
-              const expense =
-                statement.withdrawal > 0
-                  ? await ExpenseHelpers.createExpenseFromBulkInput(
-                      statement,
-                      loggedUser.id,
-                      matchingRule
-                    )
-                  : null;
+            const descriptions = statementsChunk.map((s) => s.description);
 
-              const income =
-                statement.deposit > 0
-                  ? await IncomeHelpers.createIncomeFromBulkInput(
-                      statement,
-                      loggedUser.id,
-                      matchingRule
-                    )
-                  : null;
+            const rules = await RuleHelpers.findMatchingRulesForBatch(
+              descriptions,
+              loggedUser.id
+            );
 
-              return {
-                expense,
-                income,
-              };
-            })
-          );
+            const matchingRule = rules.find(
+              (r) => r.description === statement.description
+            );
+
+            const expense =
+              statement.withdrawal > 0
+                ? await ExpenseHelpers.createExpenseFromBulkInput(
+                    statement,
+                    loggedUser.id,
+                    matchingRule
+                  )
+                : null;
+
+            const income =
+              statement.deposit > 0
+                ? await IncomeHelpers.createIncomeFromBulkInput(
+                    statement,
+                    loggedUser.id,
+                    matchingRule
+                  )
+                : null;
+
+            results.push({
+              expense,
+              income,
+            });
+          }
 
           createdExpenses = [
             ...createdExpenses,
