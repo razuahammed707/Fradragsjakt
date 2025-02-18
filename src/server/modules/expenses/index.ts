@@ -18,10 +18,6 @@ import RuleModel from '@/server/db/models/rules';
 import mongoose from 'mongoose';
 import { parseFilterString } from '@/utils/helpers/parseFilterString';
 import { IncomeHelpers } from '@/server/helpers/income';
-import { chunk } from 'lodash';
-import { RuleHelpers } from '@/server/helpers/rule';
-
-const CHUNK_SIZE = 50;
 
 export const expenseRouter = router({
   getExpenses: protectedProcedure
@@ -348,34 +344,13 @@ export const expenseRouter = router({
     .mutation(async ({ ctx, input: statements }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        let createdExpenses: any[] = [];
-        let createdIncomes: any[] = [];
-
-        const chunks = chunk(statements, CHUNK_SIZE);
-
-        for (const statementsChunk of chunks) {
-          const results = [];
-
-          for (let i = 0; i < statementsChunk.length; i++) {
-            const statement = statementsChunk[i];
-
-            const descriptions = statementsChunk.map((s) => s.description);
-
-            const rules = await RuleHelpers.findMatchingRulesForBatch(
-              descriptions,
-              loggedUser.id
-            );
-
-            const matchingRule = rules.find(
-              (r) => r.description === statement.description
-            );
-
+        const results = await Promise.all(
+          statements.map(async (statement) => {
             const expense =
               statement.withdrawal > 0
                 ? await ExpenseHelpers.createExpenseFromBulkInput(
                     statement,
-                    loggedUser.id,
-                    matchingRule
+                    loggedUser.id
                   )
                 : null;
 
@@ -383,28 +358,22 @@ export const expenseRouter = router({
               statement.deposit > 0
                 ? await IncomeHelpers.createIncomeFromBulkInput(
                     statement,
-                    loggedUser.id,
-                    matchingRule
+                    loggedUser.id
                   )
                 : null;
 
-            results.push({
+            return {
               expense,
               income,
-            });
-          }
-
-          createdExpenses = [
-            ...createdExpenses,
-            ...results.map((r) => r.expense).filter((e) => e !== null),
-          ];
-
-          createdIncomes = [
-            ...createdIncomes,
-            ...results.map((r) => r.income).filter((i) => i !== null),
-          ];
-        }
-
+            };
+          })
+        );
+        const createdExpenses = results
+          .map((r) => r.expense)
+          .filter((e) => e !== null);
+        const createdIncomes = results
+          .map((r) => r.income)
+          .filter((i) => i !== null);
         console.log(
           'Total Processed',
           createdExpenses.length + createdIncomes.length,

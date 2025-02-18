@@ -96,10 +96,11 @@ async function createExpenseFromBulkInput(
     deposit: number;
     transaction_date?: any;
   },
-  userId: string,
-  rule?: any
+  userId: string
 ) {
   try {
+    const rule = await findMatchingRule(input.description, userId);
+
     const expenseData = {
       user: userId,
       amount: input?.withdrawal,

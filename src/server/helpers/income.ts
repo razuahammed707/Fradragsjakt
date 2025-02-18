@@ -93,10 +93,11 @@ async function createIncomeFromBulkInput(
     deposit: number;
     transaction_date?: any;
   },
-  userId: string,
-  rule?: any // Pre-fetched rule
+  userId: string
 ) {
   try {
+    const rule = await findMatchingRule(input.description, userId);
+
     const incomeData = {
       ...input,
       user: userId,
