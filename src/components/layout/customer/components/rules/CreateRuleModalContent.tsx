@@ -292,10 +292,13 @@ function CreateRuleModalContent({
             customClassName="w-full mt-2"
             placeholder="Select sub-category"
             defaultValue={updateRulePayload?.sub_category}
-            options={subCategoryOptions.map((q) => ({
-              title: q.answer,
-              value: q.answer,
-            }))}
+            options={[
+              ...subCategoryOptions.map((q) => ({
+                title: q.answer,
+                value: q.answer,
+              })),
+              { title: 'Others', value: 'other' },
+            ]}
           />
         </div>
 
