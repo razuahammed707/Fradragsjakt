@@ -110,7 +110,6 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
     const mappedExpenses = mapToExpenseData(formData, fileData, headers);
     setLoading(true);
     console.log({ mappedExpenses });
-
     mutation.mutate(mappedExpenses);
   };
 
