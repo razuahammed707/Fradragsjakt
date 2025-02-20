@@ -732,7 +732,7 @@ async function getQuestionnairePrefilledValues(userId: string) {
           expense_type: ExpenseType.business,
           sub_category: {
             $exists: true,
-            $ne: '',
+            $nin: ['', 'other'],
           },
         },
       },
