@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -10,13 +10,11 @@ import { Loader2 } from 'lucide-react';
 import { PayloadType } from './ExpenseUpdateModal';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
-import { getSubCategories } from '@/utils/helpers/getSubCategories';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DependantKeys } from '@/utils/constants/DependantKeys';
-import { getDefaultValue, getInputType } from '@/utils/helpers/getDefaultValue';
 import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
 
 interface ExpenseAddContentProps {
@@ -34,7 +32,7 @@ function ExpenseAddContent({
   const {
     handleSubmit,
     control,
-    watch,
+
     setValue,
     formState: {
       /* isValid */
@@ -52,30 +50,10 @@ function ExpenseAddContent({
     mode: 'onChange',
   });
   const [loading, setLoading] = useState(false);
-  const [subCategoryOptions, setSubCategoryOptions] = useState<
-    { answer: string }[]
-  >([]);
+
   const utils = trpc.useUtils();
-  const { data: user } = trpc.users.getUserByEmail.useQuery();
 
-  const selectedCategory = watch('category');
-  const selectedSubCategory = watch('sub_category');
-
-  const { mainCategories, secondaryCategories } = useManipulatedCategories();
-
-  useEffect(() => {
-    if (selectedCategory) {
-      const subCategories = getSubCategories(selectedCategory);
-      setSubCategoryOptions(subCategories);
-    } else {
-      setSubCategoryOptions([]);
-    }
-  }, [selectedCategory]);
-
-  const shouldShowDependantField =
-    selectedSubCategory !== '' && DependantKeys[selectedSubCategory || ''];
-  const dependantKey = DependantKeys[selectedSubCategory || ''];
-  const inputType = getInputType(dependantKey || '');
+  const { mainCategories } = useManipulatedCategories();
 
   const createMutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
@@ -166,78 +144,6 @@ function ExpenseAddContent({
     }
   };
 
-  const renderDependantField = () => {
-    if (!shouldShowDependantField) return null;
-
-    return (
-      <div>
-        <Label htmlFor="sub_category_dependant">
-          {inputType === 'percentage'
-            ? `${DependantKeys[selectedSubCategory || '']} [in percentage]`
-            : DependantKeys[selectedSubCategory || '']}
-        </Label>
-        {inputType === 'number' && (
-          <FormInput
-            type="number"
-            name="sub_category_dependant"
-            id="sub_category_dependant"
-            placeholder={dependantKey}
-            control={control}
-            customClassName="w-full mt-2"
-            defaultValue={getDefaultValue(
-              user,
-              payload?.category || '',
-              payload?.sub_category || '',
-              dependantKey
-            )}
-            maxValue
-            noFraction
-            required
-          />
-        )}
-        {inputType === 'boolean' && (
-          <FormInput
-            type="select"
-            name="sub_category_dependant"
-            id="sub_category_dependant"
-            placeholder={dependantKey}
-            control={control}
-            customClassName="w-full mt-2"
-            defaultValue={getDefaultValue(
-              user,
-              payload?.category || '',
-              payload?.sub_category || '',
-              dependantKey
-            )}
-            options={[
-              { title: 'Yes', value: 'yes' },
-              { title: 'No', value: 'no' },
-            ]}
-            required
-          />
-        )}
-        {inputType === 'percentage' && (
-          <FormInput
-            type="number"
-            name="sub_category_dependant"
-            id="sub_category_dependant"
-            placeholder={`${dependantKey} (%)`}
-            control={control}
-            customClassName="w-full mt-2"
-            defaultValue={getDefaultValue(
-              user,
-              payload?.category || '',
-              payload?.sub_category || '',
-              dependantKey
-            )}
-            maxValue
-            required
-          />
-        )}
-      </div>
-    );
-  };
-
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
@@ -308,36 +214,7 @@ function ExpenseAddContent({
               />
             </ScrollArea>
           </div>
-          <div>
-            <Label htmlFor="sub_category">Sub Category</Label>
-            <SelectFormInput
-              name="sub_category"
-              control={control}
-              customClassName="w-full mt-2"
-              placeholder="Select sub-category"
-              defaultValue={payload?.sub_category}
-              options={[
-                ...subCategoryOptions.map((q) => ({
-                  title: q.answer,
-                  value: q.answer,
-                })),
-                { title: 'Others', value: 'other' },
-              ]}
-            />
-          </div>
-          {renderDependantField()}
-          <div>
-            <Label htmlFor="tag_category">Category Tag</Label>
-            <SelectFormInput
-              name="tag_category"
-              control={control}
-              customClassName="w-full mt-2"
-              placeholder="Select as Tag"
-              defaultValue={payload?.tag_category}
-              options={secondaryCategories}
-              searchEnabled
-            />
-          </div>
+
           <div>
             <Label htmlFor="receipt">Receipt</Label>
             <FormReceiptInput
