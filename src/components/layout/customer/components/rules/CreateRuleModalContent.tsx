@@ -103,9 +103,10 @@ function CreateRuleModalContent({
       <h1 className="font-medium text-2xl text-black mb-4">
         {!origin ? 'Create a rule' : 'Update rule'}
       </h1>
-      <h1 className="font-medium text-lg text-black mb-4">
+
+      <h2 className="font-medium text-lg text-black mb-4">
         {translate('componentsRuleModal.rule.if')}
-      </h1>
+      </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         <div>
           <Label htmlFor="description_contains">
