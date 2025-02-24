@@ -19,6 +19,7 @@ const updateCategorySchema = z.object({
     .max(50, 'Category title must not exceed 50 characters'),
   category_for: z.enum(['expense', 'income', 'common']).optional(),
   reference_category: z.string().optional(),
+  threshold: z.string().optional(),
 });
 
 export const categoryValidation = {
