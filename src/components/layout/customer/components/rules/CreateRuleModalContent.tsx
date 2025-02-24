@@ -100,7 +100,9 @@ function CreateRuleModalContent({
 
   return (
     <div>
-      <h1 className="font-medium text-2xl text-black mb-4">Create a rule</h1>
+      <h1 className="font-medium text-2xl text-black mb-4">
+        {!origin ? 'Create a rule' : 'Update rule'}
+      </h1>
       <h1 className="font-medium text-lg text-black mb-4">
         {translate('componentsRuleModal.rule.if')}
       </h1>
