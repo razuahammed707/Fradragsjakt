@@ -180,8 +180,8 @@
   "componentsExpenseModal": {
     "expense": {
       "heading": {
-        "add_expense": "Manually Add Expense",
-        "update_expense": "Update Expense"
+        "add_expense": "Add an expense manually",
+        "update_expense": "Update an expense"
       },
       "label": {
         "description": "Description",

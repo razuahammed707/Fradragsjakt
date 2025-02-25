@@ -203,7 +203,6 @@ export const IncomeRouter = router({
 
         const rules = await RuleModel.find({
           user: loggedUser?.id,
-          rule_for: 'income',
         });
 
         const incomesWithRules = await IncomeHelpers.getIncomesWithRules(

@@ -34,7 +34,6 @@ export default function RulesOverviewSection() {
       page: currentPage,
       limit: pageLimit,
       searchTerm,
-      rule_for: activeTab === 'all' ? undefined : activeTab,
     },
     {
       keepPreviousData: true,
@@ -133,11 +132,7 @@ export default function RulesOverviewSection() {
               loading={isLoading}
               className="min-h-[500px]"
               columns={RulesDataTableColumns()}
-              data={
-                rulesResponse?.data?.filter(
-                  (rule) => rule.rule_for === 'income'
-                ) ?? []
-              }
+              data={rulesResponse?.data ?? []}
             />
             <div className="mt-10">
               <SharedPagination
@@ -156,11 +151,7 @@ export default function RulesOverviewSection() {
               loading={isLoading}
               className="min-h-[500px]"
               columns={RulesDataTableColumns()}
-              data={
-                rulesResponse?.data?.filter(
-                  (rule) => rule.rule_for === 'expense'
-                ) ?? []
-              }
+              data={rulesResponse?.data ?? []}
             />
             <div className="mt-10">
               <SharedPagination

@@ -49,24 +49,7 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
         </div>
       ),
     },
-    /* {
-      accessorKey: 'rule_for',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          className="pl-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          <>Rule For</>
-          <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <div className="text-left my-1">
-          {transformToUppercase(row.getValue('rule_for'))}
-        </div>
-      ),
-    }, */
+
     {
       accessorKey: 'category_title',
       header: ({ column }) => (

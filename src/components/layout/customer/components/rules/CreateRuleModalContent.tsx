@@ -12,7 +12,6 @@ import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
 import { RuleFormData, RuleFormSchema } from '@/types/rule-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Separator } from '@/components/ui/separator';
 
 type ExpenseRuleContentProps = {
   modalClose?: (open: boolean) => void;
@@ -100,10 +99,10 @@ function CreateRuleModalContent({
 
   return (
     <div>
-      <h1 className="font-medium text-2xl text-black ">
-        {!origin ? 'Create a rule' : 'Update rule'}
+      <h1 className="font-medium text-xl text-black mb-3">
+        {!origin ? 'Create a rule' : 'Update a rule'}
       </h1>
-      <Separator className="my-4" />
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         <h2 className="font-medium text-lg text-black">
           {translate('componentsRuleModal.rule.if')}
@@ -166,9 +165,10 @@ function CreateRuleModalContent({
             disabled={!isValid || loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {!origin
+            {/* {!origin
               ? translate('componentsRuleModal.rule.create')
-              : translate('componentsRuleModal.rule.update')}
+              : translate('componentsRuleModal.rule.update')} */}
+            Save
           </Button>
         </div>
       </form>

@@ -23,7 +23,6 @@ async function findMatchingRule(description: string, userId: string) {
 
     const rules = await RuleModel.find({
       user: userId,
-      rule_for: 'expense',
     });
 
     const matchingRule = rules.find((rule) => {
@@ -164,7 +163,6 @@ const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
                   rule: rule._id,
                   category: rule.category_title,
                   expense_type: rule.expense_type,
-                  sub_category: rule?.sub_category,
                 },
                 expenses,
               }

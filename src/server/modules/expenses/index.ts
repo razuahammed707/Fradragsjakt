@@ -287,7 +287,6 @@ export const expenseRouter = router({
 
         const rules = await RuleModel.find({
           user: loggedUser?.id,
-          rule_for: 'expense',
         });
 
         const expensesWithRules = await ExpenseHelpers.getExpensesWithRules(
