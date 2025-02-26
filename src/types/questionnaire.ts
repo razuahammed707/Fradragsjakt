@@ -15,7 +15,4 @@ export type UpdateRuleProps = {
   category: string;
   category_title: string;
   expense_type: 'business' | 'personal';
-  rule_for: 'expense' | 'income';
-  sub_category?: string;
-  tag_category?: string;
 };

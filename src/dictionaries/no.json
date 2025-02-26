@@ -180,8 +180,8 @@
   "componentsExpenseModal": {
     "expense": {
       "heading": {
-        "add_expense": "Legg til utgift manuelt",
-        "update_expense": "Oppdater Utgift"
+        "add_expense": "Legg til en utgift manuelt",
+        "update_expense": "Oppdater en utgift"
       },
       "label": {
         "description": "Beskrivelse",

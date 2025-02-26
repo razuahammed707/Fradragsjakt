@@ -18,14 +18,13 @@ export const rulesRouter = router({
         page: z.number().default(1),
         limit: z.number().default(50),
         searchTerm: z.string().optional(),
-        rule_for: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
 
-        const { page, limit, searchTerm, rule_for } = input;
+        const { page, limit, searchTerm } = input;
         const skip = (page - 1) * limit;
 
         const query: Record<string, unknown> = { user: loggedUser?.id };
@@ -37,17 +36,12 @@ export const rulesRouter = router({
             { category_title: { $regex: searchTerm, $options: 'i' } },
           ];
         }
-        if (rule_for) {
-          query.rule_for = rule_for;
-        }
 
         const total = await RuleModel.countDocuments(query);
         const totalExpenseRules = await RuleModel.countDocuments({
-          rule_for: 'expense',
           user: loggedUser?.id,
         });
         const totalIncomeRules = await RuleModel.countDocuments({
-          rule_for: 'income',
           user: loggedUser?.id,
         });
         const rules = await RuleModel.find(query).skip(skip).limit(limit);
@@ -88,7 +82,6 @@ export const rulesRouter = router({
           description_contains: input.description_contains,
           category_title: input.category,
           expense_type: input.expense_type,
-          rule_for: input.rule_for,
         });
 
         if (rule) {
@@ -118,7 +111,6 @@ export const rulesRouter = router({
           user: sessionUser?.id,
           category: category?._id,
           category_title: category?.title,
-          rule_for: 'expense',
         });
 
         return {
@@ -254,20 +246,4 @@ export const rulesRouter = router({
         throw new ApiError(httpStatus.NOT_FOUND, message);
       }
     }),
-  updateManyRule: protectedProcedure.query(async () => {
-    try {
-      await RuleModel.updateMany({}, { $set: { rule_for: 'expense' } });
-
-      const categories = await RuleModel.find({});
-
-      return {
-        status: 200,
-        message: 'Categories updated successfully',
-        data: categories,
-      } as ApiResponse<typeof categories>;
-    } catch (error: unknown) {
-      const { message } = errorHandler(error);
-      throw new ApiError(httpStatus.NOT_FOUND, message);
-    }
-  }),
 });

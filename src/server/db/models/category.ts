@@ -13,6 +13,10 @@ const CategorySchema: Schema = new Schema<ICategory>(
       type: String,
       default: null,
     },
+    threshold: {
+      type: String,
+      default: null,
+    },
     category_for: {
       type: String,
       enum: Object.values(CategoryFor),

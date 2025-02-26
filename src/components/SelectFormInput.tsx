@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const defaultOptions = [
   { title: 'Married', value: 'married' },
@@ -58,6 +58,58 @@ export function SelectFormInput({
   searchEnabled = false,
 }: SelectFormInputProps) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const findScrollableElement = () => {
+      const commandLists = document.querySelectorAll('[cmdk-list]');
+      if (commandLists.length === 0) return null;
+
+      const mostRecentList = commandLists[commandLists.length - 1];
+
+      const scrollableDivs = mostRecentList.querySelectorAll('div');
+      for (const div of Array.from(scrollableDivs)) {
+        const styles = window.getComputedStyle(div);
+        if (styles.overflowY === 'auto' || styles.overflowY === 'scroll') {
+          return div;
+        }
+      }
+
+      return mostRecentList;
+    };
+
+    setTimeout(() => {
+      const scrollableElement = findScrollableElement();
+      if (!scrollableElement) return;
+
+      const handleWheel = (e: WheelEvent) => {
+        const { scrollTop, scrollHeight, clientHeight } = scrollableElement;
+        const isAtTop = scrollTop === 0;
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+
+        if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+          return;
+        }
+
+        e.stopPropagation();
+        scrollableElement.scrollTop += e.deltaY;
+      };
+
+      scrollableElement.addEventListener(
+        'wheel',
+        handleWheel as EventListener,
+        { passive: true }
+      );
+
+      return () => {
+        scrollableElement.removeEventListener(
+          'wheel',
+          handleWheel as EventListener
+        );
+      };
+    }, 100);
+  }, [open]);
 
   return (
     <Controller

@@ -12,4 +12,5 @@ export interface ICategory extends Document {
   reference_category?: string;
   category_for?: CategoryFor;
   creator_id: Types.ObjectId;
+  threshold: string;
 }

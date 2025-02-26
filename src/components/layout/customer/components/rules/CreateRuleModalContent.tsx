@@ -10,7 +10,6 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { UpdateRuleProps } from '@/types/questionnaire';
 import { Loader2 } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { RuleFormData, RuleFormSchema } from '@/types/rule-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -43,7 +42,7 @@ function CreateRuleModalContent({
   const utils = trpc.useUtils();
   const [loading, setLoading] = useState(false);
 
-  const { mainCategories } = useManipulatedCategories();
+  const { manipulatedCategories } = useManipulatedCategories();
 
   const ruleMutation = trpc.rules.createAndApplyRule.useMutation({
     onSuccess: ({ message }) => {
@@ -100,37 +99,36 @@ function CreateRuleModalContent({
 
   return (
     <div>
-      <h1 className="font-medium text-2xl text-black mb-4">Create a rule</h1>
-      <h1 className="font-medium text-lg text-black mb-4">
-        {translate('componentsRuleModal.rule.if')}
+      <h1 className="font-medium text-xl text-black mb-3">
+        {!origin ? 'Create a rule' : 'Update a rule'}
       </h1>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+        <h2 className="font-medium text-lg text-black">
+          {translate('componentsRuleModal.rule.if')}
+        </h2>
         <div>
-          <Label htmlFor="description_contains">
-            {translate('componentsRuleModal.rule.descriptionContains')}
-          </Label>
+          <Label htmlFor="merchant_name">Merchant name</Label>
           <FormInput
             type="text"
             name="description_contains"
-            id="description_contains"
-            placeholder={translate(
-              'componentsRuleModal.rule.descriptionContains'
-            )}
+            id="merchant_name"
+            placeholder="e.g. Netflix"
             control={control}
-            customClassName="w-full mt-2"
+            customClassName="w-full mt-1"
             defaultValue={updateRulePayload?.description_contains}
             required
           />
         </div>
-        <h1 className="font-medium text-lg text-black mb-4">
+        <h2 className="font-medium text-lg text-black pt-4">
           {translate('componentsRuleModal.rule.then')}
-        </h1>
+        </h2>
         <div>
-          <Label htmlFor="expense_type">Type</Label>
+          <Label htmlFor="expense_type">Status</Label>
           <FormInput
             name="expense_type"
             id="expense_type"
-            customClassName="w-full mt-2"
+            customClassName="w-full mt-1"
             type="select"
             control={control}
             placeholder={translate('componentsRuleModal.rule.selectType')}
@@ -148,17 +146,16 @@ function CreateRuleModalContent({
           <Label htmlFor="category">
             {translate('componentsRuleModal.rule.category')}
           </Label>
-          <ScrollArea className="w-full rounded-md">
-            <SelectFormInput
-              name="category"
-              control={control}
-              customClassName="w-full mt-2"
-              placeholder={translate('componentsRuleModal.rule.selectCategory')}
-              defaultValue={updateRulePayload?.category_title}
-              options={mainCategories}
-              required
-            />
-          </ScrollArea>
+          <SelectFormInput
+            name="category"
+            control={control}
+            customClassName="w-full mt-1"
+            placeholder={translate('componentsRuleModal.rule.selectCategory')}
+            defaultValue={updateRulePayload?.category_title}
+            options={manipulatedCategories}
+            required
+            searchEnabled
+          />
         </div>
 
         <div className="py-3">
@@ -168,9 +165,10 @@ function CreateRuleModalContent({
             disabled={!isValid || loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {!origin
+            {/* {!origin
               ? translate('componentsRuleModal.rule.create')
-              : translate('componentsRuleModal.rule.update')}
+              : translate('componentsRuleModal.rule.update')} */}
+            Save
           </Button>
         </div>
       </form>

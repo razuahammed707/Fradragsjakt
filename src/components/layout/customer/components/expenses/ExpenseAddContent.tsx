@@ -11,7 +11,6 @@ import { PayloadType } from './ExpenseUpdateModal';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DependantKeys } from '@/utils/constants/DependantKeys';
@@ -53,7 +52,7 @@ function ExpenseAddContent({
 
   const utils = trpc.useUtils();
 
-  const { mainCategories } = useManipulatedCategories();
+  const { manipulatedCategories } = useManipulatedCategories();
 
   const createMutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
@@ -152,7 +151,7 @@ function ExpenseAddContent({
           : translate('componentsExpenseModal.expense.heading.add_expense')}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="max-h-[500px] overflow-y-auto space-y-1 pr-1 white-thumb">
+        <div className="max-h-[500px] overflow-y-auto space-y-2 pr-1 white-thumb">
           <div>
             <Label htmlFor="description">
               {translate('componentsExpenseModal.expense.label.description')}
@@ -163,7 +162,7 @@ function ExpenseAddContent({
               defaultValue={payload?.description}
               placeholder="Enter description"
               control={control}
-              customClassName="w-full mt-2"
+              customClassName="w-full mt-1"
               required
             />
           </div>
@@ -178,7 +177,7 @@ function ExpenseAddContent({
               placeholder="Enter amount (NOK)"
               disabled={origin === 'expense update'}
               control={control}
-              customClassName="w-full mt-2"
+              customClassName="w-full mt-1"
               required
             />
           </div>
@@ -188,7 +187,7 @@ function ExpenseAddContent({
             </Label>
             <FormInput
               name="expense_type"
-              customClassName="w-full mt-2"
+              customClassName="w-full mt-1"
               type="select"
               control={control}
               placeholder="Select expense type"
@@ -203,16 +202,16 @@ function ExpenseAddContent({
             <Label htmlFor="category">
               {translate('componentsExpenseModal.expense.label.category')}
             </Label>
-            <ScrollArea className="w-full rounded-md">
-              <SelectFormInput
-                name="category"
-                control={control}
-                placeholder="Select category"
-                options={mainCategories}
-                defaultValue={payload?.category}
-                required
-              />
-            </ScrollArea>
+            <SelectFormInput
+              name="category"
+              control={control}
+              customClassName="mt-1"
+              placeholder="Select category"
+              options={manipulatedCategories}
+              defaultValue={payload?.category}
+              required
+              searchEnabled
+            />
           </div>
 
           <div>
@@ -227,7 +226,7 @@ function ExpenseAddContent({
               ) => {
                 setValue(name as any, value as any);
               }}
-              customClassName="mt-2"
+              customClassName="mt-1"
             />
           </div>
         </div>
