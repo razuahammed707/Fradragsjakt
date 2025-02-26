@@ -13,8 +13,7 @@ import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DependantKeys } from '@/utils/constants/DependantKeys';
-import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
+import { DatePickerFormInput } from '@/components/DatePickerFormInput';
 
 interface ExpenseAddContentProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -31,19 +30,13 @@ function ExpenseAddContent({
   const {
     handleSubmit,
     control,
-
     setValue,
-    formState: {
-      /* isValid */
-    },
+    formState: {},
     reset,
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(ExpenseFormSchema),
     defaultValues: {
-      expense_type: 'business',
       category: payload?.category || '',
-      sub_category: payload?.sub_category || '',
-      tag_category: payload?.tag_category || '',
       receipt: payload?.receipt || { link: '', mimeType: '' },
     },
     mode: 'onChange',
@@ -94,32 +87,10 @@ function ExpenseAddContent({
     },
   });
 
-  const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
-    onSuccess: () => {
-      utils.users.getUserByEmail.invalidate();
-    },
-    onError: (error) => {
-      toast.error(error.message || 'User questionnaires updation failed!');
-    },
-  });
-
   const onSubmit = (data: ExpenseFormData) => {
+    console.log(data.transaction_date);
+
     setLoading(true);
-
-    if (data.sub_category && data.sub_category_dependant) {
-      const questionnaireFormData = {
-        [data.sub_category]: {
-          [DependantKeys[data.sub_category]]: data.sub_category_dependant,
-        },
-      };
-
-      const payload = transformFormDataToPayload(
-        data.category,
-        questionnaireFormData
-      );
-      updateQuestionnaires.mutate(payload);
-    }
-
     const modifiedAmount =
       typeof data?.amount === 'number'
         ? data.amount
@@ -130,7 +101,7 @@ function ExpenseAddContent({
     const expenseData = {
       ...data,
       amount: modifiedAmount,
-      sub_category_dependant: undefined,
+      transaction_date: new Date(data.transaction_date),
     };
 
     if (origin === 'expense update' && payload?._id) {
@@ -160,9 +131,19 @@ function ExpenseAddContent({
               type="text"
               name="description"
               defaultValue={payload?.description}
-              placeholder="Enter description"
+              placeholder="e.g. Starbucks"
               control={control}
               customClassName="w-full mt-1"
+              required
+            />
+          </div>
+          <div>
+            <DatePickerFormInput
+              name="transaction_date"
+              label="Date"
+              control={control}
+              defaultValue={payload?.transaction_date || ''}
+              customClassName="w-full"
               required
             />
           </div>
@@ -173,31 +154,15 @@ function ExpenseAddContent({
             <FormInput
               type="number"
               name="amount"
-              defaultValue={payload?.amount}
-              placeholder="Enter amount (NOK)"
+              defaultValue={payload?.amount?.toString()}
+              placeholder="e.g. kr5.00"
               disabled={origin === 'expense update'}
               control={control}
               customClassName="w-full mt-1"
               required
             />
           </div>
-          <div>
-            <Label htmlFor="expense_type">
-              {translate('componentsExpenseModal.expense.label.expense_type')}
-            </Label>
-            <FormInput
-              name="expense_type"
-              customClassName="w-full mt-1"
-              type="select"
-              control={control}
-              placeholder="Select expense type"
-              options={[
-                { title: 'Deductible', value: 'business' },
-                { title: 'Personal', value: 'personal' },
-              ]}
-              required
-            />
-          </div>
+
           <div>
             <Label htmlFor="category">
               {translate('componentsExpenseModal.expense.label.category')}
@@ -213,9 +178,19 @@ function ExpenseAddContent({
               searchEnabled
             />
           </div>
-
           <div>
-            <Label htmlFor="receipt">Receipt</Label>
+            <Label htmlFor="note">Add a note (optional)</Label>
+            <FormInput
+              type="textarea"
+              name="note"
+              defaultValue={payload?.note}
+              placeholder="e.g. Meeting with my client Olivier"
+              control={control}
+              customClassName="w-full mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="receipt">Receipt (optional)</Label>
             <FormReceiptInput
               name="receipt"
               defaultValue={payload?.receipt?.link}
@@ -230,11 +205,7 @@ function ExpenseAddContent({
             />
           </div>
         </div>
-        <Button
-          //disabled={!isValid || loading}
-          type="submit"
-          className="w-full text-white"
-        >
+        <Button disabled={false} type="submit" className="w-full text-white">
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {origin === 'expense update'
             ? translate('componentsExpenseModal.expense.button.update')

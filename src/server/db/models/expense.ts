@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { DeductionStatus, ExpenseType, IExpense } from '../interfaces/expense';
+import { ExpenseType, IExpense } from '../interfaces/expense';
 
 const ExpenseSchema = new Schema<IExpense>(
   {
@@ -8,17 +8,16 @@ const ExpenseSchema = new Schema<IExpense>(
       required: true,
       trim: true,
     },
+    transaction_date: {
+      type: Date,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
     category: {
       type: String,
       required: true,
-      trim: true,
-    },
-    sub_category: {
-      type: String,
-      trim: true,
-    },
-    tag_category: {
-      type: String,
       trim: true,
     },
     expense_type: {
@@ -26,30 +25,21 @@ const ExpenseSchema = new Schema<IExpense>(
       enum: Object.values(ExpenseType),
       default: ExpenseType.unknown,
     },
-    amount: {
-      type: Number,
-      required: true,
+    note: {
+      type: String,
     },
     receipt: {
       link: String,
       mimeType: String,
     },
-    transaction_date: {
-      type: Date,
-    },
-    deduction_status: {
-      type: String,
-      enum: Object.values(DeductionStatus),
-      default: DeductionStatus.non_deductible,
+    rule: {
+      type: Schema.Types.ObjectId,
+      ref: 'rule',
     },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true,
-    },
-    rule: {
-      type: Schema.Types.ObjectId,
-      ref: 'rule',
     },
   },
   {

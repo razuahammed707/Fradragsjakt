@@ -184,7 +184,7 @@
         "update_expense": "Oppdater en utgift"
       },
       "label": {
-        "description": "Beskrivelse",
+        "description": "Selgernavn",
         "amount": "Beløp (NOK)",
         "expense_type": "Utgiftstype",
         "category": "Kategori"

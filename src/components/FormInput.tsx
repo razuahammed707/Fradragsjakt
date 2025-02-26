@@ -108,10 +108,10 @@ export function FormInput({
           <div>
             <Textarea
               {...field}
-              id={id} // Add id
+              id={id}
               placeholder={placeholder}
               rows={rows}
-              className={`w-full resize-y max-h-[200px] overflow-y-auto ${customClassName}`}
+              className={`w-full px-2 resize-y max-h-[200px] overflow-y-auto ${customClassName}`}
               required={required}
               disabled={disabled}
             />

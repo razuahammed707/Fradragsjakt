@@ -1,7 +1,7 @@
 // app/[lang]/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import '../globals.css';
 import { Toaster } from 'react-hot-toast';
 import Providers from '@/lib/StoreProviders';
 import { getDictionary } from '@/lib/dictionary';

@@ -8,11 +8,7 @@ import ExpenseModel from '@/server/db/models/expense';
 import { ApiError } from '@/lib/exceptions';
 import { expenseValidation } from './expenses.validation';
 import { ExpenseHelpers } from '@/server/helpers/expense';
-import {
-  ExpenseType,
-  IExpense,
-  IExpenseUpdate,
-} from '@/server/db/interfaces/expense';
+import { ExpenseType } from '@/server/db/interfaces/expense';
 import { errorHandler } from '@/server/middlewares/error-handler';
 import RuleModel from '@/server/db/models/rules';
 import mongoose from 'mongoose';
@@ -323,7 +319,7 @@ export const expenseRouter = router({
         const loggedUser = ctx.user as JwtPayload;
 
         const expense = await ExpenseHelpers.createExpenseRecord(
-          input as IExpense,
+          input,
           loggedUser.id
         );
 
@@ -373,12 +369,6 @@ export const expenseRouter = router({
         const createdIncomes = results
           .map((r) => r.income)
           .filter((i) => i !== null);
-        console.log(
-          'Total Processed',
-          createdExpenses.length + createdIncomes.length,
-          createdExpenses.length,
-          createdIncomes.length
-        );
 
         return {
           status: 201,
@@ -481,7 +471,7 @@ export const expenseRouter = router({
         const loggedUser = ctx.user as JwtPayload;
 
         const expense = await ExpenseHelpers.updateExpenseRecord(
-          input as IExpenseUpdate,
+          input,
           loggedUser.id
         );
 
