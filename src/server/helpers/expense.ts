@@ -1,9 +1,5 @@
 import { ApiError } from '@/lib/exceptions';
-import {
-  ExpenseType,
-  IExpense,
-  IExpenseUpdate,
-} from '../db/interfaces/expense';
+import { ExpenseType } from '../db/interfaces/expense';
 import CategoryModel from '../db/models/category';
 import ExpenseModel from '../db/models/expense';
 import RuleModel from '../db/models/rules';
@@ -13,6 +9,8 @@ import { IRule } from '../db/interfaces/rules';
 import { JwtPayload } from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { QuestionKeysMap } from '@/utils/constants/QuestionKeys';
+import { z } from 'zod';
+import { expenseValidation } from '../modules/expenses/expenses.validation';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
@@ -41,7 +39,10 @@ async function findMatchingRule(description: string, userId: string) {
   }
 }
 
-async function createExpenseRecord(input: IExpense, userId: string) {
+async function createExpenseRecord(
+  input: z.infer<typeof expenseValidation.createExpenseSchema>,
+  userId: string
+) {
   try {
     const category = await CategoryModel.findOneAndUpdate(
       {
@@ -67,8 +68,6 @@ async function createExpenseRecord(input: IExpense, userId: string) {
           expense_type: input.expense_type,
           category_title: input.category,
           category: category?._id,
-          sub_category: input.sub_category,
-          tag_category: input.tag_category,
         },
       },
       { upsert: true, new: true }
@@ -76,6 +75,7 @@ async function createExpenseRecord(input: IExpense, userId: string) {
 
     return await ExpenseModel.create({
       ...input,
+      transaction_date: new Date(input?.transaction_date),
       user: userId,
       expense_type:
         updatedRule?.expense_type || input.expense_type || ExpenseType.unknown,
@@ -690,7 +690,10 @@ const deleteExpenseRecord = async (expenseId: string, userId: string) => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
   }
 };
-const updateExpenseRecord = async (input: IExpenseUpdate, userId: string) => {
+const updateExpenseRecord = async (
+  input: z.infer<typeof expenseValidation.createExpenseSchema>,
+  userId: string
+) => {
   try {
     const { id, ...updateData } = input;
     const expense = await ExpenseModel.findOneAndUpdate(

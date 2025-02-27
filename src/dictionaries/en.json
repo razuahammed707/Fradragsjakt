@@ -184,7 +184,7 @@
         "update_expense": "Update an expense"
       },
       "label": {
-        "description": "Description",
+        "description": "Merchant name",
         "amount": "Amount (NOK)",
         "expense_type": "Expense Type",
         "category": "Category"

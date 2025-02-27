@@ -5,42 +5,32 @@ export enum ExpenseType {
   personal = 'personal',
   unknown = 'unknown',
 }
-
-export enum DeductionStatus {
-  deductible = 'deductible',
-  non_deductible = 'non_deductible',
-}
-
 export interface IExpense extends Document {
   description: string;
-  category: string;
-  sub_category: string;
-  tag_category: string;
-  expense_type: ExpenseType;
+  transaction_date: Date;
   amount: number;
-  transaction_date?: Date;
-  deduction_status: DeductionStatus;
-  user: Types.ObjectId;
-  rule: Types.ObjectId;
+  category: string;
+  expense_type?: ExpenseType;
+  note?: string;
   receipt?: {
     link: string;
     mimeType: string;
   };
+  rule: Types.ObjectId;
+  user: Types.ObjectId;
 }
 export interface IExpenseUpdate extends Document {
   id: string;
   description: string;
-  category: string;
-  sub_category: string;
-  tag_category: string;
-  expense_type: ExpenseType;
+  transaction_date: Date;
   amount: number;
-  transaction_date?: Date;
-  deduction_status: DeductionStatus;
-  user: Types.ObjectId;
-  rule: Types.ObjectId;
+  category: string;
+  expense_type?: ExpenseType;
+  note?: string;
   receipt?: {
     link: string;
     mimeType: string;
   };
+  rule: Types.ObjectId;
+  user: Types.ObjectId;
 }

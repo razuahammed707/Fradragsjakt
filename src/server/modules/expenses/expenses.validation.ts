@@ -5,22 +5,21 @@ const createExpenseSchema = z.object({
   description: z.string({
     required_error: 'Description is required',
   }),
-  expense_type: z.enum(['personal', 'business', 'unknown'], {
-    required_error: 'Expense type is required',
+  transaction_date: z.preprocess((val) => new Date(val as string), z.date()),
+  amount: z.number({
+    required_error: 'Amount is required',
   }),
   category: z.string({
     required_error: 'Category is required',
   }),
-  sub_category: z.string().optional(),
-  tag_category: z.string().optional(),
-  amount: z.number({
-    required_error: 'Amount is required',
-  }),
+  expense_type: z.enum(['personal', 'business', 'unknown']).optional(),
+  note: z.string().optional(),
   receipt: z
     .object({
       link: z.string(),
       mimeType: z.string(),
     })
+    .nullable()
     .optional(),
 });
 const createBulkExpenseSchema = z.array(

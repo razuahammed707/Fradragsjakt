@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
 import { SelectFormInput } from '@/components/SelectFormInput';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
@@ -13,9 +13,7 @@ import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DependantKeys } from '@/utils/constants/DependantKeys';
-import { transformFormDataToPayload } from '@/utils/helpers/transformFormDataAsPayload';
-
+import { DatePickerFormInput } from '@/components/DatePickerFormInput';
 interface ExpenseAddContentProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
   payload?: PayloadType;
@@ -28,26 +26,15 @@ function ExpenseAddContent({
   payload,
 }: ExpenseAddContentProps) {
   const { translate } = useTranslation();
-  const {
-    handleSubmit,
-    control,
-
-    setValue,
-    formState: {
-      /* isValid */
-    },
-    reset,
-  } = useForm<ExpenseFormData>({
+  const methods = useForm<ExpenseFormData>({
     resolver: zodResolver(ExpenseFormSchema),
     defaultValues: {
-      expense_type: 'business',
       category: payload?.category || '',
-      sub_category: payload?.sub_category || '',
-      tag_category: payload?.tag_category || '',
       receipt: payload?.receipt || { link: '', mimeType: '' },
     },
     mode: 'onChange',
   });
+
   const [loading, setLoading] = useState(false);
 
   const utils = trpc.useUtils();
@@ -61,7 +48,7 @@ function ExpenseAddContent({
       toast.success(
         translate('componentsExpenseModal.expense.toast.create_success')
       );
-      reset();
+      methods.reset();
       setModalOpen(false);
       setLoading(false);
     },
@@ -81,7 +68,7 @@ function ExpenseAddContent({
       toast.success(
         translate('componentsExpenseModal.expense.toast.update_success')
       );
-      reset();
+      methods.reset();
       setModalOpen(false);
       setLoading(false);
     },
@@ -94,32 +81,10 @@ function ExpenseAddContent({
     },
   });
 
-  const updateQuestionnaires = trpc.users.updateUserQuestionnaires.useMutation({
-    onSuccess: () => {
-      utils.users.getUserByEmail.invalidate();
-    },
-    onError: (error) => {
-      toast.error(error.message || 'User questionnaires updation failed!');
-    },
-  });
-
   const onSubmit = (data: ExpenseFormData) => {
+    console.log(data.transaction_date);
+
     setLoading(true);
-
-    if (data.sub_category && data.sub_category_dependant) {
-      const questionnaireFormData = {
-        [data.sub_category]: {
-          [DependantKeys[data.sub_category]]: data.sub_category_dependant,
-        },
-      };
-
-      const payload = transformFormDataToPayload(
-        data.category,
-        questionnaireFormData
-      );
-      updateQuestionnaires.mutate(payload);
-    }
-
     const modifiedAmount =
       typeof data?.amount === 'number'
         ? data.amount
@@ -130,7 +95,6 @@ function ExpenseAddContent({
     const expenseData = {
       ...data,
       amount: modifiedAmount,
-      sub_category_dependant: undefined,
     };
 
     if (origin === 'expense update' && payload?._id) {
@@ -150,98 +114,104 @@ function ExpenseAddContent({
           ? translate('componentsExpenseModal.expense.heading.update_expense')
           : translate('componentsExpenseModal.expense.heading.add_expense')}
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="max-h-[500px] overflow-y-auto space-y-2 pr-1 white-thumb">
-          <div>
-            <Label htmlFor="description">
-              {translate('componentsExpenseModal.expense.label.description')}
-            </Label>
-            <FormInput
-              type="text"
-              name="description"
-              defaultValue={payload?.description}
-              placeholder="Enter description"
-              control={control}
-              customClassName="w-full mt-1"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="amount">
-              {translate('componentsExpenseModal.expense.label.amount')}
-            </Label>
-            <FormInput
-              type="number"
-              name="amount"
-              defaultValue={payload?.amount}
-              placeholder="Enter amount (NOK)"
-              disabled={origin === 'expense update'}
-              control={control}
-              customClassName="w-full mt-1"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="expense_type">
-              {translate('componentsExpenseModal.expense.label.expense_type')}
-            </Label>
-            <FormInput
-              name="expense_type"
-              customClassName="w-full mt-1"
-              type="select"
-              control={control}
-              placeholder="Select expense type"
-              options={[
-                { title: 'Deductible', value: 'business' },
-                { title: 'Personal', value: 'personal' },
-              ]}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="category">
-              {translate('componentsExpenseModal.expense.label.category')}
-            </Label>
-            <SelectFormInput
-              name="category"
-              control={control}
-              customClassName="mt-1"
-              placeholder="Select category"
-              options={manipulatedCategories}
-              defaultValue={payload?.category}
-              required
-              searchEnabled
-            />
-          </div>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="max-h-[500px] overflow-y-auto space-y-2 pr-1 white-thumb">
+            <div>
+              <Label htmlFor="description">
+                {translate('componentsExpenseModal.expense.label.description')}
+              </Label>
+              <FormInput
+                type="text"
+                name="description"
+                defaultValue={payload?.description}
+                placeholder="e.g. Starbucks"
+                control={methods.control}
+                customClassName="w-full mt-1"
+                required
+              />
+            </div>
+            <div>
+              <DatePickerFormInput
+                name="transaction_date"
+                label="Date"
+                control={methods.control}
+                defaultValue={
+                  (payload?.transaction_date &&
+                    new Date(payload?.transaction_date)) ||
+                  undefined
+                }
+                customClassName="w-full"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="amount">
+                {translate('componentsExpenseModal.expense.label.amount')}
+              </Label>
+              <FormInput
+                type="number"
+                name="amount"
+                defaultValue={payload?.amount?.toString()}
+                placeholder="e.g. kr5.00"
+                disabled={origin === 'expense update'}
+                control={methods.control}
+                customClassName="w-full mt-1"
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="receipt">Receipt</Label>
-            <FormReceiptInput
-              name="receipt"
-              defaultValue={payload?.receipt?.link}
-              includeMimeType
-              setValue={(
-                name: string,
-                value: string | { link: string; mimeType: string }
-              ) => {
-                setValue(name as any, value as any);
-              }}
-              customClassName="mt-1"
-            />
+            <div>
+              <Label htmlFor="category">
+                {translate('componentsExpenseModal.expense.label.category')}
+              </Label>
+              <SelectFormInput
+                name="category"
+                control={methods.control}
+                customClassName="mt-1"
+                placeholder="Select category"
+                options={manipulatedCategories}
+                defaultValue={payload?.category}
+                required
+                searchEnabled
+              />
+            </div>
+            <div>
+              <Label htmlFor="note">Add a note (optional)</Label>
+              <FormInput
+                type="textarea"
+                name="note"
+                defaultValue={payload?.note}
+                placeholder="e.g. Meeting with my client Olivier"
+                control={methods.control}
+                customClassName="w-full mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="receipt">Receipt (optional)</Label>
+              <FormReceiptInput
+                name="receipt"
+                defaultValue={payload?.receipt?.link}
+                includeMimeType
+                setValue={(
+                  name: string,
+                  value: string | { link: string; mimeType: string }
+                ) => {
+                  methods.setValue(name as any, value as any);
+                }}
+                customClassName="mt-1"
+              />
+            </div>
           </div>
-        </div>
-        <Button
-          //disabled={!isValid || loading}
-          type="submit"
-          className="w-full text-white"
-        >
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {origin === 'expense update'
-            ? translate('componentsExpenseModal.expense.button.update')
-            : translate('componentsExpenseModal.expense.button.add')}{' '}
-          {translate('componentsExpenseModal.expense.button.expense')}
-        </Button>
-      </form>
+          <Button disabled={false} type="submit" className="w-full text-white">
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {origin === 'expense update'
+              ? translate('componentsExpenseModal.expense.button.update')
+              : translate('componentsExpenseModal.expense.button.add')}{' '}
+            {translate('componentsExpenseModal.expense.button.expense')}
+          </Button>
+        </form>
+      </FormProvider>
     </div>
   );
 }

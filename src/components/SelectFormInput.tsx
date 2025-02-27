@@ -126,7 +126,7 @@ export function SelectFormInput({
                 role="combobox"
                 aria-expanded={open}
                 className={cn(
-                  'w-full justify-between relative pr-12 ps-3',
+                  'w-full justify-between relative ps-2 pr-0',
                   customClassName
                 )}
               >
@@ -146,7 +146,7 @@ export function SelectFormInput({
                     }}
                   />
                 )}
-                <ChevronsUpDown className="absolute right-4 h-3 w-3 shrink-0 opacity-50" />
+                <ChevronsUpDown className="absolute right-2 h-3 w-3 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">

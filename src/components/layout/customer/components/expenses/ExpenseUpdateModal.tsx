@@ -10,15 +10,13 @@ export type PayloadType = {
   category: string;
   description: string;
   expense_type: string;
-  sub_category: string;
-  tag_category: string;
   transaction_date?: string;
+  note?: string;
   createdAt?: string;
   receipt?: {
     link: string;
     mimeType: string;
   };
-  deduction_status?: string;
   __v?: number;
   _id: string;
 };
