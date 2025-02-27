@@ -5,9 +5,7 @@ const createExpenseSchema = z.object({
   description: z.string({
     required_error: 'Description is required',
   }),
-  transaction_date: z.date({
-    required_error: 'Date is required',
-  }),
+  transaction_date: z.preprocess((val) => new Date(val as string), z.date()),
   amount: z.number({
     required_error: 'Amount is required',
   }),
@@ -21,6 +19,7 @@ const createExpenseSchema = z.object({
       link: z.string(),
       mimeType: z.string(),
     })
+    .nullable()
     .optional(),
 });
 const createBulkExpenseSchema = z.array(
