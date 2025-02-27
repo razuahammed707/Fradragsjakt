@@ -1,13 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Control, Controller } from 'react-hook-form';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
@@ -15,16 +7,10 @@ import { Eye, EyeOff } from 'lucide-react';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { sanitizeNumberInput } from '@/utils/helpers/sanitizeNumberInput';
 
-type Option = {
-  title: string;
-  value: string;
-};
-
 export interface FormInputProps {
   name: string;
   type?: 'text' | 'email' | 'password' | 'select' | 'number' | 'textarea';
   placeholder?: string;
-  options?: Option[];
   control?: Control<any>;
   required?: boolean;
   customClassName?: string;
@@ -42,7 +28,7 @@ export function FormInput({
   name,
   placeholder,
   type = 'text',
-  options = [],
+
   control,
   required,
   customClassName,
@@ -53,49 +39,10 @@ export function FormInput({
   disabled,
   maxValue,
   noFraction,
-  id = name, // Default to `name` if no `id` is provided
+  id = name,
 }: FormInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
-  // Select input
-  if (type === 'select') {
-    return (
-      <Controller
-        name={name}
-        control={control}
-        rules={{ required }}
-        defaultValue={defaultValue}
-        render={({ field }) => (
-          <div>
-            <Select
-              value={field.value}
-              onValueChange={field.onChange}
-              disabled={disabled}
-            >
-              <SelectTrigger
-                id={id}
-                className={`w-full data-[placeholder]:text-muted-foreground ${customClassName}`}
-              >
-                <SelectValue placeholder={placeholder} />
-              </SelectTrigger>
-              <SelectContent className="overflow-y-auto">
-                <SelectGroup>
-                  {options?.map((option, i) => (
-                    <SelectItem key={i} value={option.value}>
-                      {option.title}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {errorMessage && (
-              <div className="text-red-500 text-sm">{errorMessage}</div>
-            )}
-          </div>
-        )}
-      />
-    );
-  }
   // Textarea input
   if (type === 'textarea') {
     return (

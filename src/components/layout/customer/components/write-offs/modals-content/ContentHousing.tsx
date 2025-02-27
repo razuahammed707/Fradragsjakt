@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { CardDescription } from '@/components/ui/card';
+import { SelectFormInput } from '@/components/SelectFormInput';
 
 type ContentHousingProps = {
   questionnaire?: Questionnaire;
@@ -139,10 +140,9 @@ export function ContentHousing({ questionnaire }: ContentHousingProps) {
             Was the property your primary residence for at least 12 of the last
             24 months?
           </p>
-          <FormInput
+          <SelectFormInput
             name="Sold a residential property or holiday home profit or loss.Was the property your primary residence for at least 12 of the last 24 months"
             customClassName="w-full"
-            type="select"
             control={control}
             placeholder="Yes"
             options={[

@@ -3,6 +3,7 @@ import { Document, Types } from 'mongoose';
 export enum Type {
   personal = 'personal',
   business = 'business',
+  unknown = 'unknown',
 }
 
 export interface IRule extends Document {

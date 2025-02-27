@@ -146,25 +146,6 @@ export default function CategoryAddModal({
                 />
               </div>
 
-              {/* <div>
-                <Label className="block mb-2 text-[#101010] text-xs font-medium">
-                  Category For
-                </Label>
-                <FormInput
-                  name="category_for"
-                  defaultValue={category?.category_for}
-                  customClassName="w-full mt-2"
-                  type="select"
-                  control={control}
-                  placeholder={`Select category`}
-                  options={[
-                    { title: 'Expense', value: 'expense' },
-                    { title: 'Income', value: 'income' },
-                  ]}
-                  required
-                />
-              </div> */}
-
               <div>
                 <Label className="block mb-2 text-[#101010] text-xs font-medium">
                   Map with system-defined categories

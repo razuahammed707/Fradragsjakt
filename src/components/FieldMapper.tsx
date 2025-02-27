@@ -1,7 +1,7 @@
 import React from 'react';
-import { FormInput } from '@/components/FormInput';
 import { Control } from 'react-hook-form';
 import { Column, FormData } from '@/types/upload-statements';
+import { SelectFormInput } from './SelectFormInput';
 
 interface FieldMapperProps {
   control: Control<FormData, any>;
@@ -41,10 +41,9 @@ export const FieldMapper: React.FC<FieldMapperProps> = ({
           <p className="text-gray-800 text-xs pt-2 font-semibold">
             {column.title}
           </p>
-          <FormInput
+          <SelectFormInput
             name={column.title}
             control={control}
-            type="select"
             placeholder={column.title}
             options={headerOptions}
             required={column.title === 'Date' ? false : true}

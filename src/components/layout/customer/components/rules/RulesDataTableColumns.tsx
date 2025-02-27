@@ -45,7 +45,11 @@ export const RulesDataTableColumns = (): ColumnDef<IRule>[] => {
       ),
       cell: ({ row }) => (
         <div className="text-left">
-          {transformToUppercase(row.getValue('expense_type'))}
+          {row.getValue('expense_type') === 'business'
+            ? 'Deduction'
+            : row.getValue('expense_type') === 'personal'
+              ? 'Not Deductible'
+              : 'Ask me'}
         </div>
       ),
     },

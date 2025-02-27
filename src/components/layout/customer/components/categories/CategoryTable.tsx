@@ -38,7 +38,6 @@ export default function CategoryTable() {
       page: currentPage,
       limit: pageLimit,
       searchTerm,
-      category_for: activeTab === 'all' ? undefined : activeTab,
     },
     {
       keepPreviousData: true,

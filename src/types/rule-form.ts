@@ -4,7 +4,7 @@ export const RuleFormSchema = z.object({
   description_contains: z
     .string()
     .min(1, { message: 'Description is required' }),
-  expense_type: z.enum(['business', 'personal'], {
+  expense_type: z.enum(['business', 'personal', 'unknown'], {
     errorMap: () => ({
       message: 'Expense type must be either business or personal',
     }),

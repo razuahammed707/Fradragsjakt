@@ -19,6 +19,7 @@ import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { CardDescription } from '@/components/ui/card';
+import { SelectFormInput } from '@/components/SelectFormInput';
 
 type AccordionItemData = {
   id: string;
@@ -120,10 +121,9 @@ export function ContentHealthFamily({
           <p className="text-black pt-[12px] pb-[6px]">
             Do you have children with needs for special care?
           </p>
-          <FormInput
+          <SelectFormInput
             name="I have children aged 12 or older with special care needs.Do you have children with needs for special care?"
             customClassName="w-full"
-            type="select"
             control={control}
             placeholder="Yes"
             options={[

@@ -6,7 +6,7 @@ const RuleSchema: Schema = new Schema<IRule>(
     description_contains: { type: String, required: true },
     expense_type: {
       type: String,
-      enum: ['personal', 'business'],
+      enum: ['personal', 'business', 'unknown'],
       required: true,
     },
     category_title: {

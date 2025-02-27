@@ -2,7 +2,7 @@ import { z } from 'zod'; // Import Zod for validation
 
 const ruleSchema = z.object({
   description_contains: z.string().nonempty('Description is required'),
-  expense_type: z.enum(['personal', 'business'], {
+  expense_type: z.enum(['personal', 'business', 'unknown'], {
     required_error: 'Expense type is required',
   }),
   category: z.string({
@@ -12,7 +12,7 @@ const ruleSchema = z.object({
 const updateRuleSchema = z.object({
   _id: z.string().min(1, 'Rule ID is required'),
   description_contains: z.string().optional(),
-  expense_type: z.enum(['personal', 'business']).optional(),
+  expense_type: z.enum(['personal', 'business', 'unknown']).optional(),
   category: z.string().optional(),
 });
 
