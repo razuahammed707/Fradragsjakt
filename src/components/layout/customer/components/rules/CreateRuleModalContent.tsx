@@ -32,7 +32,7 @@ function CreateRuleModalContent({
   } = useForm<RuleFormData>({
     resolver: zodResolver(RuleFormSchema),
     defaultValues: {
-      expense_type: 'business',
+      expense_type: updateRulePayload?.expense_type,
       category: updateRulePayload?.category_title || '',
     },
     mode: 'onChange',
@@ -125,18 +125,21 @@ function CreateRuleModalContent({
         </h2>
         <div>
           <Label htmlFor="expense_type">Status</Label>
-          <FormInput
+          <SelectFormInput
             name="expense_type"
-            id="expense_type"
             customClassName="w-full mt-1"
-            type="select"
             control={control}
+            defaultValue={updateRulePayload?.expense_type}
             placeholder={translate('componentsRuleModal.rule.selectType')}
             options={[
-              { title: 'Deductible', value: 'business' },
+              { title: 'Deduction', value: 'business' },
               {
-                title: translate('componentsRuleModal.rule.personal'),
+                title: 'Not deductible',
                 value: 'personal',
+              },
+              {
+                title: 'Ask me',
+                value: 'unknown',
               },
             ]}
             required

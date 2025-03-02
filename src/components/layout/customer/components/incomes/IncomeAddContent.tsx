@@ -54,7 +54,7 @@ function IncomeAddContent({
 
   const selectedCategory = watch('category');
   //const query = { category_for: 'income' };
-  const { mainCategories, secondaryCategories } = useManipulatedCategories(); //query was used to call
+  const { mainCategories, manipulatedCategories } = useManipulatedCategories(); //query was used to call
 
   const createMutation = trpc.incomes.createIncome.useMutation({
     onSuccess: () => {
@@ -165,11 +165,10 @@ function IncomeAddContent({
             <Label htmlFor="income_type">
               {translate('componentsIncomeModal.income.label.income_type')}
             </Label>
-            <FormInput
+            <SelectFormInput
               name="income_type"
               defaultValue={payload?.income_type}
               customClassName="w-full mt-2"
-              type="select"
               control={control}
               placeholder="Select income type"
               options={[
@@ -219,7 +218,7 @@ function IncomeAddContent({
               customClassName="w-full mt-2"
               placeholder="Select as Tag"
               defaultValue={payload?.tag_category}
-              options={secondaryCategories}
+              options={manipulatedCategories}
               searchEnabled
             />
           </div>

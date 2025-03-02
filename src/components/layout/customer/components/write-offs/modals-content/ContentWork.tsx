@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { CardDescription } from '@/components/ui/card';
+import { SelectFormInput } from '@/components/SelectFormInput';
 
 type ContentWorkProps = {
   questionnaire?: Questionnaire;
@@ -356,10 +357,9 @@ export function ContentWork({ questionnaire }: ContentWorkProps) {
           <p className="text-black pt-[12px] pb-[6px]">
             Have you spent more than 183 days in Norway?
           </p>
-          <FormInput
+          <SelectFormInput
             name="living in Norway only in a part of a year.Have you spent more than 183 days in Norway"
             customClassName="w-full"
-            type="select"
             control={control}
             placeholder="Yes"
             options={[

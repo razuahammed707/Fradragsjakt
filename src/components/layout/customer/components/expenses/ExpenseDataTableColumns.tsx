@@ -109,8 +109,10 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
       cell: ({ row }) => (
         <span>
           {row.getValue('expense_type') === 'business'
-            ? 'Deductible'
-            : transformToUppercase(row.getValue('expense_type'))}
+            ? 'Deduction'
+            : row.getValue('expense_type') === 'personal'
+              ? 'Not Deductible'
+              : 'Ask me'}
         </span>
       ),
     },

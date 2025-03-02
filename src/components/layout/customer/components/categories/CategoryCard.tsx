@@ -27,15 +27,13 @@ export default function CategoryCard() {
       ? manipulatedCategories(expensesData.data)
       : categories;
 
-    // Ensure amount is a number and map to Category type
     return rawCategories.map((category) => ({
       ...category,
       amount: Number(category.amount) || 0,
-      image: category.image, // Keep original image type
+      image: category.image,
     }));
   }, [expensesData]);
 
-  // Safely filter and sort categories
   const sortedCategories: Category[] = React.useMemo(
     () =>
       manipulateCategories
@@ -44,7 +42,6 @@ export default function CategoryCard() {
     [manipulateCategories]
   );
 
-  // Safely handle empty categories array
   const highestCategory = sortedCategories[0] || null;
 
   const remainingCategories = sortedCategories.slice(1);
@@ -55,7 +52,6 @@ export default function CategoryCard() {
     .slice(7)
     .reduce((sum, category) => sum + category.amount, 0);
 
-  // Create display categories with default values
   const displayCategories: Category[] = [
     ...topCategories,
     ...(othersAmount > 0
@@ -63,26 +59,24 @@ export default function CategoryCard() {
           {
             label: 'Others',
             amount: othersAmount,
-            image: '/path/to/default-icon.svg', // Fallback to string path
+            image: '/path/to/default-icon.svg',
           },
         ]
       : [
           {
             label: 'Others',
             amount: 0,
-            image: '/path/to/default-icon.svg', // Fallback to string path
+            image: '/path/to/default-icon.svg',
           },
         ]),
   ];
 
-  // Render null if no categories exist
   if (!highestCategory && displayCategories.length === 0) {
     return null;
   }
 
   return (
     <div className="grid grid-cols-6 gap-2">
-      {/* Card for the highest category */}
       {highestCategory && (
         <Card
           style={{ gridRow: 'span 2' }}
@@ -110,7 +104,6 @@ export default function CategoryCard() {
         </Card>
       )}
 
-      {/* Grid for the other categories */}
       <div className="col-span-5 grid grid-cols-4 gap-2">
         {displayCategories.map((category, index) => (
           <Card

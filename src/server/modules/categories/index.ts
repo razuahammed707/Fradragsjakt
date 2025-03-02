@@ -48,7 +48,7 @@ export const categoryRouter = router({
           $or: [{ creator_id: loggedUser?.id }, { created_by: 'SYSTEM' }],
         });
         const totalIncomeCategories = await Category.countDocuments({
-          category_for: 'income',
+          category_for: 'expense',
           $or: [{ creator_id: loggedUser?.id }, { created_by: 'SYSTEM' }],
         });
         const categories = await Category.find(query)
@@ -161,7 +161,7 @@ export const categoryRouter = router({
 
         const categoryExist = await Category.findOne({
           title: transformedTitle,
-          creator_id: sessionUser.id,
+          $or: [{ creator_id: sessionUser.id }, { created_by: 'SYSTEM' }],
         });
         if (categoryExist) {
           throw new Error('Category already exists!');

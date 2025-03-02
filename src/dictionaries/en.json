@@ -59,14 +59,14 @@
     },
     "expenseDataTableColumns": {
       "date": "Date",
-      "description": "Description",
+      "description": "Merchant",
       "category": "Category",
       "type": "Type",
       "amount": "Amount"
     },
     "incomeDataTableColumns": {
       "date": "Date",
-      "description": "Description",
+      "description": "Merchant",
       "category": "Category",
       "type": "Type",
       "amount": "Amount"
@@ -117,7 +117,7 @@
     },
     "rulesTableColumn": {
       "serial_no": "Serial No.",
-      "description_contains": "Description Contains",
+      "description_contains": "Merchant",
       "expense_type": "Expense Type",
       "category": "Category"
     },
@@ -208,7 +208,7 @@
   "componentsRuleModal": {
     "rule": {
       "if": "IF",
-      "descriptionContains": "Description contain",
+      "descriptionContains": "Merchant",
       "then": "Then",
       "expenseType": "Expense type",
       "selectType": "Select type",

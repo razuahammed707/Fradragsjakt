@@ -14,5 +14,5 @@ export type UpdateRuleProps = {
   description_contains: string;
   category: string;
   category_title: string;
-  expense_type: 'business' | 'personal';
+  expense_type: 'business' | 'personal' | 'unknown';
 };

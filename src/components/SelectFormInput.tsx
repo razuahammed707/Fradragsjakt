@@ -149,7 +149,7 @@ export function SelectFormInput({
                 <ChevronsUpDown className="absolute right-2 h-3 w-3 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+            <PopoverContent className="w-[--radix-popover-trigger-width] p-0 pointer-events-auto">
               <Command>
                 {searchEnabled && (
                   <CommandInput

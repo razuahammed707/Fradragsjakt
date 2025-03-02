@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { CardDescription } from '@/components/ui/card';
+import { SelectFormInput } from '@/components/SelectFormInput';
 
 type ContentHobbyProps = {
   questionnaire?: Questionnaire;
@@ -166,10 +167,9 @@ export function ContentHobby({ questionnaire }: ContentHobbyProps) {
           <p className="text-black pt-[12px] pb-[6px]">
             Received salary from odd jobs and services exceeding NOK 6000?
           </p>
-          <FormInput
+          <SelectFormInput
             name="I have received salary from odd jobs and services.Received salary from odd jobs and services exceeding NOK 6000"
             customClassName="w-full"
-            type="select"
             control={control}
             placeholder="Yes or No"
             options={[
