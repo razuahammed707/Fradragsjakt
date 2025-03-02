@@ -31,6 +31,12 @@ function ExpenseAddContent({
     defaultValues: {
       category: payload?.category || '',
       receipt: payload?.receipt || { link: '', mimeType: '' },
+      description: payload?.description || '',
+      transaction_date: payload?.transaction_date
+        ? new Date(payload.transaction_date)
+        : new Date(),
+      amount: payload?.amount?.toString() || '',
+      note: payload?.note || '',
     },
     mode: 'onChange',
   });
@@ -200,6 +206,22 @@ function ExpenseAddContent({
                   methods.setValue(name as any, value as any);
                 }}
                 customClassName="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="expense_type">Status</Label>
+              <SelectFormInput
+                name="expense_type"
+                customClassName="w-full mt-1"
+                control={methods.control}
+                placeholder="Select type"
+                options={[
+                  { title: 'Deduction', value: 'business' },
+                  { title: 'Not deductible', value: 'personal' },
+                  { title: 'Ask me', value: 'unknown' },
+                ]}
+                defaultValue={payload?.expense_type}
+                required
               />
             </div>
           </div>
