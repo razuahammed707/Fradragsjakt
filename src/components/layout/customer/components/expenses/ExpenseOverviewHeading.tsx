@@ -20,6 +20,7 @@ import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import DeleteConfirmationContent from '@/components/DeleteConfirmationContent';
+import CreateRuleModal from '../rules/CreateRuleModal';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
@@ -185,6 +186,7 @@ function ExpenseOverviewHeading({
                 'components.buttons.expense_buttons.text.upload_statements'
               )}
             </Button>
+            <CreateRuleModal />
             {selectedIds.length > 0 && (
               <Button
                 onClick={() => handleButtonClick('deleteRows', selectedIds)}
