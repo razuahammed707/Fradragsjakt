@@ -37,6 +37,9 @@ function ExpenseAddContent({
         : new Date(),
       amount: payload?.amount?.toString() || '',
       note: payload?.note || '',
+      expense_type:
+        (payload?.expense_type as 'business' | 'personal' | 'unknown') ||
+        'unknown',
     },
     mode: 'onChange',
   });
@@ -183,6 +186,22 @@ function ExpenseAddContent({
               />
             </div>
             <div>
+              <Label htmlFor="expense_type">Status</Label>
+              <SelectFormInput
+                name="expense_type"
+                customClassName="w-full mt-1"
+                control={methods.control}
+                placeholder="Select type"
+                options={[
+                  { title: 'Deduction', value: 'business' },
+                  { title: 'Not deductible', value: 'personal' },
+                  { title: 'Ask me', value: 'unknown' },
+                ]}
+                defaultValue={payload?.expense_type}
+                required
+              />
+            </div>
+            <div>
               <Label htmlFor="note">Add a note (optional)</Label>
               <FormInput
                 type="textarea"
@@ -206,22 +225,6 @@ function ExpenseAddContent({
                   methods.setValue(name as any, value as any);
                 }}
                 customClassName="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="expense_type">Status</Label>
-              <SelectFormInput
-                name="expense_type"
-                customClassName="w-full mt-1"
-                control={methods.control}
-                placeholder="Select type"
-                options={[
-                  { title: 'Deduction', value: 'business' },
-                  { title: 'Not deductible', value: 'personal' },
-                  { title: 'Ask me', value: 'unknown' },
-                ]}
-                defaultValue={payload?.expense_type}
-                required
               />
             </div>
           </div>

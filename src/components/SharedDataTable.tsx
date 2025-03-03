@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { Dispatch, SetStateAction } from 'react';
 
 import {
   ColumnDef,
@@ -26,7 +27,6 @@ import {
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { NoResultsPlaceholder } from './NoResultsPlaceholder';
-import { PayloadType } from './layout/customer/components/expenses/ExpenseUpdateModal';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,9 +34,8 @@ interface DataTableProps<TData, TValue> {
   filterPlaceholder?: string;
   className?: string;
   loading?: boolean;
-  onSelectionChange?: (selectedRows: string[]) => void;
+  onSelectionChange?: Dispatch<SetStateAction<string[]>>;
   resetRowSelection?: boolean;
-  setSelectedRow?: React.Dispatch<React.SetStateAction<PayloadType | null>>;
 }
 
 export function SharedDataTable<TData, TValue>({
@@ -46,7 +45,6 @@ export function SharedDataTable<TData, TValue>({
   loading,
   onSelectionChange,
   resetRowSelection,
-  setSelectedRow,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -76,12 +74,6 @@ export function SharedDataTable<TData, TValue>({
     },
   });
 
-  const handleRowClick = (row: any) => {
-    if (setSelectedRow) {
-      setSelectedRow(row.original as any);
-      console.log(row.original);
-    }
-  };
   React.useEffect(() => {
     const selectedRows = table
       .getSelectedRowModel()
@@ -134,13 +126,15 @@ export function SharedDataTable<TData, TValue>({
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className={cn(setSelectedRow && 'cursor-pointer')}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => handleRowClick(row)}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

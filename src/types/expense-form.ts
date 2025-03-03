@@ -13,6 +13,9 @@ export const ExpenseFormSchema = z.object({
     })
     .nullable()
     .optional(),
+  expense_type: z.enum(['business', 'personal', 'unknown'], {
+    required_error: 'Status is required',
+  }),
 });
 
 export type ExpenseFormData = z.infer<typeof ExpenseFormSchema>;
