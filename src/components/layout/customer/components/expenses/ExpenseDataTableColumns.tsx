@@ -7,29 +7,36 @@ import ArrowUpDown from '../../../../../../public/sort.png';
 import Image from 'next/image';
 import { transformToUppercase } from '@/utils/helpers/transformToUppercase';
 import formatDate from '@/utils/helpers/formatDate';
-import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
-import ExpenseUpdateModal from './ExpenseUpdateModal';
-import ExpenseDetailsModal from './ExpenseDetailsModal';
+// import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
+// import ExpenseUpdateModal from './ExpenseUpdateModal';
+// import ExpenseDetailsModal from './ExpenseDetailsModal';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
-import useUserInfo from '@/hooks/use-user-info';
+// import useUserInfo from '@/hooks/use-user-info';
 
 export type ExpenseColumnProps = {
   _id: string;
   id: string;
-  transaction_date?: string;
+  transaction_date?: string | Date;
   createdAt?: string;
   description: string;
   category: string;
-  sub_category: string;
-  tag_category: string;
-  expense_type: string;
+  sub_category?: string;
+  tag_category?: string;
+  expense_type: 'business' | 'personal' | 'unknown';
   amount: number;
+  note?: string;
+  receipt?: {
+    link: string;
+    mimeType: string;
+  } | null;
 };
 
-export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
+export const ExpenseDataTableColumns = (
+  onMerchantClick: (rowData: ExpenseColumnProps) => void
+): ColumnDef<ExpenseColumnProps>[] => {
   const { translate } = useTranslation();
-  const { isAuditor } = useUserInfo();
+  // const { isAuditor } = useUserInfo();
 
   return [
     {
@@ -55,6 +62,7 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
       ),
       enableSorting: false,
       enableHiding: false,
+      size: 40,
     },
     {
       accessorKey: 'transaction_date',
@@ -67,16 +75,34 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           <span className="text-[#00104B]">{formatDate(dateToRender)}</span>
         );
       },
+      size: 120,
     },
     {
       accessorKey: 'description',
+      id: 'description',
       header: translate(
         'page.expenseDataTableColumns.description',
         'Description'
       ),
-      cell: ({ row }) => (
-        <span className="text-[#00104B]">{row.getValue('description')}</span>
-      ),
+      cell: ({ row }) => {
+        const handleClick = () => {
+          console.log('Merchant clicked, data:', row.original);
+          onMerchantClick(row.original);
+        };
+
+        return (
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={handleClick}
+            onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+            className="text-[#00104B] cursor-pointer hover:underline p-1"
+          >
+            {row.getValue('description')}
+          </div>
+        );
+      },
+      size: 200,
     },
     {
       accessorKey: 'category',
@@ -93,6 +119,7 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
       cell: ({ row }) => (
         <span>{transformToUppercase(row.getValue('category'))}</span>
       ),
+      size: 150,
     },
     {
       accessorKey: 'expense_type',
@@ -102,7 +129,7 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {translate('page.expenseDataTableColumns.type', 'Type')}{' '}
+          {translate('page.expenseDataTableColumns.status', 'Status')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
@@ -115,6 +142,7 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
               : 'Ask me'}
         </span>
       ),
+      size: 130,
     },
     {
       accessorKey: 'amount',
@@ -136,7 +164,9 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
           </span>
         );
       },
+      size: 120,
     },
+    /* Commenting out actions column
     {
       id: 'actions',
       header: 'Actions',
@@ -157,5 +187,6 @@ export const ExpenseDataTableColumns = (): ColumnDef<ExpenseColumnProps>[] => {
         </div>
       ),
     },
+    */
   ];
 };

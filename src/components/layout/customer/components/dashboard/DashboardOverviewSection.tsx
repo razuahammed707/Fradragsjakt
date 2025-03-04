@@ -13,7 +13,7 @@ import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { manipulateCustomCategoryExpenses } from '@/utils/helpers/manipulateCustomCategoryExpenses';
 
 const DashboardOverviewSection = () => {
-  const { categories } = useManipulatedCategories({ category_for: 'expense' });
+  const { categories } = useManipulatedCategories();
 
   const referenceCategories = categories?.filter(
     (category: { title: string; reference_category: string }) =>

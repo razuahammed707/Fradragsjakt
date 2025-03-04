@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useTranslation } from '@/lib/TranslationProvider';
+import { Dispatch, SetStateAction } from 'react';
 
 import {
   ColumnDef,
@@ -26,7 +27,6 @@ import {
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { NoResultsPlaceholder } from './NoResultsPlaceholder';
-import { PayloadType } from './layout/customer/components/expenses/ExpenseUpdateModal';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,9 +34,8 @@ interface DataTableProps<TData, TValue> {
   filterPlaceholder?: string;
   className?: string;
   loading?: boolean;
-  onSelectionChange?: (selectedRows: string[]) => void;
+  onSelectionChange?: Dispatch<SetStateAction<string[]>>;
   resetRowSelection?: boolean;
-  setSelectedRow?: React.Dispatch<React.SetStateAction<PayloadType | null>>;
 }
 
 export function SharedDataTable<TData, TValue>({
@@ -46,7 +45,6 @@ export function SharedDataTable<TData, TValue>({
   loading,
   onSelectionChange,
   resetRowSelection,
-  setSelectedRow,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -76,12 +74,6 @@ export function SharedDataTable<TData, TValue>({
     },
   });
 
-  const handleRowClick = (row: any) => {
-    if (setSelectedRow) {
-      setSelectedRow(row.original as any);
-      console.log(row.original);
-    }
-  };
   React.useEffect(() => {
     const selectedRows = table
       .getSelectedRowModel()
@@ -96,71 +88,82 @@ export function SharedDataTable<TData, TValue>({
   }, [resetRowSelection]);
 
   return (
-    <div>
+    <div className="relative">
       <div
         className={cn(
-          'rounded-md border-none h-[500px] overflow-auto [&::-webkit-scrollbar]:hidden',
+          'rounded-md border-none h-[500px] overflow-hidden',
           className
         )}
       >
-        <Table className="">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-[450px]">
-                  <div className="flex justify-center">
-                    <Loader2 size={50} className="animate-spin text-primary" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  className={cn(setSelectedRow && 'cursor-pointer')}
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => handleRowClick(row)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+        <div className="overflow-y-auto max-h-[500px] [&::-webkit-scrollbar]:hidden">
+          <Table>
+            <TableHeader className="sticky top-0 bg-white z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="bg-white border-b text-left"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24">
-                  <NoResultsPlaceholder
-                    className="text-black font-semibold"
-                    message={translate('page.modal.no_data')}
-                  />
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-[450px]">
+                    <div className="flex justify-center">
+                      <Loader2
+                        size={50}
+                        className="animate-spin text-primary"
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-left"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24">
+                    <NoResultsPlaceholder
+                      className="text-black font-semibold"
+                      message={translate('page.modal.no_data')}
+                    />
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

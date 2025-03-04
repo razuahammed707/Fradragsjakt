@@ -148,13 +148,13 @@ const getExpensesWithRules = async (rules: IRule[], loggedUser: JwtPayload) => {
             .select('amount description category expense_type')
             .lean();
 
-          if (process.env.NODE_ENV !== 'production') {
+          /* if (process.env.NODE_ENV !== 'production') {
             console.log(`Rule pattern: ${pattern}`);
             console.log(
               `Matches for "${rule.description_contains}":`,
               expenses.map((e) => e.description)
             );
-          }
+          } */
 
           return expenses.length > 0
             ? {

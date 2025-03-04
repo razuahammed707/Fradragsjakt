@@ -7,6 +7,7 @@ import { SharedDataTable } from '@/components/SharedDataTable';
 import { ExpenseDataTableColumns } from './ExpenseDataTableColumns';
 import { trpc } from '@/utils/trpc';
 import ExpenseUpdateModal, { PayloadType } from './ExpenseUpdateModal';
+import { ExpenseColumnProps } from './ExpenseDataTableColumns';
 
 type IFilterProps = {
   filterString: string;
@@ -49,6 +50,14 @@ function ExpenseOverviewSection({
     setTimeout(() => setResetSelection(false), 100);
   };
 
+  const handleMerchantClick = React.useCallback(
+    (rowData: ExpenseColumnProps) => {
+      console.log('handleMerchantClick called with:', rowData);
+      setSelectedRow(rowData);
+    },
+    []
+  );
+
   return (
     <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
       <ExpenseOverviewHeading
@@ -61,11 +70,10 @@ function ExpenseOverviewSection({
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
-          columns={ExpenseDataTableColumns()}
+          columns={ExpenseDataTableColumns(handleMerchantClick)}
           data={expensesResponse?.data || []}
           onSelectionChange={setSelectedIds}
           resetRowSelection={resetSelection}
-          setSelectedRow={setSelectedRow}
         />
         <SharedPagination
           currentPage={currentPage}
@@ -78,8 +86,9 @@ function ExpenseOverviewSection({
       {selectedRow && (
         <ExpenseUpdateModal
           payload={selectedRow}
-          rowClickEnabled
-          onClose={() => setSelectedRow(null)}
+          onClose={() => {
+            setSelectedRow(null);
+          }}
         />
       )}
     </div>

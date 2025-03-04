@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -14,16 +14,19 @@ import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DatePickerFormInput } from '@/components/DatePickerFormInput';
+
 interface ExpenseAddContentProps {
-  setModalOpen: Dispatch<SetStateAction<boolean>>;
+  origin: 'expense add' | 'expense update';
+  setModalOpen: (open: boolean) => void;
   payload?: PayloadType;
-  origin?: string;
+  onSuccess?: () => void;
 }
 
 function ExpenseAddContent({
   setModalOpen,
   origin,
   payload,
+  onSuccess,
 }: ExpenseAddContentProps) {
   const { translate } = useTranslation();
   const methods = useForm<ExpenseFormData>({
@@ -31,14 +34,21 @@ function ExpenseAddContent({
     defaultValues: {
       category: payload?.category || '',
       receipt: payload?.receipt || { link: '', mimeType: '' },
+      description: payload?.description || '',
+      transaction_date: payload?.transaction_date
+        ? new Date(payload.transaction_date)
+        : new Date(),
+      amount: payload?.amount?.toString() || '',
+      note: payload?.note || '',
+      expense_type:
+        (payload?.expense_type as 'business' | 'personal' | 'unknown') ||
+        'unknown',
     },
     mode: 'onChange',
   });
 
   const [loading, setLoading] = useState(false);
-
   const utils = trpc.useUtils();
-
   const { manipulatedCategories } = useManipulatedCategories();
 
   const createMutation = trpc.expenses.createExpense.useMutation({
@@ -71,6 +81,7 @@ function ExpenseAddContent({
       methods.reset();
       setModalOpen(false);
       setLoading(false);
+      onSuccess?.();
     },
     onError: (error) => {
       toast.error(
@@ -82,8 +93,6 @@ function ExpenseAddContent({
   });
 
   const onSubmit = (data: ExpenseFormData) => {
-    console.log(data.transaction_date);
-
     setLoading(true);
     const modifiedAmount =
       typeof data?.amount === 'number'
@@ -177,6 +186,22 @@ function ExpenseAddContent({
               />
             </div>
             <div>
+              <Label htmlFor="expense_type">Status</Label>
+              <SelectFormInput
+                name="expense_type"
+                customClassName="w-full mt-1"
+                control={methods.control}
+                placeholder="Select type"
+                options={[
+                  { title: 'Deduction', value: 'business' },
+                  { title: 'Not deductible', value: 'personal' },
+                  { title: 'Ask me', value: 'unknown' },
+                ]}
+                defaultValue={payload?.expense_type}
+                required
+              />
+            </div>
+            <div>
               <Label htmlFor="note">Add a note (optional)</Label>
               <FormInput
                 type="textarea"
@@ -203,7 +228,11 @@ function ExpenseAddContent({
               />
             </div>
           </div>
-          <Button disabled={false} type="submit" className="w-full text-white">
+          <Button
+            disabled={loading}
+            type="submit"
+            className="w-full text-white"
+          >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {origin === 'expense update'
               ? translate('componentsExpenseModal.expense.button.update')
