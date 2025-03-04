@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import useIsWithinDashboard from '@/hooks/is-within-dashboard';
+import ExpenseUpdateModal from '../expenses/ExpenseUpdateModal';
+import { ExpenseColumnProps } from '../expenses/ExpenseDataTableColumns';
 
 type RecentExpenseTableItem = {
   _id: string;
@@ -15,9 +17,10 @@ type RecentExpenseTableItem = {
   createdAt?: string;
   description: string;
   category: string;
-  expense_type: string;
+  expense_type: 'business' | 'personal' | 'unknown';
   amount: number;
 };
+
 type RecentExpenseTableItems = {
   data: RecentExpenseTableItem[];
 };
@@ -25,6 +28,9 @@ type RecentExpenseTableItems = {
 const RecentExpenseTable = () => {
   const isWithinDashboard = useIsWithinDashboard();
   const { data: session } = useSession();
+  const [selectedRow, setSelectedRow] =
+    React.useState<ExpenseColumnProps | null>(null);
+
   const { data: expensesResponse } = trpc.expenses.getExpenses.useQuery(
     {
       page: 1,
@@ -35,6 +41,13 @@ const RecentExpenseTable = () => {
     }
   ) as { data?: RecentExpenseTableItems };
 
+  const handleMerchantClick = React.useCallback(
+    (rowData: ExpenseColumnProps) => {
+      setSelectedRow(rowData);
+    },
+    []
+  );
+
   return (
     <div className="col-span-7 p-6 rounded-2xl bg-white">
       <div>
@@ -44,7 +57,7 @@ const RecentExpenseTable = () => {
       </div>
 
       <SharedDataTable
-        columns={YearlyExpenseTableColumns()}
+        columns={YearlyExpenseTableColumns(handleMerchantClick)}
         data={expensesResponse?.data || []}
         className={cn('max-h-[312px] border mt-6', isWithinDashboard && 'mb-2')}
       />
@@ -55,6 +68,12 @@ const RecentExpenseTable = () => {
         >
           View more ...
         </Link>
+      )}
+      {selectedRow && (
+        <ExpenseUpdateModal
+          payload={selectedRow}
+          onClose={() => setSelectedRow(null)}
+        />
       )}
     </div>
   );

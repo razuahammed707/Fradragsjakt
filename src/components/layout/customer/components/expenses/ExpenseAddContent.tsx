@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FormInput } from '@/components/FormInput';
@@ -14,16 +14,19 @@ import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DatePickerFormInput } from '@/components/DatePickerFormInput';
+
 interface ExpenseAddContentProps {
-  setModalOpen: Dispatch<SetStateAction<boolean>>;
+  origin: 'expense add' | 'expense update';
+  setModalOpen: (open: boolean) => void;
   payload?: PayloadType;
-  origin?: string;
+  onSuccess?: () => void;
 }
 
 function ExpenseAddContent({
   setModalOpen,
   origin,
   payload,
+  onSuccess,
 }: ExpenseAddContentProps) {
   const { translate } = useTranslation();
   const methods = useForm<ExpenseFormData>({
@@ -45,9 +48,7 @@ function ExpenseAddContent({
   });
 
   const [loading, setLoading] = useState(false);
-
   const utils = trpc.useUtils();
-
   const { manipulatedCategories } = useManipulatedCategories();
 
   const createMutation = trpc.expenses.createExpense.useMutation({
@@ -80,6 +81,7 @@ function ExpenseAddContent({
       methods.reset();
       setModalOpen(false);
       setLoading(false);
+      onSuccess?.();
     },
     onError: (error) => {
       toast.error(
@@ -91,8 +93,6 @@ function ExpenseAddContent({
   });
 
   const onSubmit = (data: ExpenseFormData) => {
-    console.log(data.transaction_date);
-
     setLoading(true);
     const modifiedAmount =
       typeof data?.amount === 'number'
@@ -228,7 +228,11 @@ function ExpenseAddContent({
               />
             </div>
           </div>
-          <Button disabled={false} type="submit" className="w-full text-white">
+          <Button
+            disabled={loading}
+            type="submit"
+            className="w-full text-white"
+          >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {origin === 'expense update'
               ? translate('componentsExpenseModal.expense.button.update')

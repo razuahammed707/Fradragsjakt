@@ -3,6 +3,7 @@ import SharedModal from '@/components/SharedModal';
 import { Edit2, Trash2 } from 'lucide-react';
 import ExpenseAddContent from './ExpenseAddContent';
 import DeleteRowsConfirmationContent from '@/components/DeleteConfirmationContent';
+import { Button } from '@/components/ui/button';
 
 export type PayloadType = {
   _id: string;
@@ -31,8 +32,13 @@ export default function ExpenseUpdateModal({
   rowClickEnabled?: boolean;
   onClose?: () => void;
 }) {
-  const [isModalOpen, setModalOpen] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isRowClickEnabled, setRowClickEnabled] = useState(rowClickEnabled);
+
+  React.useEffect(() => {
+    setModalOpen(true);
+  }, []);
 
   const handleButtonClick = useCallback(() => {
     setModalOpen(true);
@@ -52,9 +58,11 @@ export default function ExpenseUpdateModal({
     [onClose]
   );
 
+  if (!payload) return null;
+
   return (
     <>
-      {!rowClickEnabled && (
+      {!isRowClickEnabled && (
         <Edit2
           className="h-4 w-4 text-[#5B52F9] cursor-pointer mr-2 hover:text-[#4A43C8] transition-colors"
           onClick={handleButtonClick}
@@ -81,16 +89,21 @@ export default function ExpenseUpdateModal({
                   origin="expense update"
                   setModalOpen={setModalOpen}
                   payload={payload}
+                  onSuccess={() => {
+                    setRowClickEnabled(true);
+                    handleModalChange(false);
+                  }}
                 />
-                <div className="flex justify-center mt-6 pt-4 border-t">
-                  <button
+                <p className="text-sm my-1 text-center text-gray-500">Or</p>
+                <div className="flex justify-center">
+                  <Button
                     onClick={handleDeleteClick}
-                    className="flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 transition-colors"
+                    className="w-full bg-transparent hover:bg-red-50 shadow-none border text-red-600 hover:text-red-700 transition-colors"
                     title="Delete Expense"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete Expense
-                  </button>
+                  </Button>
                 </div>
               </>
             )}

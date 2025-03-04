@@ -53,12 +53,10 @@ function ExpenseOverviewSection({
   const handleMerchantClick = React.useCallback(
     (rowData: ExpenseColumnProps) => {
       console.log('handleMerchantClick called with:', rowData);
-      setSelectedRow(rowData as PayloadType);
+      setSelectedRow(rowData);
     },
     []
   );
-
-  console.log('Current selectedRow:', selectedRow);
 
   return (
     <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
@@ -88,9 +86,7 @@ function ExpenseOverviewSection({
       {selectedRow && (
         <ExpenseUpdateModal
           payload={selectedRow}
-          rowClickEnabled={true}
           onClose={() => {
-            console.log('Closing modal');
             setSelectedRow(null);
           }}
         />

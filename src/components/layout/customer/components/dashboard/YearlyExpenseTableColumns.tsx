@@ -1,106 +1,98 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
-import ArrowUpDown from '../../../../../../public/sort.png';
-import Image from 'next/image';
+import { useTranslation } from '@/lib/TranslationProvider';
+import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import formatDate from '@/utils/helpers/formatDate';
-import ExpenseDetailsModal from '../expenses/ExpenseDetailsModal';
-import ExpenseUpdateModal from '../expenses/ExpenseUpdateModal';
-import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
-import useUserInfo from '@/hooks/use-user-info';
+import { ExpenseColumnProps } from '../expenses/ExpenseDataTableColumns';
+// import SharedDeleteActionCell from '@/components/SharedDeleteActionCell';
+// import ExpenseUpdateModal from '../expenses/ExpenseUpdateModal';
+// import ExpenseDetailsModal from '../expenses/ExpenseDetailsModal';
+// import useUserInfo from '@/hooks/use-user-info';
 
-export type Expense = {
+export type YearlyExpenseTableItem = {
   _id: string;
   id: string;
   transaction_date?: string;
   createdAt?: string;
   description: string;
   category: string;
-  expense_type: string;
+  expense_type: 'business' | 'personal' | 'unknown';
   amount: number;
 };
 
-export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
-  const { isAuditor } = useUserInfo();
+const useColumns = (onMerchantClick: (rowData: ExpenseColumnProps) => void) => {
+  const { translate } = useTranslation();
+  // const { isAuditor } = useUserInfo();
 
   return [
     {
       accessorKey: 'transaction_date',
-      header: 'Date',
+      header: translate('page.expenseDataTableColumns.date', 'Date'),
       cell: ({ row }) => {
         const transactionDate = row.getValue('transaction_date') as string;
         const createdAt = row.original.createdAt;
         const dateToRender = transactionDate || createdAt || '';
         return (
-          <div className="w-[90px]">
-            <span className="text-[#00104B]">{formatDate(dateToRender)}</span>
-          </div>
+          <span className="text-[#00104B]">{formatDate(dateToRender)}</span>
         );
       },
     },
     {
       accessorKey: 'description',
-      header: 'Expense description',
-      cell: ({ row }) => (
-        <div className="w-[150px]">{row.getValue('description')}</div>
-      ), // Center aligned
-      size: 100, // Adjust column size
-      minSize: 100,
-      maxSize: 150,
-    },
-    {
-      accessorKey: 'expense_type',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Expense type
-          <Image src={ArrowUpDown} alt="sort icon" className="ml-1" />
-        </Button>
+      header: translate(
+        'page.expenseDataTableColumns.description',
+        'Description'
       ),
       cell: ({ row }) => (
-        <div className="pl-4">{row.getValue('expense_type')}</div>
-      ), // Center aligned
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => onMerchantClick(row.original as ExpenseColumnProps)}
+          onKeyDown={(e) =>
+            e.key === 'Enter' &&
+            onMerchantClick(row.original as ExpenseColumnProps)
+          }
+          className="text-[#00104B] cursor-pointer hover:underline p-1"
+        >
+          {row.getValue('description')}
+        </div>
+      ),
     },
     {
       accessorKey: 'category',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Category
-          <Image src={ArrowUpDown} alt="sort icon" className="ml-1" />
-        </Button>
+      header: translate('page.expenseDataTableColumns.category', 'Category'),
+      cell: ({ row }) => <span>{row.getValue('category')}</span>,
+    },
+    {
+      accessorKey: 'expense_type',
+      header: translate('page.expenseDataTableColumns.status', 'Status'),
+      cell: ({ row }) => (
+        <span>
+          {row.getValue('expense_type') === 'business'
+            ? 'Deduction'
+            : row.getValue('expense_type') === 'personal'
+              ? 'Not Deductible'
+              : 'Ask me'}
+        </span>
       ),
-      cell: ({ row }) => <div className="pl-4">{row.getValue('category')}</div>, // Center aligned
     },
     {
       accessorKey: 'amount',
-      header: () => <div className="text-left">Amount</div>,
+      header: translate('page.expenseDataTableColumns.amount', 'Amount'),
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue('amount'));
-        const formatToNOK = (amount: number) => {
-          const formatted = new Intl.NumberFormat('nb-NO', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(amount);
-
-          return `NOK ${formatted}`;
-        };
-
+        const amountToRender = row.getValue('amount') as number;
         return (
-          <div className="text-left font-medium w-[120px]">
-            {formatToNOK(amount)}
-          </div>
-        ); // Center aligned
+          <span className="text-[#00104B]">
+            {`NOK ${numberFormatter(amountToRender)}`}
+          </span>
+        );
       },
     },
+    /* Commenting out actions column
     {
       id: 'actions',
-      header: () => <div className="text-left">Action</div>,
+      header: 'Actions',
       cell: ({ row }) => (
         <div className="flex items-center space-x-1">
           <div className={`my-2`}>
@@ -118,5 +110,12 @@ export const YearlyExpenseTableColumns = (): ColumnDef<Expense>[] => {
         </div>
       ),
     },
-  ];
+    */
+  ] as ColumnDef<YearlyExpenseTableItem>[];
+};
+
+export const YearlyExpenseTableColumns = (
+  onMerchantClick: (rowData: ExpenseColumnProps) => void
+): ColumnDef<YearlyExpenseTableItem>[] => {
+  return useColumns(onMerchantClick);
 };

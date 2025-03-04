@@ -17,14 +17,19 @@ import { numberFormatter } from '@/utils/helpers/numberFormatter';
 export type ExpenseColumnProps = {
   _id: string;
   id: string;
-  transaction_date?: string;
+  transaction_date?: string | Date;
   createdAt?: string;
   description: string;
   category: string;
-  sub_category: string;
-  tag_category: string;
-  expense_type: string;
+  sub_category?: string;
+  tag_category?: string;
+  expense_type: 'business' | 'personal' | 'unknown';
   amount: number;
+  note?: string;
+  receipt?: {
+    link: string;
+    mimeType: string;
+  } | null;
 };
 
 export const ExpenseDataTableColumns = (
@@ -57,6 +62,7 @@ export const ExpenseDataTableColumns = (
       ),
       enableSorting: false,
       enableHiding: false,
+      size: 40,
     },
     {
       accessorKey: 'transaction_date',
@@ -69,6 +75,7 @@ export const ExpenseDataTableColumns = (
           <span className="text-[#00104B]">{formatDate(dateToRender)}</span>
         );
       },
+      size: 120,
     },
     {
       accessorKey: 'description',
@@ -95,6 +102,7 @@ export const ExpenseDataTableColumns = (
           </div>
         );
       },
+      size: 200,
     },
     {
       accessorKey: 'category',
@@ -111,6 +119,7 @@ export const ExpenseDataTableColumns = (
       cell: ({ row }) => (
         <span>{transformToUppercase(row.getValue('category'))}</span>
       ),
+      size: 150,
     },
     {
       accessorKey: 'expense_type',
@@ -120,7 +129,7 @@ export const ExpenseDataTableColumns = (
           className="pl-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          {translate('page.expenseDataTableColumns.type', 'Type')}{' '}
+          {translate('page.expenseDataTableColumns.status', 'Status')}{' '}
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
@@ -133,6 +142,7 @@ export const ExpenseDataTableColumns = (
               : 'Ask me'}
         </span>
       ),
+      size: 130,
     },
     {
       accessorKey: 'amount',
@@ -154,6 +164,7 @@ export const ExpenseDataTableColumns = (
           </span>
         );
       },
+      size: 120,
     },
     /* Commenting out actions column
     {
