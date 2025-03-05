@@ -84,7 +84,7 @@ const useColumns = (onMerchantClick: (rowData: ExpenseColumnProps) => void) => {
         const amountToRender = row.getValue('amount') as number;
         return (
           <span className="text-[#00104B]">
-            {`NOK ${numberFormatter(amountToRender)}`}
+            {`kr ${numberFormatter(amountToRender)}`}
           </span>
         );
       },

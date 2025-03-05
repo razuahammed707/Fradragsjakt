@@ -104,7 +104,7 @@ export default function SharedReportDownloader({
           rows: bodyItems.map((item) => [
             item.category || '',
             item.totalItemByCategory?.toString() || '0',
-            `NOK ${item.amount?.toFixed(2) || '0.00'}`,
+            `kr ${item.amount?.toFixed(2) || '0.00'}`,
           ]),
         };
       }
@@ -113,7 +113,7 @@ export default function SharedReportDownloader({
         columns: ['Category', 'Amount'],
         rows: bodyItems.map((item) => [
           item.title || item.category || item.name || '',
-          `NOK ${(item.amount || item.total_amount || 0).toFixed(2)}`,
+          `kr ${(item.amount || item.total_amount || 0).toFixed(2)}`,
         ]),
       };
     };
@@ -140,7 +140,7 @@ export default function SharedReportDownloader({
     const pageWidth = doc.internal.pageSize.getWidth();
     const marginRight = 12;
     const label = 'Deduction Amount in Total:';
-    const value = `NOK ${numberFormatter(total)}`;
+    const value = `kr ${numberFormatter(total)}`;
     const labelWidth = doc.getTextWidth(label);
     const valueWidth = doc.getTextWidth(value);
 

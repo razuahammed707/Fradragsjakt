@@ -26,11 +26,9 @@ const CategorySchema: Schema = new Schema<ICategory>(
   { timestamps: true }
 );
 
-// Compound index with unique constraint for title and creator_id
 CategorySchema.index({ title: 1, creator_id: 1 }, { unique: true });
 
 const CategoryModel =
   mongoose.models.category ||
   mongoose.model<ICategory>('category', CategorySchema);
-
 export default CategoryModel;

@@ -5,5 +5,4 @@ import wirteOffsSlice from './slices/writeoffs';
 export const reducer = combineReducers({
   questionnaire: questionnaireSlice,
   writeOffs: wirteOffsSlice,
-  // Add other reducers here
 });

@@ -13,6 +13,14 @@ import formatDate from '@/utils/helpers/formatDate';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 // import useUserInfo from '@/hooks/use-user-info';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 export type ExpenseColumnProps = {
   _id: string;
@@ -21,8 +29,6 @@ export type ExpenseColumnProps = {
   createdAt?: string;
   description: string;
   category: string;
-  sub_category?: string;
-  tag_category?: string;
   expense_type: 'business' | 'personal' | 'unknown';
   amount: number;
   note?: string;
@@ -33,7 +39,8 @@ export type ExpenseColumnProps = {
 };
 
 export const ExpenseDataTableColumns = (
-  onMerchantClick: (rowData: ExpenseColumnProps) => void
+  onMerchantClick: (rowData: ExpenseColumnProps) => void,
+  onStatusChange?: (rowId: string, newStatus: 'business' | 'personal') => void // Add this prop
 ): ColumnDef<ExpenseColumnProps>[] => {
   const { translate } = useTranslation();
   // const { isAuditor } = useUserInfo();
@@ -86,7 +93,6 @@ export const ExpenseDataTableColumns = (
       ),
       cell: ({ row }) => {
         const handleClick = () => {
-          console.log('Merchant clicked, data:', row.original);
           onMerchantClick(row.original);
         };
 
@@ -133,15 +139,57 @@ export const ExpenseDataTableColumns = (
           <Image src={ArrowUpDown} alt="arrow icon" className="ml-2" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <span>
-          {row.getValue('expense_type') === 'business'
-            ? 'Deduction'
-            : row.getValue('expense_type') === 'personal'
-              ? 'Not Deductible'
-              : 'Ask me'}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const expenseType = row.getValue('expense_type');
+
+        if (expenseType === 'unknown') {
+          return (
+            <Select
+              onValueChange={(value) => {
+                onStatusChange?.(
+                  row.original._id,
+                  value as 'business' | 'personal'
+                );
+              }}
+            >
+              <SelectTrigger className="w-[130px] h-8 px-2 py-0 text-sm">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="business" className="text-sm">
+                  <div className="flex items-center">
+                    <span className="mr-2 text-green-500">✓</span>
+                    Deduction
+                  </div>
+                </SelectItem>
+                <SelectItem value="personal" className="text-sm">
+                  <div className="flex items-center">
+                    <span className="mr-2">✕</span>
+                    Not Deductible
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          );
+        }
+
+        return (
+          <div
+            onClick={() => onMerchantClick(row.original)}
+            className="cursor-pointer flex items-center text-sm"
+          >
+            <span
+              className={cn(
+                'mr-2',
+                expenseType === 'business' && 'text-green-500'
+              )}
+            >
+              {expenseType === 'business' ? '✓' : '✕'}
+            </span>
+            {expenseType === 'business' ? 'Deduction' : 'Not Deductible'}
+          </div>
+        );
+      },
       size: 130,
     },
     {
@@ -160,7 +208,7 @@ export const ExpenseDataTableColumns = (
         const amountToRender = row.getValue('amount') as number;
         return (
           <span className="text-[#00104B]">
-            {`NOK ${numberFormatter(amountToRender)}`}
+            {`kr ${numberFormatter(amountToRender)}`}
           </span>
         );
       },

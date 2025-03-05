@@ -1,5 +1,10 @@
 import { z } from 'zod'; // Import Zod for validation
 
+export const createRuleSchema = z.object({
+  description_contains: z.string(),
+  category: z.string(),
+  expense_type: z.enum(['business', 'personal', 'unknown']),
+});
 const ruleSchema = z.object({
   description_contains: z.string().nonempty('Description is required'),
   expense_type: z.enum(['personal', 'business', 'unknown'], {
