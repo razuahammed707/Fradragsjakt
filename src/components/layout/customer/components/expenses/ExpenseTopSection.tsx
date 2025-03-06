@@ -10,6 +10,13 @@ import { useSession } from 'next-auth/react';
 import { trpc } from '@/utils/trpc';
 import { expense_categories } from '@/utils/dummy';
 import { useTranslation } from '@/lib/TranslationProvider';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 interface CategoryExpense {
   category: string;
@@ -97,13 +104,37 @@ const ExpenseTopSection = ({ filterString }: IFilterProps) => {
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="grid grid-cols-2 gap-3">
+        <Sheet>
+          <SheetTrigger asChild className="border">
+            <div className="cursor-pointer">
+              <ExpenseStatsByType
+                type={translate('page.expensetopsection.business')}
+                amount={Number(expenseStats?.business?.toFixed(2))}
+                filterString={filterString}
+              />
+            </div>
+          </SheetTrigger>
+          <SheetContent
+            noOverlay
+            side="right"
+            className="w-[500px] border sm:w-[540px]"
+          >
+            <SheetHeader>
+              <SheetTitle>Deductions by category (2025)</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground">
+                If you earned freelance / 1099 income in 2025, marking business
+                expenses as deductions reduces your taxable income.
+              </p>
+              <button className="w-full mt-4 text-primary hover:text-primary/90">
+                See impact on total tax refund
+              </button>
+            </div>
+          </SheetContent>
+        </Sheet>
         <ExpenseStatsByType
-          type={translate('page.expensetopsection.business')} // Translated
-          amount={Number(expenseStats?.business?.toFixed(2))}
-          filterString={filterString}
-        />
-        <ExpenseStatsByType
-          type={translate('page.expensetopsection.personal') as string} // Translated
+          type={translate('page.expensetopsection.personal') as string}
           amount={Number(expenseStats?.personal?.toFixed(2))}
           filterString={filterString}
         />
