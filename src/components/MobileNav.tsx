@@ -47,7 +47,7 @@ function MobileNav({ role }: MobileNavProps) {
       activeLink?.scrollIntoView({ block: 'nearest' });
     }
 
-    const currentMenu = menuItems.find((item) => pathname.includes(item.href));
+    const currentMenu = menuItems.find((item) => pathname?.includes(item.href));
     if (currentMenu) {
       setSelectedMenu(currentMenu.href);
     }

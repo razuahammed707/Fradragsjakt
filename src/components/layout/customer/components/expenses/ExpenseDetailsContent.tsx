@@ -49,7 +49,13 @@ function ExpenseDetailsContent({ payload }: { payload?: PayloadType }) {
         </div>
         <div className="space-y-4 text-[#71717A] text-xs">
           <p>
-            {formatDate(payload?.transaction_date || payload?.createdAt || '')}
+            {formatDate(
+              (payload?.transaction_date instanceof Date
+                ? payload.transaction_date.toISOString()
+                : payload?.transaction_date) ||
+                payload?.createdAt ||
+                ''
+            )}
           </p>
           <p className="text-nowrap truncate">{payload?.description}</p>
           <p>NOK {payload?.amount}</p>

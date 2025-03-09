@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { DatePickerFormInput } from '@/components/DatePickerFormInput';
 
 interface ExpenseAddContentProps {
-  origin: 'expense add' | 'expense update';
+  origin?: string;
   setModalOpen: (open: boolean) => void;
   payload?: PayloadType;
   onSuccess?: () => void;
