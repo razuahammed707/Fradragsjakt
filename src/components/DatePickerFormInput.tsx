@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/popover';
 import { Label } from '@/components/ui/label';
 import { FormMessage } from '@/components/ui/form';
+import { useState } from 'react';
 
 interface DatePickerFormInputProps {
   name: string;
@@ -37,6 +38,8 @@ export function DatePickerFormInput({
   customClassName = '',
   disabled = false,
 }: DatePickerFormInputProps) {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className={customClassName}>
       <Label htmlFor={name}>
@@ -48,7 +51,7 @@ export function DatePickerFormInput({
         defaultValue={defaultValue}
         render={({ field, fieldState }) => (
           <div className="mt-1">
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant={'outline'}
@@ -74,7 +77,10 @@ export function DatePickerFormInput({
                 <Calendar
                   mode="single"
                   selected={field.value}
-                  onSelect={field.onChange}
+                  onSelect={(date) => {
+                    field.onChange(date);
+                    setOpen(false);
+                  }}
                   disabled={(date) =>
                     disabled ||
                     date > new Date() ||
