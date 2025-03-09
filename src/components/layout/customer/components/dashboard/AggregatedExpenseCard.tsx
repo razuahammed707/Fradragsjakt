@@ -54,7 +54,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
         <div>
           <h2 className="text-[13px] font-semibold text-[#627A97]">{title}</h2>
           <p className="text-2xl font-bold text-[#00104B]">
-            NOK{' '}
+            kr{' '}
             {formatNumberWithTwoDecimals(
               expensesWithThreshold?.data?.totalAmount
             )}
@@ -96,7 +96,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                   largestItem?.total_amount >= 0 && 'text-[#00104B]'
                 )}
               >
-                NOK {formatNumberWithTwoDecimals(largestItem?.total_amount)}{' '}
+                kr {formatNumberWithTwoDecimals(largestItem?.total_amount)}{' '}
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                             total_amount >= 0 && 'text-[#00104B]'
                           )}
                         >
-                          NOK {formatNumberWithTwoDecimals(total_amount)}{' '}
+                          kr {formatNumberWithTwoDecimals(total_amount)}{' '}
                         </p>
                       </div>
                     </div>
@@ -145,7 +145,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                           )}
                           <div className="flex justify-between ">
                             <p className="text-xs font-bold text-[#00104B]">
-                              NOK{' '}
+                              kr{' '}
                               {amount ? formatNumberWithTwoDecimals(amount) : 0}
                             </p>
 
@@ -158,7 +158,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                               <p
                                 className={`text-[10px] font-medium text-[#71717A]`}
                               >
-                                Max NOK 15000
+                                Max kr 15000
                               </p>
                             )}
                           </div>
@@ -182,7 +182,7 @@ const AggregatedExpenseCard: FC<AggregatedExpenseCardProps> = ({
                         largestItem?.total_amount >= 0 && 'text-[#00104B]'
                       )}
                     >
-                      NOK {formatNumberWithTwoDecimals(total_amount)}{' '}
+                      kr {formatNumberWithTwoDecimals(total_amount)}{' '}
                     </p>
                   </div>
                 </div>

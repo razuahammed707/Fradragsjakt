@@ -1,12 +1,12 @@
 import RuleModel from '@/server/db/models/rules';
 import { JwtPayload } from 'jsonwebtoken';
 import { ApiResponse } from '@/server/db/types';
-import CategoryModel from '@/server/db/models/category';
 import httpStatus from 'http-status';
 import { ApiError, AuthError } from '@/lib/exceptions';
 import IncomeModel from '../db/models/income';
 import ExpenseModel from '../db/models/expense';
 import { errorHandler } from '../middlewares/error-handler';
+import CategoryModel from '../db/models/category';
 
 type UpdateResult = {
   count: number;
@@ -135,8 +135,8 @@ async function updateTransactions(
   try {
     const updateFields = {
       category: input.category,
-      sub_category: input.sub_category,
-      tag_category: input.tag_category,
+      sub_category: input.sub_category || null,
+      tag_category: input.tag_category || null,
       rule: rule._id,
     };
 
@@ -214,9 +214,9 @@ async function findByRuleAndUpdateTransactions(
         {
           $set: {
             category: category.title,
+            sub_category: updateData.sub_category || null,
+            tag_category: updateData.tag_category || null,
             expense_type: updateData.expense_type,
-            sub_category: updateData.sub_category,
-            tag_category: updateData.tag_category,
           },
         }
       ),
@@ -232,8 +232,6 @@ async function findByRuleAndUpdateTransactions(
           $set: {
             category: category.title,
             income_type: updateData.expense_type,
-            sub_category: updateData.sub_category,
-            tag_category: updateData.tag_category,
           },
         }
       ),
@@ -251,8 +249,6 @@ async function findByRuleAndUpdateTransactions(
           $set: {
             category: 'unknown',
             expense_type: 'unknown',
-            sub_category: '',
-            tag_category: '',
           },
         }
       ),
@@ -267,8 +263,6 @@ async function findByRuleAndUpdateTransactions(
           $set: {
             category: 'unknown',
             income_type: 'unknown',
-            sub_category: '',
-            tag_category: '',
           },
         }
       ),
@@ -307,9 +301,9 @@ async function updateTransactionsOnRuleDeletion(ruleId: string | string[]) {
         {
           $set: {
             category: 'unknown',
+            sub_category: null,
+            tag_category: null,
             expense_type: 'unknown',
-            sub_category: '',
-            tag_category: '',
           },
         }
       ),
@@ -318,9 +312,9 @@ async function updateTransactionsOnRuleDeletion(ruleId: string | string[]) {
         {
           $set: {
             category: 'unknown',
+            sub_category: null,
+            tag_category: null,
             income_type: 'unknown',
-            sub_category: '',
-            tag_category: '',
           },
         }
       ),

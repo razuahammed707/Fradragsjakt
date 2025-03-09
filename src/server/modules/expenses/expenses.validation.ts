@@ -22,17 +22,6 @@ const createExpenseSchema = z.object({
     .nullable()
     .optional(),
 });
-const createBulkExpenseSchema = z.array(
-  z.object({
-    description: z.string({
-      required_error: 'Description is required',
-    }),
-    amount: z.number({
-      required_error: 'Amount is required',
-    }),
-    transaction_date: z.any().optional(),
-  })
-);
 
 const expenseUpdatePayloadSchema = z.object({
   rule: z.string(),
@@ -63,7 +52,6 @@ const updateBulkExpenseSchema = z.object({
 
 export const expenseValidation = {
   createExpenseSchema,
-  createBulkExpenseSchema,
   updateBulkExpenseSchema,
   populateStatementSchema,
 };

@@ -58,6 +58,22 @@ function ExpenseOverviewSection({
     []
   );
 
+  const utils = trpc.useContext();
+
+  const { mutate: updateExpenseStatus } =
+    trpc.expenses.updateExpenseStatus.useMutation({
+      onSuccess: () => {
+        utils.expenses.getExpenses.invalidate();
+      },
+    });
+
+  const handleStatusChange = (
+    rowId: string,
+    newStatus: 'business' | 'personal'
+  ) => {
+    updateExpenseStatus({ id: rowId, expense_type: newStatus });
+  };
+
   return (
     <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
       <ExpenseOverviewHeading
@@ -70,7 +86,10 @@ function ExpenseOverviewSection({
       <div className="space-y-6">
         <SharedDataTable
           loading={isLoading}
-          columns={ExpenseDataTableColumns(handleMerchantClick)}
+          columns={ExpenseDataTableColumns(
+            handleMerchantClick,
+            handleStatusChange
+          )}
           data={expensesResponse?.data || []}
           onSelectionChange={setSelectedIds}
           resetRowSelection={resetSelection}

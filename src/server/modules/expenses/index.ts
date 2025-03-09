@@ -559,4 +559,216 @@ export const expenseRouter = router({
       throw new ApiError(httpStatus.NOT_FOUND, message);
     }
   }),
+  updateExpenseStatus: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        expense_type: z.enum(['business', 'personal']),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+        const { id, expense_type } = input;
+
+        const expense = await ExpenseModel.findOneAndUpdate(
+          { _id: id, user: loggedUser.id },
+          { $set: { expense_type } },
+          { new: true }
+        ).lean();
+
+        if (!expense) {
+          throw new ApiError(
+            httpStatus.NOT_FOUND,
+            'Expense not found or not accessible'
+          );
+        }
+
+        return {
+          status: 200,
+          message: 'Expense status updated successfully',
+          data: expense,
+        } as ApiResponse<typeof expense>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+      }
+    }),
+  updateBulkExpenses: protectedProcedure
+    .input(expenseValidation.updateBulkExpenseSchema)
+
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+        const { expenses } = input;
+        const updatedExpenses = await Promise.all(
+          expenses.map(async (expense) => {
+            return await ExpenseModel.findByIdAndUpdate(
+              { _id: expense?._id, user: loggedUser?.id },
+              { $set: expense.expenseUpdatePayload },
+              { new: true }
+            ).lean();
+          })
+        );
+
+        if (!updatedExpenses) {
+          throw new ApiError(
+            httpStatus.NOT_FOUND,
+            'Some expenses were not found or not accessible.'
+          );
+        }
+
+        return {
+          status: 200,
+          message: 'Expenses updated successfully',
+          data: updatedExpenses,
+        } as ApiResponse<typeof updatedExpenses>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+      }
+    }),
+  deleteExpenses: protectedProcedure
+    .input(
+      z.object({
+        _id: z.string().array().or(z.string()),
+      })
+    )
+    .mutation(async ({ ctx, input: { _id } }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        if (Array.isArray(_id)) {
+          const result = await ExpenseModel.deleteMany({
+            _id: { $in: _id },
+            user: loggedUser.id,
+          });
+
+          if (result.deletedCount === 0) {
+            throw new ApiError(
+              httpStatus.NOT_FOUND,
+              'No expenses were found or accessible'
+            );
+          }
+
+          return {
+            status: 200,
+            message: `Successfully deleted ${result.deletedCount} expenses`,
+            data: { deletedCount: result.deletedCount },
+          } as ApiResponse<{ deletedCount: number }>;
+        }
+
+        const expense = await ExpenseHelpers.deleteExpenseRecord(
+          _id,
+          loggedUser.id
+        );
+
+        return {
+          status: 200,
+          message: 'Expense deleted successfully',
+          data: expense,
+        } as ApiResponse<typeof expense>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, message);
+      }
+    }),
+  updateSingleExpense: protectedProcedure
+    .input(expenseValidation.createExpenseSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        const expense = await ExpenseHelpers.updateExpenseRecord(
+          input,
+          loggedUser.id
+        );
+
+        return {
+          status: 200,
+          message: 'Expense updated successfully',
+          data: expense,
+        } as ApiResponse<typeof expense>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }),
+  getQuestionnairePrefilledValues2: protectedProcedure.query(
+    async ({ ctx }) => {
+      try {
+        const loggedUser = ctx.user as JwtPayload;
+
+        const expenseValues =
+          await ExpenseHelpers.getQuestionnairePrefilledValues(loggedUser.id);
+
+        const categoryMap = new Map<string, Map<string, any[]>>();
+
+        expenseValues.forEach((item) => {
+          const category = item.question;
+
+          if (!categoryMap.has(category)) {
+            categoryMap.set(category, new Map());
+          }
+
+          const answerMap = categoryMap.get(category)!;
+
+          item.answers.forEach((answerObj) => {
+            const [key, values] = Object.entries(answerObj)[0];
+            if (!answerMap.has(key)) {
+              answerMap.set(key, []);
+            }
+
+            const existingValues = answerMap.get(key)!;
+
+            values.forEach((value) => {
+              const existingEntry = existingValues.find((v) =>
+                Object.keys(v).some((k) => k in value)
+              );
+
+              if (existingEntry) {
+                Object.entries(value).forEach(([subKey, subValue]) => {
+                  const existingSubValue = existingEntry[subKey];
+
+                  if (!isNaN(Number(subValue))) {
+                    const sum =
+                      (parseFloat(existingSubValue) || 0) +
+                      parseFloat(subValue);
+                    existingEntry[subKey] = sum.toFixed(2);
+                  } else {
+                    if (!Array.isArray(existingEntry[subKey])) {
+                      existingEntry[subKey] = existingSubValue
+                        ? [existingSubValue]
+                        : [];
+                    }
+                    existingEntry[subKey].push(subValue);
+                  }
+                });
+              } else {
+                existingValues.push({ ...value });
+              }
+            });
+          });
+        });
+
+        const mergedQuestionnaires = Array.from(categoryMap.entries()).map(
+          ([category, answersMap]) => ({
+            question: category,
+            answers: Array.from(answersMap.entries()).map(([key, values]) => ({
+              [key]: values,
+            })),
+          })
+        );
+
+        return {
+          status: 200,
+          message: 'Questionnaire prefilled values fetched successfully',
+          data: mergedQuestionnaires,
+        } as ApiResponse<typeof mergedQuestionnaires>;
+      } catch (error: unknown) {
+        const { message } = errorHandler(error);
+        throw new ApiError(httpStatus.NOT_FOUND, message);
+      }
+    }
+  ),
 });

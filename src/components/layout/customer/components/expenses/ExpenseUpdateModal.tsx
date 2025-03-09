@@ -12,8 +12,6 @@ export type PayloadType = {
   createdAt?: string;
   description: string;
   category: string;
-  sub_category?: string;
-  tag_category?: string;
   expense_type: 'business' | 'personal' | 'unknown';
   amount: number;
   note?: string;

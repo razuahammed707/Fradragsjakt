@@ -8,32 +8,26 @@ export enum IncomeType {
 
 export interface IIncome extends Document {
   description: string;
-  category: string;
-  sub_category: string;
-  tag_category: string;
-  income_type: IncomeType;
+  transaction_date: Date;
   amount: number;
-  transaction_date?: Date;
-  user: Types.ObjectId;
-  rule: Types.ObjectId;
+  category: string;
+  income_type?: IncomeType;
+  note?: string;
   receipt?: {
     link: string;
     mimeType: string;
   };
+  rule: Types.ObjectId;
+  user: Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
-export interface IIncomeUpdate extends Document {
+
+export interface IIncomeUpdate {
   id: string;
   description: string;
-  category: string;
-  sub_category: string;
-  tag_category: string;
-  income_type: IncomeType;
+  transaction_date: Date;
   amount: number;
-  transaction_date?: Date;
-  user: Types.ObjectId;
-  rule: Types.ObjectId;
-  receipt?: {
-    link: string;
-    mimeType: string;
-  };
+  category: string;
+  income_type: 'business' | 'personal' | 'unknown';
 }

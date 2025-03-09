@@ -16,7 +16,7 @@ const ExpenseStatsByType: React.FC<ExpenseStatsProps> = ({
   filterString,
 }) => {
   return (
-    <div className="bg-white rounded-xl px-4 pt-4 relative">
+    <div className="bg-white h-full rounded-xl px-4 pt-4 relative">
       <h1 className="text-xl font-semibold">{type} Expense</h1>
 
       <div className="flex justify-between items-center mt-7">
