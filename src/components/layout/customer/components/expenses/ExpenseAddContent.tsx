@@ -20,6 +20,7 @@ interface ExpenseAddContentProps {
   setModalOpen: (open: boolean) => void;
   payload?: PayloadType;
   onSuccess?: () => void;
+  hideFields?: string[];
 }
 
 function ExpenseAddContent({
@@ -27,6 +28,7 @@ function ExpenseAddContent({
   origin,
   payload,
   onSuccess,
+  hideFields = [],
 }: ExpenseAddContentProps) {
   const { translate } = useTranslation();
   const methods = useForm<ExpenseFormData>({
@@ -120,55 +122,65 @@ function ExpenseAddContent({
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
         {origin === 'expense update'
-          ? translate('componentsExpenseModal.expense.heading.update_expense')
+          ? `${payload?.description} (kr${payload?.amount})`
           : translate('componentsExpenseModal.expense.heading.add_expense')}
       </h1>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
           <div className="max-h-[500px] overflow-y-auto space-y-2 pr-1 white-thumb">
-            <div>
-              <Label htmlFor="description">
-                {translate('componentsExpenseModal.expense.label.description')}
-              </Label>
-              <FormInput
-                type="text"
-                name="description"
-                defaultValue={payload?.description}
-                placeholder="e.g. Starbucks"
-                control={methods.control}
-                customClassName="w-full mt-1"
-                required
-              />
-            </div>
-            <div>
-              <DatePickerFormInput
-                name="transaction_date"
-                label="Date"
-                control={methods.control}
-                defaultValue={
-                  (payload?.transaction_date &&
-                    new Date(payload?.transaction_date)) ||
-                  undefined
-                }
-                customClassName="w-full"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="amount">
-                {translate('componentsExpenseModal.expense.label.amount')}
-              </Label>
-              <FormInput
-                type="number"
-                name="amount"
-                defaultValue={payload?.amount?.toString()}
-                placeholder="e.g. kr5.00"
-                disabled={origin === 'expense update'}
-                control={methods.control}
-                customClassName="w-full mt-1"
-                required
-              />
-            </div>
+            {origin !== 'expense update' && (
+              <div>
+                <Label htmlFor="description">
+                  {translate(
+                    'componentsExpenseModal.expense.label.description'
+                  )}
+                </Label>
+                <FormInput
+                  type="text"
+                  name="description"
+                  defaultValue={payload?.description}
+                  placeholder="e.g. Starbucks"
+                  control={methods.control}
+                  customClassName="w-full mt-1"
+                  required
+                />
+              </div>
+            )}
+
+            {!hideFields.includes('transaction_date') && (
+              <div>
+                <DatePickerFormInput
+                  name="transaction_date"
+                  label="Date"
+                  control={methods.control}
+                  defaultValue={
+                    (payload?.transaction_date &&
+                      new Date(payload?.transaction_date)) ||
+                    undefined
+                  }
+                  customClassName="w-full"
+                  required
+                />
+              </div>
+            )}
+
+            {!hideFields.includes('amount') && (
+              <div>
+                <Label htmlFor="amount">
+                  {translate('componentsExpenseModal.expense.label.amount')}
+                </Label>
+                <FormInput
+                  type="number"
+                  name="amount"
+                  defaultValue={payload?.amount?.toString()}
+                  placeholder="e.g. kr5.00"
+                  disabled={origin === 'expense update'}
+                  control={methods.control}
+                  customClassName="w-full mt-1"
+                  required
+                />
+              </div>
+            )}
 
             <div>
               <Label htmlFor="category">
@@ -199,6 +211,19 @@ function ExpenseAddContent({
                 ]}
                 defaultValue={payload?.expense_type}
                 required
+              />
+            </div>
+            <div>
+              <Label htmlFor="percentage">Percentage</Label>
+              <FormInput
+                type="number"
+                name="percentage"
+                defaultValue={payload?.percentage?.toString()}
+                placeholder="e.g. 50"
+                control={methods.control}
+                customClassName="w-full mt-1"
+                min={0}
+                max={100}
               />
             </div>
             <div>
