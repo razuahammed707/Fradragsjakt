@@ -84,6 +84,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
     ],
     auditor: [
       {
+        href: '/expenses',
+        label: translate('sidebar.expenses'),
+        icon: HandCoins,
+      },
+      {
         href: '/dashboard',
         label: translate('sidebar.dashboard'),
         icon: LayoutDashboard,
@@ -92,11 +97,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         href: '/incomes',
         label: translate('sidebar.incomes'),
         icon: Wallet,
-      },
-      {
-        href: '/expenses',
-        label: translate('sidebar.expenses'),
-        icon: HandCoins,
       },
       {
         href: '/categories',
@@ -116,6 +116,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
     ],
     customer: [
       {
+        href: '/expenses',
+        label: translate('sidebar.expenses'),
+        icon: HandCoins,
+      },
+      {
         href: '/dashboard',
         label: translate('sidebar.dashboard'),
         icon: LayoutDashboard,
@@ -124,11 +129,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         href: '/incomes',
         label: translate('sidebar.incomes'),
         icon: Wallet,
-      },
-      {
-        href: '/expenses',
-        label: translate('sidebar.expenses'),
-        icon: HandCoins,
       },
       {
         href: '/categories',
