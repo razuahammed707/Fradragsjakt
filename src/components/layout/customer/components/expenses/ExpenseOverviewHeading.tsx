@@ -95,7 +95,9 @@ function ExpenseOverviewHeading({
 
   const renderContent = () => {
     if (modalContent.key === 'addExpense') {
-      return <ExpenseAddContent setModalOpen={setModalOpen} />;
+      return (
+        <ExpenseAddContent setModalOpen={setModalOpen} origin={'expense add'} />
+      );
     }
     if (modalContent.key === 'applyRule') {
       return (
