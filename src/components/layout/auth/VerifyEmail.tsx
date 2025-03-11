@@ -13,8 +13,8 @@ import { signOut } from 'next-auth/react';
 export default function VerifyEmail() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get('token');
-  const role = searchParams.get('role');
+  const token = searchParams?.get('token');
+  const role = searchParams?.get('role');
   const [isVerifying, setIsVerifying] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [alreadyVerified, setAlreadyVerified] = useState(false);
