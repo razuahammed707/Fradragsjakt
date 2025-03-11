@@ -218,12 +218,10 @@ function ExpenseAddContent({
               <FormInput
                 type="number"
                 name="percentage"
-                defaultValue={payload?.percentage?.toString()}
+                defaultValue={payload?.percentage?.toString() ?? ''}
                 placeholder="e.g. 50"
                 control={methods.control}
                 customClassName="w-full mt-1"
-                min={0}
-                max={100}
               />
             </div>
             <div>

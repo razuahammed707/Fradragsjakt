@@ -6,6 +6,7 @@ import DeleteRowsConfirmationContent from '@/components/DeleteConfirmationConten
 import { Button } from '@/components/ui/button';
 
 export type PayloadType = {
+  percentage: any;
   _id: string;
   id: string;
   transaction_date?: string | Date;
