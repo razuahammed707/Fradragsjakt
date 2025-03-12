@@ -89,6 +89,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         icon: HandCoins,
       },
       {
+        href: '/expenses',
+        label: translate('sidebar.expenses'),
+        icon: HandCoins,
+      },
+      {
         href: '/dashboard',
         label: translate('sidebar.dashboard'),
         icon: LayoutDashboard,
@@ -120,6 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         label: translate('sidebar.expenses'),
         icon: HandCoins,
       },
+
       {
         href: '/dashboard',
         label: translate('sidebar.dashboard'),
@@ -183,7 +189,9 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       activeLink?.scrollIntoView({ block: 'nearest' });
     }
 
-    const currentMenu = menuItems.find((item) => pathname?.includes(item.href));
+    const currentMenu = menuItems.find(
+      (item) => pathname?.includes(item.href) ?? false
+    );
     if (currentMenu) {
       setSelectedMenu(currentMenu.href);
     }

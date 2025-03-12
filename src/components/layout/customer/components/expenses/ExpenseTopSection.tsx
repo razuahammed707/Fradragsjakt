@@ -55,15 +55,18 @@ const ExpenseTopSection = () => {
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
+      <div>
         <Sheet>
-          <SheetTrigger asChild className="border rounded-md overflow-hidden">
+          <SheetTrigger asChild className="overflow-hidden w-full">
             <div className="cursor-pointer">
               <ExpenseStatsByType
                 type={translate('page.expensetopsection.business')}
                 amount={Number(expenseStats?.business?.toFixed(2))}
                 filterString=""
               />
+              <div className="p-3 bg-white rounded-b-lg">
+                <CategoryIcons />
+              </div>
             </div>
           </SheetTrigger>
           <SheetContent
@@ -74,31 +77,18 @@ const ExpenseTopSection = () => {
             <SheetHeader>
               <SheetTitle>Deductions by category (2025)</SheetTitle>
             </SheetHeader>
-            <div className="mt-6">
+            <div className="mt-6 space-y-6">
               <p className="text-sm text-muted-foreground">
                 If you earned freelance / 1099 income in 2025, marking business
                 expenses as deductions reduces your taxable income.
               </p>
+
               <button className="w-full mt-4 text-primary hover:text-primary/90">
                 See impact on total tax refund
               </button>
             </div>
           </SheetContent>
         </Sheet>
-        <div className="border rounded-md overflow-hidden">
-          <ExpenseStatsByType
-            type={translate('page.expensetopsection.personal')}
-            amount={Number(expenseStats?.personal?.toFixed(2))}
-            filterString=""
-          />
-        </div>
-      </div>
-
-      <div className="border rounded-md p-3 bg-white">
-        <h3 className="text-sm font-medium mb-2 py-2 px-2">
-          Categories with write-offs
-        </h3>
-        <CategoryIcons />
       </div>
     </div>
   );
