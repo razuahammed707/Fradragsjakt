@@ -125,11 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         label: translate('sidebar.expenses'),
         icon: HandCoins,
       },
-      {
-        href: '/expenses',
-        label: translate('sidebar.expenses'),
-        icon: HandCoins,
-      },
+
       {
         href: '/dashboard',
         label: translate('sidebar.dashboard'),
