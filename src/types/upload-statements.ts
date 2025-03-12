@@ -1,5 +1,4 @@
 export interface Column {
-  id: any;
   title: string;
   dataIndex: string;
   key: string;
