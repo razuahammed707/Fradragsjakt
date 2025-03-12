@@ -14,9 +14,10 @@ import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DatePickerFormInput } from '@/components/DatePickerFormInput';
+import { PercentageSliderInput } from '@/components/PercentageSliderInput';
 
 interface ExpenseAddContentProps {
-  origin: 'expense add' | 'expense update';
+  origin?: string;
   setModalOpen: (open: boolean) => void;
   payload?: PayloadType;
   onSuccess?: () => void;
@@ -94,6 +95,26 @@ function ExpenseAddContent({
     },
   });
 
+  const { category } = methods.watch();
+  const { data: categoryPercentage } =
+    trpc.categoryPercentages.getCategoryPercentage.useQuery(
+      { category },
+      { enabled: !!category }
+    );
+
+  React.useEffect(() => {
+    if (categoryPercentage && category) {
+      methods.setValue('percentage', parseInt(categoryPercentage, 10));
+    }
+  }, [categoryPercentage, category, methods]);
+
+  const categoryPercentageMutation =
+    trpc.categoryPercentages.setCategoryPercentage.useMutation({
+      onSuccess: () => {
+        utils.categoryPercentages.getCategoryPercentage.invalidate();
+      },
+    });
+
   const onSubmit = (data: ExpenseFormData) => {
     setLoading(true);
     const modifiedAmount =
@@ -108,6 +129,13 @@ function ExpenseAddContent({
       amount: modifiedAmount,
     };
 
+    if (data.category && data.percentage !== undefined) {
+      categoryPercentageMutation.mutate({
+        category: data.category,
+        percentage: data.percentage.toString(),
+      });
+    }
+
     if (origin === 'expense update' && payload?._id) {
       updateMutation.mutate({
         id: payload._id,
@@ -117,7 +145,9 @@ function ExpenseAddContent({
       createMutation.mutate(expenseData);
     }
   };
-
+  const selectedCategory = manipulatedCategories.find(
+    (cat) => cat.value === methods.watch('category')
+  );
   return (
     <div>
       <h1 className="font-medium text-lg text-black mb-4">
@@ -181,22 +211,6 @@ function ExpenseAddContent({
                 />
               </div>
             )}
-
-            <div>
-              <Label htmlFor="category">
-                {translate('componentsExpenseModal.expense.label.category')}
-              </Label>
-              <SelectFormInput
-                name="category"
-                control={methods.control}
-                customClassName="mt-1"
-                placeholder="Select category"
-                options={manipulatedCategories}
-                defaultValue={payload?.category}
-                required
-                searchEnabled
-              />
-            </div>
             <div>
               <Label htmlFor="expense_type">Status</Label>
               <SelectFormInput
@@ -214,43 +228,60 @@ function ExpenseAddContent({
               />
             </div>
             <div>
-              <Label htmlFor="percentage">Percentage</Label>
-              <FormInput
-                type="number"
+              <Label htmlFor="category">
+                {translate('componentsExpenseModal.expense.label.category')}
+              </Label>
+              <SelectFormInput
+                name="category"
+                control={methods.control}
+                customClassName="mt-1"
+                placeholder="Select category"
+                options={manipulatedCategories}
+                defaultValue={payload?.category}
+                required
+                searchEnabled
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="percentage">
+                {`Percentage for ${selectedCategory?.title?.toLowerCase() || 'expense'}`}
+              </Label>
+              <PercentageSliderInput
                 name="percentage"
-                defaultValue={payload?.percentage?.toString() ?? ''}
-                placeholder="e.g. 50"
                 control={methods.control}
-                customClassName="w-full mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="note">Add a note (optional)</Label>
-              <FormInput
-                type="textarea"
-                name="note"
-                defaultValue={payload?.note}
-                placeholder="e.g. Meeting with my client Olivier"
-                control={methods.control}
-                customClassName="w-full mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="receipt">Receipt (optional)</Label>
-              <FormReceiptInput
-                name="receipt"
-                defaultValue={payload?.receipt?.link}
-                includeMimeType
-                setValue={(
-                  name: string,
-                  value: string | { link: string; mimeType: string }
-                ) => {
-                  methods.setValue(name as any, value as any);
-                }}
+                defaultValue={50}
                 customClassName="mt-1"
               />
             </div>
           </div>
+          <div>
+            <Label htmlFor="note">Add a note (optional)</Label>
+            <FormInput
+              type="textarea"
+              name="note"
+              defaultValue={payload?.note}
+              placeholder="e.g. Meeting with my client Olivier"
+              control={methods.control}
+              customClassName="w-full mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="receipt">Receipt (optional)</Label>
+            <FormReceiptInput
+              name="receipt"
+              defaultValue={payload?.receipt?.link}
+              includeMimeType
+              setValue={(
+                name: string,
+                value: string | { link: string; mimeType: string }
+              ) => {
+                methods.setValue(name as any, value as any);
+              }}
+              customClassName="mt-1"
+            />
+          </div>
+
           <Button
             disabled={loading}
             type="submit"

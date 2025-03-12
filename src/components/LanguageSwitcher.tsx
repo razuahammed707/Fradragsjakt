@@ -21,8 +21,7 @@ export function LanguageSwitcher() {
     name: locale === 'en' ? 'English' : 'Norwegian',
   }));
 
-  // Get the current locale from the pathname
-  const currentLanguage = pathname.split('/')[1] || i18n.defaultLocale;
+  const currentLanguage = pathname?.split('/')[1] || i18n.defaultLocale;
 
   const [selectedLanguage, setSelectedLanguage] = useState(currentLanguage);
 
@@ -33,15 +32,13 @@ export function LanguageSwitcher() {
   const switchLanguage = (language: string) => {
     if (language === selectedLanguage) return;
 
-    // Save the language in a cookie
     document.cookie = `preferred-language=${language}; path=/;`;
 
-    // Redirect to the same page with the new language prefix
-    const newPathname = pathname.replace(
+    const newPathname = pathname?.replace(
       `/${selectedLanguage}`,
       `/${language}`
     );
-    router.push(newPathname);
+    router.push(newPathname || '');
   };
 
   return (

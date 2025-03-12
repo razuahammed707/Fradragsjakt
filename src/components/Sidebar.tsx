@@ -89,6 +89,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         icon: HandCoins,
       },
       {
+        href: '/expenses',
+        label: translate('sidebar.expenses'),
+        icon: HandCoins,
+      },
+      {
         href: '/dashboard',
         label: translate('sidebar.dashboard'),
         icon: LayoutDashboard,
@@ -115,6 +120,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       },
     ],
     customer: [
+      {
+        href: '/expenses',
+        label: translate('sidebar.expenses'),
+        icon: HandCoins,
+      },
       {
         href: '/expenses',
         label: translate('sidebar.expenses'),

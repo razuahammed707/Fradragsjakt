@@ -26,7 +26,7 @@ const ResetPassword = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+  const token = searchParams?.get('token');
   const router = useRouter();
   const password = watch('password');
   const confirmPassword = watch('confirmPassword');
@@ -53,14 +53,12 @@ const ResetPassword = () => {
     try {
       setIsSubmitting(true);
 
-      // Ensure password is at least 6 characters long
       if (data.password.length < 6) {
         toast.error('Password must be at least 6 characters long');
         setIsSubmitting(false);
         return;
       }
 
-      // Ensure passwords match
       if (data.password !== data.confirmPassword) {
         toast.error('Passwords do not match');
         setIsSubmitting(false);

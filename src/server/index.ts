@@ -8,12 +8,14 @@ import { expenseRouter } from './modules/expenses';
 import { uploadRouter } from './modules/upload';
 import { IncomeRouter } from './modules/incomes';
 import { auditorRouter } from './modules/auditor';
+import { categoryPercentageRouter } from './modules/category-percentages';
 
 export const appRouter = router({
   users: userRouter,
   auth: authRouter,
   rules: rulesRouter,
   categories: categoryRouter,
+  categoryPercentages: categoryPercentageRouter,
   expenses: expenseRouter,
   incomes: IncomeRouter,
   auditor: auditorRouter,
