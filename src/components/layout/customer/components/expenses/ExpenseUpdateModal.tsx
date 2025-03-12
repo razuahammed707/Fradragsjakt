@@ -6,6 +6,7 @@ import DeleteRowsConfirmationContent from '@/components/DeleteConfirmationConten
 import { Button } from '@/components/ui/button';
 
 export type PayloadType = {
+  percentage: any;
   _id: string;
   id: string;
   transaction_date?: string | Date;
@@ -91,6 +92,7 @@ export default function ExpenseUpdateModal({
                     setRowClickEnabled(true);
                     handleModalChange(false);
                   }}
+                  hideFields={['amount', 'transaction_date']}
                 />
                 <p className="text-sm my-1 text-center text-gray-500">Or</p>
                 <div className="flex justify-center">

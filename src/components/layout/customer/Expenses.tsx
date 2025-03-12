@@ -11,7 +11,7 @@ const CustomerExpenses: React.FC = () => {
 
   return (
     <ProtectedLayout>
-      <ExpenseTopSection filterString={filterString} />
+      <ExpenseTopSection />
       <ExpenseOverviewSection
         filterString={filterString}
         setFilterString={setFilterString}
