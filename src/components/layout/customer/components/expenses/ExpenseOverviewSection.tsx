@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import ExpenseOverviewHeading from './ExpenseOverviewHeading';
 import SharedPagination from '@/components/SharedPagination';
@@ -8,16 +7,9 @@ import { ExpenseDataTableColumns } from './ExpenseDataTableColumns';
 import { trpc } from '@/utils/trpc';
 import ExpenseUpdateModal, { PayloadType } from './ExpenseUpdateModal';
 import { ExpenseColumnProps } from './ExpenseDataTableColumns';
+import ExpenseTopSection from './ExpenseTopSection';
 
-type IFilterProps = {
-  filterString: string;
-  setFilterString: React.Dispatch<React.SetStateAction<string>>;
-};
-
-function ExpenseOverviewSection({
-  filterString,
-  setFilterString,
-}: IFilterProps) {
+function ExpenseOverviewSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(50);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -31,7 +23,6 @@ function ExpenseOverviewSection({
         page: currentPage,
         limit: pageLimit,
         searchTerm,
-        filterString,
       },
       {
         keepPreviousData: true,
@@ -52,7 +43,6 @@ function ExpenseOverviewSection({
 
   const handleMerchantClick = React.useCallback(
     (rowData: ExpenseColumnProps) => {
-      console.log('handleMerchantClick called with:', rowData);
       setSelectedRow(rowData);
     },
     []
@@ -64,6 +54,7 @@ function ExpenseOverviewSection({
     trpc.expenses.updateExpenseStatus.useMutation({
       onSuccess: () => {
         utils.expenses.getExpenses.invalidate();
+        utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
       },
     });
 
@@ -75,15 +66,15 @@ function ExpenseOverviewSection({
   };
 
   return (
-    <div className="mt-3 rounded-2xl p-6 space-y-6 bg-white">
+    <div className="space-y-6">
       <ExpenseOverviewHeading
         setSearchTerm={setSearchTerm}
-        setFilterString={setFilterString}
         selectedIds={selectedIds}
         onSelectionChange={setSelectedIds}
         onDeleteComplete={handleSelectionReset}
       />
-      <div className="space-y-6">
+      <ExpenseTopSection />
+      <div className="space-y-6 bg-white rounded-lg">
         <SharedDataTable
           loading={isLoading}
           columns={ExpenseDataTableColumns(

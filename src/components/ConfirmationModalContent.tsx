@@ -36,7 +36,7 @@ const ConfirmationModalContent = ({
         <h3 className="text-md font-medium mb-2">Example:</h3>
         <div className="flex items-center justify-center gap-2 mb-2">
           <div className="bg-blue-100 p-2 rounded text-sm">
-            <p className="font-medium">Restaurant Expenses</p>
+            <p className="font-medium">Merchant</p>
             <p className="text-gray-600">Set 50% write-off</p>
           </div>
           <span className="text-gray-400">→</span>

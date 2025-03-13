@@ -17,7 +17,7 @@ import { mapToExpenseData, parseFileData } from '@/utils/helpers/dataMappers';
 import toast from 'react-hot-toast';
 import { findBestMatch, targetColumns } from '@/utils/helpers/columnMatcher';
 import useIsUrlHoldsOnboard from '@/hooks/use-is-url-holds-onboard';
-import { Column } from '@/types/upload-statements';
+import { Column, FormData } from '@/types/upload-statements';
 import Image from 'next/image';
 import FileIcon from '../../public/icons/file-icon.svg';
 import UploadIcon from '../../public/icons/upload-icon.svg';
@@ -44,15 +44,6 @@ interface StatementUploadContentProps {
   setModalOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
-type FormValuesType = {
-  description?: string;
-  amount?: string;
-  Description?: string;
-  Withdrawal?: string;
-  Deposit?: string;
-  [key: string]: string | undefined;
-};
-
 const useFileProcessor = () => {
   const [loading, setLoading] = useState(false);
   const [fileLink, setFileLink] = useState<File | null>(null);
@@ -63,6 +54,7 @@ const useFileProcessor = () => {
     onSuccess: (data, variables, context) => {
       utils.expenses.getExpenses.invalidate();
       utils.incomes.getIncomes.invalidate();
+      utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
       return { data, variables, context };
     },
     onError: (error) => {
@@ -140,8 +132,8 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
     setIsProcessing(false);
   }, [isOnboard, setModalContent, setModalOpen, setLoading, setIsProcessing]);
 
-  const matchColumns = (headers: Column[]): FormValuesType => {
-    const formValues: FormValuesType = {};
+  const matchColumns = (headers: Column[]): FormData => {
+    const formValues: FormData = {};
 
     targetColumns.forEach((column) => {
       const matchedHeader = findBestMatch(column.title, headers);
@@ -153,10 +145,8 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
     return formValues;
   };
 
-  const validateRequiredFields = (formValues: FormValuesType) => {
-    const requiredFields = targetColumns.filter((col) => col.title !== 'Date');
-
-    const hasRequiredFields = requiredFields.every(
+  const validateRequiredFields = (formValues: FormData) => {
+    const hasRequiredFields = targetColumns.every(
       (col) => formValues[col.title] !== undefined
     );
 
@@ -175,12 +165,12 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
     validateRequiredFields(formValues);
 
     const mappingData = {
-      description: formValues.description || '',
-      amount: formValues.amount || '',
+      Date: formValues.Date || '',
       Description: formValues.Description || '',
       Withdrawal: formValues.Withdrawal || '',
       Deposit: formValues.Deposit || '',
     };
+    console.log({ mappingData });
 
     return mapToExpenseData(mappingData, rows, headers);
   };
@@ -219,6 +209,7 @@ const StatementUploadContent: FC<StatementUploadContentProps> = ({
 
       const fileData = await extractFileData(file);
       const mappedExpenses = processExpenseData(fileData);
+      console.log({ mappedExpenses });
 
       mutation.mutate(mappedExpenses, {
         onSuccess: () => handleMutationSuccess(),

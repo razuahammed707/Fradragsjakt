@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 
 const CategoryIcons: React.FC = () => {
-  // Placeholder data - this would be replaced with real data later
   const categories = [
     { name: 'Transportation', icon: <Car className="h-4 w-4" />, value: 2 },
     { name: 'Food', icon: <Coffee className="h-4 w-4" />, value: 3 },
@@ -26,7 +25,7 @@ const CategoryIcons: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mt-2 px-2 pb-3">
+    <div className="flex flex-wrap items-center gap-2 ">
       {categories.map((category, index) => (
         <div
           key={index}

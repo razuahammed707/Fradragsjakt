@@ -35,8 +35,8 @@ const UploadingStatementsWarning = () => {
     <>
       <div
         className={cn(
-          'bg-[#FFE2E2] text-[#50647C] text-md rounded-xl mb-2 px-4 py-2 justify-between items-center flex',
-          (isStatementsPopulated || isLoading) && 'hidden'
+          'bg-[#FFE2E2] text-[#50647C] text-md rounded-xl mb-6 px-4 py-2 justify-between items-center flex',
+          (isStatementsPopulated || isLoading) && 'hidden mb-0 '
         )}
       >
         Connect with bank or Upload bank statements to start managing your

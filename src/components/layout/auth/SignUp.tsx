@@ -45,7 +45,7 @@ export default function SignUp() {
       session.user.role &&
       session?.user.hasAnswers
     ) {
-      router.push(`/${session?.user.role}/dashboard`);
+      router.push(`/${session?.user.role}/expenses`);
     }
   }, [session, router, status]);
 

@@ -38,7 +38,7 @@ export default function Onboard() {
       session?.user?.role &&
       user?.isStepperSkippedOrCompleted
     ) {
-      router.push(`/${session.user.role}/dashboard`);
+      router.push(`/${session.user.role}/expenses`);
     }
   }, [status, session, router, user?.isStepperSkippedOrCompleted]);
 

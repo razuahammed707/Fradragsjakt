@@ -3,28 +3,24 @@
 import React, { useCallback, useState } from 'react';
 import SearchInput from '@/components/SearchInput';
 import { Button } from '@/components/ui/button';
-import { IoMdAdd, IoMdTrash } from 'react-icons/io';
-import Image from 'next/image';
-//import RuleIcon from '../../../../../../public/images/expenses/rule.png';
-import WriteOffIcon from '../../../../../../public/images/expenses/writeoff.png';
+import { IoMdTrash } from 'react-icons/io';
 import ExpenseAddContent from './ExpenseAddContent';
 import SharedModal from '../../../../SharedModal';
 import ApplyRuleModalContent from './ApplyRuleModalContent';
 import { trpc } from '@/utils/trpc';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+
 import { cn, debounce } from '@/lib/utils';
-import ExpenseDataTableFilter from './ExpenseDataTableFilter';
 import { useTranslation } from '@/lib/TranslationProvider';
 import useUserInfo from '@/hooks/use-user-info';
 import StatementUploadContent from '@/components/StatementUploadContent';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import DeleteConfirmationContent from '@/components/DeleteConfirmationContent';
 import CreateRuleModal from '../rules/CreateRuleModal';
+import { CircleEllipsis, PlusCircle } from 'lucide-react';
+import UploadingStatementsWarning from '../dashboard/UploadingStatementsWarning';
 
 type ExpenseOverviewSectionProps = {
   setSearchTerm: (value: string) => void;
-  setFilterString: (value: string) => void;
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
   onDeleteComplete?: () => void;
@@ -32,7 +28,6 @@ type ExpenseOverviewSectionProps = {
 
 function ExpenseOverviewHeading({
   setSearchTerm,
-  setFilterString,
   selectedIds = [],
   onSelectionChange,
   onDeleteComplete,
@@ -40,8 +35,6 @@ function ExpenseOverviewHeading({
   const { isAuditor } = useUserInfo();
   const { translate } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
-  const router = useRouter();
-  const { data: user } = useSession();
   const [modalContent, setModalContent] = useState<{
     key: string;
     itemIds?: string[];
@@ -60,21 +53,6 @@ function ExpenseOverviewHeading({
         keepPreviousData: true,
       }
     ) as unknown as any;
-
-  const buttons = [
-    // {
-    //   key: 'applyRule',
-    //   text: translate('components.buttons.expense_buttons.text.apply_rule'),
-    //   icon: RuleIcon,
-    // },
-    {
-      key: 'showWriteOffs',
-      text: translate(
-        'components.buttons.expense_buttons.text.show_write_offs'
-      ),
-      icon: WriteOffIcon,
-    },
-  ];
 
   const handleButtonClick = (key: string, itemIds?: string[]) => {
     if (key === 'deleteRows') {
@@ -139,112 +117,59 @@ function ExpenseOverviewHeading({
   };
 
   return (
-    <>
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">
-            {translate(
-              'components.expenseOverview.heading',
-              'Total Expenses Overview'
-            )}
-          </h1>
-        </div>
+    <div>
+      <UploadingStatementsWarning />
+      <div className="flex justify-between gap-2">
+        <SearchInput
+          onChange={handleSearchChange}
+          iconClassName="h-6 w-6 left-3 top-3"
+          className="w-full py-6 placeholder:text-lg rounded-lg "
+        />
+
         {!isAuditor && (
-          <SearchInput
-            className="hidden md:block"
-            onChange={handleSearchChange}
-            placeholder={translate(
-              'components.expenseOverview.search',
-              'Search'
-            )}
-          />
-        )}
-      </div>
-      <div className="flex justify-between mt-5">
-        {isAuditor ? (
-          <SearchInput
-            className="hidden md:block"
-            onChange={handleSearchChange}
-            placeholder={translate(
-              'components.expenseOverview.search',
-              'Search'
-            )}
-          />
-        ) : (
-          <div className="flex gap-2">
-            <Button
-              variant="purple"
-              onClick={() => handleButtonClick('addExpense')}
-            >
-              <IoMdAdd className="font-bold mr-2" />{' '}
-              {translate('components.buttons.expense_buttons.text.add_expense')}
-            </Button>
-            <Button
-              variant="purple"
-              onClick={() => handleButtonClick('uploadStatements')}
-            >
-              <IoMdAdd className="font-bold mr-2" />{' '}
-              {translate(
-                'components.buttons.expense_buttons.text.upload_statements'
-              )}
-            </Button>
-            <CreateRuleModal />
-            {selectedIds.length > 0 && (
+          <div>
+            <div className="flex ">
               <Button
-                onClick={() => handleButtonClick('deleteRows', selectedIds)}
-                className="text-[#FF6347] px-0 hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
+                className="bg-transparent border-none py-6 shadow-none text-lg hover:bg-[#E6E6FF]"
+                onClick={() => handleButtonClick('addExpense')}
               >
-                <IoMdTrash
-                  color="#FF6347"
-                  size={24}
-                  className="hover:text-[#D94F33]"
-                />
-                ({selectedIds.length})
+                <PlusCircle className="font-bold mr-2" />{' '}
+                {translate(
+                  'components.buttons.expense_buttons.text.add_expense'
+                )}
               </Button>
-            )}
+              <Button
+                className="bg-transparent border-none py-6 shadow-none text-lg hover:bg-[#E6E6FF]"
+                onClick={() => handleButtonClick('uploadStatements')}
+              >
+                <PlusCircle className="font-bold mr-2" />{' '}
+                {translate(
+                  'components.buttons.expense_buttons.text.upload_statements'
+                )}
+              </Button>
+
+              <CreateRuleModal origin="expense-page" />
+              <Button className="bg-transparent border-none py-6 shadow-none text-lg hover:bg-[#E6E6FF]">
+                <CircleEllipsis className="font-bold mr-2" />
+                More
+              </Button>
+              {selectedIds.length > 0 && (
+                <Button
+                  onClick={() => handleButtonClick('deleteRows', selectedIds)}
+                  className="text-[#FF6347] px-0 py-6 hover:bg-transparent  bg-transparent shadow-none hover:text-[#D94F33]"
+                >
+                  <IoMdTrash
+                    color="#FF6347"
+                    size={24}
+                    className="hover:text-[#D94F33]"
+                  />
+                  ({selectedIds.length})
+                </Button>
+              )}
+            </div>
           </div>
         )}
-        <div className="flex space-x-2">
-          <ExpenseDataTableFilter setFilterString={setFilterString} />
-          {isAuditor
-            ? buttons
-                .filter((btn) => btn.key !== 'applyRule')
-                .map((button, index) => (
-                  <Button
-                    key={index}
-                    variant="purple"
-                    onClick={() =>
-                      router.push(`/${user?.user?.role}/write-offs`)
-                    }
-                  >
-                    <Image
-                      src={button.icon}
-                      alt="button icon"
-                      className="mr-2"
-                    />{' '}
-                    {button.text}
-                  </Button>
-                ))
-            : buttons.map((button, index) => (
-                <Button
-                  disabled={
-                    button.key === 'applyRule' &&
-                    expensesWithMatchedRules?.data?.expensesWithRules
-                      ?.length === 0
-                  }
-                  key={index}
-                  variant="purple"
-                  onClick={() =>
-                    button.key === 'showWriteOffs'
-                      ? router.push(`/${user?.user?.role}/write-offs`)
-                      : handleButtonClick(button.key)
-                  }
-                >
-                  <Image src={button.icon} alt="button icon" className="mr-2" />{' '}
-                  {button.text}
-                </Button>
-              ))}
-        </div>
+
         <div className="bg-white absolute z-50">
           <SharedModal
             open={isModalOpen}
@@ -257,7 +182,7 @@ function ExpenseOverviewHeading({
           </SharedModal>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

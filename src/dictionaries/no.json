@@ -99,7 +99,7 @@
       "applyRule": "Bruk regel"
     },
     "expensetopsection": {
-      "business": "Bedrift",
+      "business": "Totale avskrivninger",
       "personal": "Personlig",
       "august": "August",
       "more": "Mer"
@@ -189,11 +189,7 @@
         "expense_type": "Utgiftstype",
         "category": "Kategori"
       },
-      "button": {
-        "add": "Legg til",
-        "update": "Oppdater",
-        "expense": "Utgift"
-      },
+      "button": { "title": "Spare" },
       "toast": {
         "create_success": "Utgiften ble opprettet!",
         "create_failure": "Kunne ikke opprette utgift",
@@ -342,7 +338,7 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "incomes": "Inntekter",
-    "expenses": "Utgifter",
+    "expenses": "Fradrag",
     "categories": "Kategorier",
     "rules": "Regler",
     "deductions": "Fradrag",

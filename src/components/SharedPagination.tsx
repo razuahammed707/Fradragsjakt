@@ -86,7 +86,7 @@ const SharedPagination: React.FC<SharedPaginationProps> = ({
   return (
     <Pagination className={cn('relative', justifyEnd && ' justify-end')}>
       <PaginationContent>
-        <div className="absolute left-0">
+        <div className="absolute left-2">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium text-gray-400">
               {translate('page.pagination.perpage')}

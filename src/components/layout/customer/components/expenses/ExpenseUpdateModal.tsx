@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import SharedModal from '@/components/SharedModal';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2 } from 'lucide-react';
 import ExpenseAddContent from './ExpenseAddContent';
 import DeleteRowsConfirmationContent from '@/components/DeleteConfirmationContent';
 import { Button } from '@/components/ui/button';
@@ -94,15 +94,13 @@ export default function ExpenseUpdateModal({
                   }}
                   hideFields={['amount', 'transaction_date']}
                 />
-                <p className="text-sm my-1 text-center text-gray-500">Or</p>
-                <div className="flex justify-center">
+                <div className="flex justify-center mt-1">
                   <Button
                     onClick={handleDeleteClick}
-                    className="w-full bg-transparent hover:bg-red-50 shadow-none border text-red-600 hover:text-red-700 transition-colors"
+                    className="w-full bg-transparent hover:bg-red-50 shadow-none  text-red-600 hover:text-red-700 transition-colors"
                     title="Delete Expense"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Expense
+                    Delete
                   </Button>
                 </div>
               </>
