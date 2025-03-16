@@ -104,8 +104,8 @@ async function createExpenseFromBulkInput(
       user: userId,
       amount: input?.withdrawal,
       description: input.description,
-      expense_type: rule?.expense_type || ExpenseType.unknown,
-      category: rule?.category_title || 'unknown',
+      expense_type: rule?.expense_type || ExpenseType.personal,
+      category: rule?.category_title || 'Other expense',
       rule: rule?._id,
       transaction_date: new Date(input.transaction_date),
     };

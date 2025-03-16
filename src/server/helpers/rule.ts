@@ -144,7 +144,7 @@ async function updateTransactions(
       {
         user: userId,
         description: { $regex: input.description_contains, $options: 'i' },
-        category: 'unknown',
+        category: 'Other expense',
         expense_type: 'unknown',
       },
       {
