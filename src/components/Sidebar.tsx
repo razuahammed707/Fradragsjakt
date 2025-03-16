@@ -15,7 +15,7 @@ import { Dot, Settings } from 'lucide-react';
 import {
   LayoutDashboard,
   HandCoins,
-  Landmark,
+  //Landmark,
   CircleDollarSign,
   Newspaper,
   ListTree,
@@ -146,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         label: translate('sidebar.rules'),
         icon: ClipboardPen,
       },
-      {
+      /*  {
         href: '/deductions',
         label: translate('sidebar.deductions'),
         icon: Landmark,
@@ -155,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
           { href: '/deductions/2023', label: '2023' },
           { href: '/deductions/2022', label: '2022' },
         ],
-      },
+      }, */
       {
         href: '/tax-file',
         label: translate('sidebar.tax_file'),

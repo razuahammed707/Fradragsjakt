@@ -32,6 +32,7 @@ export type ExpenseColumnProps = {
   expense_type: 'business' | 'personal' | 'unknown';
   amount: number;
   note?: string;
+  percentage: string;
   receipt?: {
     link: string;
     mimeType: string;
@@ -40,7 +41,7 @@ export type ExpenseColumnProps = {
 
 export const ExpenseDataTableColumns = (
   onMerchantClick: (rowData: ExpenseColumnProps) => void,
-  onStatusChange?: (rowId: string, newStatus: 'business' | 'personal') => void // Add this prop
+  onStatusChange?: (rowId: string, newStatus: 'business' | 'personal') => void
 ): ColumnDef<ExpenseColumnProps>[] => {
   const { translate } = useTranslation();
   // const { isAuditor } = useUserInfo();

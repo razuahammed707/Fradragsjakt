@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { MdOutlineSignpost } from 'react-icons/md';
 import SharedModal from '@/components/SharedModal';
 import CreateRuleModalContent from './CreateRuleModalContent';
-import { Edit2 } from 'lucide-react';
+import { Edit2, SlidersVertical } from 'lucide-react';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { UpdateRuleProps } from '@/types/questionnaire';
 
@@ -26,6 +26,14 @@ export default function CreateRuleModal({
       {!origin ? (
         <Button variant="purple" onClick={handleButtonClick}>
           <MdOutlineSignpost size={20} className="mr-2" />
+          {translate('page.rulesTopSection.create_rule')}
+        </Button>
+      ) : origin === 'expense-page' ? (
+        <Button
+          className="bg-transparent border-none py-6 shadow-none text-lg hover:bg-[#E6E6FF]"
+          onClick={handleButtonClick}
+        >
+          <SlidersVertical size={20} className="mr-2" />
           {translate('page.rulesTopSection.create_rule')}
         </Button>
       ) : (

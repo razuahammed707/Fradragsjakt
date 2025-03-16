@@ -48,6 +48,7 @@ function DeleteRowsConfirmationContent({
         break;
       case 'expense':
         utils.expenses.getExpenses.invalidate();
+        utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
         break;
       case 'income':
         utils.incomes.getIncomes.invalidate();

@@ -99,7 +99,7 @@
       "applyRule": "Apply Rule"
     },
     "expensetopsection": {
-      "business": "Deductible",
+      "business": "Total Write Offs",
       "personal": "Personal",
       "august": "August",
       "more": "More"
@@ -189,11 +189,7 @@
         "expense_type": "Expense Type",
         "category": "Category"
       },
-      "button": {
-        "add": "Add",
-        "update": "Update",
-        "expense": "Expense"
-      },
+      "button": { "title": "Save" },
       "toast": {
         "create_success": "Expense created successfully!",
         "create_failure": "Failed to create expense",
@@ -355,7 +351,7 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "incomes": "Incomes",
-    "expenses": "Expenses",
+    "expenses": "Deductions",
     "categories": "Categories",
     "rules": "Rules",
     "deductions": "Deductions",

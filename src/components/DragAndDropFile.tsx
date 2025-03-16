@@ -50,10 +50,12 @@ const DragAndDropFile: React.FC<DragAndDropFileProps> = ({
       )}
       <Button
         variant="purple"
+        disabled={loading}
         className="mt-2 px-6"
         onClick={handleButtonClick}
         type="button"
       >
+        {loading && <Loader2 size={40} className="animate-spin text-primary" />}
         Browse File
       </Button>
     </div>

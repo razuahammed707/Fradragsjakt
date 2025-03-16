@@ -57,9 +57,9 @@ export default function Login() {
       const targetRoute =
         role === 'customer'
           ? hasAnswers
-            ? '/customer/dashboard'
+            ? '/customer/expenses'
             : '/onboard'
-          : `/${role}/dashboard`;
+          : `/${role}/expenses`;
 
       if (role && targetRoute) {
         router.replace(targetRoute);

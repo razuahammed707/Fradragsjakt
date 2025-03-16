@@ -100,7 +100,11 @@ function CreateRuleModalContent({
   return (
     <div>
       <h1 className="font-medium text-xl text-black mb-3">
-        {!origin ? 'Create a rule' : 'Update a rule'}
+        {!origin
+          ? 'Create a rule'
+          : origin === 'expense-page'
+            ? 'Create a rule'
+            : 'Update a rule'}
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">

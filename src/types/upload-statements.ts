@@ -1,5 +1,4 @@
 export interface Column {
-  id: any;
   title: string;
   dataIndex: string;
   key: string;
@@ -18,10 +17,9 @@ export interface ExpenseData {
 }
 
 export interface FormData {
-  description: any;
-  amount: any;
-  Description: string;
-  Withdrawal: string;
-  Deposit: string;
+  Description?: string;
+  Withdrawal?: string;
+  Deposit?: string;
   Date?: string;
+  [key: string]: string | undefined;
 }

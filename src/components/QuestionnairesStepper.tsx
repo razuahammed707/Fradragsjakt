@@ -78,7 +78,7 @@ export default function QuestionnairesStepper({
           utils.users.getUserByEmail.invalidate();
           dispatch(filterAndUpdateQuestionnaires(selectedAnswers));
           dispatch(showModal(false));
-          if (!isWriteOff) router.push(`/${loggedUser?.role}/dashboard`);
+          if (!isWriteOff) router.push(`/${loggedUser?.role}/expenses`);
         },
         onError: (error) => {
           console.error('Failed to update questionnaires:', error);

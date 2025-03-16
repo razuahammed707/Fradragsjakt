@@ -35,7 +35,7 @@ function ExpenseAddContent({
   const methods = useForm<ExpenseFormData>({
     resolver: zodResolver(ExpenseFormSchema),
     defaultValues: {
-      category: payload?.category || '',
+      category: payload?.category !== 'unknown' ? payload?.category : '',
       receipt: payload?.receipt || { link: '', mimeType: '' },
       description: payload?.description || '',
       transaction_date: payload?.transaction_date
@@ -237,49 +237,53 @@ function ExpenseAddContent({
                 customClassName="mt-1"
                 placeholder="Select category"
                 options={manipulatedCategories}
-                defaultValue={payload?.category}
+                defaultValue={
+                  payload?.category !== 'unknown' ? payload?.category : ''
+                }
                 required
                 searchEnabled
               />
             </div>
 
+            {category && (
+              <div>
+                <Label htmlFor="percentage">
+                  {`Percentage for ${selectedCategory?.title?.toLowerCase() || 'expense'}`}
+                </Label>
+                <PercentageSliderInput
+                  name="percentage"
+                  control={methods.control}
+                  defaultValue={100}
+                  customClassName="mt-1"
+                />
+              </div>
+            )}
             <div>
-              <Label htmlFor="percentage">
-                {`Percentage for ${selectedCategory?.title?.toLowerCase() || 'expense'}`}
-              </Label>
-              <PercentageSliderInput
-                name="percentage"
+              <Label htmlFor="note">Add a note (optional)</Label>
+              <FormInput
+                type="textarea"
+                name="note"
+                defaultValue={payload?.note}
+                placeholder="e.g. Meeting with my client Olivier"
                 control={methods.control}
-                defaultValue={50}
+                customClassName="w-full mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="receipt">Receipt (optional)</Label>
+              <FormReceiptInput
+                name="receipt"
+                defaultValue={payload?.receipt?.link}
+                includeMimeType
+                setValue={(
+                  name: string,
+                  value: string | { link: string; mimeType: string }
+                ) => {
+                  methods.setValue(name as any, value as any);
+                }}
                 customClassName="mt-1"
               />
             </div>
-          </div>
-          <div>
-            <Label htmlFor="note">Add a note (optional)</Label>
-            <FormInput
-              type="textarea"
-              name="note"
-              defaultValue={payload?.note}
-              placeholder="e.g. Meeting with my client Olivier"
-              control={methods.control}
-              customClassName="w-full mt-1"
-            />
-          </div>
-          <div>
-            <Label htmlFor="receipt">Receipt (optional)</Label>
-            <FormReceiptInput
-              name="receipt"
-              defaultValue={payload?.receipt?.link}
-              includeMimeType
-              setValue={(
-                name: string,
-                value: string | { link: string; mimeType: string }
-              ) => {
-                methods.setValue(name as any, value as any);
-              }}
-              customClassName="mt-1"
-            />
           </div>
 
           <Button
@@ -288,10 +292,7 @@ function ExpenseAddContent({
             className="w-full text-white"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {origin === 'expense update'
-              ? translate('componentsExpenseModal.expense.button.update')
-              : translate('componentsExpenseModal.expense.button.add')}{' '}
-            {translate('componentsExpenseModal.expense.button.expense')}
+            {translate('componentsExpenseModal.expense.button.title')}
           </Button>
         </form>
       </FormProvider>

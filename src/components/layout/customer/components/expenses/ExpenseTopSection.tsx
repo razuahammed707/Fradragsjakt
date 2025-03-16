@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import useIsStatementsPopulated from '@/hooks/use-is-populated-statements';
-import UploadingStatementsWarning from '../dashboard/UploadingStatementsWarning';
 import ExpenseStatsByType from './ExpenseStatsByType';
 import { trpc } from '@/utils/trpc';
 import { useTranslation } from '@/lib/TranslationProvider';
@@ -16,7 +14,6 @@ import {
 import CategoryIcons from './CategoryIcons';
 
 const ExpenseTopSection = () => {
-  const { isStatementsPopulated, isLoading } = useIsStatementsPopulated();
   const { translate } = useTranslation();
   const [expenseStats, setExpenseStats] = useState({
     personal: 0,
@@ -49,48 +46,37 @@ const ExpenseTopSection = () => {
     }
   }, [expenses?.data]);
 
-  if (!isStatementsPopulated && !isLoading) {
-    return <UploadingStatementsWarning />;
-  }
-
   return (
-    <div className="space-y-3">
-      <div>
-        <Sheet>
-          <SheetTrigger asChild className="overflow-hidden w-full">
-            <div className="cursor-pointer">
-              <ExpenseStatsByType
-                type={translate('page.expensetopsection.business')}
-                amount={Number(expenseStats?.business?.toFixed(2))}
-                filterString=""
-              />
-              <div className="p-3 bg-white rounded-b-lg">
-                <CategoryIcons />
-              </div>
-            </div>
-          </SheetTrigger>
-          <SheetContent
-            noOverlay
-            side="right"
-            className="w-[500px] border sm:w-[540px]"
-          >
-            <SheetHeader>
-              <SheetTitle>Deductions by category (2025)</SheetTitle>
-            </SheetHeader>
-            <div className="mt-6 space-y-6">
-              <p className="text-sm text-muted-foreground">
-                If you earned freelance / 1099 income in 2025, marking business
-                expenses as deductions reduces your taxable income.
-              </p>
+    <Sheet>
+      <SheetTrigger asChild className="overflow-hidden w-full">
+        <div className="cursor-pointer bg-white p-3 rounded-lg">
+          <ExpenseStatsByType
+            type={translate('page.expensetopsection.business')}
+            amount={Number(expenseStats?.business?.toFixed(2))}
+          />
+          <CategoryIcons />
+        </div>
+      </SheetTrigger>
+      <SheetContent
+        noOverlay
+        side="right"
+        className="w-[500px] border  sm:w-[540px]"
+      >
+        <SheetHeader>
+          <SheetTitle>Deductions by category (2025)</SheetTitle>
+        </SheetHeader>
+        <div className="mt-6 space-y-6">
+          <p className="text-sm text-muted-foreground">
+            If you earned freelance / 1099 income in 2025, marking business
+            expenses as deductions reduces your taxable income.
+          </p>
 
-              <button className="w-full mt-4 text-primary hover:text-primary/90">
-                See impact on total tax refund
-              </button>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-    </div>
+          <button className="w-full mt-4 text-primary hover:text-primary/90">
+            See impact on total tax refund
+          </button>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 
