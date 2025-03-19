@@ -8,7 +8,7 @@ export type WriteOffs = {
   id: string;
   category: string;
   totalItemByCategory: number;
-  amount: number;
+  writeOffAmount: number;
 };
 
 export const WriteOffsTableColumns = (): ColumnDef<WriteOffs>[] => {
@@ -29,11 +29,11 @@ export const WriteOffsTableColumns = (): ColumnDef<WriteOffs>[] => {
       ),
     },
     {
-      accessorKey: 'amount',
+      accessorKey: 'writeOffAmount',
       header: translate('page.WriteOffDataTableColumns.deduction'),
       cell: ({ row }) => (
         <div className="text-left my-1">
-          {`NOK ${numberFormatter(row.original?.amount)}`}
+          {`kr ${numberFormatter(row.original?.writeOffAmount)}`}
         </div>
       ),
     },

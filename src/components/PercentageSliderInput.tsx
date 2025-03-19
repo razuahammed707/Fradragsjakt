@@ -15,7 +15,7 @@ interface PercentageSliderInputProps {
 export function PercentageSliderInput({
   name,
   control,
-  defaultValue = 50,
+  defaultValue = 100,
   customClassName = '',
   onThresholdChange,
 }: PercentageSliderInputProps) {

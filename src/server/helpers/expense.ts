@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import { QuestionKeysMap } from '@/utils/constants/QuestionKeys';
 import { z } from 'zod';
 import { expenseValidation } from '../modules/expenses/expenses.validation';
+import CategoryPercentageModel from '../db/models/category-percentage';
 
 async function findMatchingRule(description: string, userId: string) {
   try {
@@ -609,11 +610,24 @@ const ensureSevenDaysCoverage = (
 
 const getWriteOffSummary = async (
   skip: number,
-  limit: number,
-  searchQuery: Record<string, unknown>
+  limit: number | undefined,
+  searchQuery: Record<string, unknown>,
+  userId: string
 ) => {
   try {
-    return await ExpenseModel.aggregate([
+    const categories = await CategoryModel.find({});
+    const categoryMap = new Map(categories.map((cat) => [cat.title, cat._id]));
+
+    const categoryPercentages = await CategoryPercentageModel.find({
+      user: userId,
+    });
+    const percentageMap = new Map();
+
+    categoryPercentages.forEach((cp) => {
+      percentageMap.set(cp.category.toString(), cp.threshold);
+    });
+
+    const expensesByCategory = await ExpenseModel.aggregate([
       {
         $match: searchQuery,
       },
@@ -639,6 +653,33 @@ const getWriteOffSummary = async (
         $limit: Number(limit),
       },
     ]);
+
+    let totalWriteOff = 0;
+
+    const result = await Promise.all(
+      expensesByCategory.map(async (item) => {
+        const categoryId = categoryMap.get(item.category);
+        const threshold = categoryId
+          ? percentageMap.get(categoryId.toString()) || '100'
+          : '100';
+
+        const thresholdValue = parseInt(threshold, 10) / 100;
+        const writeOffAmount = item.amount * thresholdValue;
+
+        totalWriteOff += writeOffAmount;
+
+        return {
+          ...item,
+          threshold,
+          writeOffAmount,
+        };
+      })
+    );
+
+    return {
+      writeOffSummary: result,
+      totalWriteOff,
+    };
   } catch (error) {
     const { message } = errorHandler(error);
     throw new ApiError(httpStatus.NOT_FOUND, message);

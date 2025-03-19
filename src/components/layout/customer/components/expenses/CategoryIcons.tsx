@@ -19,21 +19,22 @@ export const categories = [
   { name: 'Office Travel', icon: Plane, value: 1 },
 ];
 
-const CategoryIcons: React.FC = () => {
+const CategoryIcons: React.FC<{
+  writeOffSummary: Array<{ category: string; totalItemByCategory: number }>;
+}> = ({ writeOffSummary }) => {
+  console.log({ writeOffSummary });
+
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {categories.map((category, index) => {
-        const Icon = category.icon;
+      {writeOffSummary?.map(({ category, totalItemByCategory }, index) => {
         return (
           <div
             key={index}
             className="flex items-center gap-1 text-xs text-gray-600"
           >
-            <div className="p-1 bg-gray-100 rounded-full">
-              <Icon className="h-4 w-4" />
-            </div>
-            <span className="hidden sm:inline">{category.name}</span>
-            <span className="text-gray-500">({category.value})</span>
+            <div className="p-1 bg-gray-100 rounded-full"></div>
+            <span className="hidden sm:inline">{category}</span>
+            <span className="text-gray-500">({totalItemByCategory})</span>
           </div>
         );
       })}

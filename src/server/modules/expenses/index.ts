@@ -244,7 +244,8 @@ export const expenseRouter = router({
         const expenses = await ExpenseHelpers.getWriteOffSummary(
           skip,
           limit,
-          query
+          query,
+          loggedUser?.id
         );
 
         return {
