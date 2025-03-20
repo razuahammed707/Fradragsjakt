@@ -54,6 +54,7 @@ function CreateRuleModalContent({
       utils.rules.getRules.invalidate();
       utils.expenses.getExpenses.invalidate();
       utils.incomes.getIncomes.invalidate();
+      utils.expenses.getWriteOffs.invalidate();
       reset();
     },
     onError: (error) => {

@@ -17,7 +17,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getCategoryIcon } from '@/utils/helpers/getCategoryIcon';
 
 const defaultOptions = [
   { title: 'Married', value: 'married' },
@@ -169,6 +170,10 @@ export function SelectFormInput({
                           setOpen(false);
                         }}
                       >
+                        {name === 'category' &&
+                          React.createElement(getCategoryIcon(option.title), {
+                            size: 16,
+                          })}{' '}
                         {option.title}
                         <Check
                           className={cn(

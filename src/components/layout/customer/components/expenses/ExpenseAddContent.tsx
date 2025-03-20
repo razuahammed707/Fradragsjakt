@@ -245,10 +245,10 @@ function ExpenseAddContent({
               />
             </div>
 
-            {category && (
+            {category && category !== 'Other expense' && (
               <div>
                 <Label htmlFor="percentage">
-                  {`Percentage for ${selectedCategory?.title?.toLowerCase() || 'selcted category'}`}
+                  {`Percentage for ${selectedCategory?.title?.toLowerCase() || 'selected category'}`}
                 </Label>
                 <PercentageSliderInput
                   name="percentage"

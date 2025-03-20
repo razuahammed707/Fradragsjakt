@@ -132,11 +132,13 @@ async function updateTransactions(
   rule: any,
   input: any
 ): Promise<TransactionUpdateResults> {
+  console.log('userId_', userId);
+  console.log({ rule });
+  console.log({ input });
+
   try {
     const updateFields = {
       category: input.category,
-      sub_category: input.sub_category || null,
-      tag_category: input.tag_category || null,
       rule: rule._id,
     };
 
@@ -144,8 +146,8 @@ async function updateTransactions(
       {
         user: userId,
         description: { $regex: input.description_contains, $options: 'i' },
-        category: 'unknown',
-        expense_type: 'unknown',
+        category: 'Other expense',
+        expense_type: 'personal',
       },
       {
         $set: {
@@ -214,8 +216,6 @@ async function findByRuleAndUpdateTransactions(
         {
           $set: {
             category: category.title,
-            sub_category: updateData.sub_category || null,
-            tag_category: updateData.tag_category || null,
             expense_type: updateData.expense_type,
           },
         }
@@ -247,8 +247,8 @@ async function findByRuleAndUpdateTransactions(
         },
         {
           $set: {
-            category: 'unknown',
-            expense_type: 'unknown',
+            category: 'Other expense',
+            expense_type: 'personal',
           },
         }
       ),

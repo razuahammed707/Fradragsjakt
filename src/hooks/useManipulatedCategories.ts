@@ -18,10 +18,20 @@ export const useManipulatedCategories = (query?: Query) => {
       value: category.title,
     }));
 
-  const manipulatedCategories = (categories?.data || []).map((category) => ({
-    title: category.title,
-    value: category.title,
-  }));
+  // Use a Set to ensure uniqueness by title
+  const uniqueTitles = new Set();
+  const manipulatedCategories = (categories?.data || [])
+    .filter((category) => {
+      if (uniqueTitles.has(category.title)) {
+        return false;
+      }
+      uniqueTitles.add(category.title);
+      return true;
+    })
+    .map((category) => ({
+      title: category.title,
+      value: category.title,
+    }));
 
   return {
     mainCategories,

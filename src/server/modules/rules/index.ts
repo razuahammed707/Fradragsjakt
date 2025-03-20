@@ -129,17 +129,18 @@ export const rulesRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const sessionUser = ctx.user as JwtPayload;
+
         RuleHelpers.validateUser(sessionUser);
 
         await RuleHelpers.checkExistingRule(sessionUser.id, input);
         const category = await RuleHelpers.findCategory(input.category);
         const newRule = await RuleHelpers.createNewRule(
           input,
-          sessionUser.id,
+          sessionUser?.id,
           category
         );
         const updateResults = await RuleHelpers.updateTransactions(
-          sessionUser.id,
+          sessionUser?.id,
           newRule,
           input
         );
