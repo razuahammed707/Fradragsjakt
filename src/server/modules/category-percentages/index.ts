@@ -65,23 +65,22 @@ export const categoryPercentageRouter = router({
         const { category } = input;
         const sessionUser = ctx.user as JwtPayload;
 
-        // Find the category by title
         const categoryDoc = await Category.findOne({ title: category });
         if (!categoryDoc) {
-          return '50'; // Default if category not found
+          return '100';
         }
 
         const categoryId = categoryDoc._id;
 
         const categoryPercentage = await CategoryPercentage.findOne({
           user: sessionUser.id,
-          category: categoryId, // Use the category ID
+          category: categoryId,
         });
 
-        return categoryPercentage ? categoryPercentage.threshold : '50';
+        return categoryPercentage ? categoryPercentage.threshold : '100';
       } catch (error) {
         console.error('Error getting category percentage:', error);
-        return '50';
+        return '100';
       }
     }),
 });

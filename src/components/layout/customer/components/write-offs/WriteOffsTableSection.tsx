@@ -68,18 +68,15 @@ export default function WriteOffsTableSection() {
             onChange={handleSearchChange}
           />
           <SharedReportDownloader
-            body={writeOffs?.data}
-            total={writeOffs?.data?.reduce(
-              (sum: any, item: { amount: any }) => sum + item.amount,
-              0
-            )}
+            body={writeOffs?.data?.writeOffSummary || []}
+            total={writeOffs?.data?.totalWriteOff || 0}
           />
         </div>
       </div>
       <div className={cn(!isWithinDashboard && 'mt-10')}>
         <SharedDataTable
           columns={WriteOffsTableColumns()}
-          data={writeOffs?.data || []}
+          data={writeOffs?.data?.writeOffSummary || []}
           className={cn(isWithinDashboard && 'h-[330px]')}
         />
         <div className={cn('mt-10', isWithinDashboard && 'hidden')}>

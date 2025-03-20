@@ -46,7 +46,9 @@ ol li::before {
   border-radius: 12px;
   border: 2px solid #e4e4e7;
 }
-
+.odometer-inside:after {
+  content: attr(data-formatted);
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;

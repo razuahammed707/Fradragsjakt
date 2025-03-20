@@ -57,7 +57,7 @@ function ExpenseAddContent({
   const createMutation = trpc.expenses.createExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
-      utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
+      utils.expenses.getWriteOffs.invalidate();
       toast.success(
         translate('componentsExpenseModal.expense.toast.create_success')
       );
@@ -77,7 +77,7 @@ function ExpenseAddContent({
   const updateMutation = trpc.expenses.updateExpense.useMutation({
     onSuccess: () => {
       utils.expenses.getExpenses.invalidate();
-      utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
+      utils.expenses.getWriteOffs.invalidate();
       toast.success(
         translate('componentsExpenseModal.expense.toast.update_success')
       );
@@ -248,12 +248,11 @@ function ExpenseAddContent({
             {category && (
               <div>
                 <Label htmlFor="percentage">
-                  {`Percentage for ${selectedCategory?.title?.toLowerCase() || 'expense'}`}
+                  {`Percentage for ${selectedCategory?.title?.toLowerCase() || 'selcted category'}`}
                 </Label>
                 <PercentageSliderInput
                   name="percentage"
                   control={methods.control}
-                  defaultValue={100}
                   customClassName="mt-1"
                 />
               </div>

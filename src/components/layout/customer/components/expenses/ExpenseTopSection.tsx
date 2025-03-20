@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ExpenseStatsByType from './ExpenseStatsByType';
 import { trpc } from '@/utils/trpc';
 import { useTranslation } from '@/lib/TranslationProvider';
@@ -16,36 +16,7 @@ import CategoryIcons, { categories } from './CategoryIcons';
 
 const ExpenseTopSection = () => {
   const { translate } = useTranslation();
-  const [expenseStats, setExpenseStats] = useState({
-    personal: 0,
-    business: 0,
-  });
-
-  const { data: expenses } =
-    trpc.expenses.getCategoryAndExpenseTypeWiseExpenses.useQuery({
-      expense_type: '',
-      filterString: '',
-    });
-
-  useEffect(() => {
-    if (!expenses?.data) return;
-
-    const { expenseTypeWiseExpenses } = expenses.data;
-
-    if (expenseTypeWiseExpenses) {
-      const personal = expenseTypeWiseExpenses.find(
-        (exp: { expense_type: string }) => exp.expense_type === 'personal'
-      );
-      const business = expenseTypeWiseExpenses.find(
-        (exp: { expense_type: string }) => exp.expense_type === 'business'
-      );
-
-      setExpenseStats({
-        personal: personal?.amount ?? 0,
-        business: business?.amount ?? 0,
-      });
-    }
-  }, [expenses?.data]);
+  const { data: writeOffs } = trpc.expenses.getWriteOffs.useQuery({});
 
   return (
     <Sheet>
@@ -53,9 +24,11 @@ const ExpenseTopSection = () => {
         <div className="cursor-pointer bg-white p-3 rounded-lg">
           <ExpenseStatsByType
             type={translate('page.expensetopsection.business')}
-            amount={Number(expenseStats?.business?.toFixed(2))}
+            amount={Number(writeOffs?.data?.totalWriteOff?.toFixed(2) ?? 0)}
           />
-          <CategoryIcons />
+          <CategoryIcons
+            writeOffSummary={writeOffs?.data?.writeOffSummary || []}
+          />
         </div>
       </SheetTrigger>
       <SheetContent
