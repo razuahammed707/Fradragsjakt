@@ -1,29 +1,10 @@
 import React from 'react';
-import {
-  Car,
-  Coffee,
-  Home,
-  Briefcase,
-  ShoppingBag,
-  Utensils,
-  Plane,
-} from 'lucide-react';
-
-export const categories = [
-  { name: 'Transportation', icon: Car, value: 2 },
-  { name: 'Food', icon: Coffee, value: 3 },
-  { name: 'Office', icon: Briefcase, value: 1 },
-  { name: 'Housing', icon: Home, value: 4 },
-  { name: 'Clothing', icon: ShoppingBag, value: 2 },
-  { name: 'Business Meals', icon: Utensils, value: 3 },
-  { name: 'Office Travel', icon: Plane, value: 1 },
-];
+import ReactOdometer from 'react-odometerjs';
+import { getCategoryIcon } from '@/utils/helpers/getCategoryIcon';
 
 const CategoryIcons: React.FC<{
   writeOffSummary: Array<{ category: string; totalItemByCategory: number }>;
 }> = ({ writeOffSummary }) => {
-  console.log({ writeOffSummary });
-
   return (
     <div className="flex flex-wrap items-center gap-2">
       {writeOffSummary?.map(({ category, totalItemByCategory }, index) => {
@@ -32,9 +13,17 @@ const CategoryIcons: React.FC<{
             key={index}
             className="flex items-center gap-1 text-xs text-gray-600"
           >
-            <div className="p-1 bg-gray-100 rounded-full"></div>
-            <span className="hidden sm:inline">{category}</span>
-            <span className="text-gray-500">({totalItemByCategory})</span>
+            <div className="bg-gray-100 rounded-md flex gap-1.5 p-1.5">
+              {React.createElement(getCategoryIcon(category), { size: 16 })}{' '}
+              <span className="text-gray-500">
+                <ReactOdometer
+                  value={totalItemByCategory}
+                  format="( ddd),dd"
+                  duration={500}
+                  theme="minimal"
+                />
+              </span>
+            </div>
           </div>
         );
       })}

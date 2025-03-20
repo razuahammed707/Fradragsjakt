@@ -228,7 +228,6 @@ export const expenseRouter = router({
         const { page, limit, searchTerm } = input;
         const skip = (page - 1) * limit;
 
-        // Base query to filter expenses by user
         const query: Record<string, unknown> = {
           user: new mongoose.Types.ObjectId(loggedUser?.id),
           expense_type: ExpenseType.business,

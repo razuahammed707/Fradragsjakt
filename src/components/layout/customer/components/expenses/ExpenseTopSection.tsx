@@ -11,12 +11,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import CategoryIcons from './CategoryIcons';
+
+import { getCategoryIcon } from '@/utils/helpers/getCategoryIcon';
 import { ChevronRight } from 'lucide-react';
-import CategoryIcons, { categories } from './CategoryIcons';
+import { Button } from '@/components/ui/button';
 
 const ExpenseTopSection = () => {
   const { translate } = useTranslation();
   const { data: writeOffs } = trpc.expenses.getWriteOffs.useQuery({});
+  console.log({ writeOffs });
 
   return (
     <Sheet>
@@ -34,40 +38,56 @@ const ExpenseTopSection = () => {
       <SheetContent
         noOverlay
         side="right"
-        className="w-[500px] border sm:w-[540px]"
+        className="max-w-[450px] border sm:max-w-[500px]"
       >
         <SheetHeader>
-          <SheetTitle>Deductions by category (2025)</SheetTitle>
+          <SheetTitle>Deductions by category (2024)</SheetTitle>{' '}
+          {/* Year updated */}
         </SheetHeader>
         <div className="mt-6 space-y-6">
           <div className="space-y-2">
-            {categories.map((category, index) => {
-              const Icon = category.icon;
-              return (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-1 bg-gray-100 rounded-full">
-                      <Icon className="h-5 w-5" />
+            {writeOffs?.data?.writeOffSummary?.map(
+              (
+                {
+                  category,
+                  totalItemByCategory,
+                  writeOffAmount,
+                }: {
+                  category: string;
+                  totalItemByCategory: number;
+                  writeOffAmount: number;
+                },
+                index: number
+              ) => {
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-2 px-3 hover:bg-gray-50 rounded-md cursor-pointer border border-black/25"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="">
+                        {React.createElement(getCategoryIcon(category), {
+                          size: 16,
+                        })}{' '}
+                      </div>
+                      <span className="">{category}</span>{' '}
                     </div>
-                    <span>{category.name}</span>
+                    <div className="flex items-center gap-2">
+                      {`kr${writeOffAmount} (${totalItemByCategory}
+                        ${totalItemByCategory === 1 ? 'transaction' : 'transactions'}
+                        )`}
+
+                      <ChevronRight size={20} className="text-gray-400" />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-600">
-                      {category.value} transactions
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              }
+            )}
           </div>
 
-          <button className="w-full text-primary hover:text-primary/90">
-            See impact on net tax bill
-          </button>
+          <Button className="w-full bg-transparent shadow-none border border-[#5B52F9] py-6 hover:text-white text-primary">
+            See impact on total tax refund
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

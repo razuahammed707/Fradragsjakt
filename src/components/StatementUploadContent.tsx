@@ -54,7 +54,7 @@ const useFileProcessor = () => {
     onSuccess: (data, variables, context) => {
       utils.expenses.getExpenses.invalidate();
       utils.incomes.getIncomes.invalidate();
-      utils.expenses.getCategoryAndExpenseTypeWiseExpenses.invalidate();
+      utils.expenses.getWriteOffs.invalidate();
       return { data, variables, context };
     },
     onError: (error) => {

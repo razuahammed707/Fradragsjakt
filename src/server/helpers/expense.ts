@@ -676,8 +676,12 @@ const getWriteOffSummary = async (
       })
     );
 
+    const sortedResult = result.sort((a, b) =>
+      a.category.localeCompare(b.category)
+    );
+
     return {
-      writeOffSummary: result,
+      writeOffSummary: sortedResult,
       totalWriteOff,
     };
   } catch (error) {
