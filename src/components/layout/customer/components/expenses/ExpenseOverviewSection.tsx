@@ -16,6 +16,7 @@ function ExpenseOverviewSection() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [resetSelection, setResetSelection] = useState(false);
   const [selectedRow, setSelectedRow] = useState<PayloadType | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const { data: expensesResponse, isLoading } =
     trpc.expenses.getExpenses.useQuery(
@@ -23,11 +24,15 @@ function ExpenseOverviewSection() {
         page: currentPage,
         limit: pageLimit,
         searchTerm,
+        category: selectedCategory, // Add this line
       },
       {
         keepPreviousData: true,
       }
     );
+
+  // Add this prop to ExpenseTopSection
+  <ExpenseTopSection onCategorySelect={setSelectedCategory} />;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -73,7 +78,7 @@ function ExpenseOverviewSection() {
         onSelectionChange={setSelectedIds}
         onDeleteComplete={handleSelectionReset}
       />
-      <ExpenseTopSection />
+      <ExpenseTopSection onCategorySelect={setSelectedCategory} />
       <div className="space-y-6 bg-white rounded-lg">
         <SharedDataTable
           loading={isLoading}

@@ -23,18 +23,24 @@ export const expenseRouter = router({
         limit: z.number().default(50),
         searchTerm: z.string().optional(),
         filterString: z.string().optional(),
+        category: z.string().nullable(),
       })
     )
     .query(async ({ ctx, input }) => {
       try {
         const loggedUser = ctx.user as JwtPayload;
-        const { page, limit, searchTerm, filterString } = input;
+        const { page, limit, searchTerm, filterString, category } = input;
         const skip = (page - 1) * limit;
 
         const query: Record<string, unknown> = { user: loggedUser?.id };
 
         const filters = parseFilterString(filterString);
         Object.assign(query, filters);
+
+        if (category !== null) {
+          query.category = category;
+          query.expense_type = 'business'; // Ensure only business expenses for the category
+        }
 
         if (searchTerm) {
           query.$or = [
