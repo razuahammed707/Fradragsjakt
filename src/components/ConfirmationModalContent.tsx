@@ -10,8 +10,9 @@ const ConfirmationModalContent = ({
 }) => {
   const router = useRouter();
 
-  const handleCreateRules = () => {
-    router.push('/customer/rules');
+  const handleCreateRules = async () => {
+    setModalOpen(false);
+    await router.push('/customer/expenses?openRuleModal=true');
   };
 
   return (
