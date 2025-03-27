@@ -137,9 +137,13 @@ function CreateRuleModalContent({
             defaultValue={updateRulePayload?.expense_type}
             placeholder={translate('componentsRuleModal.rule.selectType')}
             options={[
-              { title: 'Deduction', value: 'business' },
               {
-                title: 'Not deductible',
+                title: 'Essential Expense (e.g. Job, School, or Project)',
+                value: 'business',
+              },
+              {
+                title:
+                  'Everyday Spending (e.g. Groceries, Fuel for personal use )',
                 value: 'personal',
               },
               {

@@ -6,6 +6,8 @@ import CreateRuleModalContent from './CreateRuleModalContent';
 import { Edit2, SlidersVertical } from 'lucide-react';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { UpdateRuleProps } from '@/types/questionnaire';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function CreateRuleModal({
   updateRulePayload,
@@ -15,6 +17,19 @@ export default function CreateRuleModal({
   origin?: string;
 }) {
   const [isModalOpen, setModalOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchParams?.get('openRuleModal') === 'true') {
+        setModalOpen(true);
+        router.push('/customer/expenses');
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [searchParams]);
 
   const handleButtonClick = () => {
     setModalOpen(true);

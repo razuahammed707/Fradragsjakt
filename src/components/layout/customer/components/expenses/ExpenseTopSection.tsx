@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import ExpenseStatsByType from './ExpenseStatsByType';
 import { trpc } from '@/utils/trpc';
 import { useTranslation } from '@/lib/TranslationProvider';
@@ -17,13 +17,18 @@ import { getCategoryIcon } from '@/utils/helpers/getCategoryIcon';
 import { ChevronRight, InfoIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const ExpenseTopSection = () => {
+const ExpenseTopSection = ({
+  onCategorySelect,
+}: {
+  onCategorySelect: (category: string) => void;
+}) => {
+  // Add state for sheet control
+  const [isOpen, setIsOpen] = useState(false);
   const { translate } = useTranslation();
   const { data: writeOffs } = trpc.expenses.getWriteOffs.useQuery({});
-  console.log({ writeOffs });
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild className="block w-full">
         <div
           role="button"
@@ -97,6 +102,10 @@ const ExpenseTopSection = () => {
                 return (
                   <div
                     key={index}
+                    onClick={() => {
+                      onCategorySelect(category);
+                      setIsOpen(false);
+                    }}
                     className="flex items-center justify-between py-2 px-3 hover:bg-gray-50 rounded-md cursor-pointer border border-black/25"
                   >
                     <div className="flex items-center gap-3">
