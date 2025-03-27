@@ -14,7 +14,7 @@ import {
 import CategoryIcons from './CategoryIcons';
 
 import { getCategoryIcon } from '@/utils/helpers/getCategoryIcon';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, InfoIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const ExpenseTopSection = () => {
@@ -24,15 +24,51 @@ const ExpenseTopSection = () => {
 
   return (
     <Sheet>
-      <SheetTrigger asChild className="overflow-hidden w-full">
-        <div className="cursor-pointer bg-white p-3 rounded-lg">
-          <ExpenseStatsByType
-            type={translate('page.expensetopsection.business')}
-            amount={Number(writeOffs?.data?.totalWriteOff?.toFixed(2) ?? 0)}
-          />
-          <CategoryIcons
-            writeOffSummary={writeOffs?.data?.writeOffSummary || []}
-          />
+      <SheetTrigger asChild className="block w-full">
+        <div
+          role="button"
+          aria-label="View deductions by category"
+          className="cursor-pointer bg-white p-6 rounded-xl hover:bg-gradient-to-br hover:from-white hover:to-primary/5 
+            transition-all duration-300 group border-2 border-gray-100 hover:border-primary/30
+            relative overflow-hidden hover:-translate-y-0.5 transform-gpu"
+        >
+          <div className="absolute z-50 top-4 right-4 flex items-center gap-2">
+            <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-pulse" />
+              <span className="text-xs font-medium text-primary/80">
+                Live data
+              </span>
+            </div>
+            <InfoIcon
+              size={18}
+              className="text-gray-400 group-hover:text-primary transition-colors duration-200"
+            />
+          </div>
+
+          <div className="relative">
+            <div
+              className="absolute -left-6 top-1/2 -translate-y-1/2 w-1 h-16 bg-primary/10 rounded-r 
+              group-hover:bg-primary/30 group-hover:h-20 transition-all duration-300"
+            />
+            <div className="relative z-10">
+              {' '}
+              {/* Added z-index to ensure number visibility */}
+              <ExpenseStatsByType
+                type={translate('page.expensetopsection.business')}
+                amount={Number(writeOffs?.data?.totalWriteOff ?? 0)}
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 relative">
+            <div
+              className="absolute -left-6 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary/5 rounded-r 
+              group-hover:bg-primary/20 transition-all duration-300"
+            />
+            <CategoryIcons
+              writeOffSummary={writeOffs?.data?.writeOffSummary || []}
+            />
+          </div>
         </div>
       </SheetTrigger>
       <SheetContent
@@ -42,7 +78,6 @@ const ExpenseTopSection = () => {
       >
         <SheetHeader>
           <SheetTitle>Deductions by category (2024)</SheetTitle>{' '}
-          {/* Year updated */}
         </SheetHeader>
         <div className="mt-6 space-y-6">
           <div className="space-y-2">

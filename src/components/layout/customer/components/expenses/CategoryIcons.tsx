@@ -9,20 +9,31 @@ const CategoryIcons: React.FC<{
     <div className="flex flex-wrap items-center gap-2">
       {writeOffSummary?.map(({ category, totalItemByCategory }, index) => {
         return (
-          <div
-            key={index}
-            className="flex items-center gap-1 text-xs text-gray-600"
-          >
-            <div className="bg-gray-100 rounded-md flex gap-1.5 p-1.5">
-              {React.createElement(getCategoryIcon(category), { size: 16 })}{' '}
-              <span className="text-gray-500">
-                <ReactOdometer
-                  value={totalItemByCategory}
-                  format="( ddd),dd"
-                  duration={500}
-                  theme="minimal"
-                />
-              </span>
+          <div key={index} className="flex items-center gap-1 text-xs">
+            <div
+              className="bg-white/80 group-hover:bg-white rounded-lg flex gap-2 p-2.5 
+              transition-all duration-200 hover:scale-105 border border-gray-100
+              group-hover:border-primary/20 group-hover:shadow-sm relative"
+            >
+              <div
+                className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-50/80 group-hover:to-primary/5 
+                transition-colors duration-300 rounded-lg"
+              />
+              <div className="relative flex items-center gap-2">
+                {React.createElement(getCategoryIcon(category), {
+                  size: 16,
+                  className:
+                    'text-gray-500 group-hover:text-primary transition-colors duration-200',
+                })}
+                <span className="text-gray-600 group-hover:text-primary/80 font-medium">
+                  <ReactOdometer
+                    value={totalItemByCategory}
+                    format="( ddd),dd"
+                    duration={500}
+                    theme="minimal"
+                  />
+                </span>
+              </div>
             </div>
           </div>
         );
