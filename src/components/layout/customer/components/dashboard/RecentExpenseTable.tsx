@@ -33,6 +33,7 @@ const RecentExpenseTable = () => {
 
   const { data: expensesResponse } = trpc.expenses.getExpenses.useQuery(
     {
+      category: null, // Add the required category parameter
       page: 1,
       limit: 5,
     },

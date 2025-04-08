@@ -9,6 +9,7 @@ const useIsStatementsPopulated = () => {
 
   const { data: expenseResponse, isLoading: isExpenseLoading } =
     trpc.expenses.getExpenses.useQuery({
+      category: null, // Add the required category parameter
       page: 1,
       limit: 5,
     });
