@@ -14,7 +14,7 @@ import { Loader2 } from 'lucide-react';
 import CompanyLogo from '@/components/CompanyLogo';
 import { useTranslation } from '@/lib/TranslationProvider';
 
-import { MultiSelectFormInput } from '@/components/MultiSelectFormInput';
+import { MultiSelectFormInput } from '@/components/forms/MultiSelectFormInput';
 
 type FormData = {
   firstName: string;

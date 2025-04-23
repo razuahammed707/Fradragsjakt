@@ -2,8 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { CloudUpload, Loader2, FileText, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
-import { trpc } from '../utils/trpc';
-import SharedTooltip from './SharedTooltip';
+import { trpc } from '../../utils/trpc';
+import SharedTooltip from '../SharedTooltip';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 

@@ -12,7 +12,7 @@ import {
   filterAndUpdateQuestionnaires,
   showModal,
 } from '@/redux/slices/questionnaire';
-import { SelectedAnswer } from './layout/auth/Onboard';
+import { SelectedAnswer } from './layout/auth/OldOnboard';
 import QuestionnairesLastStep from './QuestionnairesLastStep';
 import useFindWhichUrl from '@/hooks/use-find-which-url';
 import useIsStatementsPopulated from '@/hooks/use-is-populated-statements';

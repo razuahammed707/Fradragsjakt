@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { FormInput } from '@/components/FormInput';
-import { SelectFormInput } from '@/components/SelectFormInput';
+import { FormInput } from '@/components/forms/FormInput';
+import { SelectFormInput } from '@/components/forms/SelectFormInput';
 import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
