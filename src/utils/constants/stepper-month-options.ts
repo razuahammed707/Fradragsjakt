@@ -24,7 +24,6 @@ export const getDateOptions = (): DateOption[] => {
   const currentYear = new Date().getFullYear();
   const previousYear = currentYear - 1;
 
-  // Add all months of the current year: Jan to Dec
   for (let i = 0; i < 12; i++) {
     const monthNum = String(i + 1).padStart(2, '0');
     options.push({
@@ -40,3 +39,4 @@ export const getDateOptions = (): DateOption[] => {
 
   return options;
 };
+export const defaultMonthValue = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;

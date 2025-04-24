@@ -29,7 +29,7 @@ export const steps: Step[] = [
       },
       {
         id: 'employee',
-        label: 'Employee (W-2)',
+        label: 'Employee',
         icon: (
           <div className="flex items-center justify-center w-10 h-10 text-2xl">
             💼
@@ -85,13 +85,13 @@ export const steps: Step[] = [
   },
   {
     title: (selectedOptions: string[]) =>
-      getStepDynamicTitle('What do you do', selectedOptions),
+      getStepDynamicTitle('What do you do for', selectedOptions),
     subtitle: "Select any jobs that you've done this year.",
     type: 'search',
   },
   {
     title: (selectedOptions: string[]) =>
-      getStepDynamicTitle('When did you start working', selectedOptions),
+      getStepDynamicTitle('When did you start working as', selectedOptions),
     subtitle:
       "This info allows us to find tax deductions for the months you've been working.",
     type: 'date',
@@ -99,7 +99,7 @@ export const steps: Step[] = [
   {
     title: (selectedOptions: string[]) =>
       getStepDynamicTitle(
-        'Do you travel out of town for work',
+        'Do you travel out of town for work as',
         selectedOptions
       ),
     subtitle:
@@ -111,10 +111,7 @@ export const steps: Step[] = [
   },
   {
     title: (selectedOptions: string[]) =>
-      getStepDynamicTitle(
-        'Do you go out to eat with clients or colleagues',
-        selectedOptions
-      ),
+      getStepDynamicTitle('Do you go out to eat with', selectedOptions),
     subtitle: 'Any meaningful work conversation counts.',
     type: 'boolean',
     helpText:
@@ -123,7 +120,7 @@ export const steps: Step[] = [
   },
   {
     title: (selectedOptions: string[]) =>
-      getStepDynamicTitle('Do you drive for work', selectedOptions),
+      getStepDynamicTitle('Do you drive for your work as', selectedOptions),
     subtitle:
       'E.g. attending an out-of-town networking event, attending a conference, meeting with an out-of-town client',
     type: 'boolean',
@@ -133,7 +130,7 @@ export const steps: Step[] = [
   },
   {
     title: (selectedOptions: string[]) =>
-      getStepDynamicTitle('Do you have a home workspace', selectedOptions),
+      getStepDynamicTitle('Do you have a home workspace for', selectedOptions),
     subtitle:
       'e.g. managing finances and paperwork, creating designs for clients, client development, marketing and advertising',
     type: 'boolean',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -12,9 +12,27 @@ import { renderStepContent as renderStepContentComponent } from './StepContent';
 import { StepIndicator } from '@/components/layout/auth/StepIndicator';
 import { InfoText } from './InfoText';
 import { isNextDisabled } from '@/utils/helpers/isNextDisabled';
+import { trpc } from '@/utils/trpc';
+import { useRouter } from 'next/navigation';
 
 export default function Onboard() {
-  const { status } = useSession();
+  const router = useRouter();
+  const utils = trpc.useUtils();
+  const { data: session, status } = useSession();
+  const hasToasted = useRef(false);
+  const [loading, setLoading] = useState(false);
+
+  const updateQuestionnaires = trpc.users.updateUser.useMutation({
+    onSuccess: () => {
+      toast.success('Congrats! you have successfully onboarded');
+      setLoading(false);
+      utils.users.getUserByEmail.invalidate();
+      router.push(`/${session?.user.role}/expenses`);
+    },
+    onError: (error) => {
+      console.error('Failed to update questionnaires:', error);
+    },
+  });
 
   const {
     control,
@@ -24,147 +42,116 @@ export default function Onboard() {
     formState: {},
   } = useForm<StepperFormData>({
     defaultValues: {
-      selectedOptions: [],
-      dependentsCount: null,
+      selected_profiles: [],
+      children_under_12: null,
       occupations: [],
-      startDate: '',
-      hasTravel: false,
-      hasMeals: false,
-      hasDriving: false,
-      hasWorkspace: false,
-      hasBankConnected: false,
-      hasStatementsUploaded: false,
+      start_date: '',
+      has_travel: false,
+      has_meals: false,
+      has_driving: false,
+      has_workspace: false,
+      has_special_care_children: false,
+      has_parental_allowance: false,
     },
     mode: 'onChange',
     shouldUnregister: false,
   });
 
   const [currentStep, setCurrentStep] = useState(0);
+  const selected_profiles = watch('selected_profiles');
+  const children_under_12 = watch('children_under_12');
+  watch(['occupations', 'start_date']);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const { data: user } = trpc.users.getUserByEmail.useQuery(undefined, {
+    enabled: status === 'authenticated',
+  });
 
-  // Create a persistent reference to prevent form reset
-  const [formInitialized, setFormInitialized] = useState(false);
-
-  // Watch form values for conditional rendering
-  const selectedOptions = watch('selectedOptions');
-  const dependentsCount = watch('dependentsCount');
-  const occupations = watch('occupations');
-  const startDate = watch('startDate');
-
-  // Ensure form remains initialized throughout component lifecycle
   useEffect(() => {
-    if (!formInitialized) {
-      setFormInitialized(true);
+    if (status === 'unauthenticated' && !hasToasted.current) {
+      toast.error('You are not logged in yet!');
+      hasToasted.current = true;
+      router.push('/login');
+      return;
     }
-  }, [formInitialized]);
 
-  // Removed the reset effect to preserve boolean values between steps
+    if (
+      status === 'authenticated' &&
+      session?.user?.role &&
+      user?.isStepperSkippedOrCompleted
+    ) {
+      router.push(`/${session.user.role}/expenses`);
+    }
+  }, [status, session, router, user?.isStepperSkippedOrCompleted]);
 
   const handleSelectionChange = (id: string) => {
-    const currentSelections = [...selectedOptions];
+    const currentSelections = [...selected_profiles];
 
     if (currentSelections.includes(id)) {
       setValue(
-        'selectedOptions',
+        'selected_profiles',
         currentSelections.filter((option) => option !== id),
         { shouldValidate: true }
       );
 
-      // Reset dependents count if family is unselected
       if (id === 'family') {
-        setValue('dependentsCount', null, { shouldValidate: true });
+        setValue('children_under_12', null, { shouldValidate: true });
       }
     } else {
-      setValue('selectedOptions', [...currentSelections, id], {
+      setValue('selected_profiles', [...currentSelections, id], {
         shouldValidate: true,
       });
     }
   };
 
   const handleDependentCountSelect = (count: string) => {
-    setValue('dependentsCount', count, { shouldValidate: true });
-  };
-
-  const handleOccupationSelect = (occupation: string) => {
-    if (!occupations.includes(occupation)) {
-      setValue('occupations', [...occupations, occupation], {
-        shouldValidate: true,
-      });
-    }
-    setSearchTerm('');
-  };
-
-  const handleRemoveOccupation = (occupation: string) => {
-    setValue(
-      'occupations',
-      occupations.filter((o) => o !== occupation),
-      { shouldValidate: true }
-    );
-  };
-
-  const handleDateSelect = () => {
-    if (selectedDay && selectedMonth && selectedYear) {
-      const formattedDate = `${selectedDay} ${selectedMonth} ${selectedYear}`;
-      setValue('startDate', formattedDate, { shouldValidate: true });
-      setShowDatePicker(false);
-    }
+    setValue('children_under_12', count, { shouldValidate: true });
   };
 
   const handleNext = () => {
-    // Ensure validation before proceeding
     if (isNextDisabled(currentStep, getValues())) return;
 
-    // If we're on the first step and moving to the next
     if (currentStep === 0) {
       const values = getValues();
-      const hasEmployee = values.selectedOptions.includes('employee');
-      const hasBusinessTypes = values.selectedOptions.some((opt) =>
+      const hasEmployee = values.selected_profiles.includes('employee');
+      const hasBusinessTypes = values.selected_profiles.some((opt) =>
         ['freelance', 'business', 'organization'].includes(opt)
       );
 
-      // If only employee is selected or employee with non-business types
       if (hasEmployee && !hasBusinessTypes) {
-        // Skip to the last step (bank statement step)
         setCurrentStep(steps.length - 1);
         return;
       }
 
-      // Otherwise go to the occupation step
       setCurrentStep(1);
       return;
     }
 
-    // For other steps, just increment normally
     if (currentStep + 1 < steps.length) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Submit the form when all steps are complete
       handleSubmitForm();
     }
   };
 
   const handleSubmitForm = async () => {
     try {
+      setLoading(true);
       const formData = getValues();
-
-      // Ensure all required fields have values
       const validatedData = {
-        ...formData,
-        hasTravel: formData.hasTravel ?? false,
-        hasMeals: formData.hasMeals ?? false,
-        hasDriving: formData.hasDriving ?? false,
-        hasWorkspace: formData.hasWorkspace ?? false,
-        hasBankConnected: formData.hasBankConnected ?? false,
-        hasStatementsUploaded: formData.hasStatementsUploaded ?? false,
+        profile: formData.selected_profiles,
+        questionnaires: {
+          ...(() => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { selected_profiles, ...rest } = formData;
+            return rest;
+          })(),
+          has_travel: formData.has_travel ?? false,
+          has_meals: formData.has_meals ?? false,
+          has_driving: formData.has_driving ?? false,
+          has_workspace: formData.has_workspace ?? false,
+        },
       };
-
-      console.log('Submitting form data:', validatedData);
-      toast.success('Onboarding completed successfully!');
+      updateQuestionnaires.mutate({ ...validatedData });
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error('Failed to complete onboarding. Please try again.');
@@ -174,20 +161,17 @@ export default function Onboard() {
   const handleBack = () => {
     if (currentStep === steps.length - 1) {
       const values = getValues();
-      const hasEmployee = values.selectedOptions.includes('employee');
-      const hasBusinessTypes = values.selectedOptions.some((opt) =>
+      const hasEmployee = values.selected_profiles.includes('employee');
+      const hasBusinessTypes = values.selected_profiles.some((opt) =>
         ['freelance', 'business', 'organization'].includes(opt)
       );
 
-      // If only employee is selected or employee with non-business types
       if (hasEmployee && !hasBusinessTypes) {
-        // Go back to first step
         setCurrentStep(0);
         return;
       }
     }
 
-    // For other cases, just decrement normally
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
@@ -198,7 +182,7 @@ export default function Onboard() {
   };
 
   const renderInfoText = () => {
-    return <InfoText selectedOptions={selectedOptions} />;
+    return <InfoText selectedOptions={selected_profiles} />;
   };
 
   if (status !== 'authenticated') {
@@ -213,33 +197,26 @@ export default function Onboard() {
   const renderStepContent = () => {
     const stepContent = renderStepContentComponent({
       currentStep,
-      selectedOptions,
-      dependentsCount,
-      occupations,
-      startDate,
-      searchTerm,
-      setSearchTerm,
-      showDatePicker,
-      setShowDatePicker,
-      selectedDay,
-      setSelectedDay,
-      selectedMonth,
-      setSelectedMonth,
-      selectedYear,
-      setSelectedYear,
+      selected_profiles: selected_profiles,
+      children_under_12: children_under_12,
       control,
       watch,
       setValue,
       handleSelectionChange,
       handleDependentCountSelect,
-      handleOccupationSelect,
-      handleRemoveOccupation,
-      handleDateSelect,
     });
 
     return stepContent;
   };
 
+  if (status !== 'authenticated') {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-4 text-gray-600">Wait a sec...</p>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen px-4 py-8">
       <div className="w-[740px] space-y-5 mx-auto">
@@ -279,6 +256,7 @@ export default function Onboard() {
               className="bg-[#0F172A] text-white px-8 rounded-md"
               type="button"
             >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {currentStep === steps.length - 1
                 ? 'Continue to dashboard'
                 : 'Next'}

@@ -71,7 +71,11 @@ export const userRouter = router({
   updateUser: protectedProcedure
     .input(userValidation.updateUserSchema)
     .mutation(async ({ ctx, input }) => {
-      const { questionnaires = [], isSawInstructions = false } = input;
+      const {
+        questionnaires = [],
+        isSawInstructions = false,
+        profile = [],
+      } = input;
 
       const sessionUser = ctx.user as JwtPayload;
       if (!sessionUser || !sessionUser?.email) {
@@ -83,64 +87,14 @@ export const userRouter = router({
         throw new Error('User not found.');
       }
 
-      const existingQuestionnaires = user.questionnaires || [];
-
-      const mergedQuestionnaires = questionnaires.map(
-        (payloadQuestionnaire) => {
-          const existingQuestionnaire = existingQuestionnaires.find(
-            (q: any) => q.question === payloadQuestionnaire.question
-          );
-
-          if (existingQuestionnaire) {
-            const updatedAnswers = payloadQuestionnaire.answers.map(
-              (payloadAnswer) => {
-                const existingAnswer = existingQuestionnaire.answers.find(
-                  (answer: any) => Object.keys(answer)[0] === payloadAnswer
-                );
-
-                if (existingAnswer) {
-                  return existingAnswer;
-                }
-                return { [payloadAnswer]: [] };
-              }
-            );
-
-            return {
-              question: payloadQuestionnaire.question,
-              answers: updatedAnswers,
-            };
-          }
-
-          return {
-            question: payloadQuestionnaire.question,
-            answers: payloadQuestionnaire.answers.map((answer) => ({
-              [answer]: [],
-            })),
-          };
-        }
-      );
-
-      const preservedQuestionnaires = existingQuestionnaires.filter(
-        (existingQuestionnaire: any) =>
-          !questionnaires.some(
-            (payloadQuestionnaire) =>
-              payloadQuestionnaire.question === existingQuestionnaire.question
-          )
-      );
-
-      const finalQuestionnaires = [
-        ...mergedQuestionnaires,
-        ...preservedQuestionnaires,
-      ];
-
       const updatedUser = await User.findOneAndUpdate(
         { email: sessionUser.email },
         {
-          questionnaires: finalQuestionnaires,
+          questionnaires,
           isStepperSkippedOrCompleted: true,
           isSawInstructions,
+          profile,
         },
-
         { new: true }
       );
 

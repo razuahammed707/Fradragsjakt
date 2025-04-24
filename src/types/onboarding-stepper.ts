@@ -15,14 +15,14 @@ export type Step = {
 };
 
 export type StepperFormData = {
-  selectedOptions: string[];
-  dependentsCount: string | null;
+  selected_profiles: string[];
+  children_under_12: string | null;
   occupations: string[];
-  startDate: string;
-  hasTravel: boolean | null;
-  hasMeals: boolean | null;
-  hasDriving: boolean | null;
-  hasWorkspace: boolean | null;
-  hasBankConnected: boolean | null;
-  hasStatementsUploaded: boolean | null;
+  start_date: string;
+  has_travel: boolean | null;
+  has_meals: boolean | null;
+  has_driving: boolean | null;
+  has_workspace: boolean | null;
+  has_special_care_children: boolean | null;
+  has_parental_allowance: boolean | null;
 };

@@ -5,32 +5,21 @@ import { steps } from '@/utils/constants/onboarding-steps';
 import { MultiSelectFormInput } from '@/components/forms/MultiSelectFormInput';
 import { SelectFormInput } from '@/components/forms/SelectFormInput';
 import { YesNoInput } from '@/components/forms/YesNoInput';
-import { getDateOptions } from '@/utils/constants/stepper-month-options';
+import {
+  defaultMonthValue,
+  getDateOptions,
+} from '@/utils/constants/stepper-month-options';
+import { stepperOccupationOptions } from '@/utils/constants/stepper-occupation-options';
 
 interface StepContentProps {
   currentStep: number;
-  selectedOptions: string[];
-  dependentsCount: string | null;
-  occupations: string[];
-  startDate: string;
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  showDatePicker: boolean;
-  setShowDatePicker: (show: boolean) => void;
-  selectedDay: number | null;
-  setSelectedDay: (day: number | null) => void;
-  selectedMonth: string | null;
-  setSelectedMonth: (month: string | null) => void;
-  selectedYear: number | null;
-  setSelectedYear: (year: number | null) => void;
+  selected_profiles: string[];
+  children_under_12: string | null;
   control: any;
   watch: any;
   setValue: any;
   handleSelectionChange: (id: string) => void;
   handleDependentCountSelect: (count: string) => void;
-  handleOccupationSelect: (occupation: string) => void;
-  handleRemoveOccupation: (occupation: string) => void;
-  handleDateSelect: () => void;
 }
 
 interface StepContentReturn {
@@ -40,24 +29,21 @@ interface StepContentReturn {
 
 export const renderStepContent = ({
   currentStep,
-  selectedOptions,
-  dependentsCount,
-  searchTerm,
+  selected_profiles,
+  children_under_12,
   control,
   watch,
   setValue,
   handleSelectionChange,
   handleDependentCountSelect,
-  handleOccupationSelect,
 }: StepContentProps): StepContentReturn => {
   const step = steps[currentStep];
   const dateOptions = getDateOptions();
-  console.log('Current step:', currentStep, 'Step:', step);
 
   const dynamicTitle =
-    typeof step.title === 'function' ? step.title(selectedOptions) : step.title;
-
-  console.log('Rendered title:', dynamicTitle);
+    typeof step.title === 'function'
+      ? step.title(selected_profiles)
+      : step.title;
 
   const renderTitleAndSubtitle = () => (
     <div className="mb-8">
@@ -83,12 +69,12 @@ export const renderStepContent = ({
       content: (
         <div className="w-[740px] mx-auto mt-6">
           <Controller
-            name="selectedOptions"
+            name="selected_profiles"
             control={control}
             render={() => (
               <div className="grid grid-cols-2 gap-4">
                 {step.options?.map((option) => {
-                  const isSelected = selectedOptions.includes(option.id);
+                  const isSelected = selected_profiles.includes(option.id);
                   return (
                     <Card
                       key={option.id}
@@ -108,14 +94,14 @@ export const renderStepContent = ({
             )}
           />
 
-          {currentStep === 0 && selectedOptions.includes('family') && (
+          {currentStep === 0 && selected_profiles.includes('family') && (
             <>
               <Controller
-                name="dependentsCount"
+                name="children_under_12"
                 control={control}
                 render={() => (
                   <div className="mt-8">
-                    <h3 className="text-base font-semibold text-gray-900 mb-3">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-3">
                       How many children do you have under the age of 12?
                     </h3>
                     <div className="grid grid-cols-7 gap-2">
@@ -126,7 +112,7 @@ export const renderStepContent = ({
                           onClick={() => handleDependentCountSelect(num)}
                           className={`p-3 border rounded-lg text-sm font-medium transition-all shadow-sm
                             ${
-                              dependentsCount === num
+                              children_under_12 === num
                                 ? 'border-indigo-500 bg-indigo-50 text-indigo-600  ring-indigo-500'
                                 : 'border-gray-200 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50/60'
                             }`}
@@ -140,69 +126,20 @@ export const renderStepContent = ({
               />
 
               <div className="mt-8 space-y-6">
-                <div className="flex items-center space-x-3">
-                  <span className="text-base font-semibold text-gray-900">
-                    Do you have children with special care needs?
-                  </span>
-                  <div className="inline-flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setValue('hasSpecialCareChildren', false)}
-                      className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all shadow-sm
-                        ${
-                          watch('hasSpecialCareChildren') === false
-                            ? 'border-indigo-500 bg-indigo-50 text-indigo-600  ring-indigo-500'
-                            : 'border-gray-200 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50/60'
-                        }`}
-                    >
-                      No
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setValue('hasSpecialCareChildren', true)}
-                      className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all shadow-sm
-                        ${
-                          watch('hasSpecialCareChildren') === true
-                            ? 'border-indigo-500 bg-indigo-50 text-indigo-600  ring-indigo-500'
-                            : 'border-gray-200 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50/60'
-                        }`}
-                    >
-                      Yes
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <span className="text-base font-semibold text-gray-900">
-                    Do you receive parental allowance?
-                  </span>
-                  <div className="inline-flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setValue('hasParentalAllowance', false)}
-                      className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all shadow-sm
-                        ${
-                          watch('hasParentalAllowance') === false
-                            ? 'border-indigo-500 bg-indigo-50 text-indigo-600   ring-indigo-500'
-                            : 'border-gray-200 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50/60'
-                        }`}
-                    >
-                      No
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setValue('hasParentalAllowance', true)}
-                      className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all shadow-sm
-                        ${
-                          watch('hasParentalAllowance') === true
-                            ? 'border-indigo-500 bg-indigo-50 text-indigo-600   ring-indigo-500'
-                            : 'border-gray-200 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50/60'
-                        }`}
-                    >
-                      Yes
-                    </button>
-                  </div>
-                </div>
+                <YesNoInput
+                  label="Do you have children with special care needs?"
+                  value={watch('has_special_care_children')}
+                  name={'has_special_care_children'}
+                  setValue={setValue}
+                  singleLine
+                />
+                <YesNoInput
+                  label="Do you receive parental allowance?"
+                  value={watch('has_parental_allowance')}
+                  name={'has_parental_allowance'}
+                  setValue={setValue}
+                  singleLine
+                />
               </div>
             </>
           )}
@@ -221,6 +158,7 @@ export const renderStepContent = ({
             name="occupations"
             placeholder="Select occupations"
             useBadgeLayout
+            options={stepperOccupationOptions}
             customClassName="h-12"
           />
 
@@ -228,32 +166,6 @@ export const renderStepContent = ({
             e.g. &ldquo;healthcare professional&rdquo; or
             &ldquo;consultant&rdquo;
           </p>
-
-          {searchTerm && (
-            <div className="absolute w-[740px] mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto z-50">
-              {[
-                'Graphic Designer',
-                'Web Designer',
-                'UI/UX Designer',
-                'Art Director',
-                'Brand Designer',
-                'Motion Designer',
-              ]
-                .filter((job) =>
-                  job.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .map((job) => (
-                  <button
-                    key={job}
-                    type="button"
-                    className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50"
-                    onClick={() => handleOccupationSelect(job)}
-                  >
-                    {job}
-                  </button>
-                ))}
-            </div>
-          )}
         </div>
       ),
     };
@@ -266,10 +178,11 @@ export const renderStepContent = ({
         <div className="w-[740px] mx-auto mt-6">
           <SelectFormInput
             control={control}
-            name="startDate"
+            name="start_date"
             placeholder="Select a month"
             options={dateOptions}
             customClassName="h-12"
+            defaultValue={defaultMonthValue}
           />
           <p className="text-sm text-gray-500 mt-2">
             This info allows us to find tax deductions for the months
@@ -281,52 +194,42 @@ export const renderStepContent = ({
   }
 
   if (step.type === 'boolean') {
-    let fieldName: 'hasTravel' | 'hasMeals' | 'hasDriving' | 'hasWorkspace';
+    let fieldName: 'has_travel' | 'has_meals' | 'has_driving' | 'has_workspace';
     let yesText = '';
 
     switch (currentStep) {
       case 3:
-        fieldName = 'hasTravel';
-        yesText = 'Yes, I travel for graphic design';
+        fieldName = 'has_travel';
+        yesText = 'Yes, I travel for work';
         break;
       case 4:
-        fieldName = 'hasMeals';
+        fieldName = 'has_meals';
         yesText = 'Yes, I get business meals';
         break;
       case 5:
-        fieldName = 'hasDriving';
-        yesText = 'Yes, I drive for graphic design';
+        fieldName = 'has_driving';
+        yesText = 'Yes, I drive for work';
         break;
       case 6:
-        fieldName = 'hasWorkspace';
+        fieldName = 'has_workspace';
         yesText = 'Yes, I have a home workspace';
         break;
       default:
-        fieldName = 'hasTravel';
+        fieldName = 'has_travel';
         yesText = 'Yes';
     }
-
-    const currentValue = watch(fieldName);
 
     return {
       header: renderTitleAndSubtitle(),
       content: (
         <div className="w-[740px] mx-auto mt-6">
           <YesNoInput
-            control={control}
+            value={watch(fieldName)}
             name={fieldName}
+            setValue={setValue}
             yesText={yesText}
             helpText={step.helpText}
             hasHelpLink={step.hasHelpLink}
-            onChange={(value) => {
-              if (currentValue !== value) {
-                setValue(fieldName, value, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                  shouldTouch: true,
-                });
-              }
-            }}
           />
         </div>
       ),
