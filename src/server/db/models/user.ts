@@ -27,12 +27,17 @@ const UserSchema: Schema = new Schema<IUser>(
       type: String,
     },
 
-    questionnaires: [
-      {
-        question: { type: String, required: true },
-        answers: [],
-      },
-    ],
+    questionnaires: {
+      children_under_12: { type: Schema.Types.Mixed, default: null },
+      occupations: { type: [String], default: [] },
+      start_date: { type: String },
+      has_travel: { type: Boolean, default: false },
+      has_meals: { type: Boolean, default: false },
+      has_driving: { type: Boolean, default: false },
+      has_workspace: { type: Boolean, default: false },
+      has_special_care_children: { type: Boolean, default: false },
+      has_parental_allowance: { type: Boolean, default: false },
+    },
     isVerified: {
       type: Boolean,
       default: false,

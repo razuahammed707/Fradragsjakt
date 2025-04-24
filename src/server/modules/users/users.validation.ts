@@ -40,13 +40,19 @@ const userSchema = z.object({
   isVerified: z.boolean().optional(),
 });
 const updateUserSchema = z.object({
+  profile: z.array(z.string()).optional(),
   questionnaires: z
-    .array(
-      z.object({
-        question: z.string(),
-        answers: z.array(z.string()),
-      })
-    )
+    .object({
+      children_under_12: z.any().nullable(),
+      occupations: z.array(z.string()),
+      start_date: z.string().optional(),
+      has_travel: z.boolean(),
+      has_meals: z.boolean(),
+      has_driving: z.boolean(),
+      has_workspace: z.boolean(),
+      has_special_care_children: z.boolean().nullable(),
+      has_parental_allowance: z.boolean().nullable(),
+    })
     .optional(),
   isSawInstructions: z.boolean().optional(),
 });

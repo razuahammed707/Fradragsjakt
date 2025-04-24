@@ -7,6 +7,7 @@ import StatementUploadContent from '../components/StatementUploadContent';
 import ConfirmationModalContent from './ConfirmationModalContent';
 import Success from '../../public/Success.svg';
 import useIsStatementsPopulated from '@/hooks/use-is-populated-statements';
+import { Card } from '@/components/ui/card';
 
 const QuestionnairesLastStep = () => {
   const { isStatementsPopulated } = useIsStatementsPopulated();
@@ -34,7 +35,7 @@ const QuestionnairesLastStep = () => {
   };
 
   return (
-    <div>
+    <div className="space-y-4">
       {isStatementsPopulated ? (
         <div className="flex flex-col items-center space-y-4">
           <Image
@@ -45,52 +46,52 @@ const QuestionnairesLastStep = () => {
             className="object-contain"
           />
 
-          <h2 className="text-lg font-semibold text-[#000]">
+          <h2 className="text-lg font-semibold text-[#0F172A]">
             Statement processed successfully.
           </h2>
 
-          <p className="text-xs text-[#000] max-w-[328px]">
+          <p className="text-sm text-[#64748B] max-w-[328px] text-center">
             We have found expenses and incomes from the file and they have been
             added to the expense and income page
           </p>
         </div>
       ) : (
         <>
-          <div className="p-6 mb-4 bg-white rounded-lg border border-gray-200 opacity-50">
+          <Card className="p-6 border-[#EEF0F4] hover:border-[#5B52F9] transition-all">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0">
                 <Image src={connectToBankSVG} alt="connect to bank svg" />
               </div>
               <div className="flex-grow">
-                <h3 className="font-medium text-gray-900">
+                <h3 className="font-medium text-[#0F172A]">
                   Connect to your bank
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[#64748B]">
                   Connecting to bank makes your calculations fast, seamless and
                   automated.
                 </p>
               </div>
             </div>
-          </div>
-          <div
+          </Card>
+          <Card
             onClick={handleUploadStatement}
-            className="p-6 mb-4 bg-white rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+            className="p-6 border-[#EEF0F4] hover:border-[#5B52F9] transition-all cursor-pointer"
           >
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0">
                 <Image src={uploadStatementSVG} alt="connect to bank svg" />
               </div>
               <div className="flex-grow">
-                <h3 className="font-medium text-gray-900">
+                <h3 className="font-medium text-[#0F172A]">
                   Upload your bank statement
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[#64748B]">
                   Uploading a statement gives you more control over your
                   transactions.
                 </p>
               </div>
             </div>
-          </div>
+          </Card>
         </>
       )}
 

@@ -1,11 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
+
 import { Eye, EyeOff } from 'lucide-react';
 import { numberFormatter } from '@/utils/helpers/numberFormatter';
 import { sanitizeNumberInput } from '@/utils/helpers/sanitizeNumberInput';
+import { Textarea } from '../ui/textarea';
+import { Input } from '../ui/input';
 
 export interface FormInputProps {
   name: string;

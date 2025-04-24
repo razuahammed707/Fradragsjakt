@@ -1,4 +1,8 @@
 import type { Config } from 'tailwindcss';
+import { fontFamily } from 'tailwindcss/defaultTheme';
+import animate from 'tailwindcss-animate';
+import scrollbar from 'tailwindcss-scrollbar';
+import scrollbarHide from 'tailwind-scrollbar-hide';
 
 const config: Config = {
   darkMode: ['class'],
@@ -76,9 +80,11 @@ const config: Config = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
+      fontFamily: {
+        sans: ['var(--font-inter)', ...fontFamily.sans],
+      },
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  plugins: [require('tailwindcss-animate'), require('tailwindcss-scrollbar')],
+  plugins: [animate, scrollbar, scrollbarHide],
 };
 export default config;

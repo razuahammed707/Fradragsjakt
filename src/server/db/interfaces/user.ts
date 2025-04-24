@@ -1,18 +1,27 @@
 import { Document } from 'mongoose';
-export interface IQuestionnaire {
-  question: string; // E.g., 'Work and Education'
-  answers: []; // Array of questions
+
+export interface IUserQuestionnaires {
+  children_under_12: any | null;
+  occupations: string[];
+  start_date?: string;
+  has_travel: boolean;
+  has_meals: boolean;
+  has_driving: boolean;
+  has_workspace: boolean;
+  has_special_care_children: boolean;
+  has_parental_allowance: boolean;
 }
+
 export interface IUser extends Document {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  role: string;
+  role: 'admin' | 'auditor' | 'customer';
   profile: string[];
   image: string;
-  provider: string;
-  questionnaires: IQuestionnaire[];
+  provider: 'credentials' | 'google';
+  questionnaires?: IUserQuestionnaires;
   isVerified: boolean;
   isStepperSkippedOrCompleted: boolean;
   isSawInstructions: boolean;

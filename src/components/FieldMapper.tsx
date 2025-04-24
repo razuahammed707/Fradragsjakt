@@ -1,7 +1,7 @@
 import React from 'react';
 import { Control } from 'react-hook-form';
 import { Column, FormData } from '@/types/upload-statements';
-import { SelectFormInput } from './SelectFormInput';
+import { SelectFormInput } from './forms/SelectFormInput';
 
 interface FieldMapperProps {
   control: Control<FormData, any>;

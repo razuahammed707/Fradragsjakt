@@ -19,7 +19,7 @@ import { FormReceiptInput } from '@/components/FormReceiptInput';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
 import { CardDescription } from '@/components/ui/card';
-import { SelectFormInput } from '@/components/SelectFormInput';
+import { SelectFormInput } from '@/components/forms/SelectFormInput';
 
 type AccordionItemData = {
   id: string;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { FormInput } from '@/components/FormInput';
-import { SelectFormInput } from '@/components/SelectFormInput';
+import { FormInput } from '@/components/forms/FormInput';
+import { SelectFormInput } from '@/components/forms/SelectFormInput';
 import { FormProvider, useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
@@ -10,10 +10,10 @@ import { Loader2 } from 'lucide-react';
 import { PayloadType } from './ExpenseUpdateModal';
 import { useTranslation } from '@/lib/TranslationProvider';
 import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
-import { FormReceiptInput } from '@/components/FormReceiptInput';
+import { FormReceiptInput } from '@/components/forms/FormReceiptInput';
 import { ExpenseFormData, ExpenseFormSchema } from '@/types/expense-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DatePickerFormInput } from '@/components/DatePickerFormInput';
+import { DatePickerFormInput } from '@/components/forms/DatePickerFormInput';
 import { PercentageSliderInput } from '@/components/PercentageSliderInput';
 
 interface ExpenseAddContentProps {
