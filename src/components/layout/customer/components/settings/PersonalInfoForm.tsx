@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { FormInput } from '@/components/FormInput';
+import { FormInput } from '@/components/forms/FormInput';
 import { Label } from '@/components/ui/label';
 import { Pencil, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';

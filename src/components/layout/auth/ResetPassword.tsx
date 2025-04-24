@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import CompanyLogo from '@/components/CompanyLogo';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Label } from '@/components/ui/label';
-import { FormInput } from '@/components/FormInput';
+import { FormInput } from '@/components/forms/FormInput';
 import toast from 'react-hot-toast';
 import { trpc } from '@/utils/trpc';
 

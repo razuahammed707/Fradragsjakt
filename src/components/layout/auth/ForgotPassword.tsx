@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import CompanyLogo from '@/components/CompanyLogo';
 import { trpc } from '@/utils/trpc';
 import toast from 'react-hot-toast';
-import { FormInput } from '@/components/FormInput';
+import { FormInput } from '@/components/forms/FormInput';
 import { useForm } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 

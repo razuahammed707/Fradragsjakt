@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import SearchInput from '@/components/SearchInput';
+import SearchInput from '@/components/forms/SearchInput';
 import { Button } from '@/components/ui/button';
 import { IoMdAdd, IoMdTrash } from 'react-icons/io';
 import SharedModal from '@/components/SharedModal';

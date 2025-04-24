@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { FormInput } from '@/components/FormInput';
+import { FormInput } from '@/components/forms/FormInput';
 import { SelectFormInput } from '@/components/forms/SelectFormInput'; // Import the SelectFormInput
 import { useForm } from 'react-hook-form';
 import { trpc } from '@/utils/trpc';
@@ -11,7 +11,7 @@ import { useTranslation } from '@/lib/TranslationProvider';
 import { PayloadType } from './IncomeUpdateModal';
 import { useManipulatedCategories } from '@/hooks/useManipulatedCategories';
 import { getSubCategories } from '@/utils/helpers/getSubCategories';
-import { FormReceiptInput } from '@/components/FormReceiptInput';
+import { FormReceiptInput } from '@/components/forms/FormReceiptInput';
 
 export type FormData = {
   description: string;

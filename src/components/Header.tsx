@@ -20,10 +20,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-// import { ModeToggle } from "@/components/ui/mode-toggle";
-// import AdminSearch from "@/components/features/admin-search";
-import Search from './SearchInput';
 import { UpgradeCard } from './UpgradedCard';
+import Search from './forms/SearchInput';
 
 const Header = () => (
   <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">

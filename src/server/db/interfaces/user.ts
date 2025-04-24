@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface IUserQuestionnaires {
+export interface IQuestionnaire {
   children_under_12: any | null;
   occupations: string[];
   start_date?: string;
@@ -21,7 +21,7 @@ export interface IUser extends Document {
   profile: string[];
   image: string;
   provider: 'credentials' | 'google';
-  questionnaires?: IUserQuestionnaires;
+  questionnaires?: IQuestionnaire;
   isVerified: boolean;
   isStepperSkippedOrCompleted: boolean;
   isSawInstructions: boolean;

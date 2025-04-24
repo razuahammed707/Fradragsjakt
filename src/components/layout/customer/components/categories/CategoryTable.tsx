@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import { CategoryTableColumns } from './CategoryTableColumns';
 import SharedPagination from '@/components/SharedPagination';
-import SearchInput from '@/components/SearchInput';
+import SearchInput from '@/components/forms/SearchInput';
 import CategoryAddModal from './CategoryAddModal';
 import { trpc } from '@/utils/trpc';
 import { debounce } from '@/lib/utils';
