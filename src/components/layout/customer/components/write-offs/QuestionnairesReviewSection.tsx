@@ -107,9 +107,13 @@ const QuestionnairesReviewSection = () => {
     housingAndPropertyExpenseAmount,
     giftsOrDonationsExpenseAmount,
     foreignIncomeExpenseAmount,
-  } = savingExpenseCalculator(user?.questionnaires);
+  } = savingExpenseCalculator(
+    Array.isArray(user?.questionnaires) ? user.questionnaires : []
+  );
 
-  const personalData = manipulatePersonalDeductions(user?.questionnaires || []);
+  const personalData = manipulatePersonalDeductions(
+    Array.isArray(user?.questionnaires) ? user.questionnaires : []
+  );
 
   const personalTotal = personalData?.reduce(
     (sum, current) => sum + current.total_amount,
@@ -170,7 +174,9 @@ const QuestionnairesReviewSection = () => {
   };
 
   const renderModalContent = () => {
-    const userQuestionnaires = user?.questionnaires || [];
+    const userQuestionnaires = Array.isArray(user?.questionnaires)
+      ? user.questionnaires
+      : [];
 
     const matchedQuestionnaire = questionMatcherEngine(
       selectedTitle,
@@ -246,12 +252,16 @@ const QuestionnairesReviewSection = () => {
                 onClick={() => handleButtonClick(question.title)}
                 className={cn(
                   'flex justify-between items-center p-2  bg-[#F0EFFE] rounded-md cursor-pointer hover:bg-cyan-100',
-                  user?.questionnaires?.find(
-                    (item: Questionnaire) => item.question === question.title
-                  )?.answers?.length === 0 && 'bg-gray-200 pointer-events-none',
-                  !user?.questionnaires?.find(
-                    (item: Questionnaire) => item.question === question.title
-                  ) && 'bg-gray-200 pointer-events-none',
+                  Array.isArray(user?.questionnaires) &&
+                    user?.questionnaires?.find(
+                      (item: Questionnaire) => item.question === question.title
+                    )?.answers?.length === 0 &&
+                    'bg-gray-200 pointer-events-none',
+                  !Array.isArray(user?.questionnaires) ||
+                    (!user?.questionnaires?.find(
+                      (item: Questionnaire) => item.question === question.title
+                    ) &&
+                      'bg-gray-200 pointer-events-none'),
                   isAuditor && 'pointer-events-none',
                   isWithinDashboard && 'mr-1'
                 )}
@@ -265,10 +275,12 @@ const QuestionnairesReviewSection = () => {
                   />
                   <p
                     className={cn(
-                      user?.questionnaires?.find(
-                        (item: Questionnaire) =>
-                          item.question === question.title
-                      )?.answers?.length === 0 && 'text-gray-400'
+                      Array.isArray(user?.questionnaires) &&
+                        user?.questionnaires?.find(
+                          (item: Questionnaire) =>
+                            item.question === question.title
+                        )?.answers?.length === 0 &&
+                        'text-gray-400'
                     )}
                   >
                     {question.title}
