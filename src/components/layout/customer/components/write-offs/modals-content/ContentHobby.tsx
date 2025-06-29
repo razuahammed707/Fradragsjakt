@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { FormInput } from '@/components/FormInput';
-import { FormReceiptInput } from '@/components/FormReceiptInput';
+import { FormInput } from '@/components/forms/FormInput';
+import { FormReceiptInput } from '@/components/forms/FormReceiptInput';
 import {
   Accordion,
   AccordionContent,

@@ -70,13 +70,13 @@ const healthAndFamilyExpenseCalculator = (
 
 const workAndEducationExpenseCalculator = (
   workAndEducationPayload: QuestionnaireItem,
-  questionnaires: IQuestionnaire[]
+  questionnaires: any[]
 ) => {
   if (!workAndEducationPayload || !workAndEducationPayload.answers) return 0;
 
   const initialAmount = questionnaires
     ?.find((item) => item.question === 'Work and Education')
-    ?.answers.some((answer) =>
+    ?.answers.some((answer: any) =>
       Object.keys(answer).some((key) => key === 'Member of Trade Union')
     )
     ? 3850
@@ -326,7 +326,7 @@ export const savingExpenseCalculator = (
     Record<string, QuestionnaireItem | null>
   >((acc, item) => {
     if (item && typeof item === 'object' && 'question' in item) {
-      acc[item.question] = item;
+      //acc[item.question] = item;
     }
     return acc;
   }, {});

@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from 'react';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import SharedPagination from '@/components/SharedPagination';
-import SearchInput from '@/components/SearchInput';
+import SearchInput from '@/components/forms/SearchInput';
 import { RulesDataTableColumns } from './RulesDataTableColumns';
 import CreateRuleModal from './CreateRuleModal';
 import { trpc } from '@/config/trpc/client';

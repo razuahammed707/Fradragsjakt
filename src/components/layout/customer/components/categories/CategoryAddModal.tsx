@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import SharedModal from '@/components/SharedModal';
 import { useForm } from 'react-hook-form';
-import { FormInput } from '@/components/FormInput';
+import { FormInput } from '@/components/forms/FormInput';
 import { SelectFormInput } from '@/components/forms/SelectFormInput'; // Updated to single select component
 import { Edit2, Loader2 } from 'lucide-react';
 import { DialogTitle } from '@radix-ui/react-dialog';

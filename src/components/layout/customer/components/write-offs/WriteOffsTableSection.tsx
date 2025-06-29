@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import { SharedDataTable } from '@/components/SharedDataTable';
 import SharedPagination from '@/components/SharedPagination';
-import SearchInput from '@/components/SearchInput';
+import SearchInput from '@/components/forms/SearchInput';
 import { WriteOffsTableColumns } from './WriteOffsTableColumns';
 import { trpc } from '@/utils/trpc';
 import { cn, debounce } from '@/lib/utils';

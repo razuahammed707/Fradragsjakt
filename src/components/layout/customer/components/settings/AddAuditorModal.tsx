@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import SharedModal from '@/components/SharedModal';
 import { useForm } from 'react-hook-form';
-import { FormInput } from '@/components/FormInput';
+import { FormInput } from '@/components/forms/FormInput';
 import { Loader2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { trpc } from '@/utils/trpc';
